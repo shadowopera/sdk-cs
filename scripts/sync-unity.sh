@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SRC_DIR="$ROOT_DIR/src/Archmage"
+DST_DIR="$ROOT_DIR/unity/Runtime"
+
+added=0
+updated=0
+removed=0
+
+mkdir -p "$DST_DIR"
+
+# Sync .cs files from src to unity/Runtime
+for src_file in "$SRC_DIR"/*.cs; do
+    filename="$(basename "$src_file")"
+    dst_file="$DST_DIR/$filename"
+
+    if [[ ! -f "$dst_file" ]]; then
+        cp "$src_file" "$dst_file"
+        echo "  + $filename"
+        added=$((added + 1))
+    elif ! cmp -s "$src_file" "$dst_file"; then
+        cp "$src_file" "$dst_file"
+        echo "  ~ $filename"
+        updated=$((updated + 1))
+    fi
+done
+
+# Remove .cs files in unity/Runtime that no longer exist in src
+for dst_file in "$DST_DIR"/*.cs; do
+    [[ -f "$dst_file" ]] || continue
+    filename="$(basename "$dst_file")"
+    if [[ ! -f "$SRC_DIR/$filename" ]]; then
+        rm "$dst_file"
+        echo "  - $filename"
+        removed=$((removed + 1))
+        # Note: .meta files are left intact for manual cleanup
+    fi
+done
+
+echo ""
+echo "Sync complete: $added added, $updated updated, $removed removed"

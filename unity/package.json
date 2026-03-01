@@ -1,0 +1,19 @@
+{
+  "name": "dev.shadop.archmage",
+  "version": "0.1.0",
+  "displayName": "Archmage",
+  "description": "Atlas configuration system for loading and managing configurations from JSON files with support for i18n, references, durations, and layered overrides.",
+  "unity": "6000.3",
+  "keywords": [
+    "atlas",
+    "configuration",
+    "json",
+    "data"
+  ],
+  "author": {
+    "name": "Shadop",
+    "url": "https://github.com/shadowopera"
+  },
+  "type": "library",
+  "license": "Apache-2.0"
+}
