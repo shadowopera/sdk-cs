@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
@@ -10,25 +10,25 @@ public class AtlasJson
     /// <summary>
     /// Version control information.
     /// </summary>
-    [JsonPropertyName("vcs")]
+    [JsonProperty("vcs")]
     public Dictionary<string, object>? Vcs { get; set; }
 
     /// <summary>
     /// Unique mapping: key -> file path.
     /// </summary>
-    [JsonPropertyName("unique")]
+    [JsonProperty("unique")]
     public Dictionary<string, string> Unique { get; set; } = new();
 
     /// <summary>
     /// Single mapping: key -> subkey -> file path.
     /// </summary>
-    [JsonPropertyName("single")]
+    [JsonProperty("single")]
     public Dictionary<string, Dictionary<string, string>> Single { get; set; } = new();
 
     /// <summary>
     /// Multiple mapping: key -> list of file paths.
     /// </summary>
-    [JsonPropertyName("multiple")]
+    [JsonProperty("multiple")]
     public Dictionary<string, List<string>> Multiple { get; set; } = new();
 
     /// <summary>

@@ -1,5 +1,4 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
@@ -7,23 +6,25 @@ namespace Shadop.Archmage;
 /// JSON converter for Duration that serializes to compact array format [type, value].
 /// Zero duration is serialized as null.
 /// </summary>
-public class DurationJsonConverter : JsonConverter<Duration>
+public class DurationJsonConverter : JsonConverter
 {
-    public override Duration Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override bool CanConvert(Type objectType) => objectType == typeof(Duration);
+
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        if (reader.TokenType == JsonTokenType.Null)
+        if (reader.TokenType == JsonToken.Null)
             return Duration.Zero;
 
-        if (reader.TokenType != JsonTokenType.StartArray)
-            throw new JsonException($"Expected array for Duration, got {reader.TokenType}");
+        if (reader.TokenType != JsonToken.StartArray)
+            throw new JsonSerializationException($"Expected array for Duration, got {reader.TokenType}");
 
         var shards = new List<long>();
-        while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+        while (reader.Read() && reader.TokenType != JsonToken.EndArray)
         {
-            if (reader.TokenType != JsonTokenType.Number)
-                throw new JsonException($"Expected number in Duration array, got {reader.TokenType}");
+            if (reader.TokenType != JsonToken.Integer)
+                throw new JsonSerializationException($"Expected number in Duration array, got {reader.TokenType}");
 
-            shards.Add(reader.GetInt64());
+            shards.Add(Convert.ToInt64(reader.Value));
         }
 
         if (shards.Count == 0)
@@ -32,19 +33,20 @@ public class DurationJsonConverter : JsonConverter<Duration>
         return Archmage.ParseDurationShards(shards.ToArray());
     }
 
-    public override void Write(Utf8JsonWriter writer, Duration value, JsonSerializerOptions options)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
-        var shards = Archmage.ShardDuration(value);
+        var duration = (Duration)value!;
+        var shards = Archmage.ShardDuration(duration);
         if (shards == null)
         {
-            writer.WriteNullValue();
+            writer.WriteNull();
             return;
         }
 
         writer.WriteStartArray();
         foreach (var shard in shards)
         {
-            writer.WriteNumberValue(shard);
+            writer.WriteValue(shard);
         }
         writer.WriteEndArray();
     }

@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
@@ -7,10 +7,10 @@ namespace Shadop.Archmage;
 /// </summary>
 public struct Tup2<T0, T1> : IEquatable<Tup2<T0, T1>>
 {
-    [JsonPropertyName("item0")]
+    [JsonProperty("item0")]
     public T0 Item0 { get; set; }
 
-    [JsonPropertyName("item1")]
+    [JsonProperty("item1")]
     public T1 Item1 { get; set; }
 
     public Tup2(T0 item0, T1 item1)

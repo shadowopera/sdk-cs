@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Shadop.Archmage;
 
 /// <summary>
@@ -23,6 +25,7 @@ public class AtlasOptions
     internal List<string>? Whitelist { get; set; }
     internal List<string>? Blacklist { get; set; }
     internal AtlasItemLoader? CustomLoader { get; set; }
+    internal JsonSerializerSettings? JsonSettings { get; set; }
 }
 
 /// <summary>

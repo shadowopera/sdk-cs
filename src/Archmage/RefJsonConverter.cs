@@ -1,56 +1,43 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Collections.Concurrent;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
 /// <summary>
-/// JSON converter factory for Ref that creates type-specific converters.
-/// </summary>
-public class RefJsonConverterFactory : JsonConverterFactory
-{
-    public override bool CanConvert(Type typeToConvert)
-    {
-        return typeToConvert.IsGenericType &&
-               typeToConvert.GetGenericTypeDefinition() == typeof(Ref<,>);
-    }
-
-    public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
-    {
-        Type[] genericArgs = typeToConvert.GetGenericArguments();
-        Type keyType = genericArgs[0];
-        Type valueType = genericArgs[1];
-
-        Type converterType = typeof(RefJsonConverter<,>).MakeGenericType(keyType, valueType);
-        return (JsonConverter?)Activator.CreateInstance(converterType);
-    }
-}
-
-/// <summary>
 /// JSON converter for Ref that only serializes/deserializes the RawValue.
-/// The Ref property is ignored during JSON operations and should be populated
+/// The Value property is ignored during JSON operations and should be populated
 /// during the reference binding phase.
 /// </summary>
-public class RefJsonConverter<TKey, TValue> : JsonConverter<Ref<TKey, TValue>>
-    where TKey : notnull
-    where TValue : class
+public class RefJsonConverter : JsonConverter
 {
-    public override Ref<TKey, TValue>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        if (reader.TokenType == JsonTokenType.Null)
-            return null;
+    private static readonly ConcurrentDictionary<Type, PropertyInfo> RawValueCache = new();
 
-        TKey rawValue = JsonSerializer.Deserialize<TKey>(ref reader, options)!;
-        return new Ref<TKey, TValue>(rawValue);
+    public override bool CanConvert(Type objectType)
+    {
+        return objectType.IsGenericType &&
+               objectType.GetGenericTypeDefinition() == typeof(Ref<,>);
     }
 
-    public override void Write(Utf8JsonWriter writer, Ref<TKey, TValue> value, JsonSerializerOptions options)
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    {
+        if (reader.TokenType == JsonToken.Null)
+            return null;
+
+        Type keyType = objectType.GetGenericArguments()[0];
+        object rawValue = serializer.Deserialize(reader, keyType)!;
+        return Activator.CreateInstance(objectType, rawValue);
+    }
+
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         if (value == null)
         {
-            writer.WriteNullValue();
+            writer.WriteNull();
             return;
         }
 
-        JsonSerializer.Serialize(writer, value.RawValue, options);
+        var prop = RawValueCache.GetOrAdd(value.GetType(), t => t.GetProperty("RawValue")!);
+        serializer.Serialize(writer, prop.GetValue(value));
     }
 }
