@@ -5,10 +5,12 @@
   "description": "Atlas configuration system for loading and managing configurations from JSON files with support for i18n, references, durations, and layered overrides.",
   "unity": "6000.3",
   "keywords": [
+    "archmage",
     "atlas",
+    "cfg",
+    "config",
     "configuration",
-    "json",
-    "data"
+    "json"
   ],
   "author": {
     "name": "Shadop",

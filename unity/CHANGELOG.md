@@ -16,4 +16,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tup1-Tup7 mixed-type tuple types
 - Ref type for deferred reference resolution
 - I18n internationalization support
-- JSON serialization via System.Text.Json
+- JSON serialization via Newtonsoft.Json (com.unity.nuget.newtonsoft-json)
