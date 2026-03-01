@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Shadop.Archmage;
 
 /// <summary>
@@ -98,6 +100,16 @@ public static class AtlasOptionExtensions
     public static AtlasOptions WithCustomLoader(this AtlasOptions opts, AtlasItemLoader loader)
     {
         opts.CustomLoader = loader ?? throw new ArgumentNullException(nameof(loader));
+        return opts;
+    }
+
+    /// <summary>
+    /// Sets custom JSON serializer settings for deserialization during Atlas loading.
+    /// Prevents interference from global <see cref="JsonConvert.DefaultSettings"/>.
+    /// </summary>
+    public static AtlasOptions WithJsonSettings(this AtlasOptions opts, JsonSerializerSettings settings)
+    {
+        opts.JsonSettings = settings ?? throw new ArgumentNullException(nameof(settings));
         return opts;
     }
 }

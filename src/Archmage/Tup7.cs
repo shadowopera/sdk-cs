@@ -39,7 +39,7 @@ public struct Tup7<T0, T1, T2, T3, T4, T5, T6> : IEquatable<Tup7<T0, T1, T2, T3,
         Item6 = item6;
     }
 
-    public object[] Values() => [Item0!, Item1!, Item2!, Item3!, Item4!, Item5!, Item6!];
+    public object[] Values() => new object[] { Item0!, Item1!, Item2!, Item3!, Item4!, Item5!, Item6! };
 
     public void Deconstruct(out T0 item0, out T1 item1, out T2 item2, out T3 item3, out T4 item4, out T5 item5, out T6 item6)
     {

@@ -1,4 +1,5 @@
-using System.Text.Json;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
@@ -56,7 +57,7 @@ public class I18n
     /// <param name="language">The language identifier.</param>
     public void MergeL10nData(byte[] data, string language)
     {
-        var texts = JsonSerializer.Deserialize<Dictionary<string, string>>(data)
+        var texts = JsonConvert.DeserializeObject<Dictionary<string, string>>(Encoding.UTF8.GetString(data))
             ?? throw new ArchmageException("failed to parse localization data");
         MergeTexts(texts, language);
     }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Shadop.Archmage;
 
@@ -64,8 +65,9 @@ public static partial class Archmage
         cancellationToken.ThrowIfCancellationRequested();
 
         // Read and parse atlas index file
+        var jsonSettings = options.JsonSettings;
         var atlasBytes = options.ReadFile(atlasFile);
-        var atlasJson = JsonSerializer.Deserialize<AtlasJson>(Encoding.UTF8.GetString(atlasBytes))
+        var atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasBytes), jsonSettings)
             ?? throw new ArchmageException($"invalid \"{atlasFile}\"");
 
         // Apply modifier
@@ -167,16 +169,16 @@ public static partial class Archmage
         switch (item.Mapping)
         {
             case AtlasConstants.MappingUnique:
-                files = atlasJson.Unique.TryGetValue(key, out var uf) ? [uf] : [];
+                files = atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
                 notFoundHint = $"$.unique['{key}']";
                 break;
             case AtlasConstants.MappingSingle:
                 var sf = atlasJson.PickSingle(key);
-                files = sf != null ? [sf] : [];
+                files = sf != null ? new List<string> { sf } : new List<string>();
                 notFoundHint = $"$.single['{key}']['/']";
                 break;
             case AtlasConstants.MappingMultiple:
-                files = atlasJson.Multiple.TryGetValue(key, out var mf) ? mf : [];
+                files = atlasJson.Multiple.TryGetValue(key, out var mf) ? mf : new List<string>();
                 notFoundHint = $"$.multiple['{key}']";
                 break;
             default:
@@ -211,7 +213,7 @@ public static partial class Archmage
 
             var fileData = options.ReadFile(filePath);
             var json = Encoding.UTF8.GetString(fileData);
-            var deserialized = JsonSerializer.Deserialize(json, item.Cfg!.GetType())
+            var deserialized = JsonConvert.DeserializeObject(json, item.Cfg!.GetType(), options.JsonSettings)
                 ?? throw new ArchmageException($"invalid \"{f}\"");
             CopyProperties(deserialized, item.Cfg);
 
@@ -236,8 +238,8 @@ public static partial class Archmage
             progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.ApplyingOverride, overrideFiles[i], stopwatch.Elapsed));
 
             var overrideJson = Encoding.UTF8.GetString(overrides[i]);
-            var overrideElement = JsonSerializer.Deserialize<JsonElement>(overrideJson);
-            Archmage.Merge(item.Cfg!, overrideElement);
+            var overrideToken = JToken.Parse(overrideJson);
+            Archmage.Merge(item.Cfg!, overrideToken);
         }
 
         // Call ApplyKeys if implemented

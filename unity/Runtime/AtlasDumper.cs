@@ -1,5 +1,5 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Collections.Concurrent;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
@@ -14,16 +14,16 @@ public static partial class Archmage
     /// </summary>
     /// <param name="atlas">The Atlas instance to dump.</param>
     /// <param name="outputDir">The directory to write JSON files to.</param>
-    /// <param name="options">Optional JSON serializer options. If null, uses default options with custom converters.</param>
-    public static void DumpAtlas(IAtlas atlas, string outputDir, JsonSerializerOptions? options = null)
+    /// <param name="settings">Optional JSON serializer settings. If null, uses default settings with custom converters.</param>
+    public static void DumpAtlas(IAtlas atlas, string outputDir, JsonSerializerSettings? settings = null)
     {
         if (atlas == null)
             throw new ArgumentNullException(nameof(atlas));
         if (string.IsNullOrWhiteSpace(outputDir))
             throw new ArgumentException("Output directory cannot be empty.", nameof(outputDir));
 
-        // Setup default options with custom converters
-        options ??= CreateDumpOptions();
+        // Setup default settings with custom converters
+        settings ??= CreateDumpSettings();
 
         var items = atlas.AtlasItems();
 
@@ -37,7 +37,7 @@ public static partial class Archmage
                 continue;
 
             // Serialize item to JSON
-            var json = JsonSerializer.Serialize(item.Cfg, options);
+            var json = JsonConvert.SerializeObject(item.Cfg, settings);
 
             // Write to file
             var filePath = Path.Combine(outputDir, key + ".json");
@@ -48,157 +48,166 @@ public static partial class Archmage
         }
     }
 
-    private static JsonSerializerOptions CreateDumpOptions()
+    private static JsonSerializerSettings CreateDumpSettings()
     {
-        var options = new JsonSerializerOptions
+        var settings = new JsonSerializerSettings
         {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-            PropertyNamingPolicy = null // Preserve property names as-is
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Include,
+            DefaultValueHandling = DefaultValueHandling.Include
         };
 
         // Register custom converters (zero-value Vec writes null, matching Go behavior)
-        options.Converters.Add(new DurationJsonConverter());
-        options.Converters.Add(new ZeroVecNullVec2JsonConverterFactory());
-        options.Converters.Add(new ZeroVecNullVec3JsonConverterFactory());
-        options.Converters.Add(new ZeroVecNullVec4JsonConverterFactory());
-        options.Converters.Add(new RefJsonConverterFactory());
+        settings.Converters.Add(new DurationJsonConverter());
+        settings.Converters.Add(new ZeroVecNullVec2JsonConverter());
+        settings.Converters.Add(new ZeroVecNullVec3JsonConverter());
+        settings.Converters.Add(new ZeroVecNullVec4JsonConverter());
+        settings.Converters.Add(new RefJsonConverter());
 
-        return options;
+        return settings;
     }
 }
 
 /// <summary>
-/// Vec2 converter factory for DumpAtlas that writes null for zero-valued vectors.
+/// Vec2 converter for DumpAtlas that writes null for zero-valued vectors.
 /// </summary>
-internal class ZeroVecNullVec2JsonConverterFactory : JsonConverterFactory
+internal class ZeroVecNullVec2JsonConverter : JsonConverter
 {
-    public override bool CanConvert(Type typeToConvert)
+    public override bool CanConvert(Type objectType)
     {
-        return typeToConvert.IsGenericType &&
-               typeToConvert.GetGenericTypeDefinition() == typeof(Vec2<>);
+        return objectType.IsGenericType &&
+               objectType.GetGenericTypeDefinition() == typeof(Vec2<>);
     }
 
-    public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        var elementType = typeToConvert.GetGenericArguments()[0];
-        var converterType = typeof(ZeroVecNullVec2JsonConverter<>).MakeGenericType(elementType);
-        return (JsonConverter?)Activator.CreateInstance(converterType);
-    }
-}
-
-internal class ZeroVecNullVec2JsonConverter<T> : JsonConverter<Vec2<T>>
-    where T : IEquatable<T>
-{
-    public override Vec2<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var inner = new Vec2JsonConverter<T>();
-        return inner.Read(ref reader, typeToConvert, options);
+        var inner = new Vec2JsonConverter();
+        return inner.ReadJson(reader, objectType, existingValue, serializer);
     }
 
-    public override void Write(Utf8JsonWriter writer, Vec2<T> value, JsonSerializerOptions options)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
-        if (EqualityComparer<T>.Default.Equals(value.X, default!) &&
-            EqualityComparer<T>.Default.Equals(value.Y, default!))
+        var objectType = value!.GetType();
+        var elementType = objectType.GetGenericArguments()[0];
+        var props = VecReflectionCache.GetProperties(objectType, "X", "Y");
+        var x = props[0].GetValue(value);
+        var y = props[1].GetValue(value);
+
+        if (ZeroVecHelper.IsDefault(x, elementType) && ZeroVecHelper.IsDefault(y, elementType))
         {
-            writer.WriteNullValue();
+            writer.WriteNull();
             return;
         }
+
         writer.WriteStartArray();
-        JsonSerializer.Serialize(writer, value.X, options);
-        JsonSerializer.Serialize(writer, value.Y, options);
+        serializer.Serialize(writer, x);
+        serializer.Serialize(writer, y);
         writer.WriteEndArray();
     }
 }
 
 /// <summary>
-/// Vec3 converter factory for DumpAtlas that writes null for zero-valued vectors.
+/// Vec3 converter for DumpAtlas that writes null for zero-valued vectors.
 /// </summary>
-internal class ZeroVecNullVec3JsonConverterFactory : JsonConverterFactory
+internal class ZeroVecNullVec3JsonConverter : JsonConverter
 {
-    public override bool CanConvert(Type typeToConvert)
+    public override bool CanConvert(Type objectType)
     {
-        return typeToConvert.IsGenericType &&
-               typeToConvert.GetGenericTypeDefinition() == typeof(Vec3<>);
+        return objectType.IsGenericType &&
+               objectType.GetGenericTypeDefinition() == typeof(Vec3<>);
     }
 
-    public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        var elementType = typeToConvert.GetGenericArguments()[0];
-        var converterType = typeof(ZeroVecNullVec3JsonConverter<>).MakeGenericType(elementType);
-        return (JsonConverter?)Activator.CreateInstance(converterType);
-    }
-}
-
-internal class ZeroVecNullVec3JsonConverter<T> : JsonConverter<Vec3<T>>
-    where T : IEquatable<T>
-{
-    public override Vec3<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var inner = new Vec3JsonConverter<T>();
-        return inner.Read(ref reader, typeToConvert, options);
+        var inner = new Vec3JsonConverter();
+        return inner.ReadJson(reader, objectType, existingValue, serializer);
     }
 
-    public override void Write(Utf8JsonWriter writer, Vec3<T> value, JsonSerializerOptions options)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
-        if (EqualityComparer<T>.Default.Equals(value.X, default!) &&
-            EqualityComparer<T>.Default.Equals(value.Y, default!) &&
-            EqualityComparer<T>.Default.Equals(value.Z, default!))
+        var objectType = value!.GetType();
+        var elementType = objectType.GetGenericArguments()[0];
+        var props = VecReflectionCache.GetProperties(objectType, "X", "Y", "Z");
+        var x = props[0].GetValue(value);
+        var y = props[1].GetValue(value);
+        var z = props[2].GetValue(value);
+
+        if (ZeroVecHelper.IsDefault(x, elementType) &&
+            ZeroVecHelper.IsDefault(y, elementType) &&
+            ZeroVecHelper.IsDefault(z, elementType))
         {
-            writer.WriteNullValue();
+            writer.WriteNull();
             return;
         }
+
         writer.WriteStartArray();
-        JsonSerializer.Serialize(writer, value.X, options);
-        JsonSerializer.Serialize(writer, value.Y, options);
-        JsonSerializer.Serialize(writer, value.Z, options);
+        serializer.Serialize(writer, x);
+        serializer.Serialize(writer, y);
+        serializer.Serialize(writer, z);
         writer.WriteEndArray();
     }
 }
 
 /// <summary>
-/// Vec4 converter factory for DumpAtlas that writes null for zero-valued vectors.
+/// Vec4 converter for DumpAtlas that writes null for zero-valued vectors.
 /// </summary>
-internal class ZeroVecNullVec4JsonConverterFactory : JsonConverterFactory
+internal class ZeroVecNullVec4JsonConverter : JsonConverter
 {
-    public override bool CanConvert(Type typeToConvert)
+    public override bool CanConvert(Type objectType)
     {
-        return typeToConvert.IsGenericType &&
-               typeToConvert.GetGenericTypeDefinition() == typeof(Vec4<>);
+        return objectType.IsGenericType &&
+               objectType.GetGenericTypeDefinition() == typeof(Vec4<>);
     }
 
-    public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        var elementType = typeToConvert.GetGenericArguments()[0];
-        var converterType = typeof(ZeroVecNullVec4JsonConverter<>).MakeGenericType(elementType);
-        return (JsonConverter?)Activator.CreateInstance(converterType);
+        var inner = new Vec4JsonConverter();
+        return inner.ReadJson(reader, objectType, existingValue, serializer);
+    }
+
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    {
+        var objectType = value!.GetType();
+        var elementType = objectType.GetGenericArguments()[0];
+        var props = VecReflectionCache.GetProperties(objectType, "X", "Y", "Z", "W");
+        var x = props[0].GetValue(value);
+        var y = props[1].GetValue(value);
+        var z = props[2].GetValue(value);
+        var w = props[3].GetValue(value);
+
+        if (ZeroVecHelper.IsDefault(x, elementType) &&
+            ZeroVecHelper.IsDefault(y, elementType) &&
+            ZeroVecHelper.IsDefault(z, elementType) &&
+            ZeroVecHelper.IsDefault(w, elementType))
+        {
+            writer.WriteNull();
+            return;
+        }
+
+        writer.WriteStartArray();
+        serializer.Serialize(writer, x);
+        serializer.Serialize(writer, y);
+        serializer.Serialize(writer, z);
+        serializer.Serialize(writer, w);
+        writer.WriteEndArray();
     }
 }
 
-internal class ZeroVecNullVec4JsonConverter<T> : JsonConverter<Vec4<T>>
-    where T : IEquatable<T>
+internal static class ZeroVecHelper
 {
-    public override Vec4<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var inner = new Vec4JsonConverter<T>();
-        return inner.Read(ref reader, typeToConvert, options);
-    }
+    private static readonly ConcurrentDictionary<Type, object?> DefaultValueCache = new();
 
-    public override void Write(Utf8JsonWriter writer, Vec4<T> value, JsonSerializerOptions options)
+    internal static bool IsDefault(object? value, Type type)
     {
-        if (EqualityComparer<T>.Default.Equals(value.X, default!) &&
-            EqualityComparer<T>.Default.Equals(value.Y, default!) &&
-            EqualityComparer<T>.Default.Equals(value.Z, default!) &&
-            EqualityComparer<T>.Default.Equals(value.W, default!))
+        if (value == null)
+            return true;
+
+        if (type.IsValueType)
         {
-            writer.WriteNullValue();
-            return;
+            var defaultValue = DefaultValueCache.GetOrAdd(type, t => Activator.CreateInstance(t));
+            return value.Equals(defaultValue);
         }
-        writer.WriteStartArray();
-        JsonSerializer.Serialize(writer, value.X, options);
-        JsonSerializer.Serialize(writer, value.Y, options);
-        JsonSerializer.Serialize(writer, value.Z, options);
-        JsonSerializer.Serialize(writer, value.W, options);
-        writer.WriteEndArray();
+
+        return false;
     }
 }

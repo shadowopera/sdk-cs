@@ -31,7 +31,7 @@ public struct Tup5<T0, T1, T2, T3, T4> : IEquatable<Tup5<T0, T1, T2, T3, T4>>
         Item4 = item4;
     }
 
-    public object[] Values() => [Item0!, Item1!, Item2!, Item3!, Item4!];
+    public object[] Values() => new object[] { Item0!, Item1!, Item2!, Item3!, Item4! };
 
     public void Deconstruct(out T0 item0, out T1 item1, out T2 item2, out T3 item3, out T4 item4)
     {

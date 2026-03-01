@@ -15,7 +15,7 @@ public struct Tup1<T0> : IEquatable<Tup1<T0>>
         Item0 = item0;
     }
 
-    public object[] Values() => [Item0!];
+    public object[] Values() => new object[] { Item0! };
 
     public void Deconstruct(out T0 item0)
     {

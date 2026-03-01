@@ -169,16 +169,16 @@ public static partial class Archmage
         switch (item.Mapping)
         {
             case AtlasConstants.MappingUnique:
-                files = atlasJson.Unique.TryGetValue(key, out var uf) ? [uf] : [];
+                files = atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
                 notFoundHint = $"$.unique['{key}']";
                 break;
             case AtlasConstants.MappingSingle:
                 var sf = atlasJson.PickSingle(key);
-                files = sf != null ? [sf] : [];
+                files = sf != null ? new List<string> { sf } : new List<string>();
                 notFoundHint = $"$.single['{key}']['/']";
                 break;
             case AtlasConstants.MappingMultiple:
-                files = atlasJson.Multiple.TryGetValue(key, out var mf) ? mf : [];
+                files = atlasJson.Multiple.TryGetValue(key, out var mf) ? mf : new List<string>();
                 notFoundHint = $"$.multiple['{key}']";
                 break;
             default:

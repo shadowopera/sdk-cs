@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
@@ -7,25 +7,25 @@ namespace Shadop.Archmage;
 /// </summary>
 public struct Tup7<T0, T1, T2, T3, T4, T5, T6> : IEquatable<Tup7<T0, T1, T2, T3, T4, T5, T6>>
 {
-    [JsonPropertyName("item0")]
+    [JsonProperty("item0")]
     public T0 Item0 { get; set; }
 
-    [JsonPropertyName("item1")]
+    [JsonProperty("item1")]
     public T1 Item1 { get; set; }
 
-    [JsonPropertyName("item2")]
+    [JsonProperty("item2")]
     public T2 Item2 { get; set; }
 
-    [JsonPropertyName("item3")]
+    [JsonProperty("item3")]
     public T3 Item3 { get; set; }
 
-    [JsonPropertyName("item4")]
+    [JsonProperty("item4")]
     public T4 Item4 { get; set; }
 
-    [JsonPropertyName("item5")]
+    [JsonProperty("item5")]
     public T5 Item5 { get; set; }
 
-    [JsonPropertyName("item6")]
+    [JsonProperty("item6")]
     public T6 Item6 { get; set; }
 
     public Tup7(T0 item0, T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6)
@@ -39,7 +39,7 @@ public struct Tup7<T0, T1, T2, T3, T4, T5, T6> : IEquatable<Tup7<T0, T1, T2, T3,
         Item6 = item6;
     }
 
-    public object[] Values() => [Item0!, Item1!, Item2!, Item3!, Item4!, Item5!, Item6!];
+    public object[] Values() => new object[] { Item0!, Item1!, Item2!, Item3!, Item4!, Item5!, Item6! };
 
     public void Deconstruct(out T0 item0, out T1 item1, out T2 item2, out T3 item3, out T4 item4, out T5 item5, out T6 item6)
     {

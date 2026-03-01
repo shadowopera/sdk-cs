@@ -1,5 +1,6 @@
 using System.Reflection;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 
 namespace Shadop.Archmage;
@@ -15,7 +16,7 @@ public static partial class Archmage
     /// - Objects: recursively merge members
     /// - Dictionaries: merge keys, recursing for object/dictionary values
     /// </summary>
-    public static void Merge(object target, JsonElement sourceJson)
+    public static void Merge(object target, JToken sourceJson)
     {
         if (target == null)
             throw new ArgumentNullException(nameof(target));
@@ -31,16 +32,16 @@ public static partial class Archmage
         MergeObject(target, sourceJson);
     }
 
-    private static void MergeDictionary(IDictionary target, JsonElement sourceJson)
+    private static void MergeDictionary(IDictionary target, JToken sourceJson)
     {
-        if (sourceJson.ValueKind != JsonValueKind.Object)
+        if (sourceJson.Type != JTokenType.Object)
             throw new ArchmageException("Cannot merge non-object JSON into dictionary");
 
         var dictType = target.GetType();
         var genericArgs = dictType.IsGenericType ? dictType.GetGenericArguments() : null;
         var valueType = genericArgs?.Length == 2 ? genericArgs[1] : typeof(object);
 
-        foreach (var property in sourceJson.EnumerateObject())
+        foreach (var property in ((JObject)sourceJson).Properties())
         {
             var key = property.Name;
             var sourceValue = property.Value;
@@ -53,27 +54,27 @@ public static partial class Archmage
                 // If both are objects/dictionaries, recurse
                 if (existingValue != null &&
                     (existingValue is IDictionary || IsComplexObject(existingValue)) &&
-                    sourceValue.ValueKind == JsonValueKind.Object)
+                    sourceValue.Type == JTokenType.Object)
                 {
                     Merge(existingValue, sourceValue);
                 }
                 else
                 {
                     // Replace with new value
-                    target[key] = DeserializeJsonElement(sourceValue, valueType);
+                    target[key] = DeserializeJToken(sourceValue, valueType);
                 }
             }
             else
             {
                 // Insert new key
-                target[key] = DeserializeJsonElement(sourceValue, valueType);
+                target[key] = DeserializeJToken(sourceValue, valueType);
             }
         }
     }
 
-    private static void MergeObject(object target, JsonElement sourceJson)
+    private static void MergeObject(object target, JToken sourceJson)
     {
-        if (sourceJson.ValueKind != JsonValueKind.Object)
+        if (sourceJson.Type != JTokenType.Object)
             throw new ArchmageException("Cannot merge non-object JSON into object");
 
         var targetType = target.GetType();
@@ -81,7 +82,7 @@ public static partial class Archmage
             .Where(p => p.CanWrite)
             .ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
 
-        foreach (var jsonProperty in sourceJson.EnumerateObject())
+        foreach (var jsonProperty in ((JObject)sourceJson).Properties())
         {
             // Try to find matching property (case-insensitive)
             if (!properties.TryGetValue(jsonProperty.Name, out var propertyInfo))
@@ -93,14 +94,14 @@ public static partial class Archmage
             // If both are objects/dictionaries, recurse
             if (currentValue != null &&
                 (currentValue is IDictionary || IsComplexObject(currentValue)) &&
-                sourceValue.ValueKind == JsonValueKind.Object)
+                sourceValue.Type == JTokenType.Object)
             {
                 Merge(currentValue, sourceValue);
             }
             else
             {
                 // Replace with new value (including explicit null)
-                var newValue = DeserializeJsonElement(sourceValue, propertyInfo.PropertyType);
+                var newValue = DeserializeJToken(sourceValue, propertyInfo.PropertyType);
                 propertyInfo.SetValue(target, newValue);
             }
         }
@@ -124,12 +125,11 @@ public static partial class Archmage
             .Any(p => p.CanWrite);
     }
 
-    private static object? DeserializeJsonElement(JsonElement element, Type targetType)
+    private static object? DeserializeJToken(JToken token, Type targetType)
     {
-        if (element.ValueKind == JsonValueKind.Null)
+        if (token.Type == JTokenType.Null)
             return null;
 
-        // Use System.Text.Json to deserialize to the target type
-        return JsonSerializer.Deserialize(element.GetRawText(), targetType);
+        return token.ToObject(targetType);
     }
 }

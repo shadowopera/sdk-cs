@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Shadop.Archmage;
 
@@ -12,7 +12,7 @@ namespace Shadop.Archmage;
 /// </summary>
 /// <typeparam name="TKey">The key type (should be int, long or string).</typeparam>
 /// <typeparam name="TValue">The reference value type.</typeparam>
-[JsonConverter(typeof(RefJsonConverterFactory))]
+[JsonConverter(typeof(RefJsonConverter))]
 public class Ref<TKey, TValue>
     where TKey : notnull
     where TValue : class

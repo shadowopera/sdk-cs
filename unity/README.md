@@ -6,7 +6,7 @@ with support for i18n, references, durations, and layered overrides.
 ## Requirements
 
 - Unity 6000.3 or later
-- `System.Text.Json` — this package depends on System.Text.Json but does **not** bundle it, to avoid DLL conflicts with other packages in your project. See [Dependencies](#dependencies) below.
+- com.unity.nuget.newtonsoft-json 3.2.2
 
 ## Installation
 
@@ -36,22 +36,6 @@ Add the following to your `Packages/manifest.json`:
   }
 }
 ```
-
-## Dependencies
-
-This package requires `System.Text.Json` (>= 8.0.0). Choose one of the following methods:
-
-### Option A: Via NuGetForUnity (Recommended)
-
-1. Install [NuGetForUnity](https://github.com/GlitchEnzo/NuGetForUnity)
-2. Open **NuGet > Manage NuGet Packages** in Unity
-3. Search for `System.Text.Json` and install it
-
-### Option B: Manual DLL
-
-1. Download `System.Text.Json` from [NuGet.org](https://www.nuget.org/packages/System.Text.Json)
-2. Extract the `.nupkg` file (rename to `.zip`)
-3. Copy `lib/netstandard2.0/System.Text.Json.dll` into your project's `Assets/Plugins/` folder
 
 ## Features
 
