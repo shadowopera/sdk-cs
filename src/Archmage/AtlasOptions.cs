@@ -34,7 +34,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// Represents an override configuration directory.
     /// </summary>
-    internal class OverrideConfig
+    class OverrideConfig
     {
         public OverrideConfig(string rootPath)
         {

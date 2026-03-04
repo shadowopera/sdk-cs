@@ -1,0 +1,51 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.cs]
+#### 1. Accessibility Modifiers ####
+# Prefer omitting default accessibility modifiers (e.g., omit 'private' where it is the default)
+dotnet_style_require_accessibility_modifiers = omit_if_default:suggestion
+
+#### 2. Naming Conventions ####
+# Private fields: underscore + camelCase (_camelCase)
+dotnet_naming_rule.private_members_with_underscore.symbols = private_fields
+dotnet_naming_rule.private_members_with_underscore.style = prefix_underscore
+dotnet_naming_rule.private_members_with_underscore.severity = suggestion
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+dotnet_naming_style.prefix_underscore.required_prefix = _
+
+# Public/Protected members: PascalCase
+dotnet_naming_rule.public_members_must_be_pascal_case.symbols = public_members
+dotnet_naming_rule.public_members_must_be_pascal_case.style = pascal_case_style
+dotnet_naming_rule.public_members_must_be_pascal_case.severity = suggestion
+
+dotnet_naming_symbols.public_members.applicable_kinds = property,method,event,delegate
+dotnet_naming_symbols.public_members.applicable_accessibilities = public,protected,internal
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+#### 3. C# Coding Style Best Practices ####
+# Use 'var' when the type is apparent from the assignment
+dotnet_style_predefined_type_for_locals_parameters_declarations = true:suggestion
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+
+# Namespace style: use block-scoped for netstandard2.1 compatibility
+csharp_style_namespace_declarations = block_scoped:silent
+
+#### 4. Using Directive Organization ####
+dotnet_separate_import_directive_groups = false
+dotnet_sort_system_directives_first = true
+
+# IDE0130: Namespace does not match folder structure
+dotnet_style_namespace_match_folder = false

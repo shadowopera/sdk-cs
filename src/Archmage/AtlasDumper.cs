@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -51,7 +50,7 @@ namespace Shadop.Archmage
             }
         }
 
-        private static JsonSerializerSettings CreateDumpSettings()
+        static JsonSerializerSettings CreateDumpSettings()
         {
             var settings = new JsonSerializerSettings
             {
@@ -74,7 +73,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// Vec2 converter for DumpAtlas that writes null for zero-valued vectors.
     /// </summary>
-    internal class ZeroVecNullVec2JsonConverter : JsonConverter
+    class ZeroVecNullVec2JsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
@@ -112,7 +111,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// Vec3 converter for DumpAtlas that writes null for zero-valued vectors.
     /// </summary>
-    internal class ZeroVecNullVec3JsonConverter : JsonConverter
+    class ZeroVecNullVec3JsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
@@ -154,7 +153,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// Vec4 converter for DumpAtlas that writes null for zero-valued vectors.
     /// </summary>
-    internal class ZeroVecNullVec4JsonConverter : JsonConverter
+    class ZeroVecNullVec4JsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
@@ -196,9 +195,9 @@ namespace Shadop.Archmage
         }
     }
 
-    internal static class ZeroVecHelper
+    static class ZeroVecHelper
     {
-        private static readonly ConcurrentDictionary<Type, object?> DefaultValueCache = new();
+        static readonly ConcurrentDictionary<Type, object?> DefaultValueCache = new();
 
         internal static bool IsDefault(object? value, Type type)
         {

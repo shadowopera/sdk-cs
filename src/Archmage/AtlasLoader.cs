@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -53,7 +53,7 @@ namespace Shadop.Archmage
             }, cancellationToken);
         }
 
-        private static void LoadAtlasImpl(
+        static void LoadAtlasImpl(
             string atlasFile,
             string cfgRoot,
             IAtlas atlas,
@@ -145,7 +145,7 @@ namespace Shadop.Archmage
             atlas.BindRefs();
         }
 
-        private static (string cause, bool skip) ShouldSkip(string key, AtlasOptions options)
+        static (string cause, bool skip) ShouldSkip(string key, AtlasOptions options)
         {
             if (options.Whitelist != null && options.Whitelist.Count > 0)
                 return ("whitelist", !options.Whitelist.Contains(key));
@@ -156,7 +156,7 @@ namespace Shadop.Archmage
             return ("", false);
         }
 
-        private static void LoadItem(
+        static void LoadItem(
             string key,
             AtlasItem item,
             AtlasJson atlasJson,
@@ -271,7 +271,7 @@ namespace Shadop.Archmage
             item.Ready = true;
         }
 
-        private static void CopyProperties(object source, object target)
+        static void CopyProperties(object source, object target)
         {
             var type = source.GetType();
             var properties = type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);

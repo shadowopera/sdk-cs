@@ -5,7 +5,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// Default console logger implementation.
     /// </summary>
-    internal class DefaultLogger : IAtlasLogger
+    class DefaultLogger : IAtlasLogger
     {
         public void Info(string message)
         {

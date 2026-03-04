@@ -12,7 +12,7 @@ namespace Shadop.Archmage
     /// </summary>
     public class RefJsonConverter : JsonConverter
     {
-        private static readonly ConcurrentDictionary<Type, PropertyInfo> RawValueCache = new();
+        static readonly ConcurrentDictionary<Type, PropertyInfo> RawValueCache = new();
 
         public override bool CanConvert(Type objectType)
         {

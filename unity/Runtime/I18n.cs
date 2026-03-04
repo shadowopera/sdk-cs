@@ -11,8 +11,8 @@ namespace Shadop.Archmage
     /// </summary>
     public class I18n
     {
-        private readonly string _fallbackLanguage;
-        private readonly Dictionary<string, Dictionary<string, string>> _texts;
+        readonly string _fallbackLanguage;
+        readonly Dictionary<string, Dictionary<string, string>> _texts;
 
         /// <summary>
         /// Creates a new I18n instance.

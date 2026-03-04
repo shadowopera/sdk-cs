@@ -6,9 +6,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Shadop.Archmage
 {
-    internal static class VecReflectionCache
+    static class VecReflectionCache
     {
-        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Cache = new();
+        static readonly ConcurrentDictionary<Type, PropertyInfo[]> Cache = new();
 
         internal static PropertyInfo[] GetProperties(Type objectType, params string[] names)
         {

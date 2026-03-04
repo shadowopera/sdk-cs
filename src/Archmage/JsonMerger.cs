@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Shadop.Archmage
@@ -34,7 +33,7 @@ namespace Shadop.Archmage
             MergeObject(target, sourceJson);
         }
 
-        private static void MergeDictionary(IDictionary target, JToken sourceJson)
+        static void MergeDictionary(IDictionary target, JToken sourceJson)
         {
             if (sourceJson.Type != JTokenType.Object)
                 throw new ArchmageException("Cannot merge non-object JSON into dictionary");
@@ -74,7 +73,7 @@ namespace Shadop.Archmage
             }
         }
 
-        private static void MergeObject(object target, JToken sourceJson)
+        static void MergeObject(object target, JToken sourceJson)
         {
             if (sourceJson.Type != JTokenType.Object)
                 throw new ArchmageException("Cannot merge non-object JSON into object");
@@ -109,7 +108,7 @@ namespace Shadop.Archmage
             }
         }
 
-        private static bool IsComplexObject(object obj)
+        static bool IsComplexObject(object obj)
         {
             var type = obj.GetType();
 
@@ -127,7 +126,7 @@ namespace Shadop.Archmage
                 .Any(p => p.CanWrite);
         }
 
-        private static object? DeserializeJToken(JToken token, Type targetType)
+        static object? DeserializeJToken(JToken token, Type targetType)
         {
             if (token.Type == JTokenType.Null)
                 return null;

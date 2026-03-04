@@ -10,7 +10,7 @@ namespace Shadop.Archmage
     [JsonConverter(typeof(DurationJsonConverter))]
     public readonly struct Duration : IEquatable<Duration>, IComparable<Duration>
     {
-        private readonly long _nanoseconds;
+        readonly long _nanoseconds;
 
         // Duration constants
         public static readonly Duration Nanosecond = new(1);

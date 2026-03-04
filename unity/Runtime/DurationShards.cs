@@ -64,7 +64,7 @@ namespace Shadop.Archmage
             };
         }
 
-        private static Duration ParseMixedShards(long[] shards)
+        static Duration ParseMixedShards(long[] shards)
         {
             if (shards.Length != 3)
                 throw new ArchmageException($"mixed duration shards must have 3 elements, got {shards.Length}");
