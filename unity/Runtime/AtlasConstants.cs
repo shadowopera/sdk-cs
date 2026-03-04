@@ -1,27 +1,28 @@
-namespace Shadop.Archmage;
-
-/// <summary>
-/// Constants used by the Atlas system.
-/// </summary>
-public static class AtlasConstants
+namespace Shadop.Archmage
 {
     /// <summary>
-    /// Key for the default file in a single mapping group.
+    /// Constants used by the Atlas system.
     /// </summary>
-    public const string DefaultSingleSeparator = "/";
+    public static class AtlasConstants
+    {
+        /// <summary>
+        /// Key for the default file in a single mapping group.
+        /// </summary>
+        public const string DefaultSingleSeparator = "/";
 
-    /// <summary>
-    /// Mapping type for unique items (single file).
-    /// </summary>
-    public const string MappingUnique = "unique";
+        /// <summary>
+        /// Mapping type for unique items (single file).
+        /// </summary>
+        public const string MappingUnique = "unique";
 
-    /// <summary>
-    /// Mapping type for single items (one file per key).
-    /// </summary>
-    public const string MappingSingle = "single";
+        /// <summary>
+        /// Mapping type for single items (one file per key).
+        /// </summary>
+        public const string MappingSingle = "single";
 
-    /// <summary>
-    /// Mapping type for multiple items (multiple files per key).
-    /// </summary>
-    public const string MappingMultiple = "multiple";
+        /// <summary>
+        /// Mapping type for multiple items (multiple files per key).
+        /// </summary>
+        public const string MappingMultiple = "multiple";
+    }
 }

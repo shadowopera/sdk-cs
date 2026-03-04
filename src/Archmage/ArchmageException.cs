@@ -1,16 +1,19 @@
-namespace Shadop.Archmage;
+using System;
 
-/// <summary>
-/// Exception thrown by the Archmage SDK.
-/// </summary>
-public class ArchmageException : Exception
+namespace Shadop.Archmage
 {
-    public ArchmageException(string message) : base($"<archmage> {message}")
+    /// <summary>
+    /// Exception thrown by the Archmage SDK.
+    /// </summary>
+    public class ArchmageException : Exception
     {
-    }
+        public ArchmageException(string message) : base($"<archmage> {message}")
+        {
+        }
 
-    public ArchmageException(string message, Exception innerException)
-        : base($"<archmage> {message}", innerException)
-    {
+        public ArchmageException(string message, Exception innerException)
+            : base($"<archmage> {message}", innerException)
+        {
+        }
     }
 }

@@ -1,61 +1,64 @@
-namespace Shadop.Archmage;
+using System;
 
-/// <summary>
-/// Stages of Atlas item loading.
-/// </summary>
-public enum AtlasLoadStage
+namespace Shadop.Archmage
 {
     /// <summary>
-    /// Starting to read configuration file(s).
+    /// Stages of Atlas item loading.
     /// </summary>
-    StartReading,
-
-    /// <summary>
-    /// Starting to parse JSON.
-    /// </summary>
-    StartParsing,
-
-    /// <summary>
-    /// Applying override file.
-    /// </summary>
-    ApplyingOverride,
-
-    /// <summary>
-    /// Loading completed successfully.
-    /// </summary>
-    Completed
-}
-
-/// <summary>
-/// Event data for Atlas loading progress.
-/// </summary>
-public class AtlasLoadEvent
-{
-    public AtlasLoadEvent(string key, AtlasLoadStage stage, string? filePath = null, TimeSpan elapsed = default)
+    public enum AtlasLoadStage
     {
-        Key = key;
-        Stage = stage;
-        FilePath = filePath;
-        Elapsed = elapsed;
+        /// <summary>
+        /// Starting to read configuration file(s).
+        /// </summary>
+        StartReading,
+
+        /// <summary>
+        /// Starting to parse JSON.
+        /// </summary>
+        StartParsing,
+
+        /// <summary>
+        /// Applying override file.
+        /// </summary>
+        ApplyingOverride,
+
+        /// <summary>
+        /// Loading completed successfully.
+        /// </summary>
+        Completed
     }
 
     /// <summary>
-    /// The configuration item key.
+    /// Event data for Atlas loading progress.
     /// </summary>
-    public string Key { get; }
+    public class AtlasLoadEvent
+    {
+        public AtlasLoadEvent(string key, AtlasLoadStage stage, string? filePath = null, TimeSpan elapsed = default)
+        {
+            Key = key;
+            Stage = stage;
+            FilePath = filePath;
+            Elapsed = elapsed;
+        }
 
-    /// <summary>
-    /// The current loading stage.
-    /// </summary>
-    public AtlasLoadStage Stage { get; }
+        /// <summary>
+        /// The configuration item key.
+        /// </summary>
+        public string Key { get; }
 
-    /// <summary>
-    /// The file path being processed (if applicable).
-    /// </summary>
-    public string? FilePath { get; }
+        /// <summary>
+        /// The current loading stage.
+        /// </summary>
+        public AtlasLoadStage Stage { get; }
 
-    /// <summary>
-    /// Time elapsed since the start of this item's loading.
-    /// </summary>
-    public TimeSpan Elapsed { get; }
+        /// <summary>
+        /// The file path being processed (if applicable).
+        /// </summary>
+        public string? FilePath { get; }
+
+        /// <summary>
+        /// Time elapsed since the start of this item's loading.
+        /// </summary>
+        public TimeSpan Elapsed { get; }
+    }
 }

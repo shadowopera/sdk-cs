@@ -26,4 +26,6 @@
 // </code>
 // </summary>
 
-namespace Shadop.Archmage;
+namespace Shadop.Archmage
+{
+}

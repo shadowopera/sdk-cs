@@ -1,52 +1,55 @@
+using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Shadop.Archmage;
-
-/// <summary>
-/// Represents a 2D vector. Serialized as JSON array [x, y].
-/// </summary>
-/// <typeparam name="T">The component type, must be equatable.</typeparam>
-[JsonConverter(typeof(Vec2JsonConverter))]
-public struct Vec2<T> : IEquatable<Vec2<T>>
-    where T : IEquatable<T>
+namespace Shadop.Archmage
 {
-    public T X { get; set; }
-    public T Y { get; set; }
-
-    public Vec2(T x, T y)
+    /// <summary>
+    /// Represents a 2D vector. Serialized as JSON array [x, y].
+    /// </summary>
+    /// <typeparam name="T">The component type, must be equatable.</typeparam>
+    [JsonConverter(typeof(Vec2JsonConverter))]
+    public struct Vec2<T> : IEquatable<Vec2<T>>
+        where T : IEquatable<T>
     {
-        X = x;
-        Y = y;
-    }
+        public T X { get; set; }
+        public T Y { get; set; }
 
-    public bool Equals(Vec2<T> other)
-    {
-        return EqualityComparer<T>.Default.Equals(X, other.X) &&
-               EqualityComparer<T>.Default.Equals(Y, other.Y);
-    }
+        public Vec2(T x, T y)
+        {
+            X = x;
+            Y = y;
+        }
 
-    public override bool Equals(object? obj)
-    {
-        return obj is Vec2<T> other && Equals(other);
-    }
+        public bool Equals(Vec2<T> other)
+        {
+            return EqualityComparer<T>.Default.Equals(X, other.X) &&
+                   EqualityComparer<T>.Default.Equals(Y, other.Y);
+        }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(X, Y);
-    }
+        public override bool Equals(object? obj)
+        {
+            return obj is Vec2<T> other && Equals(other);
+        }
 
-    public override string ToString()
-    {
-        return $"({X}, {Y})";
-    }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y);
+        }
 
-    public static bool operator ==(Vec2<T> left, Vec2<T> right)
-    {
-        return left.Equals(right);
-    }
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
+        }
 
-    public static bool operator !=(Vec2<T> left, Vec2<T> right)
-    {
-        return !left.Equals(right);
+        public static bool operator ==(Vec2<T> left, Vec2<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Vec2<T> left, Vec2<T> right)
+        {
+            return !left.Equals(right);
+        }
     }
 }

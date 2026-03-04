@@ -1,17 +1,20 @@
-namespace Shadop.Archmage;
+using System;
 
-/// <summary>
-/// Default console logger implementation.
-/// </summary>
-internal class DefaultLogger : IAtlasLogger
+namespace Shadop.Archmage
 {
-    public void Info(string message)
+    /// <summary>
+    /// Default console logger implementation.
+    /// </summary>
+    internal class DefaultLogger : IAtlasLogger
     {
-        Console.WriteLine($"INF {message}");
-    }
+        public void Info(string message)
+        {
+            Console.WriteLine($"INF {message}");
+        }
 
-    public void Warn(string message)
-    {
-        Console.WriteLine($"WRN {message}");
+        public void Warn(string message)
+        {
+            Console.WriteLine($"WRN {message}");
+        }
     }
 }
