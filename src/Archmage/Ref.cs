@@ -10,7 +10,7 @@ namespace Shadop.Archmage
     /// and may cause issues during JSON serialization or reference binding.
     /// </para>
     /// </summary>
-    /// <typeparam name="V">The key type (should be int, long or string).</typeparam>
+    /// <typeparam name="V">The raw value type (should be int, long or string).</typeparam>
     /// <typeparam name="T">The reference value type.</typeparam>
     [JsonConverter(typeof(RefJsonConverter))]
     public struct Ref<V, T>
@@ -18,7 +18,7 @@ namespace Shadop.Archmage
         where T : class
     {
         /// <summary>
-        /// The raw key value that will be serialized to JSON.
+        /// The raw value.
         /// </summary>
         public V RawValue { get; set; }
 
@@ -27,12 +27,12 @@ namespace Shadop.Archmage
         /// during the reference binding phase.
         /// </summary>
         [JsonIgnore]
-        public T? Value { get; set; }
+        public T? REF { get; set; }
 
         public Ref(V rawValue)
         {
             RawValue = rawValue;
-            Value = null;
+            REF = null;
         }
     }
 }
