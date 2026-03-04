@@ -31,7 +31,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// Event data for Atlas loading progress.
     /// </summary>
-    public class AtlasLoadEvent
+    public struct AtlasLoadEvent
     {
         public AtlasLoadEvent(string key, AtlasLoadStage stage, string? filePath = null, TimeSpan elapsed = default)
         {
