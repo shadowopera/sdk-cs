@@ -29,10 +29,10 @@ namespace Shadop.Archmage
         [JsonIgnore]
         public T? REF { get; set; }
 
-        public Ref(V rawValue)
+        public Ref(V rawValue, T? refValue)
         {
             RawValue = rawValue;
-            REF = null;
+            REF = refValue;
         }
     }
 }
