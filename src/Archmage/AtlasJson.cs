@@ -33,13 +33,13 @@ namespace Shadop.Archmage
         public Dictionary<string, List<string>> Multiple { get; set; } = new();
 
         /// <summary>
-        /// Picks the single file path for a key, using the default separator "/".
+        /// Picks the single file path for a key, using "/".
         /// Returns null if not found.
         /// </summary>
-        internal string? PickSingle(string key)
+        internal string? PickSingleDefault(string key)
         {
             if (Single.TryGetValue(key, out var subMap) &&
-                subMap.TryGetValue(AtlasConstants.DefaultSingleSeparator, out var path))
+                subMap.TryGetValue(AtlasConstants.SingleMappingDefaultKey, out var path))
             {
                 return path;
             }

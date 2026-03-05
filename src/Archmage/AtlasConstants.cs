@@ -8,7 +8,7 @@ namespace Shadop.Archmage
         /// <summary>
         /// Key for the default file in a single mapping group.
         /// </summary>
-        public const string DefaultSingleSeparator = "/";
+        public const string SingleMappingDefaultKey = "/";
 
         /// <summary>
         /// Mapping type for unique items (single file).

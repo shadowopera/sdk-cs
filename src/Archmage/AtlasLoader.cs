@@ -179,7 +179,7 @@ namespace Shadop.Archmage
                     notFoundHint = $"$.unique['{key}']";
                     break;
                 case AtlasConstants.MappingSingle:
-                    var sf = atlasJson.PickSingle(key);
+                    var sf = atlasJson.PickSingleDefault(key);
                     files = sf != null ? new List<string> { sf } : new List<string>();
                     notFoundHint = $"$.single['{key}']['/']";
                     break;
