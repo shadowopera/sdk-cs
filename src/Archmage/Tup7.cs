@@ -7,7 +7,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// 0-based tuple with 7 elements. JSON serializes as {"item0": ..., ..., "item6": ...}.
     /// </summary>
-    public struct Tup7<T0, T1, T2, T3, T4, T5, T6> : IEquatable<Tup7<T0, T1, T2, T3, T4, T5, T6>>
+    public class Tup7<T0, T1, T2, T3, T4, T5, T6> : IEquatable<Tup7<T0, T1, T2, T3, T4, T5, T6>>
     {
         [JsonProperty("item0")]
         public T0 Item0 { get; set; }
@@ -54,8 +54,9 @@ namespace Shadop.Archmage
             item6 = Item6;
         }
 
-        public bool Equals(Tup7<T0, T1, T2, T3, T4, T5, T6> other)
+        public bool Equals(Tup7<T0, T1, T2, T3, T4, T5, T6>? other)
         {
+            if (other is null) return false;
             return EqualityComparer<T0>.Default.Equals(Item0, other.Item0) &&
                    EqualityComparer<T1>.Default.Equals(Item1, other.Item1) &&
                    EqualityComparer<T2>.Default.Equals(Item2, other.Item2) &&
@@ -80,14 +81,15 @@ namespace Shadop.Archmage
             return $"({Item0}, {Item1}, {Item2}, {Item3}, {Item4}, {Item5}, {Item6})";
         }
 
-        public static bool operator ==(Tup7<T0, T1, T2, T3, T4, T5, T6> left, Tup7<T0, T1, T2, T3, T4, T5, T6> right)
+        public static bool operator ==(Tup7<T0, T1, T2, T3, T4, T5, T6>? left, Tup7<T0, T1, T2, T3, T4, T5, T6>? right)
         {
+            if (left is null) return right is null;
             return left.Equals(right);
         }
 
-        public static bool operator !=(Tup7<T0, T1, T2, T3, T4, T5, T6> left, Tup7<T0, T1, T2, T3, T4, T5, T6> right)
+        public static bool operator !=(Tup7<T0, T1, T2, T3, T4, T5, T6>? left, Tup7<T0, T1, T2, T3, T4, T5, T6>? right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Shadop.Archmage
     /// <summary>
     /// 0-based tuple with 3 elements. JSON serializes as {"item0": ..., "item1": ..., "item2": ...}.
     /// </summary>
-    public struct Tup3<T0, T1, T2> : IEquatable<Tup3<T0, T1, T2>>
+    public class Tup3<T0, T1, T2> : IEquatable<Tup3<T0, T1, T2>>
     {
         [JsonProperty("item0")]
         public T0 Item0 { get; set; }
@@ -34,8 +34,9 @@ namespace Shadop.Archmage
             item2 = Item2;
         }
 
-        public bool Equals(Tup3<T0, T1, T2> other)
+        public bool Equals(Tup3<T0, T1, T2>? other)
         {
+            if (other is null) return false;
             return EqualityComparer<T0>.Default.Equals(Item0, other.Item0) &&
                    EqualityComparer<T1>.Default.Equals(Item1, other.Item1) &&
                    EqualityComparer<T2>.Default.Equals(Item2, other.Item2);
@@ -56,14 +57,15 @@ namespace Shadop.Archmage
             return $"({Item0}, {Item1}, {Item2})";
         }
 
-        public static bool operator ==(Tup3<T0, T1, T2> left, Tup3<T0, T1, T2> right)
+        public static bool operator ==(Tup3<T0, T1, T2>? left, Tup3<T0, T1, T2>? right)
         {
+            if (left is null) return right is null;
             return left.Equals(right);
         }
 
-        public static bool operator !=(Tup3<T0, T1, T2> left, Tup3<T0, T1, T2> right)
+        public static bool operator !=(Tup3<T0, T1, T2>? left, Tup3<T0, T1, T2>? right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
     }
 }
