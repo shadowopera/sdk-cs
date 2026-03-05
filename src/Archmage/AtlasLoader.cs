@@ -71,9 +71,8 @@ namespace Shadop.Archmage
             cancellationToken.ThrowIfCancellationRequested();
 
             // Read and parse atlas index file
-            var jsonSettings = options.JsonSettings;
-            var atlasBytes = options.ReadFile(atlasFile);
-            var atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasBytes), jsonSettings)
+            var atlasData = options.ReadFile(atlasFile);
+            var atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasData), options.JsonSettings)
                 ?? throw new ArchmageException($"invalid \"{atlasFile}\"");
 
             // Apply modifier
@@ -219,9 +218,7 @@ namespace Shadop.Archmage
 
                 var fileData = options.ReadFile(filePath);
                 var json = Encoding.UTF8.GetString(fileData);
-                var deserialized = JsonConvert.DeserializeObject(json, item.Cfg!.GetType(), options.JsonSettings)
-                    ?? throw new ArchmageException($"invalid \"{f}\"");
-                CopyProperties(deserialized, item.Cfg);
+                MergeJson(item.Cfg!, json, options.JsonSettings);
 
                 // Collect overrides for this file
                 foreach (var overrideCfg in options.OverrideConfigs)
@@ -271,19 +268,21 @@ namespace Shadop.Archmage
             item.Ready = true;
         }
 
-        static void CopyProperties(object source, object target)
+        static readonly JsonMergeSettings MergeSettings = new()
         {
-            var type = source.GetType();
-            var properties = type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            MergeArrayHandling = MergeArrayHandling.Replace,
+            MergeNullValueHandling = MergeNullValueHandling.Merge
+        };
 
-            foreach (var prop in properties)
-            {
-                if (prop.CanRead && prop.CanWrite)
-                {
-                    var value = prop.GetValue(source);
-                    prop.SetValue(target, value);
-                }
-            }
+        static void MergeJson(object target, string json, JsonSerializerSettings? settings)
+        {
+            var serial = JsonSerializer.Create(settings);
+            var targetToken = JObject.FromObject(target, serial);
+            var patch = JObject.Parse(json);
+            targetToken.Merge(patch, MergeSettings);
+            serial.ObjectCreationHandling = ObjectCreationHandling.Replace;
+            using var reader = targetToken.CreateReader();
+            serial.Populate(reader, target);
         }
     }
 
