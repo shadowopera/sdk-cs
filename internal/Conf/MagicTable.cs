@@ -25,7 +25,7 @@ namespace Conf
     {
         public bool TryLookup(long cfgID, out MagicCfg? cfg)
         {
-            return ConfigAtlas.TryLookup<long, MagicCfg>(cfgID, this!, "MagicTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgID, this!, "MagicTable", out cfg);
         }
 
         public MagicCfg? Lookup(long cfgID)

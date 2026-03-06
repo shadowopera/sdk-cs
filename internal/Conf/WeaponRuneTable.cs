@@ -27,7 +27,7 @@ namespace Conf
     {
         public bool TryLookup(long cfgID, out WeaponRuneCfg? cfg)
         {
-            return ConfigAtlas.TryLookup<long, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgID, this!, "WeaponRuneTable", out cfg);
         }
 
         public WeaponRuneCfg? Lookup(long cfgID)

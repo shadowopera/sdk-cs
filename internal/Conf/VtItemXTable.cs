@@ -50,7 +50,7 @@ namespace Conf
     {
         public bool TryLookup(long cfgID, out VtItemXCfg? cfg)
         {
-            return ConfigAtlas.TryLookup<long, VtItemXCfg>(cfgID, this!, "VtItemXTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgID, this!, "VtItemXTable", out cfg);
         }
 
         public VtItemXCfg? Lookup(long cfgID)

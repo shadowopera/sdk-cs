@@ -9,10 +9,10 @@ namespace Shadop.Archmage
     public class AtlasJson
     {
         /// <summary>
-        /// Version control information.
+        /// VCS version metadata.
         /// </summary>
-        [JsonProperty("vcs")]
-        public Dictionary<string, object>? Vcs { get; set; }
+        [JsonProperty("version")]
+        public VersionInfo? Version { get; set; }
 
         /// <summary>
         /// Unique mapping: key -> file path.

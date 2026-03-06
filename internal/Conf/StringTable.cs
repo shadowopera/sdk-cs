@@ -92,7 +92,7 @@ namespace Conf
     {
         public bool TryLookup(string cfgID, out StringCfg? cfg)
         {
-            return ConfigAtlas.TryLookup<string, StringCfg>(cfgID, this!, "StringTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgID, this!, "StringTable", out cfg);
         }
 
         public StringCfg? Lookup(string cfgID)

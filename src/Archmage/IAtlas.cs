@@ -8,10 +8,10 @@ namespace Shadop.Archmage
     public interface IAtlas
     {
         /// <summary>
-        /// Sets version control information from the Atlas index file.
+        /// Sets VCS version metadata.
         /// </summary>
-        /// <param name="versionInfo">Version control data (may be null).</param>
-        void SetVersionInfo(Dictionary<string, object>? versionInfo);
+        /// <param name="versionInfo">VCS version metadata (may be null).</param>
+        void SetDataVersion(VersionInfo? v);
 
         /// <summary>
         /// Gets all Atlas items managed by this instance.

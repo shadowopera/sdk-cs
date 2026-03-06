@@ -33,7 +33,7 @@ namespace Conf
     {
         public bool TryLookup(string cfgID, out RaceCfg? cfg)
         {
-            return ConfigAtlas.TryLookup<string, RaceCfg>(cfgID, this!, "RaceTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgID, this!, "RaceTable", out cfg);
         }
 
         public RaceCfg? Lookup(string cfgID)

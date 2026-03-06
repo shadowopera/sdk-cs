@@ -53,7 +53,7 @@ namespace Conf
     {
         public bool TryLookup(long cfgID, out VtSkillCfg? cfg)
         {
-            return ConfigAtlas.TryLookup<long, VtSkillCfg>(cfgID, this!, "VtSkillTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgID, this!, "VtSkillTable", out cfg);
         }
 
         public VtSkillCfg? Lookup(long cfgID)

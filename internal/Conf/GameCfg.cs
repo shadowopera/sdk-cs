@@ -49,7 +49,7 @@ namespace Conf
         /// desc-x-datetime
         /// </summary>
         [JsonProperty("x-datetime")]
-        public DateTime? XDatetime { get; set; }
+        public DateTimeOffset XDatetime { get; set; }
         /// <summary>
         /// desc-x-ref
         /// </summary>

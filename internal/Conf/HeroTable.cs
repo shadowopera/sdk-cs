@@ -46,7 +46,7 @@ namespace Conf
     {
         public bool TryLookup(long cfgID, out HeroCfg? cfg)
         {
-            return ConfigAtlas.TryLookup<long, HeroCfg>(cfgID, this!, "HeroTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgID, this!, "HeroTable", out cfg);
         }
 
         public HeroCfg? Lookup(long cfgID)

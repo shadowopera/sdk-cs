@@ -10,7 +10,7 @@ namespace Conf
     {
         Dictionary<string, AtlasItem> _m = null!;
         public AtlasExtension Extension { get; private set; }
-        public Dictionary<string, object>? VersionInfo { get; set; }
+        public VersionInfo? DataVersion { get; private set; }
 
         public CharacterArray CharacterArray { get; set; }
         public GameCfg GameCfg { get; set; }
@@ -65,14 +65,9 @@ namespace Conf
             };
         }
 
-        public void SetVersionInfo(Dictionary<string, object>? info)
+        public void SetDataVersion(VersionInfo? v)
         {
-            VersionInfo = info;
-        }
-
-        public Dictionary<string, AtlasItem> AtlasItems()
-        {
-            return _m;
+            DataVersion = v;
         }
 
         public void BindRefs()
@@ -84,6 +79,11 @@ namespace Conf
                 if (_m[k].Cfg is IRefBinder binder)
                     binder.BindRefs(this);
             }
+        }
+
+        public Dictionary<string, AtlasItem> AtlasItems()
+        {
+            return _m;
         }
 
         public void OnLoaded()

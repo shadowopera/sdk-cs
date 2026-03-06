@@ -79,7 +79,7 @@ namespace Shadop.Archmage
             options.AtlasModifier?.Invoke(atlasJson);
 
             // Set version info
-            atlas.SetVersionInfo(atlasJson.Vcs);
+            atlas.SetDataVersion(atlasJson.Version);
 
             // Get all items
             var items = atlas.AtlasItems();
