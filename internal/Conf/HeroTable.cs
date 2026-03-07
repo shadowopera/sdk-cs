@@ -16,7 +16,7 @@ namespace Conf
     public partial class HeroCfg
     {
         [JsonIgnore]
-        public long ID { get; set; }
+        public long Id { get; set; }
         [JsonProperty("heroName")]
         public L10n HeroName { get; set; }
         [JsonProperty("startLevel")]
@@ -68,7 +68,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.ID = key;
+                if (val != null) val.Id = key;
             }
         }
     }

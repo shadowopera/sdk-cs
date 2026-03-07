@@ -16,7 +16,7 @@ namespace Conf
     public partial class StringCfg
     {
         [JsonIgnore]
-        public string ID { get; set; } = null!;
+        public string Id { get; set; } = null!;
         [JsonProperty("B")]
         public String_B? B { get; set; }
         /// <summary>
@@ -114,7 +114,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.ID = key;
+                if (val != null) val.Id = key;
             }
         }
     }

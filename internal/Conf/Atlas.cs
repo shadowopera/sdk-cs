@@ -28,6 +28,7 @@ namespace Conf
 
         public ConfigAtlas()
         {
+            PubtypeCheck();
             Extension = new AtlasExtension();
             CharacterArray = new CharacterArray();
             GameCfg = new GameCfg();
@@ -123,23 +124,20 @@ namespace Conf
             }
             if (tbl.TryGetValue(cfgID, out var cfg))
                 return cfg;
-            throw new KeyNotFoundException(string.Format("{0}: config entry not found for ID {1}", tblName, cfgID));
+            throw new KeyNotFoundException(string.Format("{0}: config entry not found for Id {1}", tblName, cfgID));
         }
-    }
 
-    interface IRefBinder
-    {
-        void BindRefs(ConfigAtlas atlas);
-    }
-
-    internal static class PubtypeCheck
-    {
-        static PubtypeCheck()
+        static void PubtypeCheck()
         {
             var m = new HashSet<string>();
             m.Add("Rab"); // string
             if (m.Count != 1)
                 throw new System.Exception("conflicting pubtype detected");
         }
+    }
+
+    interface IRefBinder
+    {
+        void BindRefs(ConfigAtlas atlas);
     }
 }

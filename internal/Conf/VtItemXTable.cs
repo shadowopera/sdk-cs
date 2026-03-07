@@ -16,7 +16,7 @@ namespace Conf
     public partial class VtItemXCfg
     {
         [JsonIgnore]
-        public long ID { get; set; }
+        public long Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = null!;
         [JsonProperty("price")]
@@ -72,7 +72,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.ID = key;
+                if (val != null) val.Id = key;
             }
         }
     }

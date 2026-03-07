@@ -16,7 +16,7 @@ namespace Conf
     public partial class CharacterCfg
     {
         [JsonProperty("id")]
-        public string ID { get; set; } = null!;
+        public string Id { get; set; } = null!;
         /// <summary>
         /// name config
         /// </summary>

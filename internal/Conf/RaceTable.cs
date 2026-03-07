@@ -16,7 +16,7 @@ namespace Conf
     public partial class RaceCfg
     {
         [JsonIgnore]
-        public string ID { get; set; } = null!;
+        public string Id { get; set; } = null!;
         [JsonProperty("birthplace")]
         public L10n Birthplace { get; set; }
         [JsonProperty("referrer1")]
@@ -55,7 +55,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.ID = key;
+                if (val != null) val.Id = key;
             }
         }
     }
