@@ -72,8 +72,20 @@ namespace Shadop.Archmage
 
             // Read and parse atlas index file
             var atlasData = options.ReadFile(atlasFile);
-            var atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasData), options.JsonSettings)
-                ?? throw new ArchmageException($"invalid \"{atlasFile}\"");
+            AtlasJson? atlasJson;
+            try
+            {
+                atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasData), options.JsonSettings);
+            }
+            catch (JsonException ex)
+            {
+                throw new ArchmageException($"invalid \"{atlasFile}\"", ex);
+            }
+
+            if (atlasJson == null)
+            {
+                throw new ArchmageException($"invalid \"{atlasFile}\"");
+            }
 
             // Apply modifier
             options.AtlasModifier?.Invoke(atlasJson);
@@ -241,8 +253,14 @@ namespace Shadop.Archmage
                 progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.ApplyingOverride, overrideFiles[i], stopwatch.Elapsed));
 
                 var overrideJson = Encoding.UTF8.GetString(overrides[i]);
-                var overrideToken = JToken.Parse(overrideJson);
-                Archmage.Merge(item.Cfg!, overrideToken);
+                try
+                {
+                    MergeJson(item.Cfg!, overrideJson, options.JsonSettings);
+                }
+                catch (JsonException ex)
+                {
+                    throw new ArchmageException($"applying override {overrideFiles[i]} failed", ex);
+                }
             }
 
             // Call ApplyKeys if implemented
@@ -277,9 +295,14 @@ namespace Shadop.Archmage
         static void MergeJson(object target, string json, JsonSerializerSettings? settings)
         {
             var serial = JsonSerializer.Create(settings);
-            var targetToken = JObject.FromObject(target, serial);
-            var patch = JObject.Parse(json);
-            targetToken.Merge(patch, MergeSettings);
+            var targetToken = JToken.FromObject(target, serial);
+            var patch = JToken.Parse(json);
+            
+            if (targetToken is JContainer targetContainer && patch is JContainer patchContainer)
+            {
+                targetContainer.Merge(patchContainer, MergeSettings);
+            }
+            
             serial.ObjectCreationHandling = ObjectCreationHandling.Replace;
             using var reader = targetToken.CreateReader();
             serial.Populate(reader, target);

@@ -26,8 +26,8 @@ namespace Shadop.Archmage
                 return null;
 
             Type keyType = objectType.GetGenericArguments()[0];
-            object rawValue = serializer.Deserialize(reader, keyType)!;
-            return Activator.CreateInstance(objectType, rawValue);
+            var rawValue = serializer.Deserialize(reader, keyType)!;
+            return Activator.CreateInstance(objectType, rawValue, null);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
