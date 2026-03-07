@@ -24,7 +24,6 @@ namespace Shadop.Archmage
         internal Func<string, bool> DirectoryExists { get; set; } = Directory.Exists;
         internal List<OverrideConfig> OverrideConfigs { get; set; } = new();
         internal Action<AtlasJson>? AtlasModifier { get; set; }
-        internal Action<string, AtlasItem>? NotFoundCallback { get; set; }
         internal List<string>? Whitelist { get; set; }
         internal List<string>? Blacklist { get; set; }
         internal AtlasItemLoader? CustomLoader { get; set; }

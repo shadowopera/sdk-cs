@@ -17,7 +17,7 @@ namespace Shadop.Archmage.Tests
             {
                 var ref1 = new Ref<int, string>(v, str);
                 var data = JsonConvert.SerializeObject(ref1);
-                
+
                 if (!int.TryParse(data, out _))
                 {
                     Assert.Fail($"expected marshaled data to be integer, got {data}");

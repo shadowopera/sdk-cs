@@ -14,22 +14,14 @@ namespace Shadop.Archmage.Tests
 {
     class ScavengerLogger : IAtlasLogger
     {
-        private readonly object _lock = new object();
-        public List<string> Lines { get; } = new List<string>();
+        readonly object _lock = new();
+        public List<string> Lines { get; } = new();
 
         public void Info(string message)
         {
             lock (_lock)
             {
                 Lines.Add($"INF {message}");
-            }
-        }
-
-        public void Warn(string message)
-        {
-            lock (_lock)
-            {
-                Lines.Add($"WRN {message}");
             }
         }
     }
@@ -62,7 +54,7 @@ namespace Shadop.Archmage.Tests
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
 
-        private static JsonSerializerSettings DefaultJsonSettings()
+        static JsonSerializerSettings DefaultJsonSettings()
         {
             var settings = new JsonSerializerSettings
             {
@@ -79,9 +71,39 @@ namespace Shadop.Archmage.Tests
             return settings;
         }
 
-        private static AtlasOptions DefaultOpts()
+        static AtlasOptions DefaultOpts()
         {
             return new AtlasOptions().WithJsonSettings(DefaultJsonSettings());
+        }
+
+        static void CheckUpdateGolden(IAtlas atlas, string goldenDir)
+        {
+            var updateGolden = Environment.GetEnvironmentVariable("UPDATE_GOLDEN") == "1";
+            if (updateGolden)
+            {
+                Archmage.DumpAtlas(atlas, goldenDir, DefaultJsonSettings());
+            }
+            else
+            {
+                var settings = DefaultJsonSettings();
+                foreach (var kvp in atlas.AtlasItems().OrderBy(k => k.Key))
+                {
+                    if (!kvp.Value.Ready || kvp.Value.Cfg == null) continue;
+
+                    var actualJson = JsonConvert.SerializeObject(kvp.Value.Cfg, settings) + "\n";
+                    var goldenFile = Path.Combine(goldenDir, kvp.Key + ".json");
+
+                    Assert.True(File.Exists(goldenFile), $"Golden file {goldenFile} does not exist. Run tests with UPDATE_GOLDEN=1 to generate.");
+
+                    var expectedJson = File.ReadAllText(goldenFile);
+
+                    // Normalize line endings for cross-platform comparison
+                    expectedJson = expectedJson.Replace("\r\n", "\n");
+                    actualJson = actualJson.Replace("\r\n", "\n");
+
+                    Assert.Equal(expectedJson, actualJson);
+                }
+            }
         }
 
         [Fact]
@@ -95,8 +117,9 @@ namespace Shadop.Archmage.Tests
             L10n.GetI18n = () => i18n;
 
             var atlas = new ConfigAtlas();
-            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, DefaultOpts());
-            Archmage.DumpAtlas(atlas, "golden/basic", DefaultJsonSettings());
+            var opts = DefaultOpts().WithBlacklist(new[] { "prop_floats" });
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            CheckUpdateGolden(atlas, "../../../golden/basic");
 
             Assert.Equal("it is a good day", atlas.GameCfg.XL10n.Text(en));
             Assert.Equal("今儿天气真好", atlas.GameCfg.XL10n.Text(cn));
@@ -111,20 +134,19 @@ namespace Shadop.Archmage.Tests
             Assert.NotNull(atlas.RefTable[3]!.B.REF);
             Assert.NotNull(atlas.Matrix2Table["key1"]!["key2"]![0][0].REF);
             Assert.Equal(16, atlas.VtItemXTable.Count);
-            
+
             Assert.Null(atlas.DataVersion);
             Assert.NotNull(ConfigAtlas.CodeVersion());
             Assert.Equal("7f3a2b9", ConfigAtlas.CodeVersion().ShortID);
-
-            // Compare golden dump
-            Assert.True(Directory.Exists("golden/basic"));
         }
 
         [Fact]
         public void TestAtlas_DataVersion()
         {
             var logger = new ScavengerLogger();
-            var opts = DefaultOpts().WithLogger(logger);
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithBlacklist(new[] { "prop_floats" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas_with_version.json", "../../../testdata", atlas, opts);
@@ -144,28 +166,15 @@ namespace Shadop.Archmage.Tests
                 atlasJson.Single.Remove("game");
             };
 
-            Action<string, AtlasItem> notFound = (key, atlasItem) =>
-            {
-                if (key != "character" && key != "matrix2" && key != "game")
-                {
-                    Assert.Fail("unreachable");
-                }
-            };
-
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
                 .WithAtlasModifier(atlasModifier)
-                .WithNotFoundCallback(notFound);
+                .WithBlacklist(new[] { "character", "matrix2", "game" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
-
-            Assert.Contains(logger.Lines, line => line == "WRN <archmage> cannot find $.unique['character'] in ../../../testdata/atlas.json");
-            Assert.Contains(logger.Lines, line => line == "WRN <archmage> cannot find $.single['game']['/'] in ../../../testdata/atlas.json");
-
-            int cnt = logger.Lines.Count(line => line.StartsWith("WRN"));
-            Assert.Equal(3, cnt);
+            CheckUpdateGolden(atlas, "../../../golden/atlas_modifier");
         }
 
         [Fact]
@@ -174,13 +183,11 @@ namespace Shadop.Archmage.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "Item", "game", "prop_floats", "weapon-rune" });
+                .WithWhitelist(new[] { "Item", "game", "weapon-rune" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
-
-            int cnt = logger.Lines.Count(line => line.StartsWith("WRN"));
-            Assert.Equal(1, cnt);
+            CheckUpdateGolden(atlas, "../../../golden/whitelist");
         }
 
         [Fact]
@@ -206,9 +213,7 @@ namespace Shadop.Archmage.Tests
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
-
-            int cnt = logger.Lines.Count(line => line.StartsWith("WRN"));
-            Assert.Equal(0, cnt);
+            CheckUpdateGolden(atlas, "../../../golden/blacklist");
         }
 
         [Fact]
@@ -230,11 +235,13 @@ namespace Shadop.Archmage.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
+                .WithBlacklist(new[] { "prop_floats" })
                 .WithOverrideRoot("../../../override/1")
                 .WithOverrideRoot("../../../override/2");
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            CheckUpdateGolden(atlas, "../../../golden/override_root");
         }
 
         [Fact]
@@ -251,6 +258,102 @@ namespace Shadop.Archmage.Tests
         }
 
         [Fact]
+        public void TestAtlas_WithOverrideFS()
+        {
+            var fsys = new Dictionary<string, byte[]>
+            {
+                { "game.json", Encoding.UTF8.GetBytes("{\"x-string\":\"foo bar\",\"x-map\":{\"7\":\"xxx\",\"9\":\"rab\"}}") },
+                { "clutter/magic.json", Encoding.UTF8.GetBytes("{\"200\":{\"name\":\"Power Word: Shield\"}}") }
+            };
+
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithWhitelist(new[] { "game", "Magic", "weapon-rune" })
+                .WithOverrideRoot("fsys");
+
+            opts.WithDirectoryExists(path =>
+            {
+                if (path == "fsys") return true;
+                return Directory.Exists(path);
+            });
+
+            opts.WithFileExists(path =>
+            {
+                if (path.StartsWith("fsys"))
+                {
+                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
+                    return fsys.ContainsKey(key);
+                }
+                return File.Exists(path);
+            });
+
+            opts.WithReadFile(path =>
+            {
+                if (path.StartsWith("fsys"))
+                {
+                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
+                    if (fsys.TryGetValue(key, out var data)) return data;
+                    throw new FileNotFoundException(path);
+                }
+                return File.ReadAllBytes(path);
+            });
+
+            var atlas = new ConfigAtlas();
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            CheckUpdateGolden(atlas, "../../../golden/override_fs");
+        }
+
+        [Fact]
+        public void TestAtlas_WithOverrideRootAndFS()
+        {
+            var fsys = new Dictionary<string, byte[]>
+            {
+                { "vtbl/weapon-sword.json", Encoding.UTF8.GetBytes("{\"1000\":{\"name\":\"Dragonfang Blade\",\"price\":1200}}") },
+                { "vtbl/weapon-staff.json", Encoding.UTF8.GetBytes("{\"1201\":{\"price\":2050,\"dps\":2}}") }
+            };
+
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithBlacklist(new[] { "prop_floats" })
+                .WithOverrideRoot("../../../override/1")
+                .WithOverrideRoot("../../../override/2")
+                .WithOverrideRoot("fsys");
+
+            opts.WithDirectoryExists(path =>
+            {
+                if (path == "fsys") return true;
+                return Directory.Exists(path);
+            });
+
+            opts.WithFileExists(path =>
+            {
+                if (path.StartsWith("fsys"))
+                {
+                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
+                    return fsys.ContainsKey(key);
+                }
+                return File.Exists(path);
+            });
+
+            opts.WithReadFile(path =>
+            {
+                if (path.StartsWith("fsys"))
+                {
+                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
+                    if (fsys.TryGetValue(key, out var data)) return data;
+                    throw new FileNotFoundException(path);
+                }
+                return File.ReadAllBytes(path);
+            });
+
+            var atlas = new ConfigAtlas();
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            CheckUpdateGolden(atlas, "../../../golden/override_root_and_fs");
+        }
+
+        [Fact]
         public void TestAtlas_WithCustomLoader()
         {
             AtlasItemLoader customLoader = (all, load) =>
@@ -264,43 +367,23 @@ namespace Shadop.Archmage.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
+                .WithBlacklist(new[] { "prop_floats" })
                 .WithCustomLoader(customLoader);
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
-
-            Assert.Contains(logger.Lines, line => line == "WRN <archmage> cannot find $.single['prop_floats']['/'] in ../../../testdata/atlas.json");
-
-            int cnt = logger.Lines.Count(line => line.StartsWith("WRN"));
-            Assert.Equal(1, cnt);
+            CheckUpdateGolden(atlas, "../../../golden/custom_loader");
         }
 
         [Fact]
         public void TestAtlas_NotFoundCallback()
         {
             var atlas = new ConfigAtlas();
-            Action<string, AtlasItem> notFound = (key, atlasItem) =>
-            {
-                if (key == "prop_floats")
-                {
-                    atlas.PropFloatsCfg.C = 100;
-                    atlasItem.Ready = true;
-                }
-                else
-                {
-                    Assert.Fail("unreachable");
-                }
-            };
-
             var logger = new ScavengerLogger();
-            var opts = DefaultOpts()
-                .WithLogger(logger)
-                .WithNotFoundCallback(notFound);
+            var opts = DefaultOpts().WithLogger(logger);
 
-            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
-
-            int cnt = logger.Lines.Count(line => line.StartsWith("WRN"));
-            Assert.Equal(0, cnt);
+            var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
+            Assert.Equal("<archmage> cannot find $.single['prop_floats']['/'] in ../../../testdata/atlas.json", err.Message);
         }
 
         [Fact]
@@ -331,22 +414,6 @@ namespace Shadop.Archmage.Tests
         }
 
         [Fact]
-        public void TestAtlas_NotFoundCallback_Error()
-        {
-            Action<string, AtlasItem> notFound = (key, atlasItem) =>
-            {
-                if (key == "prop_floats")
-                {
-                    throw new Exception("not found error");
-                }
-            };
-            var atlas = new ConfigAtlas();
-            var opts = DefaultOpts().WithNotFoundCallback(notFound);
-            var err = Assert.Throws<Exception>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.Equal("not found error", err.Message);
-        }
-
-        [Fact]
         public async Task TestAtlas_ContextCancellation()
         {
             using var cts = new CancellationTokenSource();
@@ -355,5 +422,5 @@ namespace Shadop.Archmage.Tests
             var atlas = new ConfigAtlas();
             var err = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, DefaultOpts(), null, cts.Token));
         }
-}
+    }
 }

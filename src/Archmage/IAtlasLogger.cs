@@ -9,10 +9,5 @@ namespace Shadop.Archmage
         /// Logs an informational message.
         /// </summary>
         void Info(string message);
-
-        /// <summary>
-        /// Logs a warning message.
-        /// </summary>
-        void Warn(string message);
     }
 }

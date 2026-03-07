@@ -25,8 +25,7 @@ namespace Shadop.Archmage
                 throw new ArgumentException("Output directory cannot be empty.", nameof(outputDir));
 
             // Setup default settings with custom converters
-            settings ??= CreateDumpSettings();
-
+            settings ??= GetJsonSerializerSettings();
             var items = atlas.AtlasItems();
 
             foreach (var kvp in items)
@@ -50,7 +49,7 @@ namespace Shadop.Archmage
             }
         }
 
-        static JsonSerializerSettings CreateDumpSettings()
+        static JsonSerializerSettings GetJsonSerializerSettings()
         {
             var settings = new JsonSerializerSettings
             {

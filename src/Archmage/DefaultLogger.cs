@@ -11,10 +11,5 @@ namespace Shadop.Archmage
         {
             Console.WriteLine($"INF {message}");
         }
-
-        public void Warn(string message)
-        {
-            Console.WriteLine($"WRN {message}");
-        }
     }
 }

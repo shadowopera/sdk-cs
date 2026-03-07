@@ -30,6 +30,8 @@ namespace Shadop.Archmage
             AtlasOptions? options = null)
         {
             options ??= new AtlasOptions();
+            options.JsonSettings ??= new JsonSerializerSettings();
+            options.JsonSettings.DateParseHandling = DateParseHandling.None;
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, null, CancellationToken.None);
             atlas.OnLoaded();
         }
@@ -204,12 +206,7 @@ namespace Shadop.Archmage
 
             if (files.Count == 0)
             {
-                options.NotFoundCallback?.Invoke(key, item);
-                if (!item.Ready)
-                {
-                    options.Logger.Warn($"<archmage> cannot find {notFoundHint} in {atlasFile}");
-                }
-                return;
+                throw new ArchmageException($"cannot find {notFoundHint} in {atlasFile}");
             }
 
             // Report: StartReading
@@ -294,18 +291,27 @@ namespace Shadop.Archmage
 
         static void MergeJson(object target, string json, JsonSerializerSettings? settings)
         {
-            var serial = JsonSerializer.Create(settings);
-            var targetToken = JToken.FromObject(target, serial);
-            var patch = JToken.Parse(json);
-            
+            var jsonSerializer = JsonSerializer.Create(settings);
+            var targetToken = JToken.FromObject(target, jsonSerializer);
+
+            using var stringReader = new StringReader(json);
+            using var jsonReader = new JsonTextReader(stringReader)
+            {
+                DateParseHandling = jsonSerializer.DateParseHandling,
+                FloatParseHandling = jsonSerializer.FloatParseHandling,
+                DateTimeZoneHandling = jsonSerializer.DateTimeZoneHandling
+            };
+
+            var patch = JToken.Load(jsonReader);
+
             if (targetToken is JContainer targetContainer && patch is JContainer patchContainer)
             {
                 targetContainer.Merge(patchContainer, MergeSettings);
             }
-            
-            serial.ObjectCreationHandling = ObjectCreationHandling.Replace;
+
+            jsonSerializer.ObjectCreationHandling = ObjectCreationHandling.Replace;
             using var reader = targetToken.CreateReader();
-            serial.Populate(reader, target);
+            jsonSerializer.Populate(reader, target);
         }
     }
 

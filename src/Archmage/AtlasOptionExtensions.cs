@@ -87,17 +87,6 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets a callback to be invoked when a configuration item is not found.
-        /// The callback may set <see cref="AtlasItem.Ready"/> to suppress the not-found warning.
-        /// The callback may throw an exception to abort loading.
-        /// </summary>
-        public static AtlasOptions WithNotFoundCallback(this AtlasOptions opts, Action<string, AtlasItem> callback)
-        {
-            opts.NotFoundCallback = callback ?? throw new ArgumentNullException(nameof(callback));
-            return opts;
-        }
-
-        /// <summary>
         /// Sets a custom loader function for parallel or custom loading strategies.
         /// </summary>
         public static AtlasOptions WithCustomLoader(this AtlasOptions opts, AtlasItemLoader loader)
