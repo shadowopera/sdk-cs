@@ -1,7 +1,7 @@
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Represents a single configuration item in the Atlas.
+    /// Represents a single configuration item within an Atlas.
     /// </summary>
     public class AtlasItem
     {

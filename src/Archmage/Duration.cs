@@ -4,39 +4,35 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Represents a duration as nanoseconds. Provides constants and methods
-    /// similar to Go's time.Duration.
+    /// Represents a duration as a signed number of nanoseconds.
     /// </summary>
+    /// <remarks>
+    /// <para>Duration provides methods to retrieve duration in various units (nanoseconds, microseconds, milliseconds, seconds, minutes, hours)
+    /// and supports arithmetic operations, comparisons, and JSON serialization.</para>
+    /// <para>The struct uses nanosecond precision internally and includes static readonly constants for common durations.
+    /// The ToString method formats durations in a human-readable format like "1h30m5s".</para>
+    /// <para>Duration serializes to and from a compact JSON array format for efficient storage.</para>
+    /// </remarks>
     [JsonConverter(typeof(DurationJsonConverter))]
     public readonly struct Duration : IEquatable<Duration>, IComparable<Duration>
     {
         readonly long _nanoseconds;
 
-        // Duration constants
+        public static readonly Duration Zero = new(0);
         public static readonly Duration Nanosecond = new(1);
         public static readonly Duration Microsecond = new(1_000);
         public static readonly Duration Millisecond = new(1_000_000);
         public static readonly Duration Second = new(1_000_000_000);
         public static readonly Duration Minute = new(60_000_000_000);
         public static readonly Duration Hour = new(3_600_000_000_000);
-        public static readonly Duration Zero = new(0);
 
-        /// <summary>
-        /// Creates a Duration from nanoseconds.
-        /// </summary>
         public Duration(long nanoseconds)
         {
             _nanoseconds = nanoseconds;
         }
 
-        /// <summary>
-        /// Implicitly converts Duration to long (nanoseconds).
-        /// </summary>
         public static implicit operator long(Duration d) => d._nanoseconds;
 
-        /// <summary>
-        /// Implicitly converts long (nanoseconds) to Duration.
-        /// </summary>
         public static implicit operator Duration(long nanoseconds) => new(nanoseconds);
 
         /// <summary>
@@ -45,39 +41,37 @@ namespace Shadop.Archmage
         public Duration Abs() => new(Math.Abs(_nanoseconds));
 
         /// <summary>
-        /// Returns the duration as a floating point number of hours.
+        /// Returns floating-point duration in hours (may lose precision).
         /// </summary>
         public double Hours() => _nanoseconds / 1_000_000_000.0 / 3600.0;
 
         /// <summary>
-        /// Returns the duration as a floating point number of minutes.
+        /// Returns floating-point duration in minutes (may lose precision).
         /// </summary>
         public double Minutes() => _nanoseconds / 1_000_000_000.0 / 60.0;
 
         /// <summary>
-        /// Returns the duration as a floating point number of seconds.
+        /// Returns floating-point duration in seconds (may lose precision).
         /// </summary>
         public double Seconds() => _nanoseconds / 1_000_000_000.0;
 
         /// <summary>
-        /// Returns the duration as an integer millisecond count.
+        /// Returns integer millisecond count (truncates sub-millisecond precision).
         /// </summary>
         public long Milliseconds() => _nanoseconds / 1_000_000;
 
         /// <summary>
-        /// Returns the duration as an integer microsecond count.
+        /// Returns integer microsecond count (truncates sub-microsecond precision).
         /// </summary>
         public long Microseconds() => _nanoseconds / 1_000;
 
-        /// <summary>
-        /// Returns the duration as an integer nanosecond count.
-        /// </summary>
         public long Nanoseconds() => _nanoseconds;
 
         /// <summary>
-        /// Returns the result of rounding d toward zero to a multiple of m.
-        /// If m &lt;= 0, returns d unchanged.
+        /// Returns the result of truncating this duration toward zero to the nearest multiple of the specified duration.
         /// </summary>
+        /// <param name="m">The divisor duration. If zero or negative, this duration is returned unchanged.</param>
+        /// <returns>A Duration truncated to a multiple of m.</returns>
         public Duration Truncate(Duration m)
         {
             long mNs = m._nanoseconds;
@@ -88,10 +82,10 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Returns the result of rounding d to the nearest multiple of m.
-        /// The rounding behavior for halfway values is to round away from zero.
-        /// If m &lt;= 0, returns d unchanged.
+        /// Returns the result of rounding this duration to the nearest multiple of the specified duration.
         /// </summary>
+        /// <param name="m">The divisor duration. If zero or negative, this duration is returned unchanged.</param>
+        /// <returns>A Duration rounded to the nearest multiple of m.</returns>
         public Duration Round(Duration m)
         {
             long mNs = m._nanoseconds;
@@ -115,8 +109,12 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Formats the duration as a string like "1h30m5s".
+        /// Formats the duration as a human-readable string.
         /// </summary>
+        /// <remarks>
+        /// <para>Examples: "1h30m5s", "500ms", "1us", "-2h15m".</para>
+        /// </remarks>
+        /// <returns>A formatted duration string.</returns>
         public override string ToString()
         {
             if (_nanoseconds == 0)
@@ -178,13 +176,12 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Explicitly converts Duration to TimeSpan.
-        /// Note: TimeSpan has 100ns (tick) precision, so nanosecond precision may be lost.
+        /// Converts to TimeSpan (100-nanosecond precision; may lose sub-tick precision).
         /// </summary>
         public TimeSpan ToTimeSpan() => TimeSpan.FromTicks(_nanoseconds / 100);
 
         /// <summary>
-        /// Creates a Duration from a TimeSpan.
+        /// Creates Duration from TimeSpan.
         /// </summary>
         public static Duration FromTimeSpan(TimeSpan timeSpan) => new(timeSpan.Ticks * 100);
 

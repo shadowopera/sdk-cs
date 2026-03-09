@@ -3,9 +3,9 @@ using System;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Default console logger implementation.
+    /// Default console logger implementation that writes to standard output.
     /// </summary>
-    class DefaultLogger : IAtlasLogger
+    internal class DefaultLogger : IAtlasLogger
     {
         public void Info(string message)
         {

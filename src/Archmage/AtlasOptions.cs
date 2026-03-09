@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Newtonsoft.Json;
 
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Configuration options for Atlas loading.
+    /// Configuration options for Atlas loading operations.
     /// </summary>
     /// <remarks>
-    /// To load configurations from non-conventional file systems (e.g., in-memory,
-    /// embedded resources, or virtual file systems), use
-    /// <see cref="AtlasOptionExtensions.WithFS"/>
-    /// to redirect all I/O operations to your custom provider.
+    /// <para>AtlasOptions provides a fluent builder pattern for configuring how the Atlas system loads and processes configuration files.
+    /// Use the extension methods in <see cref="AtlasOptionExtensions"/> to configure various aspects of loading.</para>
     /// </remarks>
     public class AtlasOptions
     {
@@ -27,7 +24,7 @@ namespace Shadop.Archmage
     }
 
     /// <summary>
-    /// Represents an override configuration directory or filesystem.
+    /// Override source (directory path or custom filesystem). Matched files merged into base config.
     /// </summary>
     readonly struct OverrideConfig
     {
@@ -43,24 +40,27 @@ namespace Shadop.Archmage
             FS = fs;
         }
 
+        /// <summary>
+        /// Directory path for file-based overrides; null for custom filesystem.
+        /// </summary>
         public string? RootPath { get; }
+
+        /// <summary>
+        /// Custom filesystem for overrides; null for directory-based.
+        /// </summary>
         public IFS? FS { get; }
     }
 
     /// <summary>
-    /// Delegate for custom Atlas item loading. Allows users to implement
-    /// parallel loading or other custom strategies.
+    /// Delegate for custom loading strategies (parallel, caching, conditional; default is sequential).
+    /// Must call loadFunc for each item.
     /// </summary>
-    /// <param name="items">The items to load.</param>
-    /// <param name="loadFunc">The function to call for each item to perform the actual loading.</param>
     public delegate void AtlasItemLoader(
         IEnumerable<KeyValuePair<string, AtlasItem>> items,
         AtlasItemLoadFunc loadFunc);
 
     /// <summary>
-    /// Delegate for loading a single Atlas item.
+    /// Callback for loading single item (reads file(s), deserializes JSON, merges overrides).
     /// </summary>
-    /// <param name="key">The item key.</param>
-    /// <param name="item">The item to load.</param>
     public delegate void AtlasItemLoadFunc(string key, AtlasItem item);
 }

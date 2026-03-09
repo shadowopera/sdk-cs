@@ -7,14 +7,16 @@ namespace Shadop.Archmage
     /// <summary>
     /// Represents a 4D vector. Serialized as JSON array [x, y, z, w].
     /// </summary>
-    /// <typeparam name="T">The component type, must be equatable.</typeparam>
     [JsonConverter(typeof(Vec4JsonConverter))]
     public struct Vec4<T> : IEquatable<Vec4<T>>
         where T : IEquatable<T>
     {
         public T X { get; set; }
+
         public T Y { get; set; }
+
         public T Z { get; set; }
+
         public T W { get; set; }
 
         public Vec4(T x, T y, T z, T w)

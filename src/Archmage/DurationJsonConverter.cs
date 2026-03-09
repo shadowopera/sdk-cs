@@ -5,13 +5,16 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// JSON converter for Duration that serializes to compact array format [type, value].
-    /// Zero duration is serialized as null.
+    /// Newtonsoft.Json converter for Duration serialization and deserialization.
     /// </summary>
     public class DurationJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType) => objectType == typeof(Duration);
 
+        /// <summary>
+        /// Deserializes JSON array or null to Duration (null/empty → Duration.Zero).
+        /// </summary>
+        /// <exception cref="JsonSerializationException">Thrown if JSON format is invalid.</exception>
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null)
@@ -35,6 +38,9 @@ namespace Shadop.Archmage
             return Archmage.ParseDurationShards(shards.ToArray());
         }
 
+        /// <summary>
+        /// Serializes Duration to JSON array or null.
+        /// </summary>
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             var duration = (Duration)value!;

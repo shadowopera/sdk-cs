@@ -1,27 +1,27 @@
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Represents a single configuration item in the Atlas.
+    /// Configuration item within an Atlas.
     /// </summary>
     public class AtlasItem
     {
         /// <summary>
-        /// The deserialized configuration object.
+        /// The deserialized configuration object. Initialize to target type instance before loading.
         /// </summary>
         public object? Cfg { get; set; }
 
         /// <summary>
-        /// The mapping type: "unique", "single", or "multiple".
+        /// The mapping strategy: "unique", "single", or "multiple".
         /// </summary>
         public string Mapping { get; set; } = string.Empty;
 
         /// <summary>
-        /// The item key.
+        /// The item's key in atlas.json.
         /// </summary>
         public string Key { get; set; } = string.Empty;
 
         /// <summary>
-        /// Indicates whether this item has been successfully loaded.
+        /// Whether this item has been successfully loaded.
         /// </summary>
         public bool Ready { get; set; }
     }

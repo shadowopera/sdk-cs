@@ -12,17 +12,30 @@ using Newtonsoft.Json.Linq;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Provides utility functions.
+    /// Provides core utility functions for Atlas loading and configuration management.
     /// </summary>
     public static partial class Archmage
     {
         /// <summary>
-        /// Loads an Atlas synchronously from the specified index file.
+        /// Loads an Atlas synchronously from the specified index file and root directory.
         /// </summary>
-        /// <param name="atlasFile">Path to the Atlas index JSON file.</param>
-        /// <param name="cfgRoot">Root directory for configuration files.</param>
-        /// <param name="atlas">The Atlas instance to populate.</param>
-        /// <param name="options">Optional loading options.</param>
+        /// <remarks>
+        /// <para>This method performs the following steps:</para>
+        /// <list type="number">
+        /// <item><description>Reads and parses atlas.json</description></item>
+        /// <item><description>Applies any registered modifier callbacks to the atlas data</description></item>
+        /// <item><description>Loads each configuration item by reading files, deserializing, and merging overrides</description></item>
+        /// <item><description>Calls BindRefs to resolve cross-table references</description></item>
+        /// <item><description>Calls OnLoaded on the Atlas for post-load initialization</description></item>
+        /// </list>
+        /// <para>If any step fails, an ArchmageException is raised and loading is aborted.
+        /// Alternatively, exceptions can be thrown from IAtlas.OnLoaded() to abort loading.</para>
+        /// </remarks>
+        /// <param name="atlasFile">Path to atlas.json containing mapping definitions.</param>
+        /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
+        /// <param name="atlas">The Atlas implementation to populate with loaded items.</param>
+        /// <param name="options">Optional loading configuration. If null, default options are used.</param>
+        /// <exception cref="ArchmageException">Thrown if loading fails at any stage.</exception>
         public static void LoadAtlas(
             string atlasFile,
             string cfgRoot,
@@ -33,12 +46,27 @@ namespace Shadop.Archmage
             options.JsonSettings ??= new JsonSerializerSettings();
             options.JsonSettings.DateParseHandling = DateParseHandling.None;
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, null, CancellationToken.None);
-            atlas.OnLoaded();
         }
 
         /// <summary>
         /// Loads an Atlas asynchronously with progress reporting and cancellation support.
         /// </summary>
+        /// <remarks>
+        /// <para>This method performs the same operations as LoadAtlas but asynchronously via Task.Run.
+        /// Progress events are reported via the IProgress interface to allow UI updates and status tracking.
+        /// Loading can be cancelled via the CancellationToken.</para>
+        /// <para>The OnLoaded callback is invoked after all loading and reference binding completes,
+        /// allowing exceptions to be thrown for final validation or initialization.</para>
+        /// </remarks>
+        /// <param name="atlasFile">Path to atlas.json containing mapping definitions.</param>
+        /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
+        /// <param name="atlas">The Atlas implementation to populate with loaded items.</param>
+        /// <param name="options">Optional loading configuration. If null, default options are used.</param>
+        /// <param name="progress">Optional callback for receiving AtlasLoadEvent progress reports.</param>
+        /// <param name="cancellationToken">Token to request cancellation of the loading operation.</param>
+        /// <returns>A Task representing the asynchronous loading operation.</returns>
+        /// <exception cref="ArchmageException">Thrown if loading fails at any stage.</exception>
+        /// <exception cref="OperationCanceledException">Thrown if cancellation is requested.</exception>
         public static Task LoadAtlasAsync(
             string atlasFile,
             string cfgRoot,
@@ -51,7 +79,6 @@ namespace Shadop.Archmage
             {
                 options ??= new AtlasOptions();
                 LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, progress, cancellationToken);
-                atlas.OnLoaded();
             }, cancellationToken);
         }
 
@@ -75,7 +102,7 @@ namespace Shadop.Archmage
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Read and parse atlas index file
+            // Read and parse atlas.json
             var atlasData = options.FS.ReadAllBytes(atlasFile);
             AtlasJson? atlasJson;
             try
@@ -159,6 +186,9 @@ namespace Shadop.Archmage
 
             // Bind references
             atlas.BindRefs();
+
+            // Invoke OnLoaded
+            atlas.OnLoaded();
         }
 
         static (string cause, bool skip) ShouldSkip(string key, AtlasOptions options)
@@ -187,21 +217,21 @@ namespace Shadop.Archmage
 
             // Resolve files based on mapping type
             List<string> files;
-            string notFoundHint;
+            string keyPath;
             switch (item.Mapping)
             {
                 case AtlasConstants.MappingUnique:
                     files = atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
-                    notFoundHint = $"$.unique['{key}']";
+                    keyPath = $"$.unique['{key}']";
                     break;
                 case AtlasConstants.MappingSingle:
-                    var sf = atlasJson.PickSingleDefault(key);
+                    var sf = atlasJson.PickFromSingle(key);
                     files = sf != null ? new List<string> { sf } : new List<string>();
-                    notFoundHint = $"$.single['{key}']['/']";
+                    keyPath = $"$.single['{key}']['/']";
                     break;
                 case AtlasConstants.MappingMultiple:
                     files = atlasJson.Multiple.TryGetValue(key, out var mf) ? mf : new List<string>();
-                    notFoundHint = $"$.multiple['{key}']";
+                    keyPath = $"$.multiple['{key}']";
                     break;
                 default:
                     throw new ArchmageException($"unsupported mapping: {item.Mapping}");
@@ -209,7 +239,7 @@ namespace Shadop.Archmage
 
             if (files.Count == 0)
             {
-                throw new ArchmageException($"cannot find {notFoundHint} in {atlasFile}");
+                throw new ArchmageException($"cannot find {keyPath} in {atlasFile}");
             }
 
             // Report: StartReading
@@ -306,11 +336,12 @@ namespace Shadop.Archmage
         /// <summary>
         /// Merges a JSON value into an existing object using the following rules:
         /// <list type="bullet">
-        ///   <item><c>null</c>     → resets the target field to its default value or raise an error</item>
-        ///   <item>JSON object     → recursively merges: only fields present in the input are updated, others remain unchanged</item>
+        ///   <item><c>null</c> → resets the target field to its default value or raise an error</item>
+        ///   <item>JSON object → recursively merges: only fields present in the input are updated, others remain unchanged</item>
         ///   <item>Any other value → replaces the current value of the target field</item>
         /// </list>
         /// </summary>
+        /// <exception cref="ArchmageException">Thrown if JSON is invalid or merge fails.</exception>
         static void MergeJson(object target, string json, JsonSerializerSettings? settings)
         {
             var jsonSerializer = JsonSerializer.Create(settings);
@@ -345,13 +376,10 @@ namespace Shadop.Archmage
     }
 
     /// <summary>
-    /// Interface for configuration objects that need to populate ID fields from dictionary keys.
+    /// Called after deserialization/overrides, before marking Ready.
     /// </summary>
     public interface IApplyKeys
     {
-        /// <summary>
-        /// Called after deserialization to populate ID fields or perform other post-load processing.
-        /// </summary>
         void ApplyKeys();
     }
 }

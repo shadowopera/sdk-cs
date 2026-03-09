@@ -3,35 +3,45 @@ using System;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Stages of Atlas item loading.
+    /// Enumeration of stages during the loading of an individual Atlas item.
     /// </summary>
+    /// <remarks>
+    /// These stages are reported via <see cref="IProgress{AtlasLoadEvent}"/> during async loading
+    /// to allow progress tracking and cancellation feedback.
+    /// </remarks>
     public enum AtlasLoadStage
     {
         /// <summary>
-        /// Starting to read configuration file(s).
+        /// The loading process is about to read configuration file(s) from the filesystem.
         /// </summary>
         StartReading,
 
         /// <summary>
-        /// Starting to parse JSON.
+        /// File content has been read and is about to be parsed as JSON.
         /// </summary>
         StartParsing,
 
         /// <summary>
-        /// Applying override file.
+        /// An override file has been loaded and is being merged into the configuration.
         /// </summary>
         ApplyingOverride,
 
         /// <summary>
-        /// Loading completed successfully.
+        /// The item has been fully loaded, parsed, and all overrides have been applied.
         /// </summary>
         Completed
     }
 
     /// <summary>
-    /// Event data for Atlas loading progress.
+    /// Progress event data reported during asynchronous Atlas item loading.
     /// </summary>
-    public struct AtlasLoadEvent
+    /// <remarks>
+    /// <para>AtlasLoadEvent instances are reported to an <see cref="IProgress{AtlasLoadEvent}"/>
+    /// implementation passed to <see cref="Archmage.LoadAtlasAsync(string, string, IAtlas, AtlasOptions?)"/>.
+    /// This allows consumers to track loading progress and provide feedback to the user.</para>
+    /// <para>The Elapsed property can be used to implement timeouts or progress visualization.</para>
+    /// </remarks>
+    public readonly struct AtlasLoadEvent
     {
         public AtlasLoadEvent(string key, AtlasLoadStage stage, string? filePath = null, TimeSpan elapsed = default)
         {
@@ -41,24 +51,15 @@ namespace Shadop.Archmage
             Elapsed = elapsed;
         }
 
-        /// <summary>
-        /// The configuration item key.
-        /// </summary>
         public string Key { get; }
 
-        /// <summary>
-        /// The current loading stage.
-        /// </summary>
         public AtlasLoadStage Stage { get; }
 
         /// <summary>
-        /// The file path being processed (if applicable).
+        /// Set during StartReading, StartParsing, ApplyingOverride; null for Completed.
         /// </summary>
         public string? FilePath { get; }
 
-        /// <summary>
-        /// Time elapsed since the start of this item's loading.
-        /// </summary>
         public TimeSpan Elapsed { get; }
     }
 }

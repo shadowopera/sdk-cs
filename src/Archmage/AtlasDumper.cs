@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -11,12 +10,14 @@ namespace Shadop.Archmage
     public static partial class Archmage
     {
         /// <summary>
-        /// Writes all loaded atlas items to JSON files in outputDir.
-        /// Each item is written to a separate file named {key}.json.
+        /// Exports Atlas items to {key}.json files (only Ready items; pretty-printed).
         /// </summary>
-        /// <param name="atlas">The Atlas instance to dump.</param>
-        /// <param name="outputDir">The directory to write JSON files to.</param>
-        /// <param name="settings">Optional JSON serializer settings. If null, uses default settings with custom converters.</param>
+        /// <remarks>
+        /// Useful for debugging, testing (golden files), and human-readable export.
+        /// Output uses custom converters for Duration/Ref types.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">Thrown if atlas or outputDir is null.</exception>
+        /// <exception cref="ArgumentException">Thrown if outputDir is empty or whitespace.</exception>
         public static void DumpAtlas(IAtlas atlas, string outputDir, JsonSerializerSettings? settings = null)
         {
             if (atlas == null)
@@ -49,6 +50,9 @@ namespace Shadop.Archmage
             }
         }
 
+        /// <summary>
+        /// Creates JSON settings for Atlas export (indented, include nulls/defaults, custom converters).
+        /// </summary>
         static JsonSerializerSettings GetJsonSerializerSettings()
         {
             var settings = new JsonSerializerSettings
@@ -58,8 +62,7 @@ namespace Shadop.Archmage
                 DefaultValueHandling = DefaultValueHandling.Include
             };
 
-            // Register custom converters (zero-value Vec writes null, matching Go behavior)
-            // Do not convert zero Vec2/3/4 to null.
+            // Register custom converters for proper serialization
             settings.Converters.Add(new DurationJsonConverter());
             settings.Converters.Add(new RefJsonConverter());
 

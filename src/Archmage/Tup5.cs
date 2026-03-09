@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// 0-based tuple with 5 elements. JSON serializes as {"item0": ..., "item1": ..., "item2": ..., "item3": ..., "item4": ...}.
+    /// 0-based tuple with 5 elements. JSON serializes as {"item0": ..., ..., "item4": ...}.
     /// </summary>
     public class Tup5<T0, T1, T2, T3, T4> : IEquatable<Tup5<T0, T1, T2, T3, T4>>
     {

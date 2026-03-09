@@ -6,13 +6,17 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Extension methods for fluent configuration of AtlasOptions.
+    /// Extension methods for fluent configuration of AtlasOptions using the builder pattern.
     /// </summary>
+    /// <remarks>
+    /// All methods return the AtlasOptions instance to enable method chaining.
+    /// </remarks>
     public static class AtlasOptionExtensions
     {
         /// <summary>
-        /// Sets a custom logger for Atlas loading.
+        /// Sets custom logger (defaults to console).
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if logger is null.</exception>
         public static AtlasOptions WithLogger(this AtlasOptions opts, IAtlasLogger logger)
         {
             opts.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -20,8 +24,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets a custom file system implementation for Atlas loading.
+        /// Sets custom filesystem (in-memory, embedded, virtual, etc. — does not affect override sources).
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if fs is null.</exception>
         public static AtlasOptions WithFS(this AtlasOptions opts, IFS fs)
         {
             opts.FS = fs ?? throw new ArgumentNullException(nameof(fs));
@@ -29,8 +34,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets a modifier function to customize the AtlasJson after loading.
+        /// Registers callback to modify atlas.json after loading.
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if modifier is null.</exception>
         public static AtlasOptions WithAtlasModifier(this AtlasOptions opts, Action<AtlasJson> modifier)
         {
             opts.AtlasModifier = modifier ?? throw new ArgumentNullException(nameof(modifier));
@@ -38,8 +44,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets a whitelist of configuration keys to load. Only items in this list will be loaded.
+        /// Specifies whitelist (if set, blacklist ignored; loads only whitelisted items).
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if whitelist is null.</exception>
         public static AtlasOptions WithWhitelist(this AtlasOptions opts, IEnumerable<string> whitelist)
         {
             opts.Whitelist = whitelist?.ToList() ?? throw new ArgumentNullException(nameof(whitelist));
@@ -47,9 +54,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets a blacklist of configuration keys to skip. Items in this list will not be loaded.
-        /// If a whitelist is also specified, the blacklist will be ignored.
+        /// Specifies blacklist (ignored if whitelist present; skips blacklisted items).
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if blacklist is null.</exception>
         public static AtlasOptions WithBlacklist(this AtlasOptions opts, IEnumerable<string> blacklist)
         {
             opts.Blacklist = blacklist?.ToList() ?? throw new ArgumentNullException(nameof(blacklist));
@@ -57,8 +64,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Adds an override directory. Files in this directory will be merged over base configurations.
+        /// Adds directory as override source (processed in order; each can override previous).
         /// </summary>
+        /// <exception cref="ArgumentException">Thrown if rootPath is null or whitespace.</exception>
         public static AtlasOptions WithOverrideRoot(this AtlasOptions opts, string rootPath)
         {
             if (string.IsNullOrWhiteSpace(rootPath))
@@ -69,8 +77,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Adds a filesystem to search for override JSON files that will be merged into loaded configurations.
+        /// Adds custom filesystem as override source (embedded, network, in-memory, etc.).
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if fs is null.</exception>
         public static AtlasOptions WithOverrideFS(this AtlasOptions opts, IFS fs)
         {
             if (fs == null)
@@ -81,8 +90,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets a custom loader function for parallel or custom loading strategies.
+        /// Sets custom loader for parallel/cached/conditional loading (default is sequential).
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if loader is null.</exception>
         public static AtlasOptions WithCustomLoader(this AtlasOptions opts, AtlasItemLoader loader)
         {
             opts.CustomLoader = loader ?? throw new ArgumentNullException(nameof(loader));
@@ -90,9 +100,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets custom JSON serializer settings for deserialization during Atlas loading.
-        /// Prevents interference from global <see cref="JsonConvert.DefaultSettings"/>.
+        /// Sets custom JSON settings.
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if settings is null.</exception>
         public static AtlasOptions WithJsonSettings(this AtlasOptions opts, JsonSerializerSettings settings)
         {
             opts.JsonSettings = settings ?? throw new ArgumentNullException(nameof(settings));

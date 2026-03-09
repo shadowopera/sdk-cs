@@ -4,39 +4,43 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Represents the structure of an Atlas index JSON file.
+    /// Represents the structure of an Atlas index JSON file (atlas.json).
     /// </summary>
+    /// <remarks>
+    /// The atlas index file contains VCS metadata and three mapping strategies that define how configuration item keys map to JSON files.
+    /// </remarks>
     public class AtlasJson
     {
         /// <summary>
-        /// VCS version metadata.
+        /// VCS metadata (workspace, commit hash, branch, timestamp). May be null if unavailable during build.
         /// </summary>
         [JsonProperty("version")]
         public VersionInfo? Version { get; set; }
 
         /// <summary>
-        /// Unique mapping: key -> file path.
+        /// One-to-one mapping (key → file path).
         /// </summary>
         [JsonProperty("unique")]
         public Dictionary<string, string> Unique { get; set; } = new();
 
         /// <summary>
-        /// Single mapping: key -> subkey -> file path.
+        /// One-to-many variant mapping (key → {variant → file path}). Use "/" as default variant key.
         /// </summary>
         [JsonProperty("single")]
         public Dictionary<string, Dictionary<string, string>> Single { get; set; } = new();
 
         /// <summary>
-        /// Multiple mapping: key -> list of file paths.
+        /// One-to-many list mapping (key → [file paths]). Files merged in order.
         /// </summary>
         [JsonProperty("multiple")]
         public Dictionary<string, List<string>> Multiple { get; set; } = new();
 
         /// <summary>
-        /// Picks the single file path for a key, using "/".
-        /// Returns null if not found.
+        /// Retrieves the default file path for a single-mapped key.
         /// </summary>
-        internal string? PickSingleDefault(string key)
+        /// <param name="key">The item key to look up.</param>
+        /// <returns>The default file path (associated with "/") if found; otherwise null.</returns>
+        internal string? PickFromSingle(string key)
         {
             if (Single.TryGetValue(key, out var subMap) &&
                 subMap.TryGetValue(AtlasConstants.SingleMappingDefaultKey, out var path))

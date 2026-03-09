@@ -7,12 +7,12 @@ namespace Shadop.Archmage
     /// <summary>
     /// Represents a 2D vector. Serialized as JSON array [x, y].
     /// </summary>
-    /// <typeparam name="T">The component type, must be equatable.</typeparam>
     [JsonConverter(typeof(Vec2JsonConverter))]
     public struct Vec2<T> : IEquatable<Vec2<T>>
         where T : IEquatable<T>
     {
         public T X { get; set; }
+
         public T Y { get; set; }
 
         public Vec2(T x, T y)

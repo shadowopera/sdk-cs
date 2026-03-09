@@ -6,9 +6,7 @@ namespace Shadop.Archmage
     public static partial class Archmage
     {
         /// <summary>
-        /// Encodes a Duration into a compact long array format [type, value] or [4, seconds, nanoseconds].
-        /// Returns null for zero duration.
-        /// Type: 0=seconds, 1=milliseconds, 2=microseconds, 3=nanoseconds, 4=mixed
+        /// Encodes Duration to compact array (chooses smallest representation based on value; zero → null).
         /// </summary>
         public static long[]? ShardDuration(Duration duration)
         {
@@ -40,10 +38,9 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Decodes a long array into a Duration.
-        /// Format: [type, value] or [4, seconds, nanoseconds]
-        /// Type: 0=seconds, 1=milliseconds, 2=microseconds, 3=nanoseconds, 4=mixed
+        /// Decodes shard array to Duration (null/empty → Duration.Zero).
         /// </summary>
+        /// <exception cref="ArchmageException">Thrown if invalid format or unknown type.</exception>
         public static Duration ParseDurationShards(long[]? shards)
         {
             if (shards == null || shards.Length == 0)

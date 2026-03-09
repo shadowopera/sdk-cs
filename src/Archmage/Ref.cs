@@ -3,28 +3,27 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage
 {
     /// <summary>
-    /// Stores a raw value and a resolved reference.
-    /// Only RawValue is serialized to JSON.
-    /// <para>
-    /// Note: V should be either int, long or string. Using other types is not supported
-    /// and may cause issues during JSON serialization or reference binding.
-    /// </para>
+    /// Represents a cross-table reference using a raw identifier and a resolved object reference.
     /// </summary>
-    /// <typeparam name="V">The raw value type (should be int, long or string).</typeparam>
-    /// <typeparam name="T">The reference value type.</typeparam>
+    /// <remarks>
+    /// <para>Ref is a two-part structure: it stores both the raw identifier (serialized to JSON)
+    /// and the resolved reference (set during the binding phase). This enables lazy resolution of references
+    /// after all data is loaded.</para>
+    /// <para><strong>Important:</strong> V should be int, long, or string (the identifier type).
+    /// Using other types may cause issues during serialization or reference binding.</para>
+    /// </remarks>
     [JsonConverter(typeof(RefJsonConverter))]
     public struct Ref<V, T>
         where V : notnull
         where T : class
     {
         /// <summary>
-        /// The raw value.
+        /// Raw identifier serialized to JSON; key for lookup during binding phase.
         /// </summary>
         public V RawValue { get; set; }
 
         /// <summary>
-        /// The resolved reference. This is not serialized and should be set
-        /// during the reference binding phase.
+        /// Resolved object (not serialized). Populated by Atlas.BindRefs(); may be null if unresolved.
         /// </summary>
         [JsonIgnore]
         public T? REF { get; set; }
