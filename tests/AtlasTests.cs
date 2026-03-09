@@ -26,6 +26,41 @@ namespace Shadop.Archmage.Tests
         }
     }
 
+    class MemoryFS : IFS
+    {
+        readonly Dictionary<string, byte[]> _fsys;
+
+        public MemoryFS(Dictionary<string, byte[]> fsys)
+        {
+            _fsys = fsys;
+        }
+
+        public bool DirectoryExists(string path)
+        {
+            return true;
+        }
+
+        public bool FileExists(string path)
+        {
+            var key = path.Replace('\\', '/');
+            return _fsys.ContainsKey(key);
+        }
+
+        public byte[] ReadAllBytes(string path)
+        {
+            var key = path.Replace('\\', '/');
+            if (_fsys.TryGetValue(key, out var data)) return data;
+            throw new FileNotFoundException(path);
+        }
+
+        public Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
+        {
+            var key = path.Replace('\\', '/');
+            if (_fsys.TryGetValue(key, out var data)) return Task.FromResult(data);
+            throw new FileNotFoundException(path);
+        }
+    }
+
     class L10nJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType) => objectType == typeof(L10n);
@@ -270,34 +305,8 @@ namespace Shadop.Archmage.Tests
             var opts = DefaultOpts()
                 .WithLogger(logger)
                 .WithWhitelist(new[] { "game", "Magic", "weapon-rune" })
-                .WithOverrideRoot("fsys");
-
-            opts.WithDirectoryExists(path =>
-            {
-                if (path == "fsys") return true;
-                return Directory.Exists(path);
-            });
-
-            opts.WithFileExists(path =>
-            {
-                if (path.StartsWith("fsys"))
-                {
-                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
-                    return fsys.ContainsKey(key);
-                }
-                return File.Exists(path);
-            });
-
-            opts.WithReadFile(path =>
-            {
-                if (path.StartsWith("fsys"))
-                {
-                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
-                    if (fsys.TryGetValue(key, out var data)) return data;
-                    throw new FileNotFoundException(path);
-                }
-                return File.ReadAllBytes(path);
-            });
+                .WithOverrideRoot("../../../override/2")
+                .WithOverrideFS(new MemoryFS(fsys));
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
@@ -319,34 +328,7 @@ namespace Shadop.Archmage.Tests
                 .WithBlacklist(new[] { "prop_floats" })
                 .WithOverrideRoot("../../../override/1")
                 .WithOverrideRoot("../../../override/2")
-                .WithOverrideRoot("fsys");
-
-            opts.WithDirectoryExists(path =>
-            {
-                if (path == "fsys") return true;
-                return Directory.Exists(path);
-            });
-
-            opts.WithFileExists(path =>
-            {
-                if (path.StartsWith("fsys"))
-                {
-                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
-                    return fsys.ContainsKey(key);
-                }
-                return File.Exists(path);
-            });
-
-            opts.WithReadFile(path =>
-            {
-                if (path.StartsWith("fsys"))
-                {
-                    var key = path.Substring("fsys/".Length).Replace('\\', '/');
-                    if (fsys.TryGetValue(key, out var data)) return data;
-                    throw new FileNotFoundException(path);
-                }
-                return File.ReadAllBytes(path);
-            });
+                .WithOverrideFS(new MemoryFS(fsys));
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);

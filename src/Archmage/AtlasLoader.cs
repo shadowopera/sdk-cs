@@ -66,14 +66,17 @@ namespace Shadop.Archmage
             // Verify override directories exist
             foreach (var overrideConfig in options.OverrideConfigs)
             {
-                if (!options.DirectoryExists(overrideConfig.RootPath))
-                    throw new ArchmageException($"invalid override root directory \"{overrideConfig.RootPath}\"");
+                if (overrideConfig.FS == null)
+                {
+                    if (!options.FS.DirectoryExists(overrideConfig.RootPath!))
+                        throw new ArchmageException($"invalid override root directory \"{overrideConfig.RootPath}\"");
+                }
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
             // Read and parse atlas index file
-            var atlasData = options.ReadFile(atlasFile);
+            var atlasData = options.FS.ReadAllBytes(atlasFile);
             AtlasJson? atlasJson;
             try
             {
@@ -225,18 +228,29 @@ namespace Shadop.Archmage
                 // Report: StartParsing
                 progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartParsing, filePath, stopwatch.Elapsed));
 
-                var fileData = options.ReadFile(filePath);
+                var fileData = options.FS.ReadAllBytes(filePath);
                 var json = Encoding.UTF8.GetString(fileData);
                 MergeJson(item.Cfg!, json, options.JsonSettings);
 
                 // Collect overrides for this file
                 foreach (var overrideCfg in options.OverrideConfigs)
                 {
-                    var ovrPath = Path.Combine(overrideCfg.RootPath, f);
-                    if (options.FileExists(ovrPath))
+                    if (overrideCfg.FS != null)
                     {
-                        overrideFiles.Add(ovrPath);
-                        overrides.Add(options.ReadFile(ovrPath));
+                        if (overrideCfg.FS.FileExists(f))
+                        {
+                            overrideFiles.Add(f);
+                            overrides.Add(overrideCfg.FS.ReadAllBytes(f));
+                        }
+                    }
+                    else
+                    {
+                        var ovrPath = Path.Combine(overrideCfg.RootPath!, f);
+                        if (options.FS.FileExists(ovrPath))
+                        {
+                            overrideFiles.Add(ovrPath);
+                            overrides.Add(options.FS.ReadAllBytes(ovrPath));
+                        }
                     }
                 }
 
@@ -289,6 +303,14 @@ namespace Shadop.Archmage
             MergeNullValueHandling = MergeNullValueHandling.Merge
         };
 
+        /// <summary>
+        /// Merges a JSON value into an existing object using the following rules:
+        /// <list type="bullet">
+        ///   <item><c>null</c>     → resets the target field to its default value or raise an error</item>
+        ///   <item>JSON object     → recursively merges: only fields present in the input are updated, others remain unchanged</item>
+        ///   <item>Any other value → replaces the current value of the target field</item>
+        /// </list>
+        /// </summary>
         static void MergeJson(object target, string json, JsonSerializerSettings? settings)
         {
             var jsonSerializer = JsonSerializer.Create(settings);
@@ -299,10 +321,17 @@ namespace Shadop.Archmage
             {
                 DateParseHandling = jsonSerializer.DateParseHandling,
                 FloatParseHandling = jsonSerializer.FloatParseHandling,
-                DateTimeZoneHandling = jsonSerializer.DateTimeZoneHandling
+                DateTimeZoneHandling = jsonSerializer.DateTimeZoneHandling,
+                Culture = jsonSerializer.Culture
             };
-
             var patch = JToken.Load(jsonReader);
+
+            if (targetToken is JArray && patch is JArray && target is System.Collections.IList listTarget)
+            {
+                listTarget.Clear();
+                jsonSerializer.Populate(patch.CreateReader(), listTarget);
+                return;
+            }
 
             if (targetToken is JContainer targetContainer && patch is JContainer patchContainer)
             {

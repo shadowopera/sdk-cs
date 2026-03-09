@@ -9,10 +9,10 @@ namespace Shadop.Archmage.Tests
     {
         class DurationTrial
         {
-            public string subject { get; set; } = "";
-            public long[]? input { get; set; }
-            public Duration expected { get; set; }
-            public string expErr { get; set; } = "";
+            public string Subject { get; set; } = "";
+            public long[]? Input { get; set; }
+            public Duration Expected { get; set; }
+            public string ExpErr { get; set; } = "";
         }
 
         [Fact]
@@ -20,57 +20,45 @@ namespace Shadop.Archmage.Tests
         {
             var dataset = new DurationTrial[]
             {
-                new DurationTrial {
-                    subject = "nil input", input = null, expected = Duration.Zero, expErr = "" },
-                new DurationTrial {
-                    subject = "empty slice", input = Array.Empty<long>(), expected = Duration.Zero, expErr = "" },
-                new DurationTrial {
-                    subject = "seconds", input = new long[] { 0, 5 }, expected = new Duration(5_000_000_000), expErr = "" },
-                new DurationTrial {
-                    subject = "milliseconds", input = new long[] { 1, 500 }, expected = new Duration(500_000_000), expErr = "" },
-                new DurationTrial {
-                    subject = "microseconds", input = new long[] { 2, 750 }, expected = new Duration(750_000), expErr = "" },
-                new DurationTrial {
-                    subject = "nanoseconds", input = new long[] { 3, 250 }, expected = new Duration(250), expErr = "" },
-                new DurationTrial {
-                    subject = "seconds with nanoseconds", input = new long[] { 4, 3, 500000001 }, expected = new Duration(3_500_000_001), expErr = "" },
-                new DurationTrial {
-                    subject = "invalid format 2", input = new long[] { 5, 100 }, expected = Duration.Zero, expErr = "invalid duration shard type" },
-                new DurationTrial {
-                    subject = "invalid format 3", input = new long[] { 0, 5, 100 }, expected = new Duration(5_000_000_000), expErr = "" },
-                new DurationTrial {
-                    subject = "unsupported length", input = new long[] { 4, 3, 500000000, 0 }, expected = Duration.Zero, expErr = "mixed duration shards must have 3 elements" },
-                new DurationTrial {
-                    subject = "slice with seconds format", input = new long[] { 0, 10 }, expected = new Duration(10_000_000_000), expErr = "" },
-                new DurationTrial {
-                    subject = "slice with seconds and nanoseconds", input = new long[] { 4, 2, 750000001 }, expected = new Duration(2_750_000_001), expErr = "" },
+                new() { Subject = "nil input", Input = null, Expected = Duration.Zero, ExpErr = "" },
+                new() { Subject = "empty slice", Input = Array.Empty<long>(), Expected = Duration.Zero, ExpErr = "" },
+                new() { Subject = "seconds", Input = new long[] { 0, 5 }, Expected = new Duration(5_000_000_000), ExpErr = "" },
+                new() { Subject = "milliseconds", Input = new long[] { 1, 500 }, Expected = new Duration(500_000_000), ExpErr = "" },
+                new() { Subject = "microseconds", Input = new long[] { 2, 750 }, Expected = new Duration(750_000), ExpErr = "" },
+                new() { Subject = "nanoseconds", Input = new long[] { 3, 250 }, Expected = new Duration(250), ExpErr = "" },
+                new() { Subject = "seconds with nanoseconds", Input = new long[] { 4, 3, 500000001 }, Expected = new Duration(3_500_000_001), ExpErr = "" },
+                new() { Subject = "invalid format 2", Input = new long[] { 5, 100 }, Expected = Duration.Zero, ExpErr = "invalid duration shard type" },
+                new() { Subject = "invalid format 3", Input = new long[] { 0, 5, 100 }, Expected = new Duration(5_000_000_000), ExpErr = "" },
+                new() { Subject = "unsupported length", Input = new long[] { 4, 3, 500000000, 0 }, Expected = Duration.Zero, ExpErr = "mixed duration shards must have 3 elements" },
+                new() { Subject = "slice with seconds format", Input = new long[] { 0, 10 }, Expected = new Duration(10_000_000_000), ExpErr = "" },
+                new() { Subject = "slice with seconds and nanoseconds", Input = new long[] { 4, 2, 750000001 }, Expected = new Duration(2_750_000_001), ExpErr = "" },
             };
 
             foreach (var tt in dataset)
             {
-                if (!string.IsNullOrEmpty(tt.expErr))
+                if (!string.IsNullOrEmpty(tt.ExpErr))
                 {
-                    var ex = Assert.Throws<ArchmageException>(() => Archmage.ParseDurationShards(tt.input));
-                    Assert.Contains(tt.expErr, ex.Message);
+                    var ex = Assert.Throws<ArchmageException>(() => Archmage.ParseDurationShards(tt.Input));
+                    Assert.Contains(tt.ExpErr, ex.Message);
                 }
                 else
                 {
-                    var r = Archmage.ParseDurationShards(tt.input);
-                    Assert.Equal(tt.expected, r);
+                    var r = Archmage.ParseDurationShards(tt.Input);
+                    Assert.Equal(tt.Expected, r);
 
-                    var d1 = tt.expected;
+                    var d1 = tt.Expected;
                     var data = JsonConvert.SerializeObject(d1);
                     var d2 = JsonConvert.DeserializeObject<Duration>(data);
-                    Assert.Equal(tt.expected, d2);
+                    Assert.Equal(tt.Expected, d2);
 
-                    var inputData = JsonConvert.SerializeObject(tt.input);
+                    var inputData = JsonConvert.SerializeObject(tt.Input);
                     var d3 = JsonConvert.DeserializeObject<Duration>(inputData);
-                    Assert.Equal(tt.expected, d3);
+                    Assert.Equal(tt.Expected, d3);
 
-                    if (tt.subject != "empty slice" && !tt.subject.StartsWith("slice with") && !tt.subject.StartsWith("invalid format") && !tt.subject.StartsWith("unsupported length"))
+                    if (tt.Subject != "empty slice" && !tt.Subject.StartsWith("slice with") && !tt.Subject.StartsWith("invalid format") && !tt.Subject.StartsWith("unsupported length"))
                     {
                         var shards = Archmage.ShardDuration(r);
-                        Assert.Equal(tt.input, shards);
+                        Assert.Equal(tt.Input, shards);
                     }
                 }
             }

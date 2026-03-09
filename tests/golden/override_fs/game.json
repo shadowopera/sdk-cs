@@ -1,6 +1,6 @@
 {
-  "x-int": 100,
-  "x-int32": 32,
+  "x-int": 1000,
+  "x-int32": 1320,
   "x-float64": 3.14,
   "x-string": "foo bar",
   "x-bool": false,
@@ -24,12 +24,12 @@
     "7": "xxx"
   },
   "x-object": {
-    "fieldX": 1,
+    "fieldX": 100,
     "fieldY": "foo"
   },
   "x-tuple": {
     "item0": 1,
-    "item1": 2.5,
+    "item1": 12.5,
     "item2": " bar "
   },
   "x-vector": [

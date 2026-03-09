@@ -20,29 +20,11 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets a custom file reading function.
+        /// Sets a custom file system implementation for Atlas loading.
         /// </summary>
-        public static AtlasOptions WithReadFile(this AtlasOptions opts, Func<string, byte[]> readFile)
+        public static AtlasOptions WithFS(this AtlasOptions opts, IFS fs)
         {
-            opts.ReadFile = readFile ?? throw new ArgumentNullException(nameof(readFile));
-            return opts;
-        }
-
-        /// <summary>
-        /// Sets a custom file existence check function.
-        /// </summary>
-        public static AtlasOptions WithFileExists(this AtlasOptions opts, Func<string, bool> fileExists)
-        {
-            opts.FileExists = fileExists ?? throw new ArgumentNullException(nameof(fileExists));
-            return opts;
-        }
-
-        /// <summary>
-        /// Sets a custom directory existence check function.
-        /// </summary>
-        public static AtlasOptions WithDirectoryExists(this AtlasOptions opts, Func<string, bool> directoryExists)
-        {
-            opts.DirectoryExists = directoryExists ?? throw new ArgumentNullException(nameof(directoryExists));
+            opts.FS = fs ?? throw new ArgumentNullException(nameof(fs));
             return opts;
         }
 
@@ -83,6 +65,18 @@ namespace Shadop.Archmage
                 throw new ArgumentException("Override root path cannot be empty.", nameof(rootPath));
 
             opts.OverrideConfigs.Add(new OverrideConfig(rootPath));
+            return opts;
+        }
+
+        /// <summary>
+        /// Adds a filesystem to search for override JSON files that will be merged into loaded configurations.
+        /// </summary>
+        public static AtlasOptions WithOverrideFS(this AtlasOptions opts, IFS fs)
+        {
+            if (fs == null)
+                throw new ArgumentNullException(nameof(fs));
+
+            opts.OverrideConfigs.Add(new OverrideConfig(fs));
             return opts;
         }
 

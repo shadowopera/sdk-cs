@@ -24,11 +24,11 @@ namespace Shadop.Archmage.Tests
 
         class MergeTextsTrial
         {
-            public string subject { get; set; } = "";
-            public Dictionary<string, string>? initialTexts { get; set; }
-            public Dictionary<string, string>? mergeTexts { get; set; }
-            public string lang { get; set; } = "";
-            public Dictionary<string, Dictionary<string, string>> expected { get; set; } = new();
+            public string Subject { get; set; } = "";
+            public Dictionary<string, string>? InitialTexts { get; set; }
+            public Dictionary<string, string>? MergeTexts { get; set; }
+            public string Lang { get; set; } = "";
+            public Dictionary<string, Dictionary<string, string>> Expected { get; set; } = new();
         }
 
         [Fact]
@@ -36,48 +36,48 @@ namespace Shadop.Archmage.Tests
         {
             var dataset = new MergeTextsTrial[]
             {
-                new MergeTextsTrial {
-                    subject = "merge into empty",
-                    initialTexts = null,
-                    mergeTexts = new Dictionary<string, string> { { "hello", "Hello" }, { "world", "World" } },
-                    lang = "en",
-                    expected = new Dictionary<string, Dictionary<string, string>> {
+                new() {
+                    Subject = "merge into empty",
+                    InitialTexts = null,
+                    MergeTexts = new Dictionary<string, string> { { "hello", "Hello" }, { "world", "World" } },
+                    Lang = "en",
+                    Expected = new Dictionary<string, Dictionary<string, string>> {
                         { "en", new Dictionary<string, string> { { "hello", "Hello" }, { "world", "World" } } }
                     }
                 },
-                new MergeTextsTrial {
-                    subject = "merge with existing keys",
-                    initialTexts = new Dictionary<string, string> { { "hello", "Hi" }, { "foo", "Bar" } },
-                    mergeTexts = new Dictionary<string, string> { { "hello", "Hello" }, { "world", "World" } },
-                    lang = "en",
-                    expected = new Dictionary<string, Dictionary<string, string>> {
+                new() {
+                    Subject = "merge with existing keys",
+                    InitialTexts = new Dictionary<string, string> { { "hello", "Hi" }, { "foo", "Bar" } },
+                    MergeTexts = new Dictionary<string, string> { { "hello", "Hello" }, { "world", "World" } },
+                    Lang = "en",
+                    Expected = new Dictionary<string, Dictionary<string, string>> {
                         { "en", new Dictionary<string, string> { { "hello", "Hello" }, { "foo", "Bar" }, { "world", "World" } } }
                     }
                 },
-                new MergeTextsTrial {
-                    subject = "merge empty map",
-                    initialTexts = new Dictionary<string, string> { { "hello", "Hello" } },
-                    mergeTexts = new Dictionary<string, string>(),
-                    lang = "en",
-                    expected = new Dictionary<string, Dictionary<string, string>> {
+                new() {
+                    Subject = "merge empty map",
+                    InitialTexts = new Dictionary<string, string> { { "hello", "Hello" } },
+                    MergeTexts = new Dictionary<string, string>(),
+                    Lang = "en",
+                    Expected = new Dictionary<string, Dictionary<string, string>> {
                         { "en", new Dictionary<string, string> { { "hello", "Hello" } } }
                     }
                 },
-                new MergeTextsTrial {
-                    subject = "merge empty map into empty",
-                    initialTexts = null,
-                    mergeTexts = null,
-                    lang = "en",
-                    expected = new Dictionary<string, Dictionary<string, string>> {
+                new() {
+                    Subject = "merge empty map into empty",
+                    InitialTexts = null,
+                    MergeTexts = null,
+                    Lang = "en",
+                    Expected = new Dictionary<string, Dictionary<string, string>> {
                         { "en", new Dictionary<string, string>() }
                     }
                 },
-                new MergeTextsTrial {
-                    subject = "merge different languages",
-                    initialTexts = new Dictionary<string, string> { { "hello", "Hello" } },
-                    mergeTexts = new Dictionary<string, string> { { "hello", "你好" } },
-                    lang = "zh",
-                    expected = new Dictionary<string, Dictionary<string, string>> {
+                new() {
+                    Subject = "merge different languages",
+                    InitialTexts = new Dictionary<string, string> { { "hello", "Hello" } },
+                    MergeTexts = new Dictionary<string, string> { { "hello", "你好" } },
+                    Lang = "zh",
+                    Expected = new Dictionary<string, Dictionary<string, string>> {
                         { "en", new Dictionary<string, string> { { "hello", "Hello" } } },
                         { "zh", new Dictionary<string, string> { { "hello", "你好" } } }
                     }
@@ -87,29 +87,29 @@ namespace Shadop.Archmage.Tests
             foreach (var tt in dataset)
             {
                 var i18n = new I18n("en");
-                if (tt.initialTexts != null)
+                if (tt.InitialTexts != null)
                 {
-                    i18n.MergeTexts(tt.initialTexts, "en");
+                    i18n.MergeTexts(tt.InitialTexts, "en");
                 }
-                if (tt.mergeTexts != null)
+                if (tt.MergeTexts != null)
                 {
-                    i18n.MergeTexts(tt.mergeTexts, tt.lang);
+                    i18n.MergeTexts(tt.MergeTexts, tt.Lang);
                 }
                 else
                 {
-                    i18n.MergeTexts(new Dictionary<string, string>(), tt.lang);
+                    i18n.MergeTexts(new Dictionary<string, string>(), tt.Lang);
                 }
 
-                Assert.Equivalent(tt.expected, i18n.AllTexts());
+                Assert.Equivalent(tt.Expected, i18n.AllTexts());
             }
         }
 
         class MergeL10nDataTrial
         {
-            public string subject { get; set; } = "";
-            public string data { get; set; } = "";
-            public string lang { get; set; } = "";
-            public string expErr { get; set; } = "";
+            public string Subject { get; set; } = "";
+            public string Data { get; set; } = "";
+            public string Lang { get; set; } = "";
+            public string ExpErr { get; set; } = "";
             public Dictionary<string, string>? expected { get; set; }
         }
 
@@ -118,12 +118,12 @@ namespace Shadop.Archmage.Tests
         {
             var dataset = new MergeL10nDataTrial[]
             {
-                new MergeL10nDataTrial { subject = "valid JSON", data = "{\"hello\":\"Hello\",\"world\":\"World\"}", lang = "en", expErr = "", expected = new Dictionary<string, string> { { "hello", "Hello" }, { "world", "World" } } },
-                new MergeL10nDataTrial { subject = "empty JSON object", data = "{}", lang = "en", expErr = "", expected = new Dictionary<string, string>() },
-                new MergeL10nDataTrial { subject = "JSON with unicode", data = "{\"hello\":\"你好\",\"world\":\"世界\"}", lang = "zh", expErr = "", expected = new Dictionary<string, string> { { "hello", "你好" }, { "world", "世界" } } },
-                new MergeL10nDataTrial { subject = "invalid JSON", data = "{invalid json", lang = "en", expErr = "Invalid character after parsing property name", expected = null },
-                new MergeL10nDataTrial { subject = "malformed JSON", data = "{\"hello\":}", lang = "en", expErr = "Unexpected character encountered while parsing", expected = null },
-                new MergeL10nDataTrial { subject = "null JSON", data = "null", lang = "en", expErr = "failed to parse", expected = null },
+                new() { Subject = "valid JSON", Data = "{\"hello\":\"Hello\",\"world\":\"World\"}", Lang = "en", ExpErr = "", expected = new Dictionary<string, string> { { "hello", "Hello" }, { "world", "World" } } },
+                new() { Subject = "empty JSON object", Data = "{}", Lang = "en", ExpErr = "", expected = new Dictionary<string, string>() },
+                new() { Subject = "JSON with unicode", Data = "{\"hello\":\"你好\",\"world\":\"世界\"}", Lang = "zh", ExpErr = "", expected = new Dictionary<string, string> { { "hello", "你好" }, { "world", "世界" } } },
+                new() { Subject = "invalid JSON", Data = "{invalid json", Lang = "en", ExpErr = "Invalid character after parsing property name", expected = null },
+                new() { Subject = "malformed JSON", Data = "{\"hello\":}", Lang = "en", ExpErr = "Unexpected character encountered while parsing", expected = null },
+                new() { Subject = "null JSON", Data = "null", Lang = "en", ExpErr = "failed to parse", expected = null },
             };
 
             foreach (var tt in dataset)
@@ -132,22 +132,22 @@ namespace Shadop.Archmage.Tests
                 Exception? err = null;
                 try
                 {
-                    i18n.MergeL10nData(Encoding.UTF8.GetBytes(tt.data), tt.lang);
+                    i18n.MergeL10nData(Encoding.UTF8.GetBytes(tt.Data), tt.Lang);
                 }
                 catch (Exception ex)
                 {
                     err = ex;
                 }
 
-                if (!string.IsNullOrEmpty(tt.expErr))
+                if (!string.IsNullOrEmpty(tt.ExpErr))
                 {
                     Assert.NotNull(err);
-                    Assert.Contains(tt.expErr, err.Message);
+                    Assert.Contains(tt.ExpErr, err.Message);
                 }
                 else
                 {
                     Assert.Null(err);
-                    Assert.Equivalent(tt.expected, i18n.AllTexts()[tt.lang]);
+                    Assert.Equivalent(tt.expected, i18n.AllTexts()[tt.Lang]);
                 }
             }
         }
@@ -165,13 +165,13 @@ namespace Shadop.Archmage.Tests
 
         class GetTextTrial
         {
-            public string subject { get; set; } = "";
-            public Dictionary<string, Dictionary<string, string>> setupTexts { get; set; } = new();
-            public string fallback { get; set; } = "";
-            public string key { get; set; } = "";
-            public string lang { get; set; } = "";
-            public string expErr { get; set; } = "";
-            public string expected { get; set; } = "";
+            public string Subject { get; set; } = "";
+            public Dictionary<string, Dictionary<string, string>> SetupTexts { get; set; } = new();
+            public string Fallback { get; set; } = "";
+            public string Key { get; set; } = "";
+            public string Lang { get; set; } = "";
+            public string ExpErr { get; set; } = "";
+            public string Expected { get; set; } = "";
         }
 
         [Fact]
@@ -179,33 +179,33 @@ namespace Shadop.Archmage.Tests
         {
             var dataset = new GetTextTrial[]
             {
-                new GetTextTrial { subject = "get existing text in requested language", setupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } } }, fallback = "en", key = "hello", lang = "en", expErr = "", expected = "Hello" },
-                new GetTextTrial { subject = "fallback to default language", setupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } } }, fallback = "en", key = "hello", lang = "zh", expErr = "", expected = "Hello" },
-                new GetTextTrial { subject = "prefer requested language over fallback", setupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } }, { "zh", new Dictionary<string, string> { { "hello", "你好" } } } }, fallback = "en", key = "hello", lang = "zh", expErr = "", expected = "你好" },
-                new GetTextTrial { subject = "key not found in any language", setupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } } }, fallback = "en", key = "goodbye", lang = "en", expErr = "not found", expected = "" },
-                new GetTextTrial { subject = "key not found in requested or fallback language", setupTexts = new Dictionary<string, Dictionary<string, string>> { { "ja", new Dictionary<string, string> { { "hello", "こんにちは" } } } }, fallback = "en", key = "hello", lang = "zh", expErr = "not found", expected = "" },
-                new GetTextTrial { subject = "empty texts", setupTexts = new Dictionary<string, Dictionary<string, string>>(), fallback = "en", key = "hello", lang = "en", expErr = "not found", expected = "" },
-                new GetTextTrial { subject = "empty key", setupTexts = new Dictionary<string, Dictionary<string, string>>(), fallback = "en", key = "", lang = "zh", expErr = "not found", expected = "" },
-                new GetTextTrial { subject = "key exists in fallback but not requested language", setupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "welcome", "Welcome" } } }, { "es", new Dictionary<string, string> { { "hello", "Hola" } } } }, fallback = "en", key = "welcome", lang = "es", expErr = "", expected = "Welcome" },
+                new() { Subject = "get existing text in requested language", SetupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } } }, Fallback = "en", Key = "hello", Lang = "en", ExpErr = "", Expected = "Hello" },
+                new() { Subject = "fallback to default language", SetupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } } }, Fallback = "en", Key = "hello", Lang = "zh", ExpErr = "", Expected = "Hello" },
+                new() { Subject = "prefer requested language over fallback", SetupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } }, { "zh", new Dictionary<string, string> { { "hello", "你好" } } } }, Fallback = "en", Key = "hello", Lang = "zh", ExpErr = "", Expected = "你好" },
+                new() { Subject = "key not found in any language", SetupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "hello", "Hello" } } } }, Fallback = "en", Key = "goodbye", Lang = "en", ExpErr = "not found", Expected = "" },
+                new() { Subject = "key not found in requested or fallback language", SetupTexts = new Dictionary<string, Dictionary<string, string>> { { "ja", new Dictionary<string, string> { { "hello", "こんにちは" } } } }, Fallback = "en", Key = "hello", Lang = "zh", ExpErr = "not found", Expected = "" },
+                new() { Subject = "empty texts", SetupTexts = new Dictionary<string, Dictionary<string, string>>(), Fallback = "en", Key = "hello", Lang = "en", ExpErr = "not found", Expected = "" },
+                new() { Subject = "empty key", SetupTexts = new Dictionary<string, Dictionary<string, string>>(), Fallback = "en", Key = "", Lang = "zh", ExpErr = "not found", Expected = "" },
+                new() { Subject = "key exists in fallback but not requested language", SetupTexts = new Dictionary<string, Dictionary<string, string>> { { "en", new Dictionary<string, string> { { "welcome", "Welcome" } } }, { "es", new Dictionary<string, string> { { "hello", "Hola" } } } }, Fallback = "en", Key = "welcome", Lang = "es", ExpErr = "", Expected = "Welcome" },
             };
 
             foreach (var tt in dataset)
             {
-                var i18n = new I18n(tt.fallback);
-                foreach (var kvp in tt.setupTexts)
+                var i18n = new I18n(tt.Fallback);
+                foreach (var kvp in tt.SetupTexts)
                 {
                     i18n.MergeTexts(kvp.Value, kvp.Key);
                 }
 
-                var success = i18n.GetText(tt.key, tt.lang, out var r);
-                if (!string.IsNullOrEmpty(tt.expErr))
+                var success = i18n.GetText(tt.Key, tt.Lang, out var r);
+                if (!string.IsNullOrEmpty(tt.ExpErr))
                 {
                     Assert.False(success);
                 }
                 else
                 {
                     Assert.True(success);
-                    Assert.Equal(tt.expected, r);
+                    Assert.Equal(tt.Expected, r);
                 }
             }
         }

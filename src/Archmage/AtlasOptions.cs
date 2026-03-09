@@ -10,18 +10,14 @@ namespace Shadop.Archmage
     /// </summary>
     /// <remarks>
     /// To load configurations from non-conventional file systems (e.g., in-memory,
-    /// embedded resources, or virtual file systems), combine
-    /// <see cref="AtlasOptionExtensions.WithReadFile"/>,
-    /// <see cref="AtlasOptionExtensions.WithFileExists"/>, and
-    /// <see cref="AtlasOptionExtensions.WithDirectoryExists"/>
+    /// embedded resources, or virtual file systems), use
+    /// <see cref="AtlasOptionExtensions.WithFS"/>
     /// to redirect all I/O operations to your custom provider.
     /// </remarks>
     public class AtlasOptions
     {
         internal IAtlasLogger Logger { get; set; } = new DefaultLogger();
-        internal Func<string, byte[]> ReadFile { get; set; } = File.ReadAllBytes;
-        internal Func<string, bool> FileExists { get; set; } = File.Exists;
-        internal Func<string, bool> DirectoryExists { get; set; } = Directory.Exists;
+        internal IFS FS { get; set; } = new DefaultFS();
         internal List<OverrideConfig> OverrideConfigs { get; set; } = new();
         internal Action<AtlasJson>? AtlasModifier { get; set; }
         internal List<string>? Whitelist { get; set; }
@@ -31,16 +27,24 @@ namespace Shadop.Archmage
     }
 
     /// <summary>
-    /// Represents an override configuration directory.
+    /// Represents an override configuration directory or filesystem.
     /// </summary>
-    struct OverrideConfig
+    readonly struct OverrideConfig
     {
         public OverrideConfig(string rootPath)
         {
             RootPath = rootPath;
+            FS = null;
         }
 
-        public string RootPath { get; }
+        public OverrideConfig(IFS fs)
+        {
+            RootPath = null;
+            FS = fs;
+        }
+
+        public string? RootPath { get; }
+        public IFS? FS { get; }
     }
 
     /// <summary>
