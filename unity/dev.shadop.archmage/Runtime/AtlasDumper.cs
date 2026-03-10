@@ -1,0 +1,77 @@
+using System;
+using System.IO;
+using System.Text;
+using Newtonsoft.Json;
+
+namespace Shadop.Archmage
+{
+    /// <summary>
+    /// Provides utility functions.
+    /// </summary>
+    public static partial class Archmage
+    {
+        /// <summary>
+        /// Exports Atlas items to {key}.json files (only Ready items; pretty-printed).
+        /// </summary>
+        /// <remarks>
+        /// Useful for debugging, testing (golden files), and human-readable export.
+        /// Output uses custom converters for Duration/Ref types.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">Thrown if atlas or outputDir is null.</exception>
+        /// <exception cref="ArgumentException">Thrown if outputDir is empty or whitespace.</exception>
+        public static void DumpAtlas(IAtlas atlas, string outputDir, JsonSerializerSettings? settings = null)
+        {
+            if (atlas == null)
+                throw new ArgumentNullException(nameof(atlas));
+            if (string.IsNullOrWhiteSpace(outputDir))
+                throw new ArgumentException("Output directory cannot be empty.", nameof(outputDir));
+
+            // Setup default settings with custom converters
+            settings ??= GetJsonSerializerSettings();
+            var items = atlas.AtlasItems();
+
+            foreach (var kvp in items)
+            {
+                var key = kvp.Key;
+                var item = kvp.Value;
+
+                // Skip items that are not ready or have no configuration
+                if (!item.Ready || item.Cfg == null)
+                    continue;
+
+                // Serialize item to JSON with LF line endings
+                var sb = new System.Text.StringBuilder();
+                using var sw = new System.IO.StringWriter(sb) { NewLine = "\n" };
+                using var jw = new JsonTextWriter(sw) { IndentChar = ' ', Indentation = 2 };
+                JsonSerializer.Create(settings).Serialize(jw, item.Cfg);
+                var json = sb.ToString();
+
+                // Write to file
+                var filePath = Path.Combine(outputDir, key + ".json");
+                var dir = Path.GetDirectoryName(filePath);
+                if (dir != null)
+                    Directory.CreateDirectory(dir);
+                File.WriteAllText(filePath, json + "\n", new UTF8Encoding(false));
+            }
+        }
+
+        /// <summary>
+        /// Creates JSON settings for Atlas export (indented, include nulls/defaults, custom converters).
+        /// </summary>
+        static JsonSerializerSettings GetJsonSerializerSettings()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Include,
+                DefaultValueHandling = DefaultValueHandling.Include
+            };
+
+            // Register custom converters for proper serialization
+            settings.Converters.Add(new DurationJsonConverter());
+            settings.Converters.Add(new RefJsonConverter());
+
+            return settings;
+        }
+    }
+}

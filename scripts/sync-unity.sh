@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SRC_DIR="$ROOT_DIR/src/Archmage"
-DST_DIR="$ROOT_DIR/unity/Runtime"
+DST_DIR="$ROOT_DIR/unity/dev.shadop.archmage/Runtime"
 
 added=0
 updated=0
@@ -13,7 +13,7 @@ removed=0
 
 mkdir -p "$DST_DIR"
 
-# Sync .cs files from src to unity/Runtime
+# Sync .cs files from src to unity/dev.shadop.archmage/Runtime
 for src_file in "$SRC_DIR"/*.cs; do
     filename="$(basename "$src_file")"
     dst_file="$DST_DIR/$filename"
@@ -29,7 +29,7 @@ for src_file in "$SRC_DIR"/*.cs; do
     fi
 done
 
-# Remove .cs files in unity/Runtime that no longer exist in src
+# Remove .cs files in unity/dev.shadop.archmage/Runtime that no longer exist in src
 for dst_file in "$DST_DIR"/*.cs; do
     [[ -f "$dst_file" ]] || continue
     filename="$(basename "$dst_file")"
@@ -43,3 +43,6 @@ done
 
 echo ""
 echo "Sync complete: $added added, $updated updated, $removed removed"
+
+echo ""
+"$SCRIPT_DIR/check-unity-meta.sh"
