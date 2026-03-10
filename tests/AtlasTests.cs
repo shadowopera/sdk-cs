@@ -385,7 +385,7 @@ namespace Shadop.Archmage.Tests
                 .WithCustomAsyncLoader(customAsyncLoader);
 
             var atlas = new ConfigAtlas();
-            await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, cancellationToken: TestContext.Current.CancellationToken);
             CheckUpdateGolden(atlas, "../../../golden/custom_loader");
         }
 
@@ -395,7 +395,7 @@ namespace Shadop.Archmage.Tests
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithCustomAsyncLoader((all, load, ct) => Task.CompletedTask);
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.Equal("<archmage> Cannot use CustomAsyncLoader with synchronous LoadAtlas", err.Message);
+            Assert.Equal("<archmage> Cannot use WithCustomAsyncLoader with synchronous LoadAtlas", err.Message);
         }
 
         [Fact]
@@ -403,8 +403,8 @@ namespace Shadop.Archmage.Tests
         {
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithCustomLoader((all, load) => { });
-            var err = await Assert.ThrowsAsync<ArchmageException>(async () => await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.Equal("<archmage> Cannot use CustomLoader with asynchronous LoadAtlasAsync", err.Message);
+            var err = await Assert.ThrowsAsync<ArchmageException>(async () => await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, cancellationToken: TestContext.Current.CancellationToken));
+            Assert.Equal("<archmage> Cannot use WithCustomLoader with asynchronous LoadAtlasAsync", err.Message);
         }
 
         [Fact]
