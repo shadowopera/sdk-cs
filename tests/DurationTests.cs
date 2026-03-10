@@ -63,5 +63,74 @@ namespace Shadop.Archmage.Tests
                 }
             }
         }
+
+        [Fact]
+        public void TestDurationMathAndProperties()
+        {
+            var d1 = Duration.Second * 2; // 2 seconds
+            var d2 = Duration.Millisecond * 500; // 500 ms
+
+            // Arithmetic
+            Assert.Equal(new Duration(2_500_000_000), d1 + d2);
+            Assert.Equal(new Duration(1_500_000_000), d1 - d2);
+            Assert.Equal(new Duration(-2_000_000_000), -d1);
+            Assert.Equal(new Duration(4_000_000_000), d1 * 2);
+            Assert.Equal(new Duration(4_000_000_000), 2 * d1);
+            Assert.Equal(new Duration(1_000_000_000), d1 / 2L);
+            Assert.Equal(4, d1 / d2);
+            Assert.Equal(Duration.Zero, d1 % d2);
+            Assert.Equal(new Duration(500_000_000), d1 % new Duration(1_500_000_000));
+
+            // Comparisons
+            Assert.True(d1 > d2);
+            Assert.True(d1 >= d2);
+            Assert.True(d2 < d1);
+            Assert.True(d2 <= d1);
+            Assert.True(d1 != d2);
+            Assert.True(d1 == new Duration(2_000_000_000));
+            Assert.Equal(1, d1.CompareTo(d2));
+            Assert.Equal(-1, d2.CompareTo(d1));
+            Assert.Equal(0, d1.CompareTo(new Duration(2_000_000_000)));
+
+            // Properties & Conversions
+            Assert.Equal(2_000_000_000, d1.Nanoseconds());
+            Assert.Equal(2_000_000, d1.Microseconds());
+            Assert.Equal(2000, d1.Milliseconds());
+            Assert.Equal(2.0, d1.Seconds());
+            Assert.Equal(2.0 / 60.0, d1.Minutes());
+            Assert.Equal(2.0 / 3600.0, d1.Hours());
+
+            var ts = d1.ToTimeSpan();
+            Assert.Equal(TimeSpan.FromSeconds(2), ts);
+            Assert.Equal(d1, Duration.FromTimeSpan(ts));
+
+            Assert.Equal(new Duration(2_000_000_000), new Duration(-2_000_000_000).Abs());
+
+            // Truncate & Round
+            var d3 = new Duration(2_400_000_000); // 2.4s
+            Assert.Equal(new Duration(2_000_000_000), d3.Truncate(Duration.Second));
+            Assert.Equal(new Duration(2_000_000_000), d3.Round(Duration.Second));
+            
+            var d4 = new Duration(2_600_000_000); // 2.6s
+            Assert.Equal(new Duration(2_000_000_000), d4.Truncate(Duration.Second));
+            Assert.Equal(new Duration(3_000_000_000), d4.Round(Duration.Second));
+        }
+
+        [Fact]
+        public void TestDurationToString()
+        {
+            Assert.Equal("0s", Duration.Zero.ToString());
+            Assert.Equal("1ns", Duration.Nanosecond.ToString());
+            Assert.Equal("1us", Duration.Microsecond.ToString());
+            Assert.Equal("1ms", Duration.Millisecond.ToString());
+            Assert.Equal("1s", Duration.Second.ToString());
+            Assert.Equal("1m", Duration.Minute.ToString());
+            Assert.Equal("1h", Duration.Hour.ToString());
+
+            Assert.Equal("1h30m5s", (Duration.Hour + Duration.Minute * 30 + Duration.Second * 5).ToString());
+            Assert.Equal("-1h30m5s", (-(Duration.Hour + Duration.Minute * 30 + Duration.Second * 5)).ToString());
+            Assert.Equal("500ms", (Duration.Millisecond * 500).ToString());
+            Assert.Equal("1s200ms", (Duration.Second + Duration.Millisecond * 200).ToString());
+        }
     }
 }

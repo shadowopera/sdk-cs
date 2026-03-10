@@ -292,6 +292,30 @@ namespace Shadop.Archmage.Tests
             Assert.StartsWith("<archmage> invalid override root directory \"override/9\"", err.Message);
         }
 
+
+        [Fact]
+        public void TestAtlas_WithFS()
+        {
+            var fsys = new Dictionary<string, byte[]>
+            {
+                { "testdata/atlas.json", System.Text.Encoding.UTF8.GetBytes("{\"version\":{\"branch\":\"test-branch\",\"id\":\"123456\"},\"single\":{\"game\":{\"/\":\"game.json\"}},\"multiple\":{},\"unique\":{}}") },
+                { "testdata/game.json", System.Text.Encoding.UTF8.GetBytes("{\"x-string\":\"hello memory fs\"}") }
+            };
+
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithFS(new MemoryFS(fsys))
+                .WithWhitelist(new[] { "game" });
+
+            var atlas = new ConfigAtlas();
+            Archmage.LoadAtlas("testdata/atlas.json", "testdata", atlas, opts);
+            
+            Assert.Equal("hello memory fs", atlas.GameCfg.XString);
+            Assert.Equal("test-branch", atlas.DataVersion!.Branch);
+            Assert.Equal("123456", atlas.DataVersion!.ID);
+        }
+
         [Fact]
         public void TestAtlas_WithOverrideFS()
         {
@@ -331,8 +355,18 @@ namespace Shadop.Archmage.Tests
                 .WithOverrideFS(new MemoryFS(fsys));
 
             var atlas = new ConfigAtlas();
-            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            var events = new List<AtlasLoadEvent>();
+            var progress = new Progress<AtlasLoadEvent>(events.Add);
+
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
             CheckUpdateGolden(atlas, "../../../golden/override_root_and_fs");
+
+            // Verify events
+            Assert.NotEmpty(events);
+            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartReading);
+            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartParsing);
+            Assert.Contains(events, e => e.Stage == AtlasLoadStage.ApplyingOverride);
+            Assert.Contains(events, e => e.Stage == AtlasLoadStage.Completed);
         }
 
         [Fact]
@@ -385,8 +419,17 @@ namespace Shadop.Archmage.Tests
                 .WithCustomAsyncLoader(customAsyncLoader);
 
             var atlas = new ConfigAtlas();
-            await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, cancellationToken: TestContext.Current.CancellationToken);
+            var events = new List<AtlasLoadEvent>();
+            var progress = new Progress<AtlasLoadEvent>(events.Add);
+
+            await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress, cancellationToken: TestContext.Current.CancellationToken);
             CheckUpdateGolden(atlas, "../../../golden/custom_loader");
+
+            // Verify events
+            Assert.NotEmpty(events);
+            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartReading);
+            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartParsing);
+            Assert.Contains(events, e => e.Stage == AtlasLoadStage.Completed);
         }
 
         [Fact]

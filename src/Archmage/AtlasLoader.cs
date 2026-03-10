@@ -35,17 +35,19 @@ namespace Shadop.Archmage
         /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
         /// <param name="atlas">The Atlas implementation to populate with loaded items.</param>
         /// <param name="options">Optional loading configuration. If null, default options are used.</param>
+        /// <param name="progress">Optional callback for receiving progress reports.</param>
         /// <exception cref="ArchmageException">Thrown if loading fails at any stage.</exception>
         public static void LoadAtlas(
             string atlasFile,
             string cfgRoot,
             IAtlas atlas,
-            AtlasOptions? options = null)
+            AtlasOptions? options = null,
+            IProgress<AtlasLoadEvent>? progress = null)
         {
             options ??= new AtlasOptions();
             if (options.CustomAsyncLoader != null)
                 throw new ArchmageException("Cannot use WithCustomAsyncLoader with synchronous LoadAtlas");
-            LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false).GetAwaiter().GetResult();
+            LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, progress).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -363,7 +365,7 @@ namespace Shadop.Archmage
         };
 
         /// <summary>
-        /// Merges a JSON value into an existing object using the following rules:
+        /// Merges JSON values into an existing object using the following rules:
         /// <list type="bullet">
         ///   <item><c>null</c> → resets the target field to its default value or raise an error</item>
         ///   <item>JSON object → recursively merges: only fields present in the input are updated, others remain unchanged</item>
