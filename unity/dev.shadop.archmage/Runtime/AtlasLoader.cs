@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -46,7 +48,7 @@ namespace Shadop.Archmage
         {
             options ??= new AtlasOptions();
             if (options.CustomAsyncLoader != null)
-                throw new ArchmageException("Cannot use WithCustomAsyncLoader with synchronous LoadAtlas");
+                throw new ArchmageException("Cannot use WithCustomAsyncLoader with synchronous LoadAtlas.");
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, progress).GetAwaiter().GetResult();
         }
 
@@ -77,7 +79,7 @@ namespace Shadop.Archmage
         {
             options ??= new AtlasOptions();
             if (options.CustomLoader != null)
-                throw new ArchmageException("Cannot use WithCustomLoader with asynchronous LoadAtlasAsync");
+                throw new ArchmageException("Cannot use WithCustomLoader with asynchronous LoadAtlasAsync.");
             await LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, progress, cancellationToken);
         }
 
@@ -102,7 +104,7 @@ namespace Shadop.Archmage
                 if (overrideConfig.FS == null)
                 {
                     if (!options.FS.DirectoryExists(overrideConfig.RootPath!))
-                        throw new ArchmageException($"invalid override root directory \"{overrideConfig.RootPath}\"");
+                        throw new ArchmageException($"Invalid override root directory \"{overrideConfig.RootPath}\".");
                 }
             }
 
@@ -117,12 +119,12 @@ namespace Shadop.Archmage
             }
             catch (JsonException ex)
             {
-                throw new ArchmageException($"invalid \"{atlasFile}\"", ex);
+                throw new ArchmageException($"Invalid \"{atlasFile}\".", ex);
             }
 
             if (atlasJson == null)
             {
-                throw new ArchmageException($"invalid \"{atlasFile}\"");
+                throw new ArchmageException($"Invalid \"{atlasFile}\".");
             }
 
             // Apply modifier
@@ -140,7 +142,7 @@ namespace Shadop.Archmage
                 foreach (var v in options.Whitelist)
                 {
                     if (!items.ContainsKey(v))
-                        throw new ArchmageException($"atlas whitelist: unknown item \"{v}\"");
+                        throw new ArchmageException($"Atlas whitelist: unknown item \"{v}\".");
                 }
             }
             if (options.Blacklist != null)
@@ -148,7 +150,7 @@ namespace Shadop.Archmage
                 foreach (var v in options.Blacklist)
                 {
                     if (!items.ContainsKey(v))
-                        throw new ArchmageException($"atlas blacklist: unknown item \"{v}\"");
+                        throw new ArchmageException($"Atlas blacklist: unknown item \"{v}\".");
                 }
             }
 
@@ -261,8 +263,6 @@ namespace Shadop.Archmage
             IProgress<AtlasLoadEvent>? progress,
             Func<IFS, string, Task<byte[]>> readFile)
         {
-            var stopwatch = Stopwatch.StartNew();
-
             item.Key = key;
 
             // Resolve files based on mapping type
@@ -284,20 +284,21 @@ namespace Shadop.Archmage
                     keyPath = $"$.multiple['{key}']";
                     break;
                 default:
-                    throw new ArchmageException($"unsupported mapping: {item.Mapping}");
+                    throw new ArchmageException($"Unsupported mapping: {item.Mapping}.");
             }
 
             if (files.Count == 0)
             {
-                throw new ArchmageException($"cannot find {keyPath} in {atlasFile}");
+                throw new ArchmageException($"Cannot find {keyPath} in {atlasFile}.");
             }
-
-            // Report: StartReading
-            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReading, elapsed: stopwatch.Elapsed));
 
             var overrideFiles = new List<string>();
             var overrides = new List<byte[]>();
             var paths = new StringBuilder();
+            var stopwatch = Stopwatch.StartNew();
+
+            // Report: StartProcessing
+            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartProcessing, elapsed: stopwatch.Elapsed));
 
             // Load each file and collect overrides
             for (var i = 0; i < files.Count; i++)
@@ -305,10 +306,14 @@ namespace Shadop.Archmage
                 var f = files[i];
                 var filePath = Path.Combine(cfgRoot, f);
 
+                // Report: StartReading
+                progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReading, filePath, stopwatch.Elapsed));
+
+                var fileData = await readFile(options.FS, filePath).ConfigureAwait(false);
+
                 // Report: StartParsing
                 progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartParsing, filePath, stopwatch.Elapsed));
 
-                var fileData = await readFile(options.FS, filePath).ConfigureAwait(false);
                 var json = Encoding.UTF8.GetString(fileData);
                 MergeJson(item.Cfg!, json, options.JsonSettings);
 
@@ -319,6 +324,9 @@ namespace Shadop.Archmage
                     {
                         if (overrideCfg.FS.FileExists(f))
                         {
+                            // Report: StartReadingOverride
+                            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, f, stopwatch.Elapsed));
+
                             overrideFiles.Add(f);
                             overrides.Add(await readFile(overrideCfg.FS, f).ConfigureAwait(false));
                         }
@@ -328,6 +336,9 @@ namespace Shadop.Archmage
                         var ovrPath = Path.Combine(overrideCfg.RootPath!, f);
                         if (options.FS.FileExists(ovrPath))
                         {
+                            // Report: StartReadingOverride
+                            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, ovrPath, stopwatch.Elapsed));
+
                             overrideFiles.Add(ovrPath);
                             overrides.Add(await readFile(options.FS, ovrPath).ConfigureAwait(false));
                         }
@@ -341,6 +352,7 @@ namespace Shadop.Archmage
             // Apply all overrides
             for (var i = 0; i < overrides.Count; i++)
             {
+                // Report: ApplyingOverride
                 progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.ApplyingOverride, overrideFiles[i], stopwatch.Elapsed));
 
                 var overrideJson = Encoding.UTF8.GetString(overrides[i]);
@@ -350,17 +362,19 @@ namespace Shadop.Archmage
                 }
                 catch (JsonException ex)
                 {
-                    throw new ArchmageException($"applying override {overrideFiles[i]} failed", ex);
+                    throw new ArchmageException($"Failed to apply override {overrideFiles[i]}.", ex);
                 }
             }
+
+            // Report: Completed
+            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.Completed, elapsed: stopwatch.Elapsed));
+            stopwatch.Stop();
 
             // Call ApplyKeys if implemented
             if (item.Cfg is IApplyKeys applyKeys)
             {
                 applyKeys.ApplyKeys();
             }
-
-            stopwatch.Stop();
 
             // Build log supplement
             var supplement = overrides.Count switch
@@ -369,9 +383,6 @@ namespace Shadop.Archmage
                 1 => " with 1 override",
                 _ => $" with {overrides.Count} overrides"
             };
-
-            // Report: Completed
-            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.Completed, elapsed: stopwatch.Elapsed));
 
             options.Logger.Info($"<archmage> loaded ({item.Mapping}) {paths}{supplement} ({stopwatch.ElapsedMilliseconds}ms)");
             item.Ready = true;

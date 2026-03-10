@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace Shadop.Archmage
 {
     /// <summary>

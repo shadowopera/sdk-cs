@@ -1,3 +1,5 @@
+#nullable enable
+
 // <summary>
 // Provides a system for loading and managing game configurations from JSON files
 // with support for internationalization, cross-table references, and layered overrides.

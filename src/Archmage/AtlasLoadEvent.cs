@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace Shadop.Archmage
@@ -12,17 +14,27 @@ namespace Shadop.Archmage
     public enum AtlasLoadStage
     {
         /// <summary>
-        /// The loading process is about to read configuration file(s) from the filesystem.
+        /// The loading process is about to process configuration file(s) for the item.
+        /// </summary>
+        StartProcessing,
+
+        /// <summary>
+        /// The loading process is about to read the base configuration file from the filesystem.
         /// </summary>
         StartReading,
 
         /// <summary>
-        /// File content has been read and is about to be parsed as JSON.
+        /// The base configuration file content has been read and is about to be parsed as JSON.
         /// </summary>
         StartParsing,
 
         /// <summary>
-        /// An override file has been loaded and is being merged into the configuration.
+        /// An override file has been found and is about to be read from the filesystem.
+        /// </summary>
+        StartReadingOverride,
+
+        /// <summary>
+        /// An override file has been read and is being parsed and merged into the configuration.
         /// </summary>
         ApplyingOverride,
 
@@ -56,7 +68,7 @@ namespace Shadop.Archmage
         public AtlasLoadStage Stage { get; }
 
         /// <summary>
-        /// Set during StartReading, StartParsing, ApplyingOverride; null for Completed.
+        /// Set during StartReading, StartParsing, StartReadingOverride, and ApplyingOverride; null for StartProcessing and Completed.
         /// </summary>
         public string? FilePath { get; }
 

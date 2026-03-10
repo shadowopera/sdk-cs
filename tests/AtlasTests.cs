@@ -56,28 +56,14 @@ namespace Shadop.Archmage.Tests
         public Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
         {
             var key = path.Replace('\\', '/');
-            if (_fsys.TryGetValue(key, out var data)) return Task.FromResult(data);
-            throw new FileNotFoundException(path);
-        }
-    }
+            if (!_fsys.TryGetValue(key, out var data)) throw new FileNotFoundException(path);
+            return FunctionInside();
 
-    class L10nJsonConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType) => objectType == typeof(L10n);
-
-        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.String)
-                return new L10n((string)reader.Value!);
-            if (reader.TokenType == JsonToken.Null)
-                return new L10n(string.Empty);
-            throw new JsonSerializationException($"Expected string for L10n, got {reader.TokenType}");
-        }
-
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-        {
-            var l10n = (L10n)value!;
-            writer.WriteValue(l10n.ToString());
+            async Task<byte[]> FunctionInside()
+            {
+                await Task.Yield();
+                return data;
+            }
         }
     }
 
@@ -91,19 +77,12 @@ namespace Shadop.Archmage.Tests
 
         static JsonSerializerSettings DefaultJsonSettings()
         {
-            var settings = new JsonSerializerSettings
+            return new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Include,
                 DefaultValueHandling = DefaultValueHandling.Include
             };
-            settings.Converters.Add(new DurationJsonConverter());
-            settings.Converters.Add(new XRefJsonConverter());
-            settings.Converters.Add(new Vec2JsonConverter());
-            settings.Converters.Add(new Vec3JsonConverter());
-            settings.Converters.Add(new Vec4JsonConverter());
-            settings.Converters.Add(new L10nJsonConverter());
-            return settings;
         }
 
         static AtlasOptions DefaultOpts()
@@ -235,7 +214,7 @@ namespace Shadop.Archmage.Tests
 
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> atlas whitelist: unknown item \"prop_float\"", err.Message);
+            Assert.StartsWith("<archmage> Atlas whitelist: unknown item \"prop_float\"", err.Message);
         }
 
         [Fact]
@@ -261,7 +240,7 @@ namespace Shadop.Archmage.Tests
 
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> atlas blacklist: unknown item \"gm\"", err.Message);
+            Assert.StartsWith("<archmage> Atlas blacklist: unknown item \"gm\".", err.Message);
         }
 
         [Fact]
@@ -289,7 +268,7 @@ namespace Shadop.Archmage.Tests
 
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> invalid override root directory \"override/9\"", err.Message);
+            Assert.StartsWith("<archmage> Invalid override root directory \"override/9\"", err.Message);
         }
 
 
@@ -355,18 +334,21 @@ namespace Shadop.Archmage.Tests
                 .WithOverrideFS(new MemoryFS(fsys));
 
             var atlas = new ConfigAtlas();
-            var events = new List<AtlasLoadEvent>();
+            var events = new System.Collections.Concurrent.ConcurrentBag<AtlasLoadEvent>();
             var progress = new Progress<AtlasLoadEvent>(events.Add);
 
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
             CheckUpdateGolden(atlas, "../../../golden/override_root_and_fs");
 
-            // Verify events
-            Assert.NotEmpty(events);
-            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartReading);
-            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartParsing);
-            Assert.Contains(events, e => e.Stage == AtlasLoadStage.ApplyingOverride);
-            Assert.Contains(events, e => e.Stage == AtlasLoadStage.Completed);
+            // Verify events for a specific key to avoid brittle global counts
+            var vtItemXEvents = events.Where(e => e.Key == "vtItemX").ToList();
+            Assert.NotEmpty(vtItemXEvents);
+            Assert.Equal(1, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartProcessing));
+            Assert.Equal(5, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartReading));
+            Assert.Equal(5, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartParsing));
+            Assert.Equal(3, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartReadingOverride));
+            Assert.Equal(3, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.ApplyingOverride));
+            Assert.Equal(1, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.Completed));
         }
 
         [Fact]
@@ -419,17 +401,21 @@ namespace Shadop.Archmage.Tests
                 .WithCustomAsyncLoader(customAsyncLoader);
 
             var atlas = new ConfigAtlas();
-            var events = new List<AtlasLoadEvent>();
+            var events = new System.Collections.Concurrent.ConcurrentBag<AtlasLoadEvent>();
             var progress = new Progress<AtlasLoadEvent>(events.Add);
 
             await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress, cancellationToken: TestContext.Current.CancellationToken);
             CheckUpdateGolden(atlas, "../../../golden/custom_loader");
 
-            // Verify events
-            Assert.NotEmpty(events);
-            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartReading);
-            Assert.Contains(events, e => e.Stage == AtlasLoadStage.StartParsing);
-            Assert.Contains(events, e => e.Stage == AtlasLoadStage.Completed);
+            // Verify events for a specific key to avoid brittle global counts
+            var vtSkillEvents = events.Where(e => e.Key == "vtSkill").ToList();
+            Assert.NotEmpty(vtSkillEvents);
+            Assert.Equal(1, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartProcessing));
+            Assert.Equal(2, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartReading));
+            Assert.Equal(2, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartParsing));
+            Assert.Equal(0, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartReadingOverride));
+            Assert.Equal(0, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.ApplyingOverride));
+            Assert.Equal(1, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.Completed));
         }
 
         [Fact]
@@ -438,7 +424,7 @@ namespace Shadop.Archmage.Tests
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithCustomAsyncLoader((all, load, ct) => Task.CompletedTask);
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.Equal("<archmage> Cannot use WithCustomAsyncLoader with synchronous LoadAtlas", err.Message);
+            Assert.Equal("<archmage> Cannot use WithCustomAsyncLoader with synchronous LoadAtlas.", err.Message);
         }
 
         [Fact]
@@ -447,7 +433,7 @@ namespace Shadop.Archmage.Tests
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithCustomLoader((all, load) => { });
             var err = await Assert.ThrowsAsync<ArchmageException>(async () => await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, cancellationToken: TestContext.Current.CancellationToken));
-            Assert.Equal("<archmage> Cannot use WithCustomLoader with asynchronous LoadAtlasAsync", err.Message);
+            Assert.Equal("<archmage> Cannot use WithCustomLoader with asynchronous LoadAtlasAsync.", err.Message);
         }
 
         [Fact]
@@ -458,14 +444,14 @@ namespace Shadop.Archmage.Tests
             var opts = DefaultOpts().WithLogger(logger);
 
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.Equal("<archmage> cannot find $.single['prop_floats']['/'] in ../../../testdata/atlas.json", err.Message);
+            Assert.Equal("<archmage> Cannot find $.single['prop_floats']['/'] in ../../../testdata/atlas.json.", err.Message);
         }
 
         [Fact]
         public void TestAtlas_AtlasFileNotFound()
         {
             var atlas = new ConfigAtlas();
-            Assert.Throws<DirectoryNotFoundException>(() => Archmage.LoadAtlas("testdata/nonexistent_atlas.json", "testdata", atlas));
+            Assert.Throws<FileNotFoundException>(() => Archmage.LoadAtlas("../../../testdata/nonexistent_atlas.json", "../../../testdata", atlas));
         }
 
         [Fact]
@@ -473,7 +459,7 @@ namespace Shadop.Archmage.Tests
         {
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas_invalid.json", "../../../testdata", atlas));
-            Assert.StartsWith("<archmage> invalid \"../../../testdata/atlas_invalid.json\"", err.Message);
+            Assert.StartsWith("<archmage> Invalid \"../../../testdata/atlas_invalid.json\"", err.Message);
         }
 
         [Fact]
@@ -481,11 +467,11 @@ namespace Shadop.Archmage.Tests
         {
             Action<AtlasJson> atlasModifier = (atlasJson) =>
             {
-                atlasJson.Unique["Item"] = "nonexistent/item.json";
+                atlasJson.Unique["Item"] = "clutter/nonexistent_item.json";
             };
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithAtlasModifier(atlasModifier);
-            Assert.Throws<DirectoryNotFoundException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
+            Assert.Throws<FileNotFoundException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
         }
 
         [Fact]

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.IO;
 using System.Text;
@@ -39,20 +41,32 @@ namespace Shadop.Archmage
                 if (!item.Ready || item.Cfg == null)
                     continue;
 
-                // Serialize item to JSON with LF line endings
-                var sb = new System.Text.StringBuilder();
-                using var sw = new System.IO.StringWriter(sb) { NewLine = "\n" };
-                using var jw = new JsonTextWriter(sw) { IndentChar = ' ', Indentation = 2 };
-                JsonSerializer.Create(settings).Serialize(jw, item.Cfg);
-                var json = sb.ToString();
-
-                // Write to file
-                var filePath = Path.Combine(outputDir, key + ".json");
-                var dir = Path.GetDirectoryName(filePath);
-                if (dir != null)
-                    Directory.CreateDirectory(dir);
-                File.WriteAllText(filePath, json + "\n", new UTF8Encoding(false));
+                try
+                {
+                    DumpAtlasItem(key, item, outputDir, settings);
+                }
+                catch (Exception ex)
+                {
+                    throw new ArchmageException($"Failed to dump atlas item \"{key}\".", ex);
+                }
             }
+        }
+
+        static void DumpAtlasItem(string key, AtlasItem item, string outputDir, JsonSerializerSettings? settings)
+        {
+            // Serialize item to JSON with LF line endings
+            var sb = new System.Text.StringBuilder();
+            using var sw = new System.IO.StringWriter(sb) { NewLine = "\n" };
+            using var jw = new JsonTextWriter(sw) { IndentChar = ' ', Indentation = 2 };
+            JsonSerializer.Create(settings).Serialize(jw, item.Cfg);
+            var json = sb.ToString();
+
+            // Write to file
+            var filePath = Path.Combine(outputDir, key + ".json");
+            var dir = Path.GetDirectoryName(filePath);
+            if (dir != null)
+                Directory.CreateDirectory(dir);
+            File.WriteAllText(filePath, json + "\n", new UTF8Encoding(false));
         }
 
         /// <summary>
@@ -60,18 +74,12 @@ namespace Shadop.Archmage
         /// </summary>
         static JsonSerializerSettings GetJsonSerializerSettings()
         {
-            var settings = new JsonSerializerSettings
+            return new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Include,
                 DefaultValueHandling = DefaultValueHandling.Include
             };
-
-            // Register custom converters for proper serialization
-            settings.Converters.Add(new DurationJsonConverter());
-            settings.Converters.Add(new XRefJsonConverter());
-
-            return settings;
         }
     }
 }

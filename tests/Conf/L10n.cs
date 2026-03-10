@@ -2,12 +2,15 @@
 
 using System;
 using Shadop.Archmage;
+using Newtonsoft.Json;
 
 namespace Conf
 {
+    [JsonConverter(typeof(L10nJsonConverter))]
     public readonly struct L10n
     {
         public static Func<I18n>? GetI18n = null;
+        public static L10n Empty = new(string.Empty);
 
         readonly string _key;
 
@@ -17,5 +20,25 @@ namespace Conf
         public string Text(string lang) => GetI18n!().Text(_key, lang);
 
         public override string ToString() => _key;
+    }
+
+    public class L10nJsonConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType) => objectType == typeof(L10n);
+
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.String)
+                return new L10n((string)reader.Value!);
+            if (reader.TokenType == JsonToken.Null)
+                return L10n.Empty;
+            throw new JsonSerializationException($"Expected string for L10n, got {reader.TokenType}");
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            var l10n = (L10n)value!;
+            writer.WriteValue(l10n.ToString());
+        }
     }
 }

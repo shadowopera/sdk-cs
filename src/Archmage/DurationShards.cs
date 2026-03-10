@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace Shadop.Archmage
 {
     /// <summary>
@@ -47,7 +49,7 @@ namespace Shadop.Archmage
                 return Duration.Zero;
 
             if (shards.Length < 2)
-                throw new ArchmageException($"invalid duration shards length: {shards.Length}, expected at least 2");
+                throw new ArchmageException($"Invalid duration shards length: {shards.Length}, expected at least 2.");
 
             long type = shards[0];
             return type switch
@@ -57,14 +59,14 @@ namespace Shadop.Archmage
                 2 => new Duration(shards[1] * 1_000),         // microseconds
                 3 => new Duration(shards[1]),                 // nanoseconds
                 4 => ParseMixedShards(shards),                // mixed (seconds + nanoseconds)
-                _ => throw new ArchmageException($"invalid duration shard type: {type}")
+                _ => throw new ArchmageException($"Invalid duration shard type: {type}.")
             };
         }
 
         static Duration ParseMixedShards(long[] shards)
         {
             if (shards.Length != 3)
-                throw new ArchmageException($"mixed duration shards must have 3 elements, got {shards.Length}");
+                throw new ArchmageException($"Mixed duration shards must have 3 elements, got {shards.Length}.");
 
             long seconds = shards[1];
             long nanoseconds = shards[2];

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,16 +36,23 @@ namespace Shadop.Archmage
             _texts = new Dictionary<string, Dictionary<string, string>>();
         }
 
+        /// <summary>
+        /// Gets the fallback language code.
+        /// </summary>
         public string Fallback() => _fallbackLanguage;
 
         /// <summary>
-        /// Returns internal structure: language → (key → text). Modifications affect lookups.
+        /// Returns the internal translation structure: language → (key → text).
+        /// Modifications to the returned dictionary will affect future lookups.
         /// </summary>
         public Dictionary<string, Dictionary<string, string>> AllTexts() => _texts;
 
         /// <summary>
-        /// Merges translation key-value pairs for language (creates if doesn't exist, overwrites existing keys).
+        /// Merges translation key-value pairs for a specific language.
+        /// Creates the language entry if it doesn't exist; overwrites existing keys.
         /// </summary>
+        /// <param name="texts">Dictionary of translation key-value pairs.</param>
+        /// <param name="language">The language code to merge into.</param>
         public void MergeTexts(Dictionary<string, string> texts, string language)
         {
             if (!_texts.TryGetValue(language, out var store))
@@ -59,38 +68,47 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Parses JSON bytes (flat object) and merges for language.
+        /// Parses JSON bytes (flat object) and merges translations for the specified language.
         /// </summary>
-        /// <exception cref="ArchmageException">Thrown if JSON parsing fails.</exception>
+        /// <param name="data">UTF-8 encoded JSON bytes of a flat object.</param>
+        /// <param name="language">The language code to merge into.</param>
+        /// <exception cref="JsonException">Thrown if JSON parsing fails.</exception>
         public void MergeL10nData(byte[] data, string language)
         {
-            var texts = JsonConvert.DeserializeObject<Dictionary<string, string>>(Encoding.UTF8.GetString(data))
-                ?? throw new ArchmageException("failed to parse localization data");
-            MergeTexts(texts, language);
+            var texts = JsonConvert.DeserializeObject<Dictionary<string, string>>(Encoding.UTF8.GetString(data));
+            if (texts is not null)
+            {
+                MergeTexts(texts, language);
+            }
         }
 
         /// <summary>
-        /// Loads localization JSON file and merges for language (flat object with string keys/values).
+        /// Loads a localization JSON file and merges translations for the specified language.
         /// </summary>
-        /// <exception cref="ArchmageException">Thrown if file not found or JSON parsing fails.</exception>
+        /// <param name="filePath">Path to the JSON file (flat object with string keys/values).</param>
+        /// <param name="language">The language code to merge into.</param>
+        /// <exception cref="ArchmageException">Thrown if reading the file or parsing JSON fails.</exception>
         public void MergeL10nFile(string filePath, string language)
         {
-            byte[] data;
+            var data = File.ReadAllBytes(filePath);
             try
             {
-                data = File.ReadAllBytes(filePath);
+                MergeL10nData(data, language);
             }
             catch (Exception ex)
             {
-                throw new ArchmageException($"localization file not found: {filePath}", ex);
+                throw new ArchmageException($"Failed to merge l10n file \"{filePath}\". language: {language}", ex);
             }
-
-            MergeL10nData(data, language);
         }
 
         /// <summary>
-        /// Retrieves text with fallback (tries requested, then fallback language).
+        /// Attempts to retrieve text with fallback.
+        /// Tries the requested language first, then falls back to the default language.
         /// </summary>
+        /// <param name="key">The translation key.</param>
+        /// <param name="language">The preferred language code.</param>
+        /// <param name="text">The retrieved text, or null if not found.</param>
+        /// <returns>True if the key was found in either the requested or fallback language; otherwise, false.</returns>
         public bool GetText(string key, string language, out string? text)
         {
             // Try requested language
@@ -112,9 +130,13 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Retrieves text with fallback (tries requested, then fallback; throws if not found).
+        /// Retrieves text with fallback, throwing an exception if not found.
+        /// Tries the requested language first, then falls back to the default language.
         /// </summary>
-        /// <exception cref="ArchmageException">Thrown if key not found in either language.</exception>
+        /// <param name="key">The translation key.</param>
+        /// <param name="language">The preferred language code.</param>
+        /// <returns>The translation string.</returns>
+        /// <exception cref="ArchmageException">Thrown if the key is not found in either the requested or fallback language.</exception>
         public string Text(string key, string language)
         {
             // Try requested language
@@ -131,7 +153,7 @@ namespace Shadop.Archmage
                 return fallbackText;
             }
 
-            throw new ArchmageException($"localization key not found: {key}");
+            throw new ArchmageException($"Localization key not found: {key}.");
         }
     }
 }
