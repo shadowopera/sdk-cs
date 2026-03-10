@@ -24,7 +24,7 @@ namespace Shadop.Archmage
         public Dictionary<string, string> Unique { get; set; } = new();
 
         /// <summary>
-        /// One-to-many variant mapping (key → {variant → file path}). Use "/" as default variant key.
+        /// One-to-many conditional mapping (key → {case → file path}). Use "/" as the default case.
         /// </summary>
         [JsonProperty("single")]
         public Dictionary<string, Dictionary<string, string>> Single { get; set; } = new();

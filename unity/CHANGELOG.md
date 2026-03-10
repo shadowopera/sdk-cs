@@ -14,6 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Duration type with compact JSON shard encoding
 - Vec2, Vec3, Vec4 vector types
 - Tup1-Tup7 mixed-type tuple types
-- Ref type for deferred reference resolution
+- Ref type for cross-table reference
 - I18n internationalization support
 - JSON serialization via Newtonsoft.Json (com.unity.nuget.newtonsoft-json)
