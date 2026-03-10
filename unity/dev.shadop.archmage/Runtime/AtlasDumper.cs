@@ -15,7 +15,7 @@ namespace Shadop.Archmage
         /// </summary>
         /// <remarks>
         /// Useful for debugging, testing (golden files), and human-readable export.
-        /// Output uses custom converters for Duration/Ref types.
+        /// Output uses custom converters for Duration/XRef types.
         /// </remarks>
         /// <exception cref="ArgumentNullException">Thrown if atlas or outputDir is null.</exception>
         /// <exception cref="ArgumentException">Thrown if outputDir is empty or whitespace.</exception>
@@ -69,7 +69,7 @@ namespace Shadop.Archmage
 
             // Register custom converters for proper serialization
             settings.Converters.Add(new DurationJsonConverter());
-            settings.Converters.Add(new RefJsonConverter());
+            settings.Converters.Add(new XRefJsonConverter());
 
             return settings;
         }

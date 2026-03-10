@@ -43,22 +43,22 @@ namespace Conf
         /// desc-K
         /// </summary>
         [JsonProperty("K")]
-        public Ref<string, RaceCfg> K { get; set; }
+        public XRef<string, RaceCfg> K { get; set; }
         /// <summary>
         /// desc-referer1
         /// </summary>
         [JsonProperty("referer1")]
-        public Ref<long, RefCfg> Referer1 { get; set; }
+        public XRef<long, RefCfg> Referer1 { get; set; }
         /// <summary>
         /// desc-referer2
         /// </summary>
         [JsonProperty("referer2")]
-        public Ref<long, RefCfg> Referer2 { get; set; }
+        public XRef<long, RefCfg> Referer2 { get; set; }
         /// <summary>
         /// desc-referer-n
         /// </summary>
         [JsonProperty("referer-n")]
-        public List<Ref<long, RefCfg>>? RefererN { get; set; }
+        public List<XRef<long, RefCfg>>? RefererN { get; set; }
     }
 
     // String_B represents $.*.B
@@ -100,9 +100,9 @@ namespace Conf
             return ConfigAtlas.Lookup<string, StringCfg>(cfgID, this!, "StringTable");
         }
 
-        internal Ref<string, StringCfg> RefLookup(string cfgID)
+        internal XRef<string, StringCfg> RefLookup(string cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<string, StringCfg>(cfgID, this!, "StringTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<string, StringCfg>(cfgID, this!, "StringTable"));
         }
     }
 

@@ -98,7 +98,7 @@ namespace Shadop.Archmage.Tests
                 DefaultValueHandling = DefaultValueHandling.Include
             };
             settings.Converters.Add(new DurationJsonConverter());
-            settings.Converters.Add(new RefJsonConverter());
+            settings.Converters.Add(new XRefJsonConverter());
             settings.Converters.Add(new Vec2JsonConverter());
             settings.Converters.Add(new Vec3JsonConverter());
             settings.Converters.Add(new Vec4JsonConverter());
@@ -162,12 +162,12 @@ namespace Shadop.Archmage.Tests
             Assert.True(atlas.ItemTable.TryGetValue(20, out var itemEntry));
             Assert.Equal(20, itemEntry!.Id);
 
-            Assert.NotNull(atlas.CharacterArray[0]!.Race.REF);
-            Assert.NotNull(atlas.CharacterArray[1]!.Runes![0].REF);
-            Assert.NotNull(atlas.GameCfg.XRef.REF);
-            Assert.NotNull(atlas.RaceTable["Dwarf"]!.Referrer2.REF);
-            Assert.NotNull(atlas.RefTable[3]!.B.REF);
-            Assert.NotNull(atlas.Matrix2Table["key1"]!["key2"]![0][0].REF);
+            Assert.NotNull(atlas.CharacterArray[0]!.Race.Ref);
+            Assert.NotNull(atlas.CharacterArray[1]!.Runes![0].Ref);
+            Assert.NotNull(atlas.GameCfg.XRef.Ref);
+            Assert.NotNull(atlas.RaceTable["Dwarf"]!.Referrer2.Ref);
+            Assert.NotNull(atlas.RefTable[3]!.B.Ref);
+            Assert.NotNull(atlas.Matrix2Table["key1"]!["key2"]![0][0].Ref);
             Assert.Equal(16, atlas.VtItemXTable.Count);
 
             Assert.Null(atlas.DataVersion);
@@ -310,7 +310,7 @@ namespace Shadop.Archmage.Tests
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("testdata/atlas.json", "testdata", atlas, opts);
-            
+
             Assert.Equal("hello memory fs", atlas.GameCfg.XString);
             Assert.Equal("test-branch", atlas.DataVersion!.Branch);
             Assert.Equal("123456", atlas.DataVersion!.ID);

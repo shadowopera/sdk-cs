@@ -21,7 +21,7 @@ namespace Conf
         /// desc-B
         /// </summary>
         [JsonProperty("B")]
-        public Ref<long, WeaponRuneCfg> B { get; set; }
+        public XRef<long, WeaponRuneCfg> B { get; set; }
         /// <summary>
         /// desc-C
         /// </summary>
@@ -31,37 +31,37 @@ namespace Conf
         /// desc-D
         /// </summary>
         [JsonProperty("D")]
-        public Ref<long, ItemCfg> D { get; set; }
+        public XRef<long, ItemCfg> D { get; set; }
         /// <summary>
         /// desc-E
         /// </summary>
         [JsonProperty("E")]
-        public Ref<long, MagicCfg> E { get; set; }
+        public XRef<long, MagicCfg> E { get; set; }
         /// <summary>
         /// desc-F
         /// </summary>
         [JsonProperty("F")]
-        public Ref<string, RaceCfg> F { get; set; }
+        public XRef<string, RaceCfg> F { get; set; }
         /// <summary>
         /// desc-G
         /// </summary>
         [JsonProperty("G")]
-        public Ref<long, HeroCfg> G { get; set; }
+        public XRef<long, HeroCfg> G { get; set; }
         /// <summary>
         /// desc-H
         /// </summary>
         [JsonProperty("H")]
-        public List<Ref<string, StringCfg>>? H { get; set; }
+        public List<XRef<string, StringCfg>>? H { get; set; }
         /// <summary>
         /// desc-J
         /// </summary>
         [JsonProperty("J")]
-        public Ref<long, ItemCfg> J { get; set; }
+        public XRef<long, ItemCfg> J { get; set; }
         /// <summary>
         /// desc-K
         /// </summary>
         [JsonProperty("K")]
-        public Ref<string, RaceCfg> K { get; set; }
+        public XRef<string, RaceCfg> K { get; set; }
     }
 
     public partial class RefTable
@@ -76,9 +76,9 @@ namespace Conf
             return ConfigAtlas.Lookup<long, RefCfg>(cfgID, this!, "RefTable");
         }
 
-        internal Ref<long, RefCfg> RefLookup(long cfgID)
+        internal XRef<long, RefCfg> RefLookup(long cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<long, RefCfg>(cfgID, this!, "RefTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, RefCfg>(cfgID, this!, "RefTable"));
         }
     }
 

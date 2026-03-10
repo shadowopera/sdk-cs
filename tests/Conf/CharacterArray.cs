@@ -26,7 +26,7 @@ namespace Conf
         /// race config
         /// </summary>
         [JsonProperty("race")]
-        public Ref<string, RaceCfg> Race { get; set; }
+        public XRef<string, RaceCfg> Race { get; set; }
         /// <summary>
         /// health config
         /// </summary>
@@ -42,7 +42,7 @@ namespace Conf
         /// my runes
         /// </summary>
         [JsonProperty("runes")]
-        public List<Ref<long, WeaponRuneCfg>>? Runes { get; set; }
+        public List<XRef<long, WeaponRuneCfg>>? Runes { get; set; }
         [JsonProperty("ultimateSkill")]
         public long UltimateSkill { get; set; }
         [JsonProperty("ref-crude")]

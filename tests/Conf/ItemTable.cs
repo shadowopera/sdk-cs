@@ -44,9 +44,9 @@ namespace Conf
             return ConfigAtlas.Lookup<long, ItemCfg>(cfgID, this!, "ItemTable");
         }
 
-        internal Ref<long, ItemCfg> RefLookup(long cfgID)
+        internal XRef<long, ItemCfg> RefLookup(long cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<long, ItemCfg>(cfgID, this!, "ItemTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, ItemCfg>(cfgID, this!, "ItemTable"));
         }
     }
 

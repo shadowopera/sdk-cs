@@ -61,9 +61,9 @@ namespace Conf
             return ConfigAtlas.Lookup<long, VtSkillCfg>(cfgID, this!, "VtSkillTable");
         }
 
-        internal Ref<long, VtSkillCfg> RefLookup(long cfgID)
+        internal XRef<long, VtSkillCfg> RefLookup(long cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<long, VtSkillCfg>(cfgID, this!, "VtSkillTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, VtSkillCfg>(cfgID, this!, "VtSkillTable"));
         }
     }
 

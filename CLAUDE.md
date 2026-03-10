@@ -49,7 +49,7 @@ bash scripts/sync-unity.sh
 
 ### Special Types
 
-- **`Ref<V, T>`** — Cross-table reference; raw value stored, resolved in bind phase via `IRefBinder`
+- **`XRef<V, T>`** — Cross-table reference; raw value stored, resolved in bind phase via `IRefBinder`
 - **`Duration`** — Nanosecond-precision duration with compact shard encoding; custom JSON converter
 - **`I18n`** — Multi-language text with fallback; loaded from locale JSON files
 - **`Vec2/3/4<T>`**, **`Tup1–7`** — Typed vectors and tuples for structured config fields
@@ -64,6 +64,6 @@ bash scripts/sync-unity.sh
 
 ### Dependencies
 
-- `Newtonsoft.Json 13.0.4` — JSON serialization with custom converters (`RefJsonConverter`, `DurationJsonConverter`, `VecJsonConverter`)
+- `Newtonsoft.Json 13.0.4` — JSON serialization with custom converters (`XRefJsonConverter`, `DurationJsonConverter`, `VecJsonConverter`)
 - `xunit.v3 2.0.3` — Test framework
 - C# 9.0, nullable enabled, implicit usings disabled

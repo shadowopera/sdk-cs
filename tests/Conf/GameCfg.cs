@@ -54,7 +54,7 @@ namespace Conf
         /// desc-x-ref
         /// </summary>
         [JsonProperty("x-ref")]
-        public Ref<long, WeaponRuneCfg> XRef { get; set; }
+        public XRef<long, WeaponRuneCfg> XRef { get; set; }
         /// <summary>
         /// desc-x-l10n
         /// </summary>

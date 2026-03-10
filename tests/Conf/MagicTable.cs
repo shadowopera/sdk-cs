@@ -33,9 +33,9 @@ namespace Conf
             return ConfigAtlas.Lookup<long, MagicCfg>(cfgID, this!, "MagicTable");
         }
 
-        internal Ref<long, MagicCfg> RefLookup(long cfgID)
+        internal XRef<long, MagicCfg> RefLookup(long cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<long, MagicCfg>(cfgID, this!, "MagicTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, MagicCfg>(cfgID, this!, "MagicTable"));
         }
     }
 

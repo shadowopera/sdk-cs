@@ -22,24 +22,24 @@ namespace Conf
         [JsonProperty("startLevel")]
         public long StartLevel { get; set; }
         [JsonProperty("referrer")]
-        public List<Ref<long, RefCfg>>? Referrer { get; set; }
+        public List<XRef<long, RefCfg>>? Referrer { get; set; }
         [JsonProperty("race-combo")]
         public List<Hero_RaceComboEntry>? RaceCombo { get; set; }
         [JsonProperty("referrer-sort")]
-        public List<Ref<long, RefCfg>>? ReferrerSort { get; set; }
+        public List<XRef<long, RefCfg>>? ReferrerSort { get; set; }
         [JsonProperty("referrer-compact")]
-        public List<Ref<long, RefCfg>>? ReferrerCompact { get; set; }
+        public List<XRef<long, RefCfg>>? ReferrerCompact { get; set; }
         [JsonProperty("referrer-sort-compact")]
-        public List<Ref<long, RefCfg>>? ReferrerSortCompact { get; set; }
+        public List<XRef<long, RefCfg>>? ReferrerSortCompact { get; set; }
     }
 
     // Hero_RaceComboEntry represents $.*['race-combo'].*
     public partial class Hero_RaceComboEntry
     {
         [JsonProperty("race1")]
-        public Ref<string, RaceCfg> Race1 { get; set; }
+        public XRef<string, RaceCfg> Race1 { get; set; }
         [JsonProperty("race2")]
-        public Ref<string, RaceCfg> Race2 { get; set; }
+        public XRef<string, RaceCfg> Race2 { get; set; }
     }
 
     public partial class HeroTable
@@ -54,9 +54,9 @@ namespace Conf
             return ConfigAtlas.Lookup<long, HeroCfg>(cfgID, this!, "HeroTable");
         }
 
-        internal Ref<long, HeroCfg> RefLookup(long cfgID)
+        internal XRef<long, HeroCfg> RefLookup(long cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<long, HeroCfg>(cfgID, this!, "HeroTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, HeroCfg>(cfgID, this!, "HeroTable"));
         }
     }
 

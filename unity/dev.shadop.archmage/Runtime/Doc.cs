@@ -8,8 +8,8 @@
 // a set), and multiple (multi-file merging).
 //
 // Key features include:
-//   - I18n for multi-language text management with automatic fallbacks
-//   - Ref type for cross-table reference resolution via IAtlas.BindRefs
+//   - I18n for multi-language text management with automatic fallback
+//   - XRef type for cross-table reference resolution via IAtlas.BindRefs
 //   - Duration type with compact JSON array format and unit optimization
 //   - Whitelist / blacklist to load only a subset of configurations
 //   - Layered overrides: additional directories or filesystems supply JSON that

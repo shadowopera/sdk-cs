@@ -35,9 +35,9 @@ namespace Conf
             return ConfigAtlas.Lookup<long, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable");
         }
 
-        internal Ref<long, WeaponRuneCfg> RefLookup(long cfgID)
+        internal XRef<long, WeaponRuneCfg> RefLookup(long cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<long, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable"));
         }
     }
 

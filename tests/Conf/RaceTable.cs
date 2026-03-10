@@ -20,13 +20,13 @@ namespace Conf
         [JsonProperty("birthplace")]
         public L10n Birthplace { get; set; }
         [JsonProperty("referrer1")]
-        public Ref<long, RefCfg> Referrer1 { get; set; }
+        public XRef<long, RefCfg> Referrer1 { get; set; }
         [JsonProperty("referrer2")]
-        public Ref<string, StringCfg> Referrer2 { get; set; }
+        public XRef<string, StringCfg> Referrer2 { get; set; }
         [JsonProperty("heroes1")]
-        public List<Ref<long, HeroCfg>>? Heroes1 { get; set; }
+        public List<XRef<long, HeroCfg>>? Heroes1 { get; set; }
         [JsonProperty("heroes2")]
-        public List<Ref<long, HeroCfg>>? Heroes2 { get; set; }
+        public List<XRef<long, HeroCfg>>? Heroes2 { get; set; }
     }
 
     public partial class RaceTable
@@ -41,9 +41,9 @@ namespace Conf
             return ConfigAtlas.Lookup<string, RaceCfg>(cfgID, this!, "RaceTable");
         }
 
-        internal Ref<string, RaceCfg> RefLookup(string cfgID)
+        internal XRef<string, RaceCfg> RefLookup(string cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<string, RaceCfg>(cfgID, this!, "RaceTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<string, RaceCfg>(cfgID, this!, "RaceTable"));
         }
     }
 

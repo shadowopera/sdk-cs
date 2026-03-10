@@ -58,9 +58,9 @@ namespace Conf
             return ConfigAtlas.Lookup<long, VtItemXCfg>(cfgID, this!, "VtItemXTable");
         }
 
-        internal Ref<long, VtItemXCfg> RefLookup(long cfgID)
+        internal XRef<long, VtItemXCfg> RefLookup(long cfgID)
         {
-            return ConfigAtlas.MakeRef(cfgID, ConfigAtlas.Lookup<long, VtItemXCfg>(cfgID, this!, "VtItemXTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, VtItemXCfg>(cfgID, this!, "VtItemXTable"));
         }
     }
 

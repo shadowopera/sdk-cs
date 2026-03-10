@@ -110,7 +110,7 @@ namespace Shadop.Archmage.Tests
             var d3 = new Duration(2_400_000_000); // 2.4s
             Assert.Equal(new Duration(2_000_000_000), d3.Truncate(Duration.Second));
             Assert.Equal(new Duration(2_000_000_000), d3.Round(Duration.Second));
-            
+
             var d4 = new Duration(2_600_000_000); // 2.6s
             Assert.Equal(new Duration(2_000_000_000), d4.Truncate(Duration.Second));
             Assert.Equal(new Duration(3_000_000_000), d4.Round(Duration.Second));

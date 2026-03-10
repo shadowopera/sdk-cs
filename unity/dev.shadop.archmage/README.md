@@ -43,7 +43,7 @@ Add the following to your `Packages/manifest.json`:
 - **Duration** — Time duration type with compact shard encoding
 - **Vec2 / Vec3 / Vec4** — Lightweight vector types with JSON support
 - **Tup1–Tup7** — Mixed-type tuple types for structured data
-- **Ref** — Deferred reference resolution across atlas items
+- **XRef** — Deferred reference resolution across atlas items
 - **I18n** — Internationalization support
 
 ## License

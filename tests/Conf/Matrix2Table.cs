@@ -8,7 +8,7 @@ using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class Matrix2Table : Dictionary<string, Dictionary<string, List<List<Ref<long, HeroCfg>>>>?>
+    public partial class Matrix2Table : Dictionary<string, Dictionary<string, List<List<XRef<long, HeroCfg>>>>?>
     {
         // Definition only.
     }
