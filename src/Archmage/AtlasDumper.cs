@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace Shadop.Archmage
@@ -38,15 +39,19 @@ namespace Shadop.Archmage
                 if (!item.Ready || item.Cfg == null)
                     continue;
 
-                // Serialize item to JSON
-                var json = JsonConvert.SerializeObject(item.Cfg, settings);
+                // Serialize item to JSON with LF line endings
+                var sb = new System.Text.StringBuilder();
+                using var sw = new System.IO.StringWriter(sb) { NewLine = "\n" };
+                using var jw = new JsonTextWriter(sw) { IndentChar = ' ', Indentation = 2 };
+                JsonSerializer.Create(settings).Serialize(jw, item.Cfg);
+                var json = sb.ToString();
 
                 // Write to file
                 var filePath = Path.Combine(outputDir, key + ".json");
                 var dir = Path.GetDirectoryName(filePath);
                 if (dir != null)
                     Directory.CreateDirectory(dir);
-                File.WriteAllText(filePath, json + "\n");
+                File.WriteAllText(filePath, json + "\n", new UTF8Encoding(false));
             }
         }
 

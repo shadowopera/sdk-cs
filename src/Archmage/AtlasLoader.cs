@@ -90,8 +90,7 @@ namespace Shadop.Archmage
             IProgress<AtlasLoadEvent>? progress = null,
             CancellationToken cancellationToken = default)
         {
-            options.JsonSettings ??= new JsonSerializerSettings();
-            options.JsonSettings.DateParseHandling = DateParseHandling.None;
+            options.JsonSettings = CloneAndPrepareSettings(options.JsonSettings);
 
             Func<IFS, string, Task<byte[]>> readFile = isAsync
                 ? (fs, path) => fs.ReadAllBytesAsync(path, cancellationToken)
@@ -197,7 +196,6 @@ namespace Shadop.Archmage
             {
                 void ItemLoadFunc(string key, AtlasItem item)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
                     LoadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile).GetAwaiter().GetResult();
                 }
 
@@ -219,6 +217,27 @@ namespace Shadop.Archmage
 
             // Invoke OnLoaded
             atlas.OnLoaded();
+        }
+
+        static JsonSerializerSettings CloneAndPrepareSettings(JsonSerializerSettings? originalSettings)
+        {
+            JsonSerializerSettings settings;
+            if (originalSettings != null)
+            {
+                settings = new JsonSerializerSettings();
+                foreach (var prop in typeof(JsonSerializerSettings).GetProperties())
+                {
+                    if (prop.CanWrite)
+                        prop.SetValue(settings, prop.GetValue(originalSettings));
+                }
+            }
+            else
+            {
+                settings = new JsonSerializerSettings();
+            }
+
+            settings.DateParseHandling = DateParseHandling.None;
+            return settings;
         }
 
         static (string cause, bool skip) ShouldSkip(string key, AtlasOptions options)
