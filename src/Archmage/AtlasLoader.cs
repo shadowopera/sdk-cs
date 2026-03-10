@@ -43,6 +43,9 @@ namespace Shadop.Archmage
             AtlasOptions? options = null)
         {
             options ??= new AtlasOptions();
+            if (options.CustomAsyncLoader != null)
+                throw new ArchmageException("Cannot use CustomAsyncLoader with synchronous LoadAtlas");
+            
             options.JsonSettings ??= new JsonSerializerSettings();
             options.JsonSettings.DateParseHandling = DateParseHandling.None;
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, null, CancellationToken.None);
@@ -52,7 +55,7 @@ namespace Shadop.Archmage
         /// Loads an Atlas asynchronously with progress reporting and cancellation support.
         /// </summary>
         /// <remarks>
-        /// <para>This method performs the same operations as LoadAtlas but asynchronously via Task.Run.
+        /// <para>This method performs the same operations as LoadAtlas but asynchronously, providing non-blocking I/O.
         /// Progress events are reported via the IProgress interface to allow UI updates and status tracking.
         /// Loading can be cancelled via the CancellationToken.</para>
         /// <para>The OnLoaded callback is invoked after all loading and reference binding completes,
@@ -67,7 +70,7 @@ namespace Shadop.Archmage
         /// <returns>A Task representing the asynchronous loading operation.</returns>
         /// <exception cref="ArchmageException">Thrown if loading fails at any stage.</exception>
         /// <exception cref="OperationCanceledException">Thrown if cancellation is requested.</exception>
-        public static Task LoadAtlasAsync(
+        public static async Task LoadAtlasAsync(
             string atlasFile,
             string cfgRoot,
             IAtlas atlas,
@@ -75,11 +78,13 @@ namespace Shadop.Archmage
             IProgress<AtlasLoadEvent>? progress = null,
             CancellationToken cancellationToken = default)
         {
-            return Task.Run(() =>
-            {
-                options ??= new AtlasOptions();
-                LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, progress, cancellationToken);
-            }, cancellationToken);
+            options ??= new AtlasOptions();
+            if (options.CustomLoader != null)
+                throw new ArchmageException("Cannot use CustomLoader with asynchronous LoadAtlasAsync");
+
+            options.JsonSettings ??= new JsonSerializerSettings();
+            options.JsonSettings.DateParseHandling = DateParseHandling.None;
+            await LoadAtlasImplAsync(atlasFile, cfgRoot, atlas, options, progress, cancellationToken);
         }
 
         static void LoadAtlasImpl(
@@ -191,6 +196,115 @@ namespace Shadop.Archmage
             atlas.OnLoaded();
         }
 
+        static async Task LoadAtlasImplAsync(
+            string atlasFile,
+            string cfgRoot,
+            IAtlas atlas,
+            AtlasOptions options,
+            IProgress<AtlasLoadEvent>? progress,
+            CancellationToken cancellationToken)
+        {
+            // Verify override directories exist
+            foreach (var overrideConfig in options.OverrideConfigs)
+            {
+                if (overrideConfig.FS == null)
+                {
+                    if (!options.FS.DirectoryExists(overrideConfig.RootPath!))
+                        throw new ArchmageException($"invalid override root directory \"{overrideConfig.RootPath}\"");
+                }
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Read and parse atlas.json
+            var atlasData = await options.FS.ReadAllBytesAsync(atlasFile, cancellationToken);
+            AtlasJson? atlasJson;
+            try
+            {
+                atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasData), options.JsonSettings);
+            }
+            catch (JsonException ex)
+            {
+                throw new ArchmageException($"invalid \"{atlasFile}\"", ex);
+            }
+
+            if (atlasJson == null)
+            {
+                throw new ArchmageException($"invalid \"{atlasFile}\"");
+            }
+
+            // Apply modifier
+            options.AtlasModifier?.Invoke(atlasJson);
+
+            // Set version info
+            atlas.SetDataVersion(atlasJson.Version);
+
+            // Get all items
+            var items = atlas.AtlasItems();
+
+            // Validate whitelist/blacklist keys exist
+            if (options.Whitelist != null)
+            {
+                foreach (var v in options.Whitelist)
+                {
+                    if (!items.ContainsKey(v))
+                        throw new ArchmageException($"atlas whitelist: unknown item \"{v}\"");
+                }
+            }
+            if (options.Blacklist != null)
+            {
+                foreach (var v in options.Blacklist)
+                {
+                    if (!items.ContainsKey(v))
+                        throw new ArchmageException($"atlas blacklist: unknown item \"{v}\"");
+                }
+            }
+
+            // Sort by key (case-insensitive) and filter
+            var sortedKeys = items.Keys
+                .OrderBy(k => k, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var filteredItems = new List<KeyValuePair<string, AtlasItem>>();
+            foreach (var k in sortedKeys)
+            {
+                var (cause, skip) = ShouldSkip(k, options);
+                if (skip)
+                {
+                    options.Logger.Info($"<archmage> skipping atlas item: {k}. cause: {cause}");
+                    continue;
+                }
+                filteredItems.Add(new KeyValuePair<string, AtlasItem>(k, items[k]));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Load items
+            async Task ItemLoadFuncAsync(string key, AtlasItem item, CancellationToken ct)
+            {
+                ct.ThrowIfCancellationRequested();
+                await LoadItemAsync(key, item, atlasJson, atlasFile, cfgRoot, options, progress, ct);
+            }
+
+            if (options.CustomAsyncLoader != null)
+            {
+                await options.CustomAsyncLoader(filteredItems, ItemLoadFuncAsync, cancellationToken);
+            }
+            else
+            {
+                foreach (var kvp in filteredItems)
+                {
+                    await ItemLoadFuncAsync(kvp.Key, kvp.Value, cancellationToken);
+                }
+            }
+
+            // Bind references
+            atlas.BindRefs();
+
+            // Invoke OnLoaded
+            atlas.OnLoaded();
+        }
+
         static (string cause, bool skip) ShouldSkip(string key, AtlasOptions options)
         {
             if (options.Whitelist != null && options.Whitelist.Count > 0)
@@ -280,6 +394,132 @@ namespace Shadop.Archmage
                         {
                             overrideFiles.Add(ovrPath);
                             overrides.Add(options.FS.ReadAllBytes(ovrPath));
+                        }
+                    }
+                }
+
+                if (i > 0) paths.Append(", ");
+                paths.Append(filePath);
+            }
+
+            // Apply all overrides
+            for (var i = 0; i < overrides.Count; i++)
+            {
+                progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.ApplyingOverride, overrideFiles[i], stopwatch.Elapsed));
+
+                var overrideJson = Encoding.UTF8.GetString(overrides[i]);
+                try
+                {
+                    MergeJson(item.Cfg!, overrideJson, options.JsonSettings);
+                }
+                catch (JsonException ex)
+                {
+                    throw new ArchmageException($"applying override {overrideFiles[i]} failed", ex);
+                }
+            }
+
+            // Call ApplyKeys if implemented
+            if (item.Cfg is IApplyKeys applyKeys)
+            {
+                applyKeys.ApplyKeys();
+            }
+
+            stopwatch.Stop();
+
+            // Build log supplement
+            var supplement = overrides.Count switch
+            {
+                0 => "",
+                1 => " with 1 override",
+                _ => $" with {overrides.Count} overrides"
+            };
+
+            // Report: Completed
+            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.Completed, elapsed: stopwatch.Elapsed));
+
+            options.Logger.Info($"<archmage> loaded ({item.Mapping}) {paths}{supplement} ({stopwatch.ElapsedMilliseconds}ms)");
+            item.Ready = true;
+        }
+
+        static async Task LoadItemAsync(
+            string key,
+            AtlasItem item,
+            AtlasJson atlasJson,
+            string atlasFile,
+            string cfgRoot,
+            AtlasOptions options,
+            IProgress<AtlasLoadEvent>? progress,
+            CancellationToken cancellationToken)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            item.Key = key;
+
+            // Resolve files based on mapping type
+            List<string> files;
+            string keyPath;
+            switch (item.Mapping)
+            {
+                case AtlasConstants.MappingUnique:
+                    files = atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
+                    keyPath = $"$.unique['{key}']";
+                    break;
+                case AtlasConstants.MappingSingle:
+                    var sf = atlasJson.PickFromSingle(key);
+                    files = sf != null ? new List<string> { sf } : new List<string>();
+                    keyPath = $"$.single['{key}']['/']";
+                    break;
+                case AtlasConstants.MappingMultiple:
+                    files = atlasJson.Multiple.TryGetValue(key, out var mf) ? mf : new List<string>();
+                    keyPath = $"$.multiple['{key}']";
+                    break;
+                default:
+                    throw new ArchmageException($"unsupported mapping: {item.Mapping}");
+            }
+
+            if (files.Count == 0)
+            {
+                throw new ArchmageException($"cannot find {keyPath} in {atlasFile}");
+            }
+
+            // Report: StartReading
+            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReading, elapsed: stopwatch.Elapsed));
+
+            var overrideFiles = new List<string>();
+            var overrides = new List<byte[]>();
+            var paths = new StringBuilder();
+
+            // Load each file and collect overrides
+            for (var i = 0; i < files.Count; i++)
+            {
+                var f = files[i];
+                var filePath = Path.Combine(cfgRoot, f);
+
+                // Report: StartParsing
+                progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartParsing, filePath, stopwatch.Elapsed));
+
+                var fileData = await options.FS.ReadAllBytesAsync(filePath, cancellationToken);
+                var json = Encoding.UTF8.GetString(fileData);
+                MergeJson(item.Cfg!, json, options.JsonSettings);
+
+                // Collect overrides for this file
+                foreach (var overrideCfg in options.OverrideConfigs)
+                {
+                    if (overrideCfg.FS != null)
+                    {
+                        if (overrideCfg.FS.FileExists(f))
+                        {
+                            overrideFiles.Add(f);
+                            overrides.Add(await overrideCfg.FS.ReadAllBytesAsync(f, cancellationToken));
+                        }
+                    }
+                    else
+                    {
+                        var ovrPath = Path.Combine(overrideCfg.RootPath!, f);
+                        if (options.FS.FileExists(ovrPath))
+                        {
+                            overrideFiles.Add(ovrPath);
+                            overrides.Add(await options.FS.ReadAllBytesAsync(ovrPath, cancellationToken));
                         }
                     }
                 }

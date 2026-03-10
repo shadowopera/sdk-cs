@@ -100,6 +100,16 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
+        /// Sets custom async loader for parallel/cached/conditional loading (default is sequential).
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if loader is null.</exception>
+        public static AtlasOptions WithCustomAsyncLoader(this AtlasOptions opts, AtlasItemAsyncLoader loader)
+        {
+            opts.CustomAsyncLoader = loader ?? throw new ArgumentNullException(nameof(loader));
+            return opts;
+        }
+
+        /// <summary>
         /// Sets custom JSON settings.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown if settings is null.</exception>
