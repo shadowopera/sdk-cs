@@ -9,11 +9,11 @@ namespace Shadop.Archmage.Tests
 {
     public class MergeJsonTests
     {
-        private static void CallMergeJson(object target, string json)
+        static void CallMergeJson(object target, string json, JsonSerializerSettings? settings = null)
         {
             var method = typeof(Archmage).GetMethod("MergeJson", BindingFlags.Static | BindingFlags.NonPublic);
             Assert.NotNull(method);
-            method.Invoke(null, new object[] { target, json, null! });
+            method.Invoke(null, new object[] { target, json, settings! });
         }
 
         public class NestedObject
@@ -70,6 +70,35 @@ namespace Shadop.Archmage.Tests
 
             Assert.Equal("Updated", target.Xxx);
             Assert.Null(target.Foo);
+        }
+
+        public class DateTimeObject
+        {
+            [JsonProperty("ts")]
+            public DateTimeOffset Ts { get; set; }
+
+            [JsonProperty("name")]
+            public string Name { get; set; } = "";
+        }
+
+        [Fact]
+        public void TestMergeJson_DateTimeOffsetNullResetsToDefault()
+        {
+            var settings = new JsonSerializerSettings();
+            settings.DateParseHandling = DateParseHandling.None;
+            settings.Converters.Add(new DateTimeOffsetJsonConverter());
+
+            var target = new DateTimeObject
+            {
+                Ts = new DateTimeOffset(2025, 6, 15, 12, 0, 0, TimeSpan.Zero),
+                Name = "test"
+            };
+
+            // Merge null into DateTimeOffset field — should reset to default, not throw
+            CallMergeJson(target, "{ \"ts\": null }", settings);
+
+            Assert.Equal(default(DateTimeOffset), target.Ts);
+            Assert.Equal("test", target.Name);
         }
 
         [Fact]

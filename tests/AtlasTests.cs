@@ -82,19 +82,9 @@ namespace Shadop.Archmage.Tests
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
 
-        static JsonSerializerSettings DefaultJsonSettings()
-        {
-            return new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Include,
-                DefaultValueHandling = DefaultValueHandling.Include
-            };
-        }
-
         static AtlasOptions DefaultOpts()
         {
-            return new AtlasOptions().WithJsonSettings(DefaultJsonSettings());
+            return new AtlasOptions().WithJsonSettings(Archmage.CreateJsonSerializerSettings());
         }
 
         static void CheckUpdateGolden(IAtlas atlas, string goldenDir)
@@ -102,11 +92,11 @@ namespace Shadop.Archmage.Tests
             var updateGolden = Environment.GetEnvironmentVariable("UPDATE_GOLDEN") == "1";
             if (updateGolden)
             {
-                Archmage.DumpAtlas(atlas, goldenDir, DefaultJsonSettings());
+                Archmage.DumpAtlas(atlas, goldenDir, Archmage.CreateJsonSerializerSettings());
             }
             else
             {
-                var settings = DefaultJsonSettings();
+                var settings = Archmage.CreateJsonSerializerSettings();
                 foreach (var kvp in atlas.AtlasItems().OrderBy(k => k.Key))
                 {
                     if (!kvp.Value.Ready || kvp.Value.Cfg == null) continue;

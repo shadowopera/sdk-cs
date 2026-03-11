@@ -29,7 +29,7 @@ namespace Shadop.Archmage
                 throw new ArgumentException("Output directory cannot be empty.", nameof(outputDir));
 
             // Setup default settings with custom converters
-            settings ??= GetJsonSerializerSettings();
+            settings ??= CreateJsonSerializerSettings();
             var items = atlas.AtlasItems();
 
             foreach (var kvp in items)
@@ -59,6 +59,7 @@ namespace Shadop.Archmage
             using var sw = new System.IO.StringWriter(sb) { NewLine = "\n" };
             using var jw = new JsonTextWriter(sw) { IndentChar = ' ', Indentation = 2 };
             JsonSerializer.Create(settings).Serialize(jw, item.Cfg);
+            sb.Append('\n');
             var json = sb.ToString();
 
             // Write to file
@@ -66,20 +67,23 @@ namespace Shadop.Archmage
             var dir = Path.GetDirectoryName(filePath);
             if (dir != null)
                 Directory.CreateDirectory(dir);
-            File.WriteAllText(filePath, json + "\n", new UTF8Encoding(false));
+            File.WriteAllText(filePath, json, new UTF8Encoding(false));
         }
 
         /// <summary>
         /// Creates JSON settings for Atlas export (indented, include nulls/defaults, custom converters).
         /// </summary>
-        static JsonSerializerSettings GetJsonSerializerSettings()
+        public static JsonSerializerSettings CreateJsonSerializerSettings()
         {
-            return new JsonSerializerSettings
+            var settings = new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Include,
                 DefaultValueHandling = DefaultValueHandling.Include
             };
+
+            settings.Converters.Add(new DateTimeOffsetJsonConverter());
+            return settings;
         }
     }
 }

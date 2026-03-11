@@ -176,40 +176,59 @@ namespace Shadop.Archmage
             // Load items
             if (isAsync)
             {
-                async Task ItemLoadFuncAsync(string key, AtlasItem item, CancellationToken ct)
+                async Task itemLoadFuncAsync(string key, AtlasItem item, CancellationToken ct)
                 {
                     ct.ThrowIfCancellationRequested();
-                    await LoadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile).ConfigureAwait(false);
+                    try
+                    {
+                        await LoadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile)
+                            .ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        var msg = $"Failed to load atlas item: \"{key}\". atlasFile: {atlasFile}, cfgRoot: {cfgRoot}";
+                        throw new ArchmageException(msg, ex);
+                    }
                 }
 
                 if (options.CustomAsyncLoader != null)
                 {
-                    await options.CustomAsyncLoader(filteredItems, ItemLoadFuncAsync, cancellationToken).ConfigureAwait(false);
+                    await options.CustomAsyncLoader(filteredItems, itemLoadFuncAsync, cancellationToken)
+                        .ConfigureAwait(false);
                 }
                 else
                 {
                     foreach (var kvp in filteredItems)
                     {
-                        await ItemLoadFuncAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
+                        await itemLoadFuncAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
             else
             {
-                void ItemLoadFunc(string key, AtlasItem item)
+                void itemLoadFunc(string key, AtlasItem item)
                 {
-                    LoadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile).GetAwaiter().GetResult();
+                    try
+                    {
+                        LoadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile)
+                            .GetAwaiter().GetResult();
+                    }
+                    catch (Exception ex)
+                    {
+                        var msg = $"Failed to load atlas item: \"{key}\". atlasFile: {atlasFile}, cfgRoot: {cfgRoot}";
+                        throw new ArchmageException(msg, ex);
+                    }
                 }
 
                 if (options.CustomLoader != null)
                 {
-                    options.CustomLoader(filteredItems, ItemLoadFunc);
+                    options.CustomLoader(filteredItems, itemLoadFunc);
                 }
                 else
                 {
                     foreach (var kvp in filteredItems)
                     {
-                        ItemLoadFunc(kvp.Key, kvp.Value);
+                        itemLoadFunc(kvp.Key, kvp.Value);
                     }
                 }
             }
@@ -239,6 +258,7 @@ namespace Shadop.Archmage
             }
 
             settings.DateParseHandling = DateParseHandling.None;
+            settings.Converters.Add(new DateTimeOffsetJsonConverter());
             return settings;
         }
 
@@ -284,12 +304,12 @@ namespace Shadop.Archmage
                     keyPath = $"$.multiple['{key}']";
                     break;
                 default:
-                    throw new ArchmageException($"Unsupported mapping: {item.Mapping}.");
+                    throw new Exception($"Unsupported mapping: {item.Mapping}.");
             }
 
             if (files.Count == 0)
             {
-                throw new ArchmageException($"Cannot find {keyPath} in {atlasFile}.");
+                throw new Exception($"Cannot find {keyPath} in {atlasFile}.");
             }
 
             var overrideFiles = new List<string>();
@@ -362,7 +382,7 @@ namespace Shadop.Archmage
                 }
                 catch (JsonException ex)
                 {
-                    throw new ArchmageException($"Failed to apply override {overrideFiles[i]}.", ex);
+                    throw new Exception($"Failed to apply override {overrideFiles[i]}.", ex);
                 }
             }
 

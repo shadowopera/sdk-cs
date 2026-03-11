@@ -258,6 +258,7 @@ namespace Shadop.Archmage
             }
 
             settings.DateParseHandling = DateParseHandling.None;
+            settings.Converters.Add(new DateTimeOffsetJsonConverter());
             return settings;
         }
 
