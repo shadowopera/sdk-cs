@@ -14,6 +14,9 @@ dotnet test tests/Archmage.Tests.csproj
 # Run a single test by name
 dotnet test tests/Archmage.Tests.csproj --filter "FullyQualifiedName~TestName"
 
+# Regenerate golden files after intentional output changes
+UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj
+
 # Sync source to Unity package
 bash scripts/sync-unity.sh
 ```
@@ -45,7 +48,10 @@ bash scripts/sync-unity.sh
 | `IFS` | File system abstraction; `DefaultFS` wraps `System.IO` |
 | `IAtlasLogger` | Logging; `DefaultLogger` writes to console |
 | `AtlasOptions` | Builder for loader configuration (FS, logger, filters, overrides, loaders) |
-| `AtlasLoader` | Unified sync/async loading implementation |
+| `IApplyKeys` | Optional interface on config objects; called after deserialization/overrides, before marking `Ready` |
+| `IRefBinder` | Implemented by generated table classes; called during `BindRefs()` to resolve `XRef` fields |
+
+The `Archmage` static class is split across two `partial class` files: `AtlasLoader.cs` (loading logic) and `AtlasDumper.cs` (`DumpAtlas` utility for exporting ready items to JSON files, used for golden file tests).
 
 ### Special Types
 
@@ -56,11 +62,14 @@ bash scripts/sync-unity.sh
 
 ### Generated Config Pattern
 
-`tests/Conf/` shows the expected shape of user-generated code:
+`tests/Conf/` shows the expected shape of user-generated code (files are marked "DO NOT EDIT" — they represent output of the archmage code-generation tool):
 
 - Table classes implement `IRefBinder` and populate themselves via JSON deserialization
 - `AtlasExtension.cs` wires all tables to `IAtlas.BindRefs()`
 - `L10n.cs` wraps `I18n` for localization lookup
+- `Atlas.cs` is the `ConfigAtlas : IAtlas` root; its `BuildMap()` registers each table with its key and mapping type
+
+Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` to regenerate them when output changes are intentional.
 
 ### Dependencies
 
