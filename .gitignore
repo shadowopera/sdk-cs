@@ -102,3 +102,5 @@ fabric.properties
 http-client.private.env.json
 
 # ==[custom]================================================
+
+GEMINI.md

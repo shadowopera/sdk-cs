@@ -67,6 +67,13 @@ namespace Shadop.Archmage.Tests
         }
     }
 
+    class SyncProgress<T> : IProgress<T>
+    {
+        readonly Action<T> _handler;
+        public SyncProgress(Action<T> handler) => _handler = handler;
+        public void Report(T value) => _handler(value);
+    }
+
     public class AtlasTests
     {
         public AtlasTests()
@@ -335,7 +342,7 @@ namespace Shadop.Archmage.Tests
 
             var atlas = new ConfigAtlas();
             var events = new System.Collections.Concurrent.ConcurrentBag<AtlasLoadEvent>();
-            var progress = new Progress<AtlasLoadEvent>(events.Add);
+            var progress = new SyncProgress<AtlasLoadEvent>(events.Add);
 
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
             CheckUpdateGolden(atlas, "../../../golden/override_root_and_fs");
@@ -402,7 +409,7 @@ namespace Shadop.Archmage.Tests
 
             var atlas = new ConfigAtlas();
             var events = new System.Collections.Concurrent.ConcurrentBag<AtlasLoadEvent>();
-            var progress = new Progress<AtlasLoadEvent>(events.Add);
+            var progress = new SyncProgress<AtlasLoadEvent>(events.Add);
 
             await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress, cancellationToken: TestContext.Current.CancellationToken);
             CheckUpdateGolden(atlas, "../../../golden/custom_loader");
