@@ -31,4 +31,4 @@ function printImportantMessage() {
     $colorful && tput setaf 7
 }
 
-UPDATE_GOLDEN=1 dotnet test
+UPDATE_GOLDEN=1 dotnet test "$@"
