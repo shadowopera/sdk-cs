@@ -18,6 +18,18 @@ and calls post-load hooks.
 - **Layered overrides**: additional directories or filesystems supply JSON that
   is merged into the base data at load time, field by field
 
+## Requirements
+
+### Unity
+
+- Unity 6000.3 or later
+- com.unity.nuget.newtonsoft-json 3.2.2
+
+### .NET
+
+- net8.0
+- Newtonsoft.Json 13.0.4
+
 ## Installation
 
 ### Unity (via OpenUPM)
@@ -263,14 +275,13 @@ ver?.ShortID  // "a1b2c3d"
 
 ```
 sdk-cs/
-├── src/Archmage/          # C# source (canonical)
-├── unity/                 # Unity package (OpenUPM)
-│   ├── package.json
-│   ├── Runtime/           # Synced from src/
-│   └── ...
+├── src/Archmage/                   # C# source (canonical)
+├── unity/
+│   └── dev.shadop.archmage/        # Unity package (OpenUPM)
+│       └── Runtime/                # Synced from src/Archmage/
 ├── scripts/
-│   └── sync-unity.sh      # src/ → unity/Runtime/ sync
-└── tests/                 # xunit.v3 tests + generated Conf/ fixtures
+│   └── sync-unity.sh               # src/ → unity/Runtime/ sync
+└── tests/                          # xunit.v3 tests + generated Conf/ fixtures
 ```
 
 ### Build & Test
