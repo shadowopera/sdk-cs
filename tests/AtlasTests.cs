@@ -451,7 +451,10 @@ namespace Shadop.Archmage.Tests
             var opts = DefaultOpts().WithLogger(logger);
 
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.Equal("<archmage> Cannot find $.single['prop_floats']['/'] in ../../../testdata/atlas.json.", err.Message);
+            Assert.StartsWith("<archmage> Failed to load atlas item: \"prop_floats\"", err.Message);
+            Assert.NotNull(err.InnerException);
+            Assert.IsType<Exception>(err.InnerException);
+            Assert.Equal("Cannot find $.single['prop_floats']['/'] in ../../../testdata/atlas.json.", err.InnerException.Message);
         }
 
         [Fact]
@@ -478,7 +481,9 @@ namespace Shadop.Archmage.Tests
             };
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithAtlasModifier(atlasModifier);
-            Assert.Throws<FileNotFoundException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
+            var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
+            Assert.StartsWith("<archmage> Failed to load atlas item: \"Item\"", err.Message);
+            Assert.IsType<FileNotFoundException>(err.InnerException);
         }
 
         [Fact]
