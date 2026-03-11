@@ -1,6 +1,6 @@
 # Archmage
 
-This is the runtime library for the [Archmage](https://archmage.shadop.dev/) game
+This is the runtime library for [Archmage](https://archmage.shadop.dev/)'s game
 configuration system, which loads and manages configurations from JSON files with
 support for i18n, cross-table references, durations, and layered overrides.
 
@@ -44,9 +44,9 @@ Or add to `Packages/manifest.json`:
 {
     "scopedRegistries": [
         {
-            "name": "OpenUPM",
+            "name": "package.openupm.com",
             "url": "https://package.openupm.com",
-            "scopes": ["dev.shadop"]
+            "scopes": []
         }
     ],
     "dependencies": {
@@ -147,7 +147,15 @@ is ignored). All keys must exist in the atlas or an exception is thrown.
 **Override layers** — Each `WithOverrideRoot` / `WithOverrideFS` call adds another
 override source. When loading an item, each override source is checked in the order they
 were added; any matching file is deserialized and its fields applied on top of the base
-data. This is useful for environment-specific patches (e.g., QA, staging).
+data. This is useful for environment-specific patches.
+
+Field-level merge rules during override processing:
+
+| Value in override | Behavior |
+|---|---|
+| `null` | Resets the target field to its default value or raise an exception |
+| JSON object | Recursively merges — only fields present in the override are updated, others remain unchanged |
+| Any other value | Overwrites the field |
 
 **Custom loader** — By default, items are loaded one by one in alphabetical order.
 `WithCustomLoader` and `WithCustomAsyncLoader` let you take control of that loop —

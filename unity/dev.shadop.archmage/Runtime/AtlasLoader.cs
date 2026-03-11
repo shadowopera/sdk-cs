@@ -419,7 +419,7 @@ namespace Shadop.Archmage
         /// <list type="bullet">
         ///   <item><c>null</c> → resets the target field to its default value or raise an error</item>
         ///   <item>JSON object → recursively merges: only fields present in the input are updated, others remain unchanged</item>
-        ///   <item>Any other value → replaces the current value of the target field</item>
+        ///   <item>Any other value → overwrites the field</item>
         /// </list>
         /// </summary>
         /// <exception cref="ArchmageException">Thrown if JSON is invalid or merge fails.</exception>
