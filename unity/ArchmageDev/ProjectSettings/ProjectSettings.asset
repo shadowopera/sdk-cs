@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: e2f6bdec4cf14460d9b8261c521f2fcc
+  productGUID: 8ab4a04190fa34e878abfb5f8e8957f7
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -924,10 +924,10 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 5fae09ec-a3af-48b9-89fb-71be584474e1
+  cloudProjectId: 643e8197-e1dc-4f26-96ef-d6af313eb7ec
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: ArchmageDev 2026-03-10_15-27-15
+  projectName: ArchmageDev 2026-03-12_13-59-59
   organizationId: wechat_os_qy09ltuopupphuvl43lrz3kyo
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
