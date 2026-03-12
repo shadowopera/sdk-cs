@@ -14,7 +14,7 @@ removed=0
 
 mkdir -p "$DST_DIR"
 
-for name in "README.md" "LICENSE"; do
+for name in "README.md" "CHANGELOG.md" "LICENSE"; do
     src_file="$ROOT_DIR/$name"
     dst_file="$PKG_DIR/$name"
 
