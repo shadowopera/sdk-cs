@@ -14,20 +14,35 @@ removed=0
 
 mkdir -p "$DST_DIR"
 
-# Sync README.md and LICENSE
 for name in "README.md" "LICENSE"; do
     src_file="$ROOT_DIR/$name"
     dst_file="$PKG_DIR/$name"
 
     if [[ -f "$src_file" ]]; then
-        if [[ ! -f "$dst_file" ]]; then
-            cp "$src_file" "$dst_file"
-            echo "  + $name"
-            added=$((added + 1))
-        elif ! cmp -s "$src_file" "$dst_file"; then
-            cp "$src_file" "$dst_file"
-            echo "  ~ $name"
-            updated=$((updated + 1))
+        if [[ "$name" == "README.md" ]]; then
+            # Skip first two lines
+            tmp_file="$(mktemp)"
+            tail -n +3 "$src_file" > "$tmp_file"
+            if [[ ! -f "$dst_file" ]]; then
+                cp "$tmp_file" "$dst_file"
+                echo "  + $name"
+                added=$((added + 1))
+            elif ! cmp -s "$tmp_file" "$dst_file"; then
+                cp "$tmp_file" "$dst_file"
+                echo "  ~ $name"
+                updated=$((updated + 1))
+            fi
+            rm "$tmp_file"
+        else
+            if [[ ! -f "$dst_file" ]]; then
+                cp "$src_file" "$dst_file"
+                echo "  + $name"
+                added=$((added + 1))
+            elif ! cmp -s "$src_file" "$dst_file"; then
+                cp "$src_file" "$dst_file"
+                echo "  ~ $name"
+                updated=$((updated + 1))
+            fi
         fi
     fi
 done

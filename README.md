@@ -1,3 +1,5 @@
+![Archmage](./archmage.jpg)
+
 # Archmage
 
 This is the runtime library for [Archmage](https://archmage.shadop.dev/)'s game
