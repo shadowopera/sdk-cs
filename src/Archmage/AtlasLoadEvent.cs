@@ -49,7 +49,7 @@ namespace Shadop.Archmage
     /// </summary>
     /// <remarks>
     /// <para>AtlasLoadEvent instances are reported to an <see cref="IProgress{AtlasLoadEvent}"/>
-    /// implementation passed to <see cref="Archmage.LoadAtlasAsync(string, string, IAtlas, AtlasOptions?)"/>.
+    /// implementation passed to <see cref="Archmage.LoadAtlasAsync"/>.
     /// This allows consumers to track loading progress and provide feedback to the user.</para>
     /// <para>The Elapsed property can be used to implement timeouts or progress visualization.</para>
     /// </remarks>

@@ -5,10 +5,41 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>9.0</LangVersion>
+
+    <!-- NuGet Metadata -->
+    <PackageId>Shadop.Archmage</PackageId>
+    <Version>0.1.1</Version>
+    <Title>Archmage</Title>
+    <Authors>Shadop</Authors>
+    <Description>This is the runtime library for the Archmage game configuration system, which loads and manages configurations from JSON files with support for i18n, cross-table references, durations, and layered overrides.</Description>
+    <PackageProjectUrl>https://archmage.shadop.dev/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/shadowopera/sdk-cs</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>archmage;atlas;cfg;config;configuration;table;override;json</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Build Options -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../unity/dev.shadop.archmage/README.md" Pack="true" PackagePath="\" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

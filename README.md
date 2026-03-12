@@ -2,7 +2,7 @@
 
 # Archmage
 
-This is the runtime library for [Archmage](https://archmage.shadop.dev/)'s game
+This is the runtime library for the [Archmage](https://archmage.shadop.dev/) game
 configuration system, which loads and manages configurations from JSON files with
 support for i18n, cross-table references, durations, and layered overrides.
 
@@ -40,22 +40,8 @@ and calls post-load hooks.
 openupm add dev.shadop.archmage
 ```
 
-Or add to `Packages/manifest.json`:
-
-```json
-{
-    "scopedRegistries": [
-        {
-            "name": "package.openupm.com",
-            "url": "https://package.openupm.com",
-            "scopes": []
-        }
-    ],
-    "dependencies": {
-        "dev.shadop.archmage": "0.1.0"
-    }
-}
-```
+Or visit the [OpenUPM package page](https://openupm.com/packages/dev.shadop.archmage/)
+and click the **Manual-installation** button for instructions.
 
 > [!NOTE]
 > **Unity Signature Warning**: Unity may display a "Missing Signature" warning. This is expected for OpenUPM packages. Archmage is safe to use - the warning does not affect functionality. Simply proceed with your development as usual.
