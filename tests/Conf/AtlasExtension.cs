@@ -1,5 +1,7 @@
 // This file will not be regenerated. Safe to edit.
 
+#nullable enable
+
 namespace Conf
 {
     public class AtlasExtension
