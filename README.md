@@ -55,6 +55,9 @@ Or add to `Packages/manifest.json`:
 }
 ```
 
+> [!NOTE]
+> **Unity Signature Warning**: Unity may display a "Missing Signature" warning. This is expected for OpenUPM packages. Archmage is safe to use - the warning does not affect functionality. Simply proceed with your development as usual.
+
 ### .NET (via NuGet)
 
 ```bash
