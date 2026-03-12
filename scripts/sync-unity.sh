@@ -15,20 +15,18 @@ removed=0
 mkdir -p "$DST_DIR"
 
 # Sync README.md and LICENSE
-for item in "README.md:README.md" "LICENSE:LICENSE.md"; do
-    src_name="${item%%:*}"
-    dst_name="${item##*:}"
-    src_file="$ROOT_DIR/$src_name"
-    dst_file="$PKG_DIR/$dst_name"
+for name in "README.md" "LICENSE"; do
+    src_file="$ROOT_DIR/$name"
+    dst_file="$PKG_DIR/$name"
 
     if [[ -f "$src_file" ]]; then
         if [[ ! -f "$dst_file" ]]; then
             cp "$src_file" "$dst_file"
-            echo "  + $dst_name"
+            echo "  + $name"
             added=$((added + 1))
         elif ! cmp -s "$src_file" "$dst_file"; then
             cp "$src_file" "$dst_file"
-            echo "  ~ $dst_name"
+            echo "  ~ $name"
             updated=$((updated + 1))
         fi
     fi
