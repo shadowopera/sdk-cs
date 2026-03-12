@@ -104,3 +104,4 @@ http-client.private.env.json
 # ==[custom]================================================
 
 GEMINI.md
+artifacts/
