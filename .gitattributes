@@ -21,3 +21,8 @@
 *.dll binary
 *.so binary
 *.dylib binary
+
+# Windows-specific files that require CRLF
+*.sln      text eol=crlf
+*.slnx     text eol=crlf
+*.csproj   text eol=crlf
