@@ -23,7 +23,7 @@ bash scripts/sync-unity.sh
 
 ## Architecture
 
-**Archmage** is a C# configuration management SDK (namespace `Shadop.Archmage`) for loading JSON-based game configs, targeting both .NET (`net8.0`, `netstandard2.1`) and Unity. The core library lives in `src/Archmage/`; the `unity/Runtime/` directory is a mirror synced via `scripts/sync-unity.sh`.
+**Archmage** is a C# configuration management SDK (namespace `Shadop.Archmage`) for loading JSON-based game configs, targeting both .NET (`net8.0`, `netstandard2.1`) and Unity. The core library lives in `src/Archmage/`; the `unity/dev.shadop.archmage/Runtime/` directory is a mirror synced via `scripts/sync-unity.sh`.
 
 ### Entry Point
 

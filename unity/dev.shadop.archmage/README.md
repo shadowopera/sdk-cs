@@ -288,7 +288,7 @@ sdk-cs/
 │   └── dev.shadop.archmage/        # Unity package (OpenUPM)
 │       └── Runtime/                # Synced from src/Archmage/
 ├── scripts/
-│   └── sync-unity.sh               # src/ → unity/Runtime/ sync
+│   └── sync-unity.sh               # src/ → unity/.../Runtime/ sync
 └── tests/                          # xunit.v3 tests + generated Conf/ fixtures
 ```
 
