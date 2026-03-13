@@ -43,8 +43,7 @@ function ensureCleanWorktree() {
 }
 
 function markStepDone() {
-    local step="$1"
-    sed -i '' "s/\"${step}\": 0/\"${step}\": 1/" release.json
+    GOEXPERIMENT=jsonv2 go run scripts/release.go mark "$1" || exit 1
 }
 
 VERSION_ARG="${1:-}"
@@ -60,12 +59,16 @@ while true; do
 
     if [[ "$RESULT" == "DONE" ]]; then
         printImportantMessage "Release complete!"
+        printMessage "Delete release.json when ready for the next release."
         printImportantMessage "Run 'git push --follow-tags' to publish."
         exit 0
     fi
 
     NEXT_STEP="$RESULT"
-    VERSION=$(grep '"version"' release.json | sed 's/.*: *"\(.*\)".*/\1/')
+    VERSION=$(GOEXPERIMENT=jsonv2 go run scripts/release.go version 2>&1) || {
+        printError "Failed to get version: $VERSION"
+        exit 1
+    }
 
     printImportantMessage "Step: $NEXT_STEP (v$VERSION)"
 

@@ -79,4 +79,4 @@ echo ""
 echo "Sync complete: $added added, $updated updated, $removed removed"
 
 echo ""
-"$SCRIPT_DIR/check-unity-meta.sh"
+"$SCRIPT_DIR/reconcile-unity-meta.sh"

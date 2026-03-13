@@ -34,18 +34,42 @@ func main() {
 		}
 	}()
 
-	if len(os.Args) > 2 {
+	switch {
+	case len(os.Args) == 1:
+		runNext("")
+	case os.Args[1] == "version":
+		runVersion()
+	case os.Args[1] == "mark":
+		if len(os.Args) != 3 {
+			panic("usage: release.go mark <step>")
+		}
+		runMark(os.Args[2])
+	case len(os.Args) == 2:
+		version := strings.TrimPrefix(strings.TrimPrefix(os.Args[1], "v"), "V")
+		if !semverRe.MatchString(version) {
+			panic("unknown command or invalid semver: " + os.Args[1])
+		}
+		runNext(version)
+	default:
 		panic("too many arguments")
 	}
+}
 
-	version := ""
-	if len(os.Args) > 1 {
-		version = strings.TrimPrefix(strings.TrimPrefix(os.Args[1], "v"), "V")
-		if !semverRe.MatchString(version) {
-			panic("invalid semver format: " + version)
-		}
+func runVersion() {
+	rel := loadRelease()
+	fmt.Println(rel.Version)
+}
+
+func runMark(step string) {
+	rel := loadRelease()
+	if !setStep(rel, step, 1) {
+		panic("unknown step: " + step)
 	}
+	validateSteps(rel)
+	saveRelease(rel)
+}
 
+func runNext(version string) {
 	if _, err := os.Stat(releaseFile); err != nil {
 		if !os.IsNotExist(err) {
 			panic(err)
@@ -53,17 +77,34 @@ func main() {
 		if version == "" {
 			panic("usage: release.sh <version>")
 		}
-		rel := Release{Version: version}
-		data, err := json.Marshal(rel, jsontext.WithIndent("\t"))
-		if err != nil {
-			panic(err)
-		}
-		data = append(data, '\n')
-		if err := os.WriteFile(releaseFile, data, 0644); err != nil {
-			panic(err)
+		rel := &Release{Version: version}
+		saveRelease(rel)
+	}
+
+	rel := loadRelease()
+
+	if !semverRe.MatchString(rel.Version) {
+		panic("invalid semver format in release.json: " + rel.Version)
+	}
+
+	if version != "" && version != rel.Version {
+		if allDone(rel) {
+			panic("release " + rel.Version + " already completed, please delete release.json first")
+		} else {
+			panic("version mismatch: release.json has " + rel.Version + ", got " + version)
 		}
 	}
 
+	validateSteps(rel)
+
+	if allDone(rel) {
+		fmt.Println("DONE")
+	} else {
+		fmt.Println(nextStep(rel))
+	}
+}
+
+func loadRelease() *Release {
 	data, err := os.ReadFile(releaseFile)
 	if err != nil {
 		panic(err)
@@ -72,26 +113,30 @@ func main() {
 	if err := json.Unmarshal(data, &rel); err != nil {
 		panic("failed to parse release.json: " + err.Error())
 	}
+	return &rel
+}
 
-	if !semverRe.MatchString(rel.Version) {
-		panic("invalid semver format in release.json: " + rel.Version)
+func saveRelease(rel *Release) {
+	data, err := json.Marshal(rel, jsontext.WithIndent("\t"))
+	if err != nil {
+		panic(err)
 	}
+	data = append(data, '\n')
+	if err := os.WriteFile(releaseFile, data, 0644); err != nil {
+		panic(err)
+	}
+}
 
-	if version != "" && version != rel.Version {
-		if allDone(&rel) {
-			panic("release already completed, please delete release.json first")
-		} else {
-			panic("version mismatch: release.json has " + rel.Version + ", got " + version)
+func setStep(rel *Release, name string, value int) bool {
+	v := reflect.ValueOf(&rel.Steps).Elem()
+	t := v.Type()
+	for i := 0; i < t.NumField(); i++ {
+		if t.Field(i).Tag.Get("json") == name {
+			v.Field(i).SetInt(int64(value))
+			return true
 		}
 	}
-
-	validateSteps(&rel)
-
-	if allDone(&rel) {
-		fmt.Println("DONE")
-	} else {
-		fmt.Println(nextStep(&rel))
-	}
+	return false
 }
 
 // stepValues returns step values in declaration order.
