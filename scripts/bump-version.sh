@@ -118,7 +118,7 @@ else
             exit 0
         fi
     fi
-    git tag "v$NEW_VERSION"
+    git tag -a "v$NEW_VERSION" -m "v$NEW_VERSION"
     printImportantMessage "Tag v$NEW_VERSION created."
 fi
 
