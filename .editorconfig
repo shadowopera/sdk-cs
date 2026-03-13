@@ -10,7 +10,7 @@ charset = utf-8
 [*.cs]
 #### 1. Accessibility Modifiers ####
 # Prefer omitting default accessibility modifiers (e.g., omit 'private' where it is the default)
-dotnet_style_require_accessibility_modifiers = omit_if_default:suggestion
+dotnet_style_require_accessibility_modifiers = omit_if_default:none
 
 #### 2. Naming Conventions ####
 # Private fields: underscore + camelCase (_camelCase)
@@ -37,8 +37,8 @@ dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 #### 3. C# Coding Style Best Practices ####
 # Use 'var' when the type is apparent from the assignment
 dotnet_style_predefined_type_for_locals_parameters_declarations = true:suggestion
-csharp_style_var_for_built_in_types = true:suggestion
-csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_for_built_in_types = true:none
+csharp_style_var_when_type_is_apparent = true:none
 
 # Namespace style: use block-scoped for netstandard2.1 compatibility
 csharp_style_namespace_declarations = block_scoped:silent
@@ -49,3 +49,9 @@ dotnet_sort_system_directives_first = true
 
 # IDE0130: Namespace does not match folder structure
 dotnet_style_namespace_match_folder = false
+
+# IDE0040: Remove accessibility modifiers
+dotnet_diagnostic.IDE0040.severity = none
+
+# IDE0007: Use implicit type
+dotnet_diagnostic.IDE0007.severity = none

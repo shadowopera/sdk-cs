@@ -20,8 +20,6 @@ namespace Shadop.Archmage.Tests
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
 
-
-
         [Fact]
         public void TestAtlas_Basic()
         {

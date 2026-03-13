@@ -50,6 +50,7 @@ namespace Shadop.Archmage
             if (options.CustomAsyncLoader != null)
                 throw new ArchmageException("Cannot use WithCustomAsyncLoader with synchronous LoadAtlas.");
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, progress).GetAwaiter().GetResult();
+            atlas.OnLoaded();
         }
 
         /// <summary>
@@ -81,6 +82,8 @@ namespace Shadop.Archmage
             if (options.CustomLoader != null)
                 throw new ArchmageException("Cannot use WithCustomLoader with asynchronous LoadAtlasAsync.");
             await LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, progress, cancellationToken);
+            // Invoke in the caller's thread.
+            atlas.OnLoaded();
         }
 
         static async Task LoadAtlasImpl(
@@ -235,9 +238,6 @@ namespace Shadop.Archmage
 
             // Bind references
             atlas.BindRefs();
-
-            // Invoke OnLoaded
-            atlas.OnLoaded();
         }
 
         static JsonSerializerSettings CloneAndPrepareSettings(JsonSerializerSettings? originalSettings)

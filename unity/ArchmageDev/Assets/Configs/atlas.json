@@ -1,0 +1,35 @@
+{
+	"unique": {
+		"character": "character.json",
+		"hero": "hero.json",
+		"Item": "clutter/item.json",
+		"Magic": "clutter/magic.json",
+		"matrix2": "matrix2.json",
+		"Race": "clutter/race.json",
+		"ref": "sdk/ref.json",
+		"string": "sdk/string.json",
+		"weapon-rune": "weapon-rune.json"
+	},
+	"single": {
+		"game": {
+			"/": "game.json"
+		},
+		"prop_floats": {
+			"x3": "sdk/prop-floats.x3.json",
+			"x5": "sdk/prop-floats.x5.json"
+		}
+	},
+	"multiple": {
+		"vtItemX": [
+			"vtbl/item1-common.json",
+			"vtbl/item1-special.json",
+			"vtbl/weapon-shield.json",
+			"vtbl/weapon-staff.json",
+			"vtbl/weapon-sword.json"
+		],
+		"vtSkill": [
+			"vtbl/skill-active.json",
+			"vtbl/skill-passive.json"
+		]
+	}
+}

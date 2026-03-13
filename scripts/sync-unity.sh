@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+shopt -s nullglob
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -47,7 +48,7 @@ for name in "README.md" "CHANGELOG.md" "LICENSE"; do
     fi
 done
 
-# Sync .cs files from src to unity/dev.shadop.archmage/Runtime
+# Sync standard .cs files from src/Archmage to Runtime
 for src_file in "$SRC_DIR"/*.cs; do
     filename="$(basename "$src_file")"
     dst_file="$DST_DIR/$filename"
@@ -63,15 +64,42 @@ for src_file in "$SRC_DIR"/*.cs; do
     fi
 done
 
-# Remove .cs files in unity/dev.shadop.archmage/Runtime that no longer exist in src
+# Sync integration files from src/Archmage/Unity to Samples~/Integration
+SAMPLES_DIR="$PKG_DIR/Samples~/Integration"
+mkdir -p "$SAMPLES_DIR"
+
+for src_file in "$SRC_DIR"/Unity/*.cs; do
+    filename="$(basename "$src_file")"
+    dst_file="$SAMPLES_DIR/$filename"
+
+    if [[ ! -f "$dst_file" ]]; then
+        cp "$src_file" "$dst_file"
+        echo "  + $filename (Samples~)"
+        added=$((added + 1))
+    elif ! cmp -s "$src_file" "$dst_file"; then
+        cp "$src_file" "$dst_file"
+        echo "  ~ $filename (Samples~)"
+        updated=$((updated + 1))
+    fi
+done
+
+# Remove .cs files in Runtime that no longer exist in src/Archmage
 for dst_file in "$DST_DIR"/*.cs; do
-    [[ -f "$dst_file" ]] || continue
     filename="$(basename "$dst_file")"
     if [[ ! -f "$SRC_DIR/$filename" ]]; then
         rm "$dst_file"
-        echo "  - $filename"
+        echo "  - $filename (Runtime)"
         removed=$((removed + 1))
-        # Note: .meta files are left intact for manual cleanup
+    fi
+done
+
+# Remove .cs files in Samples~/Integration that no longer exist in src/Archmage/Unity
+for dst_file in "$SAMPLES_DIR"/*.cs; do
+    filename="$(basename "$dst_file")"
+    if [[ ! -f "$SRC_DIR/Unity/$filename" ]]; then
+        rm "$dst_file"
+        echo "  - $filename (Samples~)"
+        removed=$((removed + 1))
     fi
 done
 
