@@ -19,6 +19,12 @@ UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj
 
 # Sync source to Unity package
 bash scripts/sync-unity.sh
+
+# Bump version
+bash scripts/bump-version.sh [--yes] <version>  # e.g. 0.2.0
+
+# Step-driven release workflow
+bash scripts/release.sh [<version>]
 ```
 
 ## Architecture
@@ -76,3 +82,10 @@ Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` 
 - `Newtonsoft.Json 13.0.4` — JSON serialization with custom converters (`XRefJsonConverter`, `DurationJsonConverter`, `VecJsonConverter`)
 - `xunit.v3 2.0.3` — Test framework
 - C# 9.0, nullable enabled, implicit usings disabled
+
+### Release & CI
+
+- **`scripts/bump-version.sh`** — bumps `<Version>` in `Archmage.csproj` and `unity/.../package.json`, commits, and creates an annotated git tag; use `--yes` to skip interactive prompts
+- **`scripts/release.sh`** + **`scripts/release.go`** — step-driven release automation; state persisted in `scripts/release.json`; steps: checkVersion → runTests1 → updateChangelog → syncUnity → runTests2 → bumpVersion
+- **`scripts/reconcile-unity-meta.sh`** — checks Unity `.meta` file consistency
+- **`.github/workflows/publish-nuget.yml`** — publishes to NuGet on `v*` tag push; verifies tag version matches `Archmage.csproj`, runs tests, packs, and pushes with `NUGET_API_KEY` secret
