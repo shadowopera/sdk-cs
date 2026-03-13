@@ -19,6 +19,7 @@
     "url": "https://archmage.shadop.dev/"
   },
   "type": "library",
+  "changelogUrl": "https://github.com/shadowopera/sdk-cs/blob/main/CHANGELOG.md",
   "license": "Apache-2.0",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.2"
