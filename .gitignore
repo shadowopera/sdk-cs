@@ -105,3 +105,4 @@ http-client.private.env.json
 
 GEMINI.md
 artifacts/
+/release.json
