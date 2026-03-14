@@ -461,6 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4389773c34d4c486d901270d78ac5fab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConfLoader
+  _demoType: 1
 --- !u!4 &1564733310
 Transform:
   m_ObjectHideFlags: 0
@@ -480,7 +481,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1564733310}
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 1564733310}

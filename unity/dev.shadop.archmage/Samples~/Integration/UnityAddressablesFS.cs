@@ -1,6 +1,6 @@
 #nullable enable
 
-#if UNITY_ADDRESSABLES
+#if UNITY_ADDRESSABLES && UNITY_6000_0_OR_NEWER
 
 using System;
 using System.IO;
