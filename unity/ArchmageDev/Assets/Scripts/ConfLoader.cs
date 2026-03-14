@@ -1,10 +1,12 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 using Conf;
 using Shadop.Archmage;
 
@@ -31,6 +33,19 @@ public class ConfLoader : MonoBehaviour
             {
                 atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
             });
+
+        var activeScene = SceneManager.GetActiveScene();
+        switch (activeScene.name)
+        {
+            case "ArchmageAddressablesConcurrent":
+            {
+                options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
+                {
+                    await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
+                });
+                break;
+            }
+        }
 
         try
         {

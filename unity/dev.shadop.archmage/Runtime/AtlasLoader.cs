@@ -95,6 +95,7 @@ namespace Shadop.Archmage
             IProgress<AtlasLoadEvent>? progress = null,
             CancellationToken cancellationToken = default)
         {
+            var stopwatch = Stopwatch.StartNew();
             options.JsonSettings = CloneAndPrepareSettings(options.JsonSettings);
 
             Func<IFS, string, Task<byte[]>> readFile = isAsync
@@ -168,7 +169,7 @@ namespace Shadop.Archmage
                 var (cause, skip) = ShouldSkip(k, options);
                 if (skip)
                 {
-                    options.Logger.Info($"<archmage> skipping atlas item: {k}. cause: {cause}");
+                    options.Logger.Info($"<archmage> Skipping atlas item: {k}. cause: {cause}");
                     continue;
                 }
                 filteredItems.Add(new KeyValuePair<string, AtlasItem>(k, items[k]));
@@ -238,6 +239,8 @@ namespace Shadop.Archmage
 
             // Bind references
             atlas.BindRefs();
+
+            options.Logger.Info($"<archmage> Loaded {filteredItems.Count} config items in {stopwatch.ElapsedMilliseconds}ms");
         }
 
         static JsonSerializerSettings CloneAndPrepareSettings(JsonSerializerSettings? originalSettings)
@@ -404,7 +407,7 @@ namespace Shadop.Archmage
                 _ => $" with {overrides.Count} overrides"
             };
 
-            options.Logger.Info($"<archmage> loaded ({item.Mapping}) {paths}{supplement} ({stopwatch.ElapsedMilliseconds}ms)");
+            options.Logger.Info($"<archmage> Loaded ({item.Mapping}) {paths}{supplement} ({stopwatch.ElapsedMilliseconds}ms)");
             item.Ready = true;
         }
 
