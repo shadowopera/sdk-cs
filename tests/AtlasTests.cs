@@ -305,7 +305,7 @@ namespace Shadop.Archmage.Tests
             var progress = new SyncProgress<AtlasLoadEvent>(events.Add);
 
             await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress, cancellationToken: TestContext.Current.CancellationToken);
-            CheckUpdateGolden(atlas, "../../../golden/custom_loader");
+            CheckUpdateGolden(atlas, "../../../golden/custom_async_loader");
 
             // Verify events for a specific key to avoid brittle global counts
             var vtSkillEvents = events.Where(e => e.Key == "vtSkill").ToList();
