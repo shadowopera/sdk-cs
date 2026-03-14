@@ -43,6 +43,12 @@ openupm add dev.shadop.archmage
 Or visit the [OpenUPM package page](https://openupm.com/packages/dev.shadop.archmage/)
 and click the **Manual-installation** button for instructions.
 
+**Then import the Unity integration files** (Unity-specific adapters) into your project:
+
+1. Open **Window → Package Management → Package Manager**
+2. In the left sidebar, click **In Project**, then select **Archmage** from the package list
+3. On the Archmage info page, select the **Samples** tab and click **Import** (or **Reimport**) next to **Integration**
+
 > [!NOTE]
 > **Unity Signature Warning**: Unity may display a "Missing Signature" warning. This is expected for OpenUPM packages. Archmage is safe to use - the warning does not affect functionality. Simply proceed with your development as usual.
 
