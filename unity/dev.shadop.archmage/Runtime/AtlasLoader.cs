@@ -47,8 +47,8 @@ namespace Shadop.Archmage
             IProgress<AtlasLoadEvent>? progress = null)
         {
             options ??= new AtlasOptions();
-            if (options.CustomAsyncLoader != null)
-                throw new ArchmageException("Cannot use WithCustomAsyncLoader with synchronous LoadAtlas.");
+            if (options.AsyncLoadStrategy != null)
+                throw new ArchmageException("Cannot use WithAsyncLoadStrategy with synchronous LoadAtlas.");
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, progress).GetAwaiter().GetResult();
             atlas.OnLoaded();
         }
@@ -79,8 +79,8 @@ namespace Shadop.Archmage
             CancellationToken cancellationToken = default)
         {
             options ??= new AtlasOptions();
-            if (options.CustomLoader != null)
-                throw new ArchmageException("Cannot use WithCustomLoader with asynchronous LoadAtlasAsync.");
+            if (options.LoadStrategy != null)
+                throw new ArchmageException("Cannot use WithLoadStrategy with asynchronous LoadAtlasAsync.");
             await LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, progress, cancellationToken);
             // Invoke in the caller's thread.
             atlas.OnLoaded();
@@ -179,7 +179,7 @@ namespace Shadop.Archmage
             // Load items
             if (isAsync)
             {
-                async Task itemLoadFuncAsync(string key, AtlasItem item, CancellationToken ct)
+                async Task itemLoadAsync(string key, AtlasItem item, CancellationToken ct)
                 {
                     ct.ThrowIfCancellationRequested();
                     try
@@ -194,22 +194,22 @@ namespace Shadop.Archmage
                     }
                 }
 
-                if (options.CustomAsyncLoader != null)
+                if (options.AsyncLoadStrategy != null)
                 {
-                    await options.CustomAsyncLoader(filteredItems, itemLoadFuncAsync, cancellationToken)
+                    await options.AsyncLoadStrategy(filteredItems, itemLoadAsync, cancellationToken)
                         .ConfigureAwait(false);
                 }
                 else
                 {
                     foreach (var kvp in filteredItems)
                     {
-                        await itemLoadFuncAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
+                        await itemLoadAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
             else
             {
-                void itemLoadFunc(string key, AtlasItem item)
+                void itemLoad(string key, AtlasItem item)
                 {
                     try
                     {
@@ -223,15 +223,15 @@ namespace Shadop.Archmage
                     }
                 }
 
-                if (options.CustomLoader != null)
+                if (options.LoadStrategy != null)
                 {
-                    options.CustomLoader(filteredItems, itemLoadFunc);
+                    options.LoadStrategy(filteredItems, itemLoad);
                 }
                 else
                 {
                     foreach (var kvp in filteredItems)
                     {
-                        itemLoadFunc(kvp.Key, kvp.Value);
+                        itemLoad(kvp.Key, kvp.Value);
                     }
                 }
             }

@@ -92,22 +92,22 @@ namespace Shadop.Archmage
         }
 
         /// <summary>
-        /// Sets custom loader for parallel/cached/conditional loading (default is sequential).
+        /// Sets custom load strategy for parallel/cached/conditional loading (default is sequential).
         /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown if loader is null.</exception>
-        public static AtlasOptions WithCustomLoader(this AtlasOptions opts, AtlasItemLoader loader)
+        /// <exception cref="ArgumentNullException">Thrown if strategy is null.</exception>
+        public static AtlasOptions WithLoadStrategy(this AtlasOptions opts, AtlasLoadStrategy strategy)
         {
-            opts.CustomLoader = loader ?? throw new ArgumentNullException(nameof(loader));
+            opts.LoadStrategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
             return opts;
         }
 
         /// <summary>
-        /// Sets custom async loader for parallel/cached/conditional loading (default is sequential).
+        /// Sets custom async load strategy for parallel/cached/conditional loading (default is sequential).
         /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown if loader is null.</exception>
-        public static AtlasOptions WithCustomAsyncLoader(this AtlasOptions opts, AtlasItemAsyncLoader loader)
+        /// <exception cref="ArgumentNullException">Thrown if strategy is null.</exception>
+        public static AtlasOptions WithAsyncLoadStrategy(this AtlasOptions opts, AtlasAsyncLoadStrategy strategy)
         {
-            opts.CustomAsyncLoader = loader ?? throw new ArgumentNullException(nameof(loader));
+            opts.AsyncLoadStrategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
             return opts;
         }
 

@@ -23,8 +23,8 @@ namespace Shadop.Archmage
         internal Action<AtlasJson>? AtlasModifier { get; set; }
         internal List<string>? Whitelist { get; set; }
         internal List<string>? Blacklist { get; set; }
-        internal AtlasItemLoader? CustomLoader { get; set; }
-        internal AtlasItemAsyncLoader? CustomAsyncLoader { get; set; }
+        internal AtlasLoadStrategy? LoadStrategy { get; set; }
+        internal AtlasAsyncLoadStrategy? AsyncLoadStrategy { get; set; }
         internal JsonSerializerSettings? JsonSettings { get; set; }
     }
 
@@ -58,28 +58,28 @@ namespace Shadop.Archmage
 
     /// <summary>
     /// Delegate for custom loading strategies (parallel, caching, conditional; default is sequential).
-    /// Must call loadFunc for each item.
+    /// Must call load for each item.
     /// </summary>
-    public delegate void AtlasItemLoader(
+    public delegate void AtlasLoadStrategy(
         IEnumerable<KeyValuePair<string, AtlasItem>> items,
-        AtlasItemLoadFunc loadFunc);
+        AtlasItemLoader load);
 
     /// <summary>
     /// Callback for loading single item (reads file(s), deserializes JSON, merges overrides).
     /// </summary>
-    public delegate void AtlasItemLoadFunc(string key, AtlasItem item);
+    public delegate void AtlasItemLoader(string key, AtlasItem item);
 
     /// <summary>
     /// Delegate for custom asynchronous loading strategies (parallel, caching, conditional; default is sequential).
-    /// Must call loadFunc for each item.
+    /// Must call loadAsync for each item.
     /// </summary>
-    public delegate Task AtlasItemAsyncLoader(
+    public delegate Task AtlasAsyncLoadStrategy(
         IEnumerable<KeyValuePair<string, AtlasItem>> items,
-        AtlasItemAsyncLoadFunc loadFunc,
+        AtlasItemAsyncLoader loadAsync,
         CancellationToken cancellationToken);
 
     /// <summary>
     /// Callback for asynchronously loading single item (reads file(s), deserializes JSON, merges overrides).
     /// </summary>
-    public delegate Task AtlasItemAsyncLoadFunc(string key, AtlasItem item, CancellationToken cancellationToken);
+    public delegate Task AtlasItemAsyncLoader(string key, AtlasItem item, CancellationToken cancellationToken);
 }

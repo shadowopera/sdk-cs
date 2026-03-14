@@ -5,7 +5,7 @@ configuration system, which loads and manages configurations from JSON files wit
 support for i18n, cross-table references, durations, and layered overrides.
 
 It is built around the concept of an **Atlas** — a registry that maps named keys
-to configurations. Each key points to one or more JSON files; the loader reads
+to configurations. Each key points to one or more JSON files; **Archmage** reads
 and deserializes them into generated C# objects, resolves cross-table references,
 and calls post-load hooks.
 
@@ -146,17 +146,17 @@ Field-level merge rules during override processing:
 | JSON object | Recursively merges — only fields present in the override are updated, others remain unchanged |
 | Any other value | Overwrites the field |
 
-**Custom loader** — By default, items are loaded one by one in alphabetical order.
-`WithCustomLoader` and `WithCustomAsyncLoader` let you take control of that loop —
+**Custom load strategy** — By default, items are loaded one by one in alphabetical order.
+`WithLoadStrategy` and `WithAsyncLoadStrategy` let you take control of that loop —
 for example to load items in parallel:
 
 ```csharp
 // Parallel sync
-var opts = new AtlasOptions().WithCustomLoader((items, load) =>
+var opts = new AtlasOptions().WithLoadStrategy((items, load) =>
     Parallel.ForEach(items, kvp => load(kvp.Key, kvp.Value)));
 
 // Parallel async
-var opts = new AtlasOptions().WithCustomAsyncLoader(async (items, loadAsync, ct) =>
+var opts = new AtlasOptions().WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
     await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct))));
 ```
 

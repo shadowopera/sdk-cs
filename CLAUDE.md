@@ -53,7 +53,7 @@ bash scripts/release.sh [<version>]
 | `IAtlas` | Config collection with lifecycle hooks; implemented by generated code in `tests/Conf/` |
 | `IFS` | File system abstraction; `DefaultFS` wraps `System.IO` |
 | `IAtlasLogger` | Logging; `DefaultLogger` writes to console |
-| `AtlasOptions` | Builder for loader configuration (FS, logger, filters, overrides, loaders) |
+| `AtlasOptions` | Builder for loader configuration (FS, logger, filters, overrides, strategies) |
 | `IApplyKeys` | Optional interface on config objects; called after deserialization/overrides, before marking `Ready` |
 | `IRefBinder` | Implemented by generated table classes; called during `BindRefs()` to resolve `XRef` fields |
 

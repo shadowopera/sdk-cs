@@ -252,9 +252,9 @@ namespace Shadop.Archmage.Tests
         }
 
         [Fact]
-        public void TestAtlas_WithCustomLoader()
+        public void TestAtlas_WithLoadStrategy()
         {
-            AtlasItemLoader customLoader = (all, load) =>
+            AtlasLoadStrategy loadStrategy = (all, load) =>
             {
                 Parallel.ForEach(all, new ParallelOptions { MaxDegreeOfParallelism = 10 }, kvp =>
                 {
@@ -266,7 +266,7 @@ namespace Shadop.Archmage.Tests
             var opts = DefaultOpts()
                 .WithLogger(logger)
                 .WithBlacklist(new[] { "prop_floats" })
-                .WithCustomLoader(customLoader);
+                .WithLoadStrategy(loadStrategy);
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
@@ -274,9 +274,9 @@ namespace Shadop.Archmage.Tests
         }
 
         [Fact]
-        public async Task TestAtlas_WithCustomAsyncLoader()
+        public async Task TestAtlas_WithAsyncLoadStrategy()
         {
-            AtlasItemAsyncLoader customAsyncLoader = async (all, loadAsync, ct) =>
+            AtlasAsyncLoadStrategy asyncLoadStrategy = async (all, loadAsync, ct) =>
             {
                 using var semaphore = new SemaphoreSlim(10);
                 var tasks = all.Select(async kvp =>
@@ -298,7 +298,7 @@ namespace Shadop.Archmage.Tests
             var opts = DefaultOpts()
                 .WithLogger(logger)
                 .WithBlacklist(new[] { "prop_floats" })
-                .WithCustomAsyncLoader(customAsyncLoader);
+                .WithAsyncLoadStrategy(asyncLoadStrategy);
 
             var atlas = new ConfigAtlas();
             var events = new System.Collections.Concurrent.ConcurrentBag<AtlasLoadEvent>();
@@ -319,21 +319,21 @@ namespace Shadop.Archmage.Tests
         }
 
         [Fact]
-        public void TestAtlas_LoadAtlas_WithCustomAsyncLoader_Throws()
+        public void TestAtlas_LoadAtlas_WithAsyncLoadStrategy_Throws()
         {
             var atlas = new ConfigAtlas();
-            var opts = DefaultOpts().WithCustomAsyncLoader((all, load, ct) => Task.CompletedTask);
+            var opts = DefaultOpts().WithAsyncLoadStrategy((all, load, ct) => Task.CompletedTask);
             var err = Assert.Throws<ArchmageException>(() => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.Equal("<archmage> Cannot use WithCustomAsyncLoader with synchronous LoadAtlas.", err.Message);
+            Assert.Equal("<archmage> Cannot use WithAsyncLoadStrategy with synchronous LoadAtlas.", err.Message);
         }
 
         [Fact]
-        public async Task TestAtlas_LoadAtlasAsync_WithCustomLoader_Throws()
+        public async Task TestAtlas_LoadAtlasAsync_WithLoadStrategy_Throws()
         {
             var atlas = new ConfigAtlas();
-            var opts = DefaultOpts().WithCustomLoader((all, load) => { });
+            var opts = DefaultOpts().WithLoadStrategy((all, load) => { });
             var err = await Assert.ThrowsAsync<ArchmageException>(async () => await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", atlas, opts, cancellationToken: TestContext.Current.CancellationToken));
-            Assert.Equal("<archmage> Cannot use WithCustomLoader with asynchronous LoadAtlasAsync.", err.Message);
+            Assert.Equal("<archmage> Cannot use WithLoadStrategy with asynchronous LoadAtlasAsync.", err.Message);
         }
 
         [Fact]
