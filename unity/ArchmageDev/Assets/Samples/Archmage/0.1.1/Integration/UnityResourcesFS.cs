@@ -24,9 +24,12 @@ namespace Shadop.Archmage
             if (textAsset == null)
                 throw new FileNotFoundException($"Could not find Resources asset: {resourcePath}.");
 
-            return textAsset.bytes;
+            var bytes = textAsset.bytes;
+            Resources.UnloadAsset(textAsset);
+            return bytes;
         }
 
+#if UNITY_6000_0_OR_NEWER
         public async Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -35,7 +38,6 @@ namespace Shadop.Archmage
 
             await Awaitable.MainThreadAsync();
 
-#if UNITY_6000_0_OR_NEWER
             var resourceRequest = Resources.LoadAsync<TextAsset>(resourcePath);
             await resourceRequest;
             cancellationToken.ThrowIfCancellationRequested();
@@ -45,11 +47,16 @@ namespace Shadop.Archmage
             if (textAsset == null)
                 throw new FileNotFoundException($"Could not find Resources asset: {resourcePath}.");
 
-            return textAsset.bytes;
-#else
-            throw new System.NotImplementedException("UnityResourcesFS async loading requires Unity 6 or newer.");
-#endif
+            var bytes = textAsset.bytes;
+            Resources.UnloadAsset(textAsset);
+            return bytes;
         }
+#else
+        public Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException("UnityResourcesFS async loading requires Unity 6 or newer.");
+        }
+#endif
 
         public bool FileExists(string path)
         {
@@ -63,7 +70,7 @@ namespace Shadop.Archmage
 
         private static string StripExtension(string path)
         {
-            return Path.ChangeExtension(path, null)?.Replace('\\', '/') ?? path;
+            return Path.ChangeExtension(path, null).Replace('\\', '/');
         }
     }
 }

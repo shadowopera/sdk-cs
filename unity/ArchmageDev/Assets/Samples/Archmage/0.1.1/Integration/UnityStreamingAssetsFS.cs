@@ -1,6 +1,6 @@
 #nullable enable
 
-#if UNITY_5_3_OR_NEWER
+#if UNITY_6000_0_OR_NEWER
 
 using System;
 using System.IO;
@@ -25,8 +25,6 @@ namespace Shadop.Archmage
 
         public async Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             // Combine with StreamingAssets root, normalizing to forward slashes.
             var normalizedPath = path.Replace('\\', '/');
             var fullPath = Application.streamingAssetsPath + "/" + normalizedPath;
@@ -43,6 +41,7 @@ namespace Shadop.Archmage
             // The registration is disposed with the using block to avoid holding
             // a reference to the request after it has been released.
             using var registration = cancellationToken.Register(() => request.Abort());
+            cancellationToken.ThrowIfCancellationRequested();
 
             await request.SendWebRequest();
 
