@@ -286,6 +286,7 @@ ver?.ShortID  // "a1b2c3d"
 sdk-cs/
 ├── src/Archmage/                   # C# source (canonical)
 ├── unity/
+│   ├── ArchmageDev/                # Unity demo & development project
 │   └── dev.shadop.archmage/        # Unity package (OpenUPM)
 │       └── Runtime/                # Synced from src/Archmage/
 ├── scripts/
