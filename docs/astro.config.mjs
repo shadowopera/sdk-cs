@@ -3,6 +3,9 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+	redirects: {
+		'/': '/sdk-cs/shadop-archmage-archmage',
+	},
 	integrations: [
 		starlight({
 			title: 'Archmage Documentation',
