@@ -10,10 +10,6 @@ Represents a 4D vector. Serialized as JSON array [x, y, z, w].
 public struct Vec4<T>
 ```
 
-#### Type Parameters
-
-`T`<br>
-
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec4<T>](./shadop.archmage.vec4-1.md)<br>
 Implements IEquatable<Vec4<T>><br>
 Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md), JsonConverterAttribute

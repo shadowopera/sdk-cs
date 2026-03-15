@@ -20,9 +20,9 @@ I18n (internationalization) stores text for multiple languages and retrieves the
 
 Usage pattern:
 
-1. - Create an I18n instance with a fallback language
-2. - Load translations via MergeTexts, MergeL10nData, or MergeL10nFile
-3. - Retrieve translations via GetText or Text
+1. Create an I18n instance with a fallback language
+2. Load translations via MergeTexts, MergeL10nData, or MergeL10nFile
+3. Retrieve translations via GetText or Text
 
 ## Constructors
 

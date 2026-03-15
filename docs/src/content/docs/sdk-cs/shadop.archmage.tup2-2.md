@@ -10,12 +10,6 @@ Namespace: Shadop.Archmage
 public class Tup2<T0, T1> : 
 ```
 
-#### Type Parameters
-
-`T0`<br>
-
-`T1`<br>
-
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Tup2<T0, T1>](./shadop.archmage.tup2-2.md)<br>
 Implements IEquatable<Tup2<T0, T1>><br>
 Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)

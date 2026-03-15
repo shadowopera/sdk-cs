@@ -22,6 +22,12 @@ files.forEach((file) => {
   // 1. Decode HTML entities (e.g., &lt; -> <)
   let content = decodeHTML(originalRawContent);
 
+  // 1.1 Remove "- " from numbered lists like "1. - "
+  content = content.replace(/^(\s*\d+\.) - /gm, '$1 ');
+
+  // 1.2 Remove "Type Parameters" section if it only contains bare type names (T0, T1, V, etc.)
+  content = content.replace(/^#### Type Parameters\r?\n\r?\n(?:`[A-Z0-9]+`<br>\r?\n(?:\r?\n)?)+(?=(?:####|Inheritance|Implements|Attributes|\[Object\]|$))/gm, '');
+
   let finalContent = '';
 
   // Skip adding frontmatter if file already has it

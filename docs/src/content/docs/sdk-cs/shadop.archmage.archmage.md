@@ -90,11 +90,11 @@ Thrown if loading fails at any stage.
 
 This method performs the following steps:
 
-1. - Reads and parses atlas.json
-2. - Applies any registered modifier callbacks to the atlas data
-3. - Loads each configuration item by reading files, deserializing, and merging overrides
-4. - Calls BindRefs to resolve cross-table references
-5. - Calls OnLoaded on the Atlas for post-load initialization
+1. Reads and parses atlas.json
+2. Applies any registered modifier callbacks to the atlas data
+3. Loads each configuration item by reading files, deserializing, and merging overrides
+4. Calls BindRefs to resolve cross-table references
+5. Calls OnLoaded on the Atlas for post-load initialization
 
 If any step fails, an ArchmageException is raised and loading is aborted.
  Alternatively, exceptions can be thrown from IAtlas.OnLoaded() to abort loading.
@@ -189,10 +189,6 @@ Thrown if invalid format or unknown type.
 public static Tup1<T0> MakeTuple<T0>(T0 item0)
 ```
 
-#### Type Parameters
-
-`T0`<br>
-
 #### Parameters
 
 `item0` T0<br>
@@ -206,12 +202,6 @@ Tup1<T0><br>
 ```csharp
 public static Tup2<T0, T1> MakeTuple<T0, T1>(T0 item0, T1 item1)
 ```
-
-#### Type Parameters
-
-`T0`<br>
-
-`T1`<br>
 
 #### Parameters
 
@@ -228,14 +218,6 @@ Tup2<T0, T1><br>
 ```csharp
 public static Tup3<T0, T1, T2> MakeTuple<T0, T1, T2>(T0 item0, T1 item1, T2 item2)
 ```
-
-#### Type Parameters
-
-`T0`<br>
-
-`T1`<br>
-
-`T2`<br>
 
 #### Parameters
 
@@ -254,16 +236,6 @@ Tup3<T0, T1, T2><br>
 ```csharp
 public static Tup4<T0, T1, T2, T3> MakeTuple<T0, T1, T2, T3>(T0 item0, T1 item1, T2 item2, T3 item3)
 ```
-
-#### Type Parameters
-
-`T0`<br>
-
-`T1`<br>
-
-`T2`<br>
-
-`T3`<br>
 
 #### Parameters
 
@@ -284,18 +256,6 @@ Tup4<T0, T1, T2, T3><br>
 ```csharp
 public static Tup5<T0, T1, T2, T3, T4> MakeTuple<T0, T1, T2, T3, T4>(T0 item0, T1 item1, T2 item2, T3 item3, T4 item4)
 ```
-
-#### Type Parameters
-
-`T0`<br>
-
-`T1`<br>
-
-`T2`<br>
-
-`T3`<br>
-
-`T4`<br>
 
 #### Parameters
 
@@ -318,20 +278,6 @@ Tup5<T0, T1, T2, T3, T4><br>
 ```csharp
 public static Tup6<T0, T1, T2, T3, T4, T5> MakeTuple<T0, T1, T2, T3, T4, T5>(T0 item0, T1 item1, T2 item2, T3 item3, T4 item4, T5 item5)
 ```
-
-#### Type Parameters
-
-`T0`<br>
-
-`T1`<br>
-
-`T2`<br>
-
-`T3`<br>
-
-`T4`<br>
-
-`T5`<br>
 
 #### Parameters
 
@@ -356,22 +302,6 @@ Tup6<T0, T1, T2, T3, T4, T5><br>
 ```csharp
 public static Tup7<T0, T1, T2, T3, T4, T5, T6> MakeTuple<T0, T1, T2, T3, T4, T5, T6>(T0 item0, T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6)
 ```
-
-#### Type Parameters
-
-`T0`<br>
-
-`T1`<br>
-
-`T2`<br>
-
-`T3`<br>
-
-`T4`<br>
-
-`T5`<br>
-
-`T6`<br>
 
 #### Parameters
 
