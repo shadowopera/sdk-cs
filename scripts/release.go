@@ -17,7 +17,6 @@ type Release struct {
 		RunTests1       int `json:"runTests1"`
 		UpdateChangelog int `json:"updateChangelog"`
 		SyncUnity       int `json:"syncUnity"`
-		RunTests2       int `json:"runTests2"`
 		BumpVersion     int `json:"bumpVersion"`
 	} `json:"steps"`
 }

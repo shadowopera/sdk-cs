@@ -118,17 +118,13 @@ while true; do
             markStepDone "syncUnity"
             ;;
 
-        runTests2)
+        bumpVersion)
             printMessage "Running defensive tests..."
             if ! dotnet test; then
                 printError "Tests failed."
                 exit 1
             fi
             ensureCleanWorktree
-            markStepDone "runTests2"
-            ;;
-
-        bumpVersion)
             printMessage "Bumping version..."
             if ! bash scripts/bump-version.sh --yes "$VERSION"; then
                 printError "bump-version.sh failed."
