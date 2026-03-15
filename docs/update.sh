@@ -69,8 +69,8 @@ if ! node fix-api-docs.mjs; then
 fi
 
 # Sync generated docs to the main docs site
-printMessage "Syncing sdk-cs docs to ../docs/src/content/docs/sdk-cs/ ..."
-if ! rsync -av --delete src/content/docs/sdk-cs/ ../../docs/src/content/docs/sdk-cs/; then
+printMessage "Syncing sdk-cs docs to ../docs/archmage ..."
+if ! rsync -av --delete src/content/docs/sdk-cs/ ../../docs/archmage/src/content/docs/sdk-cs/; then
     printError "rsync failed"
     exit 1
 fi
