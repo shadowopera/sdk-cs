@@ -11,7 +11,7 @@ namespace Shadop.Archmage
     {
         public void Info(string message)
         {
-            UnityEngine.Debug.Log($"[Archmage] {message}");
+            UnityEngine.Debug.Log($"{message}");
         }
     }
 }
