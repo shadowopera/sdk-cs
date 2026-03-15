@@ -9,6 +9,8 @@ using UnityEngine.AddressableAssets;
 using Conf;
 using Shadop.Archmage;
 
+#pragma warning disable UNT0006
+
 public class ConfLoader : MonoBehaviour
 {
     public ConfigAtlas Atlas { get; private set; }
@@ -27,7 +29,7 @@ public class ConfLoader : MonoBehaviour
     [Header("Settings")]
     public DemoType _demoType = DemoType.AddressablesConcurrent;
 
-    async void Start()
+    async Task Start()
     {
         Debug.Log($"[ConfLoader] DemoType = {_demoType}");
 
@@ -35,23 +37,23 @@ public class ConfLoader : MonoBehaviour
         {
             case DemoType.Addressables:
             case DemoType.AddressablesConcurrent:
-                AddressablesDemo();
+                await AddressablesDemo();
                 break;
             case DemoType.Resources:
                 ResourcesDemo();
                 break;
             case DemoType.ResourcesAsync:
             case DemoType.ResourcesConcurrentAsync:
-                ResourcesAsyncDemo();
+                await ResourcesAsyncDemo();
                 break;
             case DemoType.StreamingAssetsAsync:
             case DemoType.StreamingAssetsConcurrentAsync:
-                StreamingAssetsAsyncDemo();
+                await StreamingAssetsAsyncDemo();
                 break;
         }
     }
 
-    async void AddressablesDemo()
+    async Task AddressablesDemo()
     {
         // 1. Set the root directory for configuration loading.
         // In Addressables, the default Address is usually the project-relative path of the asset.
@@ -118,7 +120,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    async void ResourcesAsyncDemo()
+    async Task ResourcesAsyncDemo()
     {
         string cfgRoot = "StaticConfigs";
         string atlasFile = "StaticConfigs/atlas.json";
@@ -152,7 +154,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    async void StreamingAssetsAsyncDemo()
+    async Task StreamingAssetsAsyncDemo()
     {
         string cfgRoot = "WebConfigs";
         string atlasFile = "WebConfigs/atlas.json";
