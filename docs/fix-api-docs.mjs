@@ -18,7 +18,7 @@ if (files.length === 0) {
 
 files.forEach((file) => {
   const originalRawContent = fs.readFileSync(file, 'utf-8');
-  
+
   // 1. Decode HTML entities (e.g., &lt; -> <)
   let content = decodeHTML(originalRawContent);
 
@@ -55,7 +55,7 @@ files.forEach((file) => {
         break;
       }
     }
-    
+
     if (h1Index !== -1) {
       title = lines[h1Index].slice(2).trim();
       // Remove the H1 from the body to avoid duplicate titles in Starlight
@@ -66,7 +66,7 @@ files.forEach((file) => {
     // Use single quotes and escape internal single quotes for better YAML safety
     const safeTitle = title.replace(/'/g, "''");
     const frontmatter = `---\ntitle: '${safeTitle}'\n---\n\n`;
-    
+
     // 4. Construct final content
     // .trim() removes leading/trailing whitespace, then we add exactly one newline
     finalContent = frontmatter + lines.join('\n').trim() + '\n';
@@ -76,6 +76,17 @@ files.forEach((file) => {
   if (finalContent !== originalRawContent) {
     fs.writeFileSync(file, finalContent);
     console.log(`Processed: ${file}${finalContent.length !== originalRawContent.length ? ` (Size: ${originalRawContent.length} -> ${finalContent.length})` : ''}`);
+  }
+
+  // 6. Rename file if it contains dots in the basename (Starlight compatibility)
+  const dir = path.dirname(file);
+  const ext = path.extname(file);
+  const base = path.basename(file, ext);
+  if (base.includes('.')) {
+    const newBase = base.replace(/\./g, '-');
+    const newFile = path.join(dir, newBase + ext);
+    fs.renameSync(file, newFile);
+    console.log(`Renamed: ${file} -> ${newFile}`);
   }
 });
 
