@@ -35,6 +35,25 @@ function printImportantMessage() {
 # Move to project root
 cd ..
 
+# Sync image and prepare guide docs
+printMessage "Syncing assets and preparing guide docs ..."
+mkdir -p docs/src/assets/archmage/
+rsync -av archmage.jpg docs/src/assets/archmage/archmage.jpg
+
+rm -rf docs/src/content/docs/guides-cs/
+mkdir -p docs/src/content/docs/guides-cs/
+
+# Process README.md for Starlight
+{
+    echo "---"
+    echo "title: 'Overview'"
+    echo "---"
+    echo ""
+    perl -0777 -pe 's/\n---\s+## Development.*//s' README.md | \
+        perl -0777 -pe 's/^# Archmage\n\n//m' | \
+        perl -pe 's|\./archmage\.jpg|../../../assets/archmage/archmage.jpg|g'
+} > docs/src/content/docs/guides-cs/README.md
+
 # Clean previous generated API docs
 printMessage "Cleaning docs/src/content/docs/sdk-cs/ ..."
 rm -rf docs/src/content/docs/sdk-cs/
@@ -63,7 +82,7 @@ cp docs/src/content/docs/sdk-cs.manual/*.md docs/src/content/docs/sdk-cs/
 # Post-process the generated docs
 printMessage "Post-processing API docs ..."
 cd docs
-if ! node fix-api-docs.mjs; then
+if ! node utils/fix-api-docs.mjs; then
     printError "fix-api-docs.mjs failed"
     exit 1
 fi

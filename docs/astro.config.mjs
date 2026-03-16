@@ -5,13 +5,17 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'Archmage Documentation',
+			title: 'Archmage Docs',
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/shadowopera/sdk-cs' }
 			],
 			sidebar: [
 				{
-					label: 'C# API Reference',
+					label: 'C# Guides',
+					autogenerate: { directory: 'guides-cs' },
+				},
+				{
+					label: 'C# SDK',
 					autogenerate: { directory: 'sdk-cs' },
 				},
 			],
