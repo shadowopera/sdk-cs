@@ -185,6 +185,8 @@ Thrown if invalid format or unknown type.
 
 ### **MakeTuple<T0>(T0)**
 
+Creates a 1-element tuple.
+
 ```csharp
 public static Tup1<T0> MakeTuple<T0>(T0 item0)
 ```
@@ -198,6 +200,8 @@ public static Tup1<T0> MakeTuple<T0>(T0 item0)
 Tup1<T0><br>
 
 ### **MakeTuple<T0, T1>(T0, T1)**
+
+Creates a 2-element tuple.
 
 ```csharp
 public static Tup2<T0, T1> MakeTuple<T0, T1>(T0 item0, T1 item1)
@@ -214,6 +218,8 @@ public static Tup2<T0, T1> MakeTuple<T0, T1>(T0 item0, T1 item1)
 Tup2<T0, T1><br>
 
 ### **MakeTuple<T0, T1, T2>(T0, T1, T2)**
+
+Creates a 3-element tuple.
 
 ```csharp
 public static Tup3<T0, T1, T2> MakeTuple<T0, T1, T2>(T0 item0, T1 item1, T2 item2)
@@ -232,6 +238,8 @@ public static Tup3<T0, T1, T2> MakeTuple<T0, T1, T2>(T0 item0, T1 item1, T2 item
 Tup3<T0, T1, T2><br>
 
 ### **MakeTuple<T0, T1, T2, T3>(T0, T1, T2, T3)**
+
+Creates a 4-element tuple.
 
 ```csharp
 public static Tup4<T0, T1, T2, T3> MakeTuple<T0, T1, T2, T3>(T0 item0, T1 item1, T2 item2, T3 item3)
@@ -252,6 +260,8 @@ public static Tup4<T0, T1, T2, T3> MakeTuple<T0, T1, T2, T3>(T0 item0, T1 item1,
 Tup4<T0, T1, T2, T3><br>
 
 ### **MakeTuple<T0, T1, T2, T3, T4>(T0, T1, T2, T3, T4)**
+
+Creates a 5-element tuple.
 
 ```csharp
 public static Tup5<T0, T1, T2, T3, T4> MakeTuple<T0, T1, T2, T3, T4>(T0 item0, T1 item1, T2 item2, T3 item3, T4 item4)
@@ -274,6 +284,8 @@ public static Tup5<T0, T1, T2, T3, T4> MakeTuple<T0, T1, T2, T3, T4>(T0 item0, T
 Tup5<T0, T1, T2, T3, T4><br>
 
 ### **MakeTuple<T0, T1, T2, T3, T4, T5>(T0, T1, T2, T3, T4, T5)**
+
+Creates a 6-element tuple.
 
 ```csharp
 public static Tup6<T0, T1, T2, T3, T4, T5> MakeTuple<T0, T1, T2, T3, T4, T5>(T0 item0, T1 item1, T2 item2, T3 item3, T4 item4, T5 item5)
@@ -298,6 +310,8 @@ public static Tup6<T0, T1, T2, T3, T4, T5> MakeTuple<T0, T1, T2, T3, T4, T5>(T0 
 Tup6<T0, T1, T2, T3, T4, T5><br>
 
 ### **MakeTuple<T0, T1, T2, T3, T4, T5, T6>(T0, T1, T2, T3, T4, T5, T6)**
+
+Creates a 7-element tuple.
 
 ```csharp
 public static Tup7<T0, T1, T2, T3, T4, T5, T6> MakeTuple<T0, T1, T2, T3, T4, T5, T6>(T0 item0, T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6)
