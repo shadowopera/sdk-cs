@@ -88,9 +88,21 @@ if ! node utils/fix-api-docs.mjs; then
 fi
 
 # Sync generated docs to the main docs site
-printMessage "Syncing sdk-cs docs to ../docs/archmage ..."
+printMessage "Syncing assets ..."
+if ! rsync -av --delete src/assets/archmage/ ../../docs/archmage/src/assets/archmage/; then
+    printError "rsync assets failed"
+    exit 1
+fi
+
+printMessage "Syncing guides-cs ..."
+if ! rsync -av --delete src/content/docs/guides-cs/ ../../docs/archmage/src/content/docs/guides-cs/; then
+    printError "rsync guides-cs failed"
+    exit 1
+fi
+
+printMessage "Syncing sdk-cs ..."
 if ! rsync -av --delete src/content/docs/sdk-cs/ ../../docs/archmage/src/content/docs/sdk-cs/; then
-    printError "rsync failed"
+    printError "rsync sdk-cs failed"
     exit 1
 fi
 
