@@ -200,6 +200,7 @@ public class ConfLoader : MonoBehaviour
         i18n.MergeL10nFile($"{cfgRoot}/l10n.json", en, fs);
         i18n.MergeL10nFile($"{cfgRoot}/l10n.fr.json", fr, fs);
         L10n.GetI18n = () => i18n;
+        L10n.GetPreferredLanguge = () => "fr";
     }
 
     async Task InitI18nAsync(IFS fs, string cfgRoot)
@@ -210,6 +211,7 @@ public class ConfLoader : MonoBehaviour
         await i18n.MergeL10nFileAsync($"{cfgRoot}/l10n.json", en, fs);
         await i18n.MergeL10nFileAsync($"{cfgRoot}/l10n.fr.json", fr, fs);
         L10n.GetI18n = () => i18n;
+        L10n.GetPreferredLanguge = () => "fr";
     }
 
     void ShowAtlasBasicFeatures()
@@ -222,10 +224,10 @@ public class ConfLoader : MonoBehaviour
         var firstChar = Atlas.CharacterArray[0];
         Debug.Log($"[ConfLoader] CharacterArray[0]: ID={firstChar.Id}, Attack={firstChar.Attack}");
         Debug.Log($"[ConfLoader] CharacterArray[0].Race.RawValue: {firstChar.Race.RawValue}");
-        Debug.Log($"[ConfLoader] CharacterArray[0].Race.Ref.Birthplace: {firstChar.Race.Ref.Birthplace.Text("en")}");
+        Debug.Log($"[ConfLoader] CharacterArray[0].Race.Ref.Birthplace: {firstChar.Race.Ref.Birthplace.Text}");
 
         // 3. Query localized text via L10n.
-        Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {Atlas.HeroTable[3].HeroName.Text("fr")}");
-        Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {Atlas.GameCfg.XL10n.Text("fr")}");
+        Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {Atlas.HeroTable[3].HeroName.Text}");
+        Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {Atlas.GameCfg.XL10n.Text}");
     }
 }

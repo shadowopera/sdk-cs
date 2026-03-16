@@ -29,14 +29,16 @@ namespace Shadop.Archmage.Tests
             i18n.MergeL10nFile("../../../testdata/l10n.json", en);
             i18n.MergeL10nFile("../../../testdata/l10n.cn.json", cn);
             L10n.GetI18n = () => i18n;
+            L10n.GetPreferredLanguge = () => cn;
 
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithBlacklist(new[] { "prop_floats" });
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
             CheckUpdateGolden(atlas, "../../../golden/basic");
 
-            Assert.Equal("it is a good day", atlas.GameCfg.XL10n.Text(en));
-            Assert.Equal("今儿天气真好", atlas.GameCfg.XL10n.Text(cn));
+            var ok = atlas.GameCfg.XL10n.GetText(en, out var text);
+            Assert.Equal("it is a good day", text);
+            Assert.Equal("今儿天气真好", atlas.GameCfg.XL10n.Text);
 
             Assert.True(atlas.ItemTable.TryGetValue(20, out var itemEntry));
             Assert.Equal(20, itemEntry!.Id);
