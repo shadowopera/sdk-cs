@@ -106,5 +106,10 @@ if ! rsync -av --delete src/content/docs/sdk-cs/ ../../docs/archmage/src/content
     exit 1
 fi
 
+# Stage all changes in the main docs site
+printMessage "Staging changes in docs site ..."
+cd ../../docs
+git add -A
+
 echo
 printMessage "Done."

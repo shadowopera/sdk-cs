@@ -31,7 +31,7 @@ and calls post-load hooks.
 
 ### .NET
 
-- net8.0
+- net8.0, netstandard2.1 or later
 - Newtonsoft.Json 13.0.4
 
 ## Installation

@@ -108,12 +108,12 @@ The language code to merge into.
 T:Newtonsoft.Json.JsonException<br>
 Thrown if JSON parsing fails.
 
-### **MergeL10nFile(String, String)**
+### **MergeL10nFile(String, String, IFS)**
 
 Loads a localization JSON file and merges translations for the specified language.
 
 ```csharp
-public void MergeL10nFile(string filePath, string language)
+public void MergeL10nFile(string filePath, string language, IFS fs)
 ```
 
 #### Parameters
@@ -123,6 +123,40 @@ Path to the JSON file (flat object with string keys/values).
 
 `language` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The language code to merge into.
+
+`fs` [IFS](./shadop.archmage.ifs.md)<br>
+Optional file system abstraction; defaults to [File.ReadAllBytes(String)](https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readallbytes) if null.
+
+#### Exceptions
+
+[ArchmageException](./shadop.archmage.archmageexception.md)<br>
+Thrown if reading the file or parsing JSON fails.
+
+### **MergeL10nFileAsync(String, String, IFS, CancellationToken)**
+
+Asynchronously loads a localization JSON file and merges translations for the specified language.
+
+```csharp
+public Task MergeL10nFileAsync(string filePath, string language, IFS fs, CancellationToken cancellationToken)
+```
+
+#### Parameters
+
+`filePath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+Path to the JSON file (flat object with string keys/values).
+
+`language` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The language code to merge into.
+
+`fs` [IFS](./shadop.archmage.ifs.md)<br>
+Optional file system abstraction; defaults to [File.ReadAllBytesAsync(String, CancellationToken)](https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readallbytesasync) if null.
+
+`cancellationToken` [CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken)<br>
+Token to cancel the operation.
+
+#### Returns
+
+[Task](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task)<br>
 
 #### Exceptions
 
