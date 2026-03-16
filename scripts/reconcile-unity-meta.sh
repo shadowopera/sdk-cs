@@ -48,7 +48,7 @@ for meta_file in "$UNITY_RUNTIME_DIR"/*.meta; do
     fi
 done
 
-# 3. Check that ArchmageDev/Assets/Samples/Archmage/ has exactly one subdirectory named $VERSION
+# 3. ArchmageDev/Assets/Samples/Archmage/ must has exactly one subdirectory named $VERSION
 echo ""
 echo "Checking unity/ArchmageDev/Assets/Samples/Archmage/ has exactly one subdirectory named $VERSION..."
 
@@ -61,7 +61,7 @@ elif [[ "$(basename "${version_dirs[0]}")" != "$VERSION" ]]; then
     errs=$((errs + 1))
 fi
 
-# 4. Check that Samples~/Integration *.cs files match ArchmageDev installed samples
+# 4. Samples~/Integration *.cs files must match ArchmageDev installed samples
 echo ""
 echo "Checking Samples~/Integration *.cs files match unity/ArchmageDev/Assets/Samples/Archmage/$VERSION/Integration..."
 

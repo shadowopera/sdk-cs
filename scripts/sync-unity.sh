@@ -106,5 +106,21 @@ done
 echo ""
 echo "Sync complete: $added added, $updated updated, $removed removed"
 
+# Sync testdata JSON files to Unity config directories (independent of above counters)
+TESTDATA_DIR="$ROOT_DIR/tests/testdata"
+UNITY_CONFIG_DIRS=(
+    "$ROOT_DIR/unity/ArchmageDev/Assets/Configs"
+    "$ROOT_DIR/unity/ArchmageDev/Assets/Resources/StaticConfigs"
+    "$ROOT_DIR/unity/ArchmageDev/Assets/StreamingAssets/WebConfigs"
+)
+
+echo ""
+echo "Syncing testdata JSON to Unity config directories..."
+for config_dir in "${UNITY_CONFIG_DIRS[@]}"; do
+    mkdir -p "$config_dir"
+    rsync -a --delete --include="*/" --include="*.json" --exclude="*" "$TESTDATA_DIR/" "$config_dir/"
+    echo "  synced -> $config_dir"
+done
+
 echo ""
 "$SCRIPT_DIR/reconcile-unity-meta.sh"

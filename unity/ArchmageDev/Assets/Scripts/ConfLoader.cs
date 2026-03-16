@@ -84,7 +84,8 @@ public class ConfLoader : MonoBehaviour
             Debug.Log("[ConfLoader] Starting async config loading...");
             await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, Atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
-            LogFirstCharacter();
+            await InitI18nAsync(new UnityAddressablesFS(), cfgRoot);
+            ShowAtlasBasicFeatures();
         }
         catch (Exception ex)
         {
@@ -112,7 +113,8 @@ public class ConfLoader : MonoBehaviour
             Debug.Log("[ConfLoader] Starting sync config loading (Resources)...");
             Archmage.LoadAtlas(atlasFile, cfgRoot, Atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
-            LogFirstCharacter();
+            InitI18n(new UnityResourcesFS(), cfgRoot);
+            ShowAtlasBasicFeatures();
         }
         catch (Exception ex)
         {
@@ -146,7 +148,8 @@ public class ConfLoader : MonoBehaviour
             Debug.Log("[ConfLoader] Starting async config loading (Resources)...");
             await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, Atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
-            LogFirstCharacter();
+            await InitI18nAsync(new UnityResourcesFS(), cfgRoot);
+            ShowAtlasBasicFeatures();
         }
         catch (Exception ex)
         {
@@ -180,7 +183,8 @@ public class ConfLoader : MonoBehaviour
             Debug.Log("[ConfLoader] Starting async config loading (StreamingAssets)...");
             await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, Atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
-            LogFirstCharacter();
+            await InitI18nAsync(new UnityStreamingAssetsFS(), cfgRoot);
+            ShowAtlasBasicFeatures();
         }
         catch (Exception ex)
         {
@@ -188,18 +192,40 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    void LogFirstCharacter()
+    void InitI18n(IFS fs, string cfgRoot)
     {
-        if (Atlas.CharacterArray == null || Atlas.CharacterArray.Count == 0)
-            return;
+        var en = "en";
+        var fr = "fr";
+        var i18n = new I18n(en);
+        i18n.MergeL10nFile($"{cfgRoot}/l10n.json", en, fs);
+        i18n.MergeL10nFile($"{cfgRoot}/l10n.fr.json", fr, fs);
+        L10n.GetI18n = () => i18n;
+    }
 
+    async Task InitI18nAsync(IFS fs, string cfgRoot)
+    {
+        var en = "en";
+        var fr = "fr";
+        var i18n = new I18n(en);
+        await i18n.MergeL10nFileAsync($"{cfgRoot}/l10n.json", en, fs);
+        await i18n.MergeL10nFileAsync($"{cfgRoot}/l10n.fr.json", fr, fs);
+        L10n.GetI18n = () => i18n;
+    }
+
+    void ShowAtlasBasicFeatures()
+    {
+        // 1. Look up a config entry by ID from a dictionary-based table.
+        Atlas.HeroTable.TryLookup(2, out var hero);
+        Debug.Log($"[ConfLoader] HeroTable[2]: StartLevel={hero.StartLevel}");
+
+        // 2. Access a cross-table reference via XRef.Ref.
         var firstChar = Atlas.CharacterArray[0];
-        if (firstChar == null)
-            return;
+        Debug.Log($"[ConfLoader] CharacterArray[0]: ID={firstChar.Id}, Attack={firstChar.Attack}");
+        Debug.Log($"[ConfLoader] CharacterArray[0].Race.RawValue: {firstChar.Race.RawValue}");
+        Debug.Log($"[ConfLoader] CharacterArray[0].Race.Ref.Birthplace: {firstChar.Race.Ref.Birthplace.Text("en")}");
 
-        Debug.Log($"[ConfLoader] Loaded first character: ID={firstChar.Id}, Attack={firstChar.Attack}");
-
-        if (firstChar.Race.Ref != null)
-            Debug.Log($"[ConfLoader] Character race info resolved: {firstChar.Race.Ref.Id}");
+        // 3. Query localized text via L10n.
+        Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {Atlas.HeroTable[3].HeroName.Text("fr")}");
+        Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {Atlas.GameCfg.XL10n.Text("fr")}");
     }
 }

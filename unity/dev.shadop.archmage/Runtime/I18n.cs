@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Shadop.Archmage
@@ -87,10 +89,34 @@ namespace Shadop.Archmage
         /// </summary>
         /// <param name="filePath">Path to the JSON file (flat object with string keys/values).</param>
         /// <param name="language">The language code to merge into.</param>
+        /// <param name="fs">Optional file system abstraction; defaults to <see cref="File.ReadAllBytes"/> if null.</param>
         /// <exception cref="ArchmageException">Thrown if reading the file or parsing JSON fails.</exception>
-        public void MergeL10nFile(string filePath, string language)
+        public void MergeL10nFile(string filePath, string language, IFS? fs = null)
         {
-            var data = File.ReadAllBytes(filePath);
+            fs ??= new DefaultFS();
+            var data = fs.ReadAllBytes(filePath);
+            try
+            {
+                MergeL10nData(data, language);
+            }
+            catch (Exception ex)
+            {
+                throw new ArchmageException($"Failed to merge l10n file \"{filePath}\". language: {language}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously loads a localization JSON file and merges translations for the specified language.
+        /// </summary>
+        /// <param name="filePath">Path to the JSON file (flat object with string keys/values).</param>
+        /// <param name="language">The language code to merge into.</param>
+        /// <param name="fs">Optional file system abstraction; defaults to <see cref="File.ReadAllBytesAsync"/> if null.</param>
+        /// <param name="cancellationToken">Token to cancel the operation.</param>
+        /// <exception cref="ArchmageException">Thrown if reading the file or parsing JSON fails.</exception>
+        public async Task MergeL10nFileAsync(string filePath, string language, IFS? fs = null, CancellationToken cancellationToken = default)
+        {
+            fs ??= new DefaultFS();
+            var data = await fs.ReadAllBytesAsync(filePath, cancellationToken);
             try
             {
                 MergeL10nData(data, language);
