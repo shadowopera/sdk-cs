@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Conf
 {
     [JsonConverter(typeof(L10nJsonConverter))]
-    public readonly struct L10n
+    public readonly partial struct L10n
     {
         public static L10n Empty = new(string.Empty);
 

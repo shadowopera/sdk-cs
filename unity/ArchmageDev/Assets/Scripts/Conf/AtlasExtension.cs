@@ -4,7 +4,7 @@
 
 namespace Conf
 {
-    public class AtlasExtension
+    public partial class AtlasExtension
     {
         // Put your config extensions here.
 
