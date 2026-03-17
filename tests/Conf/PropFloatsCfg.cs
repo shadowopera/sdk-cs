@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
@@ -12,34 +13,22 @@ namespace Conf
 {
     public partial class PropFloatsCfg
     {
-        /// <summary>
-        /// desc-B
-        /// </summary>
+        // desc-B
         [JsonProperty("B")]
         public double B { get; set; }
-        /// <summary>
-        /// desc-C
-        /// </summary>
+        // desc-C
         [JsonProperty("C")]
         public float C { get; set; }
-        /// <summary>
-        /// desc-D
-        /// </summary>
+        // desc-D
         [JsonProperty("D")]
         public double D { get; set; }
-        /// <summary>
-        /// desc-E
-        /// </summary>
+        // desc-E
         [JsonProperty("E")]
         public float E { get; set; }
-        /// <summary>
-        /// desc-F
-        /// </summary>
+        // desc-F
         [JsonProperty("F")]
         public double F { get; set; }
-        /// <summary>
-        /// desc-G
-        /// </summary>
+        // desc-G
         [JsonProperty("G")]
         public double G { get; set; }
     }

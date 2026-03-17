@@ -5,43 +5,75 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class MagicTable : Dictionary<long, MagicCfg?>
+    public partial struct MagicCfgId
     {
-        // Definition only.
+        public long Value { get; internal set; }
     }
+
+    public partial class MagicTable : Dictionary<MagicCfgId, MagicCfg?> {}
 
     public partial class MagicCfg
     {
         [JsonIgnore]
-        public long Id { get; set; }
+        public MagicCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = null!;
     }
 
     public partial class MagicTable
     {
-        public bool TryLookup(long cfgID, out MagicCfg? cfg)
+        public bool TryLookup(MagicCfgId cfgID, out MagicCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "MagicTable", out cfg);
         }
 
-        public MagicCfg? Lookup(long cfgID)
+        public MagicCfg? Lookup(MagicCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<long, MagicCfg>(cfgID, this!, "MagicTable");
+            return ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgID, this!, "MagicTable");
         }
 
-        internal XRef<long, MagicCfg> RefLookup(long cfgID)
+        internal XRef<MagicCfgId, MagicCfg> RefLookup(MagicCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, MagicCfg>(cfgID, this!, "MagicTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgID, this!, "MagicTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(MagicCfgIdJsonConverter))]
+    [TypeConverter(typeof(MagicCfgIdTypeConverter))]
+    public partial struct MagicCfgId : IEquatable<MagicCfgId>, IZero
+    {
+        public static implicit operator MagicCfgId(long value) => new() { Value = value };
+        public static implicit operator long(MagicCfgId obj) => obj.Value;
+
+        public bool Equals(MagicCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is MagicCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(MagicCfgId left, MagicCfgId right) => left.Value == right.Value;
+        public static bool operator !=(MagicCfgId left, MagicCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value.ToString();
+        public bool IsZero => Value == default;
+    }
+
+    internal class MagicCfgIdJsonConverter : ValueWrapperJsonConverter<MagicCfgId, long>
+    {
+        protected override MagicCfgId Create(long value) => value;
+        protected override long GetValue(MagicCfgId obj) => obj.Value;
+    }
+
+    internal class MagicCfgIdTypeConverter : ValueWrapperTypeConverter<MagicCfgId, long>
+    {
+        protected override MagicCfgId Create(long value) => value;
+    }
 
     public partial class MagicTable : IApplyKeys
     {

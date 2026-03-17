@@ -5,51 +5,83 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class RaceTable : Dictionary<string, RaceCfg?>
+    public partial struct RaceCfgId
     {
-        // Definition only.
+        public string Value { get; internal set; }
     }
+
+    public partial class RaceTable : Dictionary<RaceCfgId, RaceCfg?> {}
 
     public partial class RaceCfg
     {
         [JsonIgnore]
-        public string Id { get; set; } = null!;
+        public RaceCfgId Id { get; set; } = null!;
         [JsonProperty("birthplace")]
         public L10n Birthplace { get; set; }
         [JsonProperty("referrer1")]
-        public XRef<long, RefCfg> Referrer1 { get; set; }
+        public XRef<RefCfgId, RefCfg> Referrer1 { get; set; }
         [JsonProperty("referrer2")]
-        public XRef<string, StringCfg> Referrer2 { get; set; }
+        public XRef<StringCfgId, StringCfg> Referrer2 { get; set; }
         [JsonProperty("heroes1")]
-        public List<XRef<long, HeroCfg>>? Heroes1 { get; set; }
+        public List<XRef<HeroCfgId, HeroCfg>>? Heroes1 { get; set; }
         [JsonProperty("heroes2")]
-        public List<XRef<long, HeroCfg>>? Heroes2 { get; set; }
+        public List<XRef<HeroCfgId, HeroCfg>>? Heroes2 { get; set; }
     }
 
     public partial class RaceTable
     {
-        public bool TryLookup(string cfgID, out RaceCfg? cfg)
+        public bool TryLookup(RaceCfgId cfgID, out RaceCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "RaceTable", out cfg);
         }
 
-        public RaceCfg? Lookup(string cfgID)
+        public RaceCfg? Lookup(RaceCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<string, RaceCfg>(cfgID, this!, "RaceTable");
+            return ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgID, this!, "RaceTable");
         }
 
-        internal XRef<string, RaceCfg> RefLookup(string cfgID)
+        internal XRef<RaceCfgId, RaceCfg> RefLookup(RaceCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<string, RaceCfg>(cfgID, this!, "RaceTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgID, this!, "RaceTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(RaceCfgIdJsonConverter))]
+    [TypeConverter(typeof(RaceCfgIdTypeConverter))]
+    public partial struct RaceCfgId : IEquatable<RaceCfgId>, IZero
+    {
+        public static implicit operator RaceCfgId(string value) => new() { Value = value };
+        public static implicit operator string(RaceCfgId obj) => obj.Value;
+
+        public bool Equals(RaceCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is RaceCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(RaceCfgId left, RaceCfgId right) => left.Value == right.Value;
+        public static bool operator !=(RaceCfgId left, RaceCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value;
+        public bool IsZero => string.IsNullOrEmpty(Value);
+    }
+
+    internal class RaceCfgIdJsonConverter : ValueWrapperJsonConverter<RaceCfgId, string>
+    {
+        protected override RaceCfgId Create(string value) => value;
+        protected override string GetValue(RaceCfgId obj) => obj.Value;
+    }
+
+    internal class RaceCfgIdTypeConverter : ValueWrapperTypeConverter<RaceCfgId, string>
+    {
+        protected override RaceCfgId Create(string value) => value;
+    }
 
     public partial class RaceTable : IApplyKeys
     {

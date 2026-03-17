@@ -5,62 +5,49 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class StringTable : Dictionary<string, StringCfg?>
+    public partial struct StringCfgId
     {
-        // Definition only.
+        public string Value { get; internal set; }
     }
+
+    public partial class StringTable : Dictionary<StringCfgId, StringCfg?> {}
 
     public partial class StringCfg
     {
         [JsonIgnore]
-        public string Id { get; set; } = null!;
+        public StringCfgId Id { get; set; } = null!;
         [JsonProperty("B")]
         public String_B? B { get; set; }
-        /// <summary>
-        /// desc-E
-        /// </summary>
+        // desc-E
         [JsonProperty("E")]
         public string E { get; set; } = null!;
-        /// <summary>
-        /// def-validate
-        /// </summary>
+        // def-validate
         [JsonProperty("def-validate")]
         public string DefValidate { get; set; } = null!;
-        /// <summary>
-        /// def-postprocess
-        /// </summary>
+        // def-postprocess
         [JsonProperty("def-postprocess")]
         public string DefPostprocess { get; set; } = null!;
-        /// <summary>
-        /// desc-I
-        /// </summary>
+        // desc-I
         [JsonProperty("I")]
         public string I { get; set; } = null!;
-        /// <summary>
-        /// desc-K
-        /// </summary>
+        // desc-K
         [JsonProperty("K")]
-        public XRef<string, RaceCfg> K { get; set; }
-        /// <summary>
-        /// desc-referer1
-        /// </summary>
+        public XRef<RaceCfgId, RaceCfg> K { get; set; }
+        // desc-referer1
         [JsonProperty("referer1")]
-        public XRef<long, RefCfg> Referer1 { get; set; }
-        /// <summary>
-        /// desc-referer2
-        /// </summary>
+        public XRef<RefCfgId, RefCfg> Referer1 { get; set; }
+        // desc-referer2
         [JsonProperty("referer2")]
-        public XRef<long, RefCfg> Referer2 { get; set; }
-        /// <summary>
-        /// desc-referer-n
-        /// </summary>
+        public XRef<RefCfgId, RefCfg> Referer2 { get; set; }
+        // desc-referer-n
         [JsonProperty("referer-n")]
-        public List<XRef<long, RefCfg>>? RefererN { get; set; }
+        public List<XRef<RefCfgId, RefCfg>>? RefererN { get; set; }
     }
 
     // String_B represents $.*.B
@@ -68,9 +55,7 @@ namespace Conf
     {
         [JsonProperty("bar")]
         public Rab? Bar { get; set; }
-        /// <summary>
-        /// desc-B.car
-        /// </summary>
+        // desc-B.car
         [JsonProperty("car")]
         public string Car { get; set; } = null!;
     }
@@ -78,37 +63,62 @@ namespace Conf
     // Rab represents $.*.B.bar
     public partial class Rab
     {
-        /// <summary>
-        /// desc-B.bar.foo
-        /// </summary>
+        // desc-B.bar.foo
         [JsonProperty("foo")]
         public string Foo { get; set; } = null!;
-        /// <summary>
-        /// desc-B.bar.qux
-        /// </summary>
+        // desc-B.bar.qux
         [JsonProperty("qux")]
         public string Qux { get; set; } = null!;
     }
 
     public partial class StringTable
     {
-        public bool TryLookup(string cfgID, out StringCfg? cfg)
+        public bool TryLookup(StringCfgId cfgID, out StringCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "StringTable", out cfg);
         }
 
-        public StringCfg? Lookup(string cfgID)
+        public StringCfg? Lookup(StringCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<string, StringCfg>(cfgID, this!, "StringTable");
+            return ConfigAtlas.Lookup<StringCfgId, StringCfg>(cfgID, this!, "StringTable");
         }
 
-        internal XRef<string, StringCfg> RefLookup(string cfgID)
+        internal XRef<StringCfgId, StringCfg> RefLookup(StringCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<string, StringCfg>(cfgID, this!, "StringTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<StringCfgId, StringCfg>(cfgID, this!, "StringTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(StringCfgIdJsonConverter))]
+    [TypeConverter(typeof(StringCfgIdTypeConverter))]
+    public partial struct StringCfgId : IEquatable<StringCfgId>, IZero
+    {
+        public static implicit operator StringCfgId(string value) => new() { Value = value };
+        public static implicit operator string(StringCfgId obj) => obj.Value;
+
+        public bool Equals(StringCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is StringCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(StringCfgId left, StringCfgId right) => left.Value == right.Value;
+        public static bool operator !=(StringCfgId left, StringCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value;
+        public bool IsZero => string.IsNullOrEmpty(Value);
+    }
+
+    internal class StringCfgIdJsonConverter : ValueWrapperJsonConverter<StringCfgId, string>
+    {
+        protected override StringCfgId Create(string value) => value;
+        protected override string GetValue(StringCfgId obj) => obj.Value;
+    }
+
+    internal class StringCfgIdTypeConverter : ValueWrapperTypeConverter<StringCfgId, string>
+    {
+        protected override StringCfgId Create(string value) => value;
+    }
 
     public partial class StringTable : IApplyKeys
     {

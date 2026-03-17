@@ -5,20 +5,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class WeaponRuneTable : Dictionary<long, WeaponRuneCfg?>
+    public partial struct WeaponRuneCfgId
     {
-        // Definition only.
+        public long Value { get; internal set; }
     }
+
+    public partial class WeaponRuneTable : Dictionary<WeaponRuneCfgId, WeaponRuneCfg?> {}
 
     public partial class WeaponRuneCfg
     {
         [JsonIgnore]
-        public long Id { get; set; }
+        public WeaponRuneCfgId Id { get; set; }
         [JsonProperty("runeName")]
         public string RuneName { get; set; } = null!;
         [JsonProperty("power")]
@@ -27,23 +30,52 @@ namespace Conf
 
     public partial class WeaponRuneTable
     {
-        public bool TryLookup(long cfgID, out WeaponRuneCfg? cfg)
+        public bool TryLookup(WeaponRuneCfgId cfgID, out WeaponRuneCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "WeaponRuneTable", out cfg);
         }
 
-        public WeaponRuneCfg? Lookup(long cfgID)
+        public WeaponRuneCfg? Lookup(WeaponRuneCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<long, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable");
+            return ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable");
         }
 
-        internal XRef<long, WeaponRuneCfg> RefLookup(long cfgID)
+        internal XRef<WeaponRuneCfgId, WeaponRuneCfg> RefLookup(WeaponRuneCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(WeaponRuneCfgIdJsonConverter))]
+    [TypeConverter(typeof(WeaponRuneCfgIdTypeConverter))]
+    public partial struct WeaponRuneCfgId : IEquatable<WeaponRuneCfgId>, IZero
+    {
+        public static implicit operator WeaponRuneCfgId(long value) => new() { Value = value };
+        public static implicit operator long(WeaponRuneCfgId obj) => obj.Value;
+
+        public bool Equals(WeaponRuneCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is WeaponRuneCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(WeaponRuneCfgId left, WeaponRuneCfgId right) => left.Value == right.Value;
+        public static bool operator !=(WeaponRuneCfgId left, WeaponRuneCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value.ToString();
+        public bool IsZero => Value == default;
+    }
+
+    internal class WeaponRuneCfgIdJsonConverter : ValueWrapperJsonConverter<WeaponRuneCfgId, long>
+    {
+        protected override WeaponRuneCfgId Create(long value) => value;
+        protected override long GetValue(WeaponRuneCfgId obj) => obj.Value;
+    }
+
+    internal class WeaponRuneCfgIdTypeConverter : ValueWrapperTypeConverter<WeaponRuneCfgId, long>
+    {
+        protected override WeaponRuneCfgId Create(long value) => value;
+    }
 
     public partial class WeaponRuneTable : IApplyKeys
     {

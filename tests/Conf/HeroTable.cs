@@ -5,64 +5,96 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class HeroTable : Dictionary<long, HeroCfg?>
+    public partial struct HeroCfgId
     {
-        // Definition only.
+        public long Value { get; internal set; }
     }
+
+    public partial class HeroTable : Dictionary<HeroCfgId, HeroCfg?> {}
 
     public partial class HeroCfg
     {
         [JsonIgnore]
-        public long Id { get; set; }
+        public HeroCfgId Id { get; set; }
         [JsonProperty("heroName")]
         public L10n HeroName { get; set; }
         [JsonProperty("startLevel")]
         public long StartLevel { get; set; }
         [JsonProperty("referrer")]
-        public List<XRef<long, RefCfg>>? Referrer { get; set; }
+        public List<XRef<RefCfgId, RefCfg>>? Referrer { get; set; }
         [JsonProperty("race-combo")]
         public List<Hero_RaceComboEntry>? RaceCombo { get; set; }
         [JsonProperty("referrer-sort")]
-        public List<XRef<long, RefCfg>>? ReferrerSort { get; set; }
+        public List<XRef<RefCfgId, RefCfg>>? ReferrerSort { get; set; }
         [JsonProperty("referrer-compact")]
-        public List<XRef<long, RefCfg>>? ReferrerCompact { get; set; }
+        public List<XRef<RefCfgId, RefCfg>>? ReferrerCompact { get; set; }
         [JsonProperty("referrer-sort-compact")]
-        public List<XRef<long, RefCfg>>? ReferrerSortCompact { get; set; }
+        public List<XRef<RefCfgId, RefCfg>>? ReferrerSortCompact { get; set; }
     }
 
     // Hero_RaceComboEntry represents $.*['race-combo'].*
     public partial class Hero_RaceComboEntry
     {
         [JsonProperty("race1")]
-        public XRef<string, RaceCfg> Race1 { get; set; }
+        public XRef<RaceCfgId, RaceCfg> Race1 { get; set; }
         [JsonProperty("race2")]
-        public XRef<string, RaceCfg> Race2 { get; set; }
+        public XRef<RaceCfgId, RaceCfg> Race2 { get; set; }
     }
 
     public partial class HeroTable
     {
-        public bool TryLookup(long cfgID, out HeroCfg? cfg)
+        public bool TryLookup(HeroCfgId cfgID, out HeroCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "HeroTable", out cfg);
         }
 
-        public HeroCfg? Lookup(long cfgID)
+        public HeroCfg? Lookup(HeroCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<long, HeroCfg>(cfgID, this!, "HeroTable");
+            return ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgID, this!, "HeroTable");
         }
 
-        internal XRef<long, HeroCfg> RefLookup(long cfgID)
+        internal XRef<HeroCfgId, HeroCfg> RefLookup(HeroCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, HeroCfg>(cfgID, this!, "HeroTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgID, this!, "HeroTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(HeroCfgIdJsonConverter))]
+    [TypeConverter(typeof(HeroCfgIdTypeConverter))]
+    public partial struct HeroCfgId : IEquatable<HeroCfgId>, IZero
+    {
+        public static implicit operator HeroCfgId(long value) => new() { Value = value };
+        public static implicit operator long(HeroCfgId obj) => obj.Value;
+
+        public bool Equals(HeroCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is HeroCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(HeroCfgId left, HeroCfgId right) => left.Value == right.Value;
+        public static bool operator !=(HeroCfgId left, HeroCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value.ToString();
+        public bool IsZero => Value == default;
+    }
+
+    internal class HeroCfgIdJsonConverter : ValueWrapperJsonConverter<HeroCfgId, long>
+    {
+        protected override HeroCfgId Create(long value) => value;
+        protected override long GetValue(HeroCfgId obj) => obj.Value;
+    }
+
+    internal class HeroCfgIdTypeConverter : ValueWrapperTypeConverter<HeroCfgId, long>
+    {
+        protected override HeroCfgId Create(long value) => value;
+    }
 
     public partial class HeroTable : IApplyKeys
     {

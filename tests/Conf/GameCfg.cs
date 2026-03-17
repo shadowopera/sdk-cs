@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
@@ -12,84 +13,52 @@ namespace Conf
 {
     public partial class GameCfg
     {
-        /// <summary>
-        /// desc-x-int
-        /// </summary>
+        // desc-x-int
         [JsonProperty("x-int")]
         public long XInt { get; set; }
-        /// <summary>
-        /// desc-x-int32
-        /// </summary>
+        // desc-x-int32
         [JsonProperty("x-int32")]
         public int XInt32 { get; set; }
-        /// <summary>
-        /// desc-x-float64
-        /// </summary>
+        // desc-x-float64
         [JsonProperty("x-float64")]
         public double XFloat64 { get; set; }
-        /// <summary>
-        /// desc-x-string
-        /// </summary>
+        // desc-x-string
         [JsonProperty("x-string")]
         public string XString { get; set; } = null!;
-        /// <summary>
-        /// desc-x-bool
-        /// </summary>
+        // desc-x-bool
         [JsonProperty("x-bool")]
         public bool XBool { get; set; }
-        /// <summary>
-        /// desc-x-duration
-        /// </summary>
+        // desc-x-duration
         [JsonProperty("x-duration")]
         public Duration XDuration { get; set; }
-        /// <summary>
-        /// desc-x-path
-        /// </summary>
+        // desc-x-path
         [JsonProperty("x-path")]
         public string XPath { get; set; } = null!;
-        /// <summary>
-        /// desc-x-datetime
-        /// </summary>
+        // desc-x-datetime
         [JsonProperty("x-datetime")]
         public DateTimeOffset XDatetime { get; set; }
-        /// <summary>
-        /// desc-x-ref
-        /// </summary>
+        // desc-x-ref
         [JsonProperty("x-ref")]
-        public XRef<long, WeaponRuneCfg> XRef { get; set; }
-        /// <summary>
-        /// desc-x-l10n
-        /// </summary>
+        public XRef<WeaponRuneCfgId, WeaponRuneCfg> XRef { get; set; }
+        // desc-x-l10n
         [JsonProperty("x-l10n")]
         public L10n XL10n { get; set; }
-        /// <summary>
-        /// desc-x-array1
-        /// </summary>
+        // desc-x-array1
         [JsonProperty("x-array1")]
         public List<long>? XArray1 { get; set; }
-        /// <summary>
-        /// desc-x-array2
-        /// </summary>
+        // desc-x-array2
         [JsonProperty("x-array2")]
         public List<sbyte>? XArray2 { get; set; }
-        /// <summary>
-        /// desc-x-map
-        /// </summary>
+        // desc-x-map
         [JsonProperty("x-map")]
         public Dictionary<long, string>? XMap { get; set; }
-        /// <summary>
-        /// desc-x-object
-        /// </summary>
+        // desc-x-object
         [JsonProperty("x-object")]
         public Game_XObject? XObject { get; set; }
-        /// <summary>
-        /// desc-x-tuple
-        /// </summary>
+        // desc-x-tuple
         [JsonProperty("x-tuple")]
         public Tup3<long, float, string>? XTuple { get; set; }
-        /// <summary>
-        /// desc-x-vector
-        /// </summary>
+        // desc-x-vector
         [JsonProperty("x-vector")]
         public Vec3<int> XVector { get; set; }
     }

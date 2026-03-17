@@ -5,20 +5,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class ItemTable : Dictionary<long, ItemCfg?>
+    public partial struct ItemCfgId
     {
-        // Definition only.
+        public long Value { get; internal set; }
     }
+
+    public partial class ItemTable : Dictionary<ItemCfgId, ItemCfg?> {}
 
     public partial class ItemCfg
     {
         [JsonIgnore]
-        public long Id { get; set; }
+        public ItemCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = null!;
         [JsonProperty("price")]
@@ -36,23 +39,52 @@ namespace Conf
 
     public partial class ItemTable
     {
-        public bool TryLookup(long cfgID, out ItemCfg? cfg)
+        public bool TryLookup(ItemCfgId cfgID, out ItemCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "ItemTable", out cfg);
         }
 
-        public ItemCfg? Lookup(long cfgID)
+        public ItemCfg? Lookup(ItemCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<long, ItemCfg>(cfgID, this!, "ItemTable");
+            return ConfigAtlas.Lookup<ItemCfgId, ItemCfg>(cfgID, this!, "ItemTable");
         }
 
-        internal XRef<long, ItemCfg> RefLookup(long cfgID)
+        internal XRef<ItemCfgId, ItemCfg> RefLookup(ItemCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, ItemCfg>(cfgID, this!, "ItemTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<ItemCfgId, ItemCfg>(cfgID, this!, "ItemTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(ItemCfgIdJsonConverter))]
+    [TypeConverter(typeof(ItemCfgIdTypeConverter))]
+    public partial struct ItemCfgId : IEquatable<ItemCfgId>, IZero
+    {
+        public static implicit operator ItemCfgId(long value) => new() { Value = value };
+        public static implicit operator long(ItemCfgId obj) => obj.Value;
+
+        public bool Equals(ItemCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is ItemCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(ItemCfgId left, ItemCfgId right) => left.Value == right.Value;
+        public static bool operator !=(ItemCfgId left, ItemCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value.ToString();
+        public bool IsZero => Value == default;
+    }
+
+    internal class ItemCfgIdJsonConverter : ValueWrapperJsonConverter<ItemCfgId, long>
+    {
+        protected override ItemCfgId Create(long value) => value;
+        protected override long GetValue(ItemCfgId obj) => obj.Value;
+    }
+
+    internal class ItemCfgIdTypeConverter : ValueWrapperTypeConverter<ItemCfgId, long>
+    {
+        protected override ItemCfgId Create(long value) => value;
+    }
 
     public partial class ItemTable : IApplyKeys
     {

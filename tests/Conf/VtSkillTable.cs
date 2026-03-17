@@ -5,29 +5,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class VtSkillTable : Dictionary<long, VtSkillCfg?>
+    public partial struct VtSkillCfgId
     {
-        // Definition only.
+        public long Value { get; internal set; }
     }
+
+    public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg?> {}
 
     public partial class VtSkillCfg
     {
         [JsonIgnore]
-        public long Id { get; set; }
+        public VtSkillCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = null!;
         [JsonProperty("class")]
         public string Class { get; set; } = null!;
         [JsonProperty("Foo")]
         public Dictionary<long, VtSkill_FooEntry>? Foo { get; set; }
-        /// <summary>
-        /// reagent
-        /// </summary>
+        // reagent
         [JsonProperty("reagent")]
         public long Reagent { get; set; }
         [JsonProperty("weapons")]
@@ -37,39 +38,64 @@ namespace Conf
     // VtSkill_FooEntry represents $.*.Foo.*
     public partial class VtSkill_FooEntry
     {
-        /// <summary>
-        /// X1a
-        /// </summary>
+        // X1a
         [JsonProperty("X1")]
         public string X1 { get; set; } = null!;
         [JsonProperty("X2")]
         public Duration X2 { get; set; }
-        /// <summary>
-        /// X5
-        /// </summary>
+        // X5
         [JsonProperty("X5")]
         public long X5 { get; set; }
     }
 
     public partial class VtSkillTable
     {
-        public bool TryLookup(long cfgID, out VtSkillCfg? cfg)
+        public bool TryLookup(VtSkillCfgId cfgID, out VtSkillCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "VtSkillTable", out cfg);
         }
 
-        public VtSkillCfg? Lookup(long cfgID)
+        public VtSkillCfg? Lookup(VtSkillCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<long, VtSkillCfg>(cfgID, this!, "VtSkillTable");
+            return ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgID, this!, "VtSkillTable");
         }
 
-        internal XRef<long, VtSkillCfg> RefLookup(long cfgID)
+        internal XRef<VtSkillCfgId, VtSkillCfg> RefLookup(VtSkillCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, VtSkillCfg>(cfgID, this!, "VtSkillTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgID, this!, "VtSkillTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(VtSkillCfgIdJsonConverter))]
+    [TypeConverter(typeof(VtSkillCfgIdTypeConverter))]
+    public partial struct VtSkillCfgId : IEquatable<VtSkillCfgId>, IZero
+    {
+        public static implicit operator VtSkillCfgId(long value) => new() { Value = value };
+        public static implicit operator long(VtSkillCfgId obj) => obj.Value;
+
+        public bool Equals(VtSkillCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is VtSkillCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(VtSkillCfgId left, VtSkillCfgId right) => left.Value == right.Value;
+        public static bool operator !=(VtSkillCfgId left, VtSkillCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value.ToString();
+        public bool IsZero => Value == default;
+    }
+
+    internal class VtSkillCfgIdJsonConverter : ValueWrapperJsonConverter<VtSkillCfgId, long>
+    {
+        protected override VtSkillCfgId Create(long value) => value;
+        protected override long GetValue(VtSkillCfgId obj) => obj.Value;
+    }
+
+    internal class VtSkillCfgIdTypeConverter : ValueWrapperTypeConverter<VtSkillCfgId, long>
+    {
+        protected override VtSkillCfgId Create(long value) => value;
+    }
 
     public partial class VtSkillTable : IApplyKeys
     {
