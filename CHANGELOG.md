@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-03-17
+
+### Added
+
+- Added `IZero` interface and `ValueWrapperJsonConverter` / `ValueWrapperTypeConverter` for better primitive wrapper support.
+- Added `IFS` support and `MergeL10nFileAsync` variant to `MergeL10nFile` in `I18n`.
+- New documentation site built with Astro and Starlight, including comprehensive API docs and C# guides.
+
+### Changed
+
+- Improved `L10n` API: replaced `Text(lang)` with a `Text` property that uses `GetPreferredLanguage`.
+- Made `AtlasExtension` and `L10n` classes `partial` to allow user-defined extensions.
+- Removed `[Archmage]` prefix from `UnityAtlasLogger` for cleaner logs.
+
 ## [0.2.0] - 2026-03-14
 
 ### Added
