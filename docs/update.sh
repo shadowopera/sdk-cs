@@ -38,7 +38,10 @@ cd ..
 # Sync image and prepare guide docs
 printMessage "Syncing assets and preparing guide docs ..."
 mkdir -p docs/src/assets/archmage/
-rsync -av archmage.jpg docs/src/assets/archmage/archmage.jpg
+if ! rsync -av archmage.jpg docs/src/assets/archmage/archmage.jpg; then
+    printError "rsync archmage.jpg failed"
+    exit 1
+fi
 
 rm -rf docs/src/content/docs/guides-cs/
 mkdir -p docs/src/content/docs/guides-cs/
@@ -47,12 +50,25 @@ mkdir -p docs/src/content/docs/guides-cs/
 {
     echo "---"
     echo "title: 'Overview'"
+    echo "sidebar:"
+    echo "  order: 1"
     echo "---"
     echo ""
     perl -0777 -pe 's/\n---\s+## Development.*//s' README.md | \
         perl -0777 -pe 's/^# Archmage\n\n//m' | \
         perl -pe 's|\./archmage\.jpg|../../../assets/archmage/archmage.jpg|g'
 } > docs/src/content/docs/guides-cs/README.md
+
+# Process CHANGELOG.md for Starlight
+{
+    echo "---"
+    echo "title: 'Changelog'"
+    echo "sidebar:"
+    echo "  order: 2"
+    echo "---"
+    echo ""
+    cat CHANGELOG.md
+} > docs/src/content/docs/guides-cs/CHANGELOG.md
 
 # Clean previous generated API docs
 printMessage "Cleaning docs/src/content/docs/sdk-cs/ ..."
@@ -77,7 +93,10 @@ rm -f docs/src/content/docs/sdk-cs/index.md
 
 # Copy manually maintained docs into the generated directory
 printMessage "Copying manual docs from sdk-cs.manual/ ..."
-cp docs/src/content/docs/sdk-cs.manual/*.md docs/src/content/docs/sdk-cs/
+if ! cp docs/src/content/docs/sdk-cs.manual/*.md docs/src/content/docs/sdk-cs/; then
+    printError "cp manual docs failed"
+    exit 1
+fi
 
 # Post-process the generated docs
 printMessage "Post-processing API docs ..."
