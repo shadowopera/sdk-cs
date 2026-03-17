@@ -107,19 +107,4 @@ else
     printMessage "Version already up to date, skipping commit."
 fi
 
-# 7) Create git tag (skip if already exists)
-if git tag -l "v$NEW_VERSION" | grep -q "v$NEW_VERSION"; then
-    printMessage "Tag v$NEW_VERSION already exists, skipping."
-else
-    if ! $AUTO_YES; then
-        if ! gum confirm "Do you want to create git tag v$NEW_VERSION?"; then
-            printMessage "Skipping git tag."
-            printImportantMessage "Done."
-            exit 0
-        fi
-    fi
-    git tag -a "v$NEW_VERSION" -m "v$NEW_VERSION"
-    printImportantMessage "Tag v$NEW_VERSION created."
-fi
-
 printImportantMessage "Done."

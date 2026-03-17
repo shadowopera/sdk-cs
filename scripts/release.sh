@@ -124,16 +124,35 @@ while true; do
                 printError "Tests failed."
                 exit 1
             fi
+
             ensureCleanWorktree
             printMessage "Bumping version..."
             if ! bash scripts/bump-version.sh --yes "$VERSION"; then
                 printError "bump-version.sh failed."
                 exit 1
             fi
+            # Create git tag (skip if already exists)
+            if git tag -l "v$VERSION" | grep -q "v$VERSION"; then
+                printMessage "Tag v$VERSION already exists, skipping."
+            else
+                if ! gum confirm "Do you want to create git tag v$VERSION?"; then
+                    printMessage "Skipping git tag."
+                else
+                    git tag -a "v$VERSION" -m "v$VERSION"
+                    printImportantMessage "Tag v$VERSION created."
+                fi
+            fi
+
+            if ! bash scripts/reconcile-unity-meta.sh; then
+                printError "reconcile-unity-meta.sh failed."
+                exit 1
+            fi
+
             if ! git tag -l "v$VERSION" | grep -q "v$VERSION"; then
                 printError "Git tag v$VERSION was not created. Please run: git tag v$VERSION"
                 exit 1
             fi
+
             ensureCleanWorktree
             markStepDone "bumpVersion"
             ;;
