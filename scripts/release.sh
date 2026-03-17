@@ -136,6 +136,10 @@ while true; do
                 printError "reconcile-unity-meta.sh failed."
                 exit 1
             fi
+            if ! bash scripts/sort-slnx.sh unity/ArchmageDev/ArchmageDev.slnx; then
+                printError "sort-slnx.sh failed."
+                exit 1
+            fi
 
             # Create git tag (skip if already exists)
             if git tag -l "v$VERSION" | grep -q "v$VERSION"; then

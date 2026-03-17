@@ -11,7 +11,7 @@ import (
 )
 
 type Solution struct {
-	Name     xml.Name  `xml:"Solution"`
+	_        xml.Name  `xml:"Solution"`
 	Projects []Project `xml:"Project"`
 }
 
@@ -70,5 +70,5 @@ func main() {
 		log.Fatalf("Error writing file: %v", err)
 	}
 
-	fmt.Printf("Sorted %d projects in %s\n", len(solution.Projects), filePath)
+	fmt.Printf("Completed: %d projects sorted.\n", len(solution.Projects))
 }

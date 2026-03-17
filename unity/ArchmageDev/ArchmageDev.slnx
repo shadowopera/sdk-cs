@@ -1,6 +1,6 @@
-﻿<Solution>
-  <Project Path="Shadop.Archmage.Runtime.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="Shadop.Archmage.Integration.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
+<Solution>
+  <Project Path="Assembly-CSharp-Editor.csproj"></Project>
+  <Project Path="Assembly-CSharp.csproj"></Project>
+  <Project Path="Shadop.Archmage.Integration.csproj"></Project>
+  <Project Path="Shadop.Archmage.Runtime.csproj"></Project>
 </Solution>
