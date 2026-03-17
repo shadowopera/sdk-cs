@@ -131,6 +131,12 @@ while true; do
                 printError "bump-version.sh failed."
                 exit 1
             fi
+
+            if ! bash scripts/reconcile-unity-meta.sh; then
+                printError "reconcile-unity-meta.sh failed."
+                exit 1
+            fi
+
             # Create git tag (skip if already exists)
             if git tag -l "v$VERSION" | grep -q "v$VERSION"; then
                 printMessage "Tag v$VERSION already exists, skipping."
@@ -142,12 +148,6 @@ while true; do
                     printImportantMessage "Tag v$VERSION created."
                 fi
             fi
-
-            if ! bash scripts/reconcile-unity-meta.sh; then
-                printError "reconcile-unity-meta.sh failed."
-                exit 1
-            fi
-
             if ! git tag -l "v$VERSION" | grep -q "v$VERSION"; then
                 printError "Git tag v$VERSION was not created. Please run: git tag v$VERSION"
                 exit 1
