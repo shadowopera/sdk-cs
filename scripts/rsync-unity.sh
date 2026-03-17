@@ -47,7 +47,6 @@ mkdir -p "$SAMPLES_DIR" "$CONF_DIR"
 
 rsync -a --delete --include="*.cs" --exclude="*" "$SRC_DIR/" "$DST_DIR/"
 rsync -a --delete --include="*.cs" --exclude="*" "$SRC_DIR/Unity/" "$SAMPLES_DIR/"
-rsync -a --delete --include="*.cs" --exclude="*" "$ROOT_DIR/tests/Conf/" "$CONF_DIR/"
 
 # Sync testdata JSON files to Unity config directories (independent of above counters)
 TESTDATA_DIR="$ROOT_DIR/tests/testdata"
