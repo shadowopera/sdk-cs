@@ -18,18 +18,18 @@ dotnet test tests/Archmage.Tests.csproj --filter "FullyQualifiedName~TestName"
 UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj
 
 # Sync source to Unity package
-bash scripts/sync-unity.sh
+scripts/rsync-unity.sh
 
 # Bump version
-bash scripts/bump-version.sh [--yes] <version>  # e.g. 0.2.0
+scripts/bump-version.sh [--yes] <version>  # e.g. 0.2.0
 
 # Step-driven release workflow
-bash scripts/release.sh [<version>]
+scripts/release.sh [<version>]
 ```
 
 ## Architecture
 
-**Archmage** is a C# configuration management SDK (namespace `Shadop.Archmage`) for loading JSON-based game configs, targeting both .NET (`net8.0`, `netstandard2.1`) and Unity. The core library lives in `src/Archmage/`; the `unity/dev.shadop.archmage/Runtime/` directory is a mirror synced via `scripts/sync-unity.sh`.
+**Archmage** is a C# configuration management SDK (namespace `Shadop.Archmage`) for loading JSON-based game configs, targeting both .NET (`net8.0`, `netstandard2.1`) and Unity. The core library lives in `src/Archmage/`; the `unity/dev.shadop.archmage/Runtime/` directory is a mirror synced via `scripts/rsync-unity.sh`.
 
 ### Entry Point
 

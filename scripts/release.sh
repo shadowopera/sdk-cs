@@ -106,8 +106,8 @@ while true; do
 
         syncUnity)
             printMessage "Syncing Unity package..."
-            if ! bash scripts/sync-unity.sh; then
-                printError "sync-unity.sh failed."
+            if ! bash scripts/rsync-unity.sh; then
+                printError "rsync-unity.sh failed."
                 exit 1
             fi
             git add unity/dev.shadop.archmage/

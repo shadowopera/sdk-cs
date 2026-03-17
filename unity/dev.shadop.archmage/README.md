@@ -290,7 +290,7 @@ sdk-cs/
 │   └── dev.shadop.archmage/        # Unity package (OpenUPM)
 │       └── Runtime/                # Synced from src/Archmage/
 ├── scripts/
-│   └── sync-unity.sh               # src/ → unity/.../Runtime/ sync
+│   └── rsync-unity.sh              # src/ → unity/.../Runtime/ sync
 └── tests/                          # xunit.v3 tests + generated Conf/ fixtures
 ```
 
@@ -306,7 +306,7 @@ UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj   # regenerate golden fi
 ### Sync to Unity
 
 ```bash
-bash scripts/sync-unity.sh
+scripts/rsync-unity.sh
 ```
 
 ## License
