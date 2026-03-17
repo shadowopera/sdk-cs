@@ -136,7 +136,7 @@ while true; do
                 printError "reconcile-unity-meta.sh failed."
                 exit 1
             fi
-            if ! bash scripts/sort-slnx.sh unity/ArchmageDev/ArchmageDev.slnx; then
+            if ! bash scripts/sort-slnx.sh; then
                 printError "sort-slnx.sh failed."
                 exit 1
             fi

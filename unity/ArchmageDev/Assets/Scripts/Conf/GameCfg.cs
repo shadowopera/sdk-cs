@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
+using UnityEngine;
 
 namespace Conf
 {
@@ -58,9 +59,18 @@ namespace Conf
         // desc-x-tuple
         [JsonProperty("x-tuple")]
         public Tup3<long, float, string>? XTuple { get; set; }
-        // desc-x-vector
-        [JsonProperty("x-vector")]
-        public Vec3<int> XVector { get; set; }
+        // desc-x-vector2
+        [JsonProperty("x-vector2")]
+        public Vector2Int XVector2 { get; set; }
+        // desc-x-vector3
+        [JsonProperty("x-vector3")]
+        public Vector3 XVector3 { get; set; }
+        // desc-x-vector4
+        [JsonProperty("x-vector4")]
+        public Vector4 XVector4 { get; set; }
+        // desc-x-vector4x
+        [JsonProperty("x-vector4x")]
+        public Vec4<int> XVector4x { get; set; }
     }
 
     // Game_XObject represents $['x-object']

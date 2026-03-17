@@ -67,6 +67,7 @@ public class ConfLoader : MonoBehaviour
         // 3. Configure loading options.
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
+            .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityAddressablesFS())
             .WithAtlasModifier(atlasJson =>
             {
@@ -102,6 +103,7 @@ public class ConfLoader : MonoBehaviour
 
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
+            .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityResourcesFS())
             .WithAtlasModifier(atlasJson =>
             {
@@ -131,6 +133,7 @@ public class ConfLoader : MonoBehaviour
 
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
+            .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityResourcesFS())
             .WithAtlasModifier(atlasJson =>
             {
@@ -166,6 +169,7 @@ public class ConfLoader : MonoBehaviour
 
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
+            .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityStreamingAssetsFS())
             .WithAtlasModifier(atlasJson =>
             {
@@ -229,5 +233,10 @@ public class ConfLoader : MonoBehaviour
         // 3. Query localized text via L10n.
         Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {Atlas.HeroTable[3].HeroName.Text}");
         Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {Atlas.GameCfg.XL10n.Text}");
+
+        // 4. Show Unity Built-in vectors.
+        Debug.Log($"[ConfLoader] GameCfg.XVector2 (Vector2Int): {Atlas.GameCfg.XVector2}");
+        Debug.Log($"[ConfLoader] GameCfg.XVector3 (Vector3): {Atlas.GameCfg.XVector3}");
+        Debug.Log($"[ConfLoader] GameCfg.XVector4 (Vector4): {Atlas.GameCfg.XVector4}");
     }
 }

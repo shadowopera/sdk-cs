@@ -73,7 +73,7 @@ namespace Shadop.Archmage.Tests
     {
         internal static AtlasOptions DefaultOpts()
         {
-            return new AtlasOptions().WithJsonSettings(Archmage.CreateJsonSerializerSettings());
+            return new AtlasOptions().WithJsonSettings(Archmage.CreateJsonDumpSettings());
         }
 
         internal static void CheckUpdateGolden(IAtlas atlas, string goldenDir)
@@ -81,11 +81,11 @@ namespace Shadop.Archmage.Tests
             var updateGolden = Environment.GetEnvironmentVariable("UPDATE_GOLDEN") == "1";
             if (updateGolden)
             {
-                Archmage.DumpAtlas(atlas, goldenDir, Archmage.CreateJsonSerializerSettings());
+                Archmage.DumpAtlas(atlas, goldenDir, Archmage.CreateJsonDumpSettings());
             }
             else
             {
-                var settings = Archmage.CreateJsonSerializerSettings();
+                var settings = Archmage.CreateJsonDumpSettings();
                 foreach (var kvp in System.Linq.Enumerable.OrderBy(atlas.AtlasItems(), k => k.Key))
                 {
                     if (!kvp.Value.Ready || kvp.Value.Cfg == null) continue;

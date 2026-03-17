@@ -44,13 +44,17 @@ Thrown if outputDir is empty or whitespace.
 Useful for debugging, testing (golden files), and human-readable export.
  Output uses custom converters for Duration/XRef types.
 
-### **CreateJsonSerializerSettings()**
+### **CreateJsonDumpSettings(JsonSerializerSettings)**
 
 Creates JSON settings for Atlas export (indented, include nulls/defaults, custom converters).
 
 ```csharp
-public static JsonSerializerSettings CreateJsonSerializerSettings()
+public static JsonSerializerSettings CreateJsonDumpSettings(JsonSerializerSettings baseSettings)
 ```
+
+#### Parameters
+
+`baseSettings` JsonSerializerSettings<br>
 
 #### Returns
 

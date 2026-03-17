@@ -29,7 +29,7 @@ namespace Shadop.Archmage
                 throw new ArgumentException("Output directory cannot be empty.", nameof(outputDir));
 
             // Setup default settings with custom converters
-            settings ??= CreateJsonSerializerSettings();
+            settings = CreateJsonDumpSettings(settings);
             var items = atlas.AtlasItems();
 
             foreach (var kvp in items)
@@ -73,15 +73,12 @@ namespace Shadop.Archmage
         /// <summary>
         /// Creates JSON settings for Atlas export (indented, include nulls/defaults, custom converters).
         /// </summary>
-        public static JsonSerializerSettings CreateJsonSerializerSettings()
+        public static JsonSerializerSettings CreateJsonDumpSettings(JsonSerializerSettings? baseSettings = null)
         {
-            var settings = new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Include,
-                DefaultValueHandling = DefaultValueHandling.Include
-            };
-
+            var settings = CloneJsonSettings(baseSettings);
+            settings.Formatting = Formatting.Indented;
+            settings.NullValueHandling = NullValueHandling.Include;
+            settings.DefaultValueHandling = DefaultValueHandling.Include;
             settings.Converters.Add(new DateTimeOffsetJsonConverter());
             return settings;
         }

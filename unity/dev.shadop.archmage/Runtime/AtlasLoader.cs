@@ -96,7 +96,7 @@ namespace Shadop.Archmage
             CancellationToken cancellationToken = default)
         {
             var stopwatch = Stopwatch.StartNew();
-            options.JsonSettings = CloneAndPrepareSettings(options.JsonSettings);
+            options.JsonSettings = CreateJsonLoadSettings(options.JsonSettings);
 
             Func<IFS, string, Task<byte[]>> readFile = isAsync
                 ? (fs, path) => fs.ReadAllBytesAsync(path, cancellationToken)
@@ -243,23 +243,24 @@ namespace Shadop.Archmage
             options.Logger.Info($"<archmage> Loaded {filteredItems.Count} config items in {stopwatch.ElapsedMilliseconds}ms");
         }
 
-        static JsonSerializerSettings CloneAndPrepareSettings(JsonSerializerSettings? originalSettings)
+        internal static JsonSerializerSettings CloneJsonSettings(JsonSerializerSettings? original)
         {
-            JsonSerializerSettings settings;
-            if (originalSettings != null)
+            var settings = new JsonSerializerSettings();
+            if (original != null)
             {
-                settings = new JsonSerializerSettings();
                 foreach (var prop in typeof(JsonSerializerSettings).GetProperties())
                 {
                     if (prop.CanWrite)
-                        prop.SetValue(settings, prop.GetValue(originalSettings));
+                        prop.SetValue(settings, prop.GetValue(original));
                 }
             }
-            else
-            {
-                settings = new JsonSerializerSettings();
-            }
 
+            return settings;
+        }
+
+        static JsonSerializerSettings CreateJsonLoadSettings(JsonSerializerSettings? baseSettings)
+        {
+            var settings = CloneJsonSettings(baseSettings);
             settings.DateParseHandling = DateParseHandling.None;
             settings.Converters.Add(new DateTimeOffsetJsonConverter());
             return settings;

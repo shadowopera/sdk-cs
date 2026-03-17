@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
 [[ "$TRACE" ]] && set -x
+pushd "$(dirname "$0")" > /dev/null
+trap __EXIT EXIT
 
 colorful=false
 if [[ -t 1 ]] && [[ -n "${TERM:-}" ]]; then
     colorful=true
 fi
+
+function __EXIT() {
+    popd > /dev/null
+}
 
 function printMessage() {
     local timestamp=$([ -n "${WTS:-}" ] && [ "${WTS}" != "0" ] && date +'[%Y-%m-%d %H:%M:%S] ')
@@ -26,31 +32,29 @@ function printImportantMessage() {
     $colorful && tput sgr0 || true
 }
 
-# Validate input
-if [[ $# -eq 0 ]]; then
-    printError "Usage: $0 <file.slnx>"
-    exit 1
-fi
+# List of .slnx files to sort
+FILES=(
+    "../unity/ArchmageDev/ArchmageDev.slnx"
+)
 
-file="$1"
+for file in "${FILES[@]}"; do
+    if [[ ! -f "$file" ]]; then
+        printError "File not found: $file"
+        continue
+    fi
 
-if [[ ! -f "$file" ]]; then
-    printError "File not found: $file"
-    exit 1
-fi
+    if [[ ! "$file" =~ \.slnx$ ]]; then
+        printError "File is not a .slnx file: $file"
+        continue
+    fi
 
-if [[ ! "$file" =~ \.slnx$ ]]; then
-    printError "File is not a .slnx file: $file"
-    exit 1
-fi
+    printMessage "Sorting projects in $file..."
 
-printMessage "Sorting projects in $file..."
+    # Get script directory and run Go program from there
+    if ! go run "__impl/sort-slnx.go" "$file"; then
+        printError "Failed to sort $file"
+        exit 1
+    fi
 
-# Get script directory and run Go program from there
-dir="$(cd "$(dirname "$0")" && pwd)"
-if ! go run "$dir/__impl/sort-slnx.go" "$file"; then
-    printError "Failed to sort $file"
-    exit 1
-fi
-
-printImportantMessage "✓ $file sorted successfully"
+    printImportantMessage "✓ $file sorted successfully"
+done
