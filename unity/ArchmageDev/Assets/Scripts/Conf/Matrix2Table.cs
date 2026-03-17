@@ -5,15 +5,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class Matrix2Table : Dictionary<string, Dictionary<string, List<List<XRef<long, HeroCfg>>>>?>
-    {
-        // Definition only.
-    }
+    public partial class Matrix2Table : Dictionary<string, Dictionary<string, List<List<XRef<HeroCfgId, HeroCfg>>>>?> {}
 
     #region Trifles
 

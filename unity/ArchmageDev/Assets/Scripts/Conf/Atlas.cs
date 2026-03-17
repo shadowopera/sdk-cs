@@ -113,15 +113,8 @@ namespace Conf
             where K : notnull
             where V : class
         {
-            if (cfgID is string s)
-            {
-                if (string.IsNullOrEmpty(s))
-                    return null;
-            }
-            else if (EqualityComparer<K>.Default.Equals(cfgID, default!))
-            {
+            if (cfgID is IZero z && z.IsZero)
                 return null;
-            }
             if (tbl.TryGetValue(cfgID, out var cfg))
                 return cfg;
             throw new KeyNotFoundException(string.Format("{0}: config entry not found for Id {1}", tblName, cfgID));

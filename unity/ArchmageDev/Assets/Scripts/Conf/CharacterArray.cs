@@ -5,33 +5,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class CharacterArray : List<CharacterCfg?>
-    {
-        // Definition only.
-    }
+    public partial class CharacterArray : List<CharacterCfg?> {}
 
     public partial class CharacterCfg
     {
         [JsonProperty("id")]
         public string Id { get; set; } = null!;
-        /// <summary>
-        /// name config
-        /// </summary>
+        // name config
         [JsonProperty("name")]
         public L10n Name { get; set; }
-        /// <summary>
-        /// race config
-        /// </summary>
+        // race config
         [JsonProperty("race")]
-        public XRef<string, RaceCfg> Race { get; set; }
-        /// <summary>
-        /// health config
-        /// </summary>
+        public XRef<RaceCfgId, RaceCfg> Race { get; set; }
+        // health config
         [JsonProperty("health")]
         public long Health { get; set; }
         [JsonProperty("attack")]
@@ -40,11 +32,9 @@ namespace Conf
         public bool IsPlayable { get; set; }
         [JsonProperty("skills")]
         public List<string>? Skills { get; set; }
-        /// <summary>
-        /// my runes
-        /// </summary>
+        // my runes
         [JsonProperty("runes")]
-        public List<XRef<long, WeaponRuneCfg>>? Runes { get; set; }
+        public List<XRef<WeaponRuneCfgId, WeaponRuneCfg>>? Runes { get; set; }
         [JsonProperty("ultimateSkill")]
         public long UltimateSkill { get; set; }
         [JsonProperty("ref-crude")]

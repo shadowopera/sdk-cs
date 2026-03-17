@@ -5,86 +5,100 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class RefTable : Dictionary<long, RefCfg?>
+    public partial struct RefCfgId
     {
-        // Definition only.
+        public long Value { get; internal set; }
     }
+
+    public partial class RefTable : Dictionary<RefCfgId, RefCfg?> {}
 
     public partial class RefCfg
     {
         [JsonIgnore]
-        public long Id { get; set; }
-        /// <summary>
-        /// desc-B
-        /// </summary>
+        public RefCfgId Id { get; set; }
+        // desc-B
         [JsonProperty("B")]
-        public XRef<long, WeaponRuneCfg> B { get; set; }
-        /// <summary>
-        /// desc-C
-        /// </summary>
+        public XRef<WeaponRuneCfgId, WeaponRuneCfg> B { get; set; }
+        // desc-C
         [JsonProperty("C")]
         public long C { get; set; }
-        /// <summary>
-        /// desc-D
-        /// </summary>
+        // desc-D
         [JsonProperty("D")]
-        public XRef<long, ItemCfg> D { get; set; }
-        /// <summary>
-        /// desc-E
-        /// </summary>
+        public XRef<ItemCfgId, ItemCfg> D { get; set; }
+        // desc-E
         [JsonProperty("E")]
-        public XRef<long, MagicCfg> E { get; set; }
-        /// <summary>
-        /// desc-F
-        /// </summary>
+        public XRef<MagicCfgId, MagicCfg> E { get; set; }
+        // desc-F
         [JsonProperty("F")]
-        public XRef<string, RaceCfg> F { get; set; }
-        /// <summary>
-        /// desc-G
-        /// </summary>
+        public XRef<RaceCfgId, RaceCfg> F { get; set; }
+        // desc-G
         [JsonProperty("G")]
-        public XRef<long, HeroCfg> G { get; set; }
-        /// <summary>
-        /// desc-H
-        /// </summary>
+        public XRef<HeroCfgId, HeroCfg> G { get; set; }
+        // desc-H
         [JsonProperty("H")]
-        public List<XRef<string, StringCfg>>? H { get; set; }
-        /// <summary>
-        /// desc-J
-        /// </summary>
+        public List<XRef<StringCfgId, StringCfg>>? H { get; set; }
+        // desc-J
         [JsonProperty("J")]
-        public XRef<long, ItemCfg> J { get; set; }
-        /// <summary>
-        /// desc-K
-        /// </summary>
+        public XRef<ItemCfgId, ItemCfg> J { get; set; }
+        // desc-K
         [JsonProperty("K")]
-        public XRef<string, RaceCfg> K { get; set; }
+        public XRef<RaceCfgId, RaceCfg> K { get; set; }
     }
 
     public partial class RefTable
     {
-        public bool TryLookup(long cfgID, out RefCfg? cfg)
+        public bool TryLookup(RefCfgId cfgID, out RefCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "RefTable", out cfg);
         }
 
-        public RefCfg? Lookup(long cfgID)
+        public RefCfg? Lookup(RefCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<long, RefCfg>(cfgID, this!, "RefTable");
+            return ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgID, this!, "RefTable");
         }
 
-        internal XRef<long, RefCfg> RefLookup(long cfgID)
+        internal XRef<RefCfgId, RefCfg> RefLookup(RefCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, RefCfg>(cfgID, this!, "RefTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgID, this!, "RefTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(RefCfgIdJsonConverter))]
+    [TypeConverter(typeof(RefCfgIdTypeConverter))]
+    public partial struct RefCfgId : IEquatable<RefCfgId>, IZero
+    {
+        public static implicit operator RefCfgId(long value) => new() { Value = value };
+        public static implicit operator long(RefCfgId obj) => obj.Value;
+
+        public bool Equals(RefCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is RefCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(RefCfgId left, RefCfgId right) => left.Value == right.Value;
+        public static bool operator !=(RefCfgId left, RefCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value.ToString();
+        public bool IsZero => Value == default;
+    }
+
+    internal class RefCfgIdJsonConverter : ValueWrapperJsonConverter<RefCfgId, long>
+    {
+        protected override RefCfgId Create(long value) => value;
+        protected override long GetValue(RefCfgId obj) => obj.Value;
+    }
+
+    internal class RefCfgIdTypeConverter : ValueWrapperTypeConverter<RefCfgId, long>
+    {
+        protected override RefCfgId Create(long value) => value;
+    }
 
     public partial class RefTable : IApplyKeys
     {

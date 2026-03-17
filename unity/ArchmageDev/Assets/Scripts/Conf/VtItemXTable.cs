@@ -5,20 +5,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Shadop.Archmage;
 
 namespace Conf
 {
-    public partial class VtItemXTable : Dictionary<long, VtItemXCfg?>
+    public partial struct VtItemXCfgId
     {
-        // Definition only.
+        public long Value { get; internal set; }
     }
+
+    public partial class VtItemXTable : Dictionary<VtItemXCfgId, VtItemXCfg?> {}
 
     public partial class VtItemXCfg
     {
         [JsonIgnore]
-        public long Id { get; set; }
+        public VtItemXCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = null!;
         [JsonProperty("price")]
@@ -50,23 +53,52 @@ namespace Conf
 
     public partial class VtItemXTable
     {
-        public bool TryLookup(long cfgID, out VtItemXCfg? cfg)
+        public bool TryLookup(VtItemXCfgId cfgID, out VtItemXCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgID, this!, "VtItemXTable", out cfg);
         }
 
-        public VtItemXCfg? Lookup(long cfgID)
+        public VtItemXCfg? Lookup(VtItemXCfgId cfgID)
         {
-            return ConfigAtlas.Lookup<long, VtItemXCfg>(cfgID, this!, "VtItemXTable");
+            return ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgID, this!, "VtItemXTable");
         }
 
-        internal XRef<long, VtItemXCfg> RefLookup(long cfgID)
+        internal XRef<VtItemXCfgId, VtItemXCfg> RefLookup(VtItemXCfgId cfgID)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<long, VtItemXCfg>(cfgID, this!, "VtItemXTable"));
+            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgID, this!, "VtItemXTable"));
         }
     }
 
     #region Trifles
+
+    [JsonConverter(typeof(VtItemXCfgIdJsonConverter))]
+    [TypeConverter(typeof(VtItemXCfgIdTypeConverter))]
+    public partial struct VtItemXCfgId : IEquatable<VtItemXCfgId>, IZero
+    {
+        public static implicit operator VtItemXCfgId(long value) => new() { Value = value };
+        public static implicit operator long(VtItemXCfgId obj) => obj.Value;
+
+        public bool Equals(VtItemXCfgId other) => Value == other.Value;
+        public override bool Equals(object? obj) => obj is VtItemXCfgId other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        public static bool operator ==(VtItemXCfgId left, VtItemXCfgId right) => left.Value == right.Value;
+        public static bool operator !=(VtItemXCfgId left, VtItemXCfgId right) => left.Value != right.Value;
+
+        public override string ToString() => Value.ToString();
+        public bool IsZero => Value == default;
+    }
+
+    internal class VtItemXCfgIdJsonConverter : ValueWrapperJsonConverter<VtItemXCfgId, long>
+    {
+        protected override VtItemXCfgId Create(long value) => value;
+        protected override long GetValue(VtItemXCfgId obj) => obj.Value;
+    }
+
+    internal class VtItemXCfgIdTypeConverter : ValueWrapperTypeConverter<VtItemXCfgId, long>
+    {
+        protected override VtItemXCfgId Create(long value) => value;
+    }
 
     public partial class VtItemXTable : IApplyKeys
     {
