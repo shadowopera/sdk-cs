@@ -94,7 +94,7 @@ while true; do
             ;;
 
         updateChangelog)
-            echo "Summarize all commit messages since the last git tag, extract key changes, and update @CHANGELOG.md according to the 'Keep a Changelog 1.1.0' format. New version number: $VERSION"
+            echo "Summarize all commit messages since the last git tag, extract key changes, and update the root directory @CHANGELOG.md according to the 'Keep a Changelog 1.1.0' format. New version number: $VERSION"
             if ! gum confirm --affirmative=OK --negative=Cancel \
                 "After committing (docs: update changelog), tab to OK and press Enter."; then
                 printMessage "Aborted."
