@@ -231,15 +231,16 @@ i18n.Text("ui.ok", "ja");     // → falls back to "OK"
 ```
 
 In generated config classes, localized fields are typed as `L10n`. In JSON they are
-represented as strings (e.g., `"ui.ok"`); calling `.Text(lang)` on an `L10n` field
-looks that string up in a shared `I18n` instance. Set `L10n.GetI18n` to provide that
-instance before any lookup:
+represented as strings (e.g., `"ui.ok"`); accessing `.Text` on an `L10n` field looks up
+that key in a shared `I18n` instance. Set `L10n.GetI18n` and `L10n.GetPreferredLanguage`
+to configure the lookup before use.
 
 ```csharp
 L10n.GetI18n = () => i18n;
+L10n.GetPreferredLanguage = () => "zh-CN";
 
 // Then in your code:
-string label = hero.Name.Text("zh-CN");
+string label = hero.Name.Text;
 ```
 
 ### Vec

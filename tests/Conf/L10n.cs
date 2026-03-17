@@ -15,15 +15,15 @@ namespace Conf
 
         // GetI18n must be set before calling L10n.GetText() and L10n.Text.
         public static Func<I18n>? GetI18n = null;
-        // GetPreferredLanguge must be set before calling L10n.Text.
-        public static Func<string>? GetPreferredLanguge = null;
+        // GetPreferredLanguage must be set before calling L10n.Text.
+        public static Func<string>? GetPreferredLanguage = null;
 
         readonly string _key;
 
         public L10n(string key) { _key = key; }
 
         public bool GetText(string lang, out string? text) => GetI18n!().GetText(_key, lang, out text);
-        public string Text => GetI18n!().Text(_key, GetPreferredLanguge!());
+        public string Text => GetI18n!().Text(_key, GetPreferredLanguage!());
 
         public override string ToString() => _key;
     }

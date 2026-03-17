@@ -200,7 +200,7 @@ public class ConfLoader : MonoBehaviour
         i18n.MergeL10nFile($"{cfgRoot}/l10n.json", en, fs);
         i18n.MergeL10nFile($"{cfgRoot}/l10n.fr.json", fr, fs);
         L10n.GetI18n = () => i18n;
-        L10n.GetPreferredLanguge = () => "fr";
+        L10n.GetPreferredLanguage = () => "fr";
     }
 
     async Task InitI18nAsync(IFS fs, string cfgRoot)
@@ -211,7 +211,7 @@ public class ConfLoader : MonoBehaviour
         await i18n.MergeL10nFileAsync($"{cfgRoot}/l10n.json", en, fs);
         await i18n.MergeL10nFileAsync($"{cfgRoot}/l10n.fr.json", fr, fs);
         L10n.GetI18n = () => i18n;
-        L10n.GetPreferredLanguge = () => "fr";
+        L10n.GetPreferredLanguage = () => "fr";
     }
 
     void ShowAtlasBasicFeatures()

@@ -29,7 +29,7 @@ namespace Shadop.Archmage.Tests
             i18n.MergeL10nFile("../../../testdata/l10n.json", en);
             i18n.MergeL10nFile("../../../testdata/l10n.cn.json", cn);
             L10n.GetI18n = () => i18n;
-            L10n.GetPreferredLanguge = () => cn;
+            L10n.GetPreferredLanguage = () => cn;
 
             var atlas = new ConfigAtlas();
             var opts = DefaultOpts().WithBlacklist(new[] { "prop_floats" });
