@@ -43,14 +43,14 @@ function ensureCleanWorktree() {
 }
 
 function markStepDone() {
-    GOEXPERIMENT=jsonv2 go run scripts/__impl/release.go mark "$1" || exit 1
+    GOEXPERIMENT=jsonv2 go run scripts/__impl/release/main.go mark "$1" || exit 1
 }
 
 VERSION_ARG="${1:-}"
 
 while true; do
     # Run release.go (pass version arg only on first iteration)
-    RESULT=$(GOEXPERIMENT=jsonv2 go run scripts/__impl/release.go $VERSION_ARG 2>&1) || {
+    RESULT=$(GOEXPERIMENT=jsonv2 go run scripts/__impl/release/main.go $VERSION_ARG 2>&1) || {
         printError "$RESULT"
         exit 1
     }
@@ -65,7 +65,7 @@ while true; do
     fi
 
     NEXT_STEP="$RESULT"
-    VERSION=$(GOEXPERIMENT=jsonv2 go run scripts/__impl/release.go version 2>&1) || {
+    VERSION=$(GOEXPERIMENT=jsonv2 go run scripts/__impl/release/main.go version 2>&1) || {
         printError "Failed to get version: $VERSION"
         exit 1
     }

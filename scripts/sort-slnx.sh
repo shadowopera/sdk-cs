@@ -51,10 +51,10 @@ for file in "${FILES[@]}"; do
     printMessage "Sorting projects in $file..."
 
     # Get script directory and run Go program from there
-    if ! go run "__impl/sort-slnx.go" "$file"; then
+    if ! go run "__impl/sort-slnx/main.go" "$file"; then
         printError "Failed to sort $file"
         exit 1
     fi
 
-    printImportantMessage "✓ $file sorted successfully"
+    printImportantMessage "✓ $file"
 done
