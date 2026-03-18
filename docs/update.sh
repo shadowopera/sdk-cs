@@ -64,7 +64,7 @@ mkdir -p docs/src/content/docs/guides-cs/
     echo "---"
     echo "title: 'Changelog'"
     echo "sidebar:"
-    echo "  order: 2"
+    echo "  order: 99"
     echo "---"
     echo ""
     cat CHANGELOG.md

@@ -94,25 +94,59 @@ while true; do
             ;;
 
         updateChangelog)
-            echo "Summarize all commit messages since the last git tag, extract key changes, and update the root directory @CHANGELOG.md according to the 'Keep a Changelog 1.1.0' format. New version number: $VERSION"
+            printMessage "Please update CHANGELOG.md manually according to Keep a Changelog 1.1.0 format."
+            printMessage "New version number: $VERSION"
             if ! gum confirm --affirmative=OK --negative=Cancel \
-                "After committing (docs: update changelog), tab to OK and press Enter."; then
+                "After updating CHANGELOG.md, click OK to sync and commit changes."; then
                 printMessage "Aborted."
                 exit 1
             fi
+
+            printMessage "Syncing CHANGELOG.md to Unity package..."
+            if ! rsync -av CHANGELOG.md unity/dev.shadop.archmage/CHANGELOG.md; then
+                printError "Failed to sync CHANGELOG.md to Unity package."
+                exit 1
+            fi
+
+            printMessage "Creating Starlight version of CHANGELOG.md..."
+            if ! {
+                echo "---"
+                echo "title: 'Changelog'"
+                echo "sidebar:"
+                echo "  order: 99"
+                echo "---"
+                echo ""
+                cat CHANGELOG.md
+            } > docs/src/content/docs/guides-cs/CHANGELOG.md; then
+                printError "Failed to create Starlight CHANGELOG.md."
+                exit 1
+            fi
+
+            printMessage "Staging CHANGELOG.md files..."
+            if ! git add CHANGELOG.md unity/dev.shadop.archmage/CHANGELOG.md docs/src/content/docs/guides-cs/CHANGELOG.md; then
+                printError "Failed to stage CHANGELOG.md files."
+                exit 1
+            fi
+
+            printMessage "Committing changes..."
+            if ! git commit -m "docs: update changelog"; then
+                printError "Failed to commit CHANGELOG.md changes."
+                exit 1
+            fi
+
             ensureCleanWorktree
             markStepDone "updateChangelog"
             ;;
 
         syncUnity)
-            printMessage "Syncing Unity package..."
+            printMessage "Syncing to Unity..."
             if ! bash scripts/rsync-unity.sh; then
                 printError "rsync-unity.sh failed."
                 exit 1
             fi
             git add unity/dev.shadop.archmage/
             if ! git diff --cached --quiet; then
-                git commit -m "chore: sync unity package"
+                git commit -m "chore: sync changes to the unity directory"
             fi
             ensureCleanWorktree
             markStepDone "syncUnity"
