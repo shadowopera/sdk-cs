@@ -18,6 +18,10 @@ export default defineConfig({
 					label: 'C# SDK',
 					autogenerate: { directory: 'sdk-cs' },
 				},
+				{
+					label: 'C# SDK (Unity)',
+					autogenerate: { directory: 'sdk-cs-unity' },
+				},
 			],
 		}),
 	],

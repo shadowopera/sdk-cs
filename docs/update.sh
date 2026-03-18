@@ -91,13 +91,6 @@ fi
 # Remove the generated index.md (conflicts with Starlight's own index)
 rm -f docs/src/content/docs/sdk-cs/index.md
 
-# Copy manually maintained docs into the generated directory
-printMessage "Copying manual docs from sdk-cs.manual/ ..."
-if ! cp docs/src/content/docs/sdk-cs.manual/*.md docs/src/content/docs/sdk-cs/; then
-    printError "cp manual docs failed"
-    exit 1
-fi
-
 # Post-process the generated docs
 printMessage "Post-processing API docs ..."
 cd docs
@@ -122,6 +115,12 @@ fi
 printMessage "Syncing sdk-cs ..."
 if ! rsync -av --delete src/content/docs/sdk-cs/ ../../docs/archmage/src/content/docs/sdk-cs/; then
     printError "rsync sdk-cs failed"
+    exit 1
+fi
+
+printMessage "Syncing sdk-cs-unity ..."
+if ! rsync -av --delete src/content/docs/sdk-cs-unity/ ../../docs/archmage/src/content/docs/sdk-cs-unity/; then
+    printError "rsync sdk-cs-unity failed"
     exit 1
 fi
 
