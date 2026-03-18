@@ -162,8 +162,8 @@ public class ConfLoader : MonoBehaviour
 
     async Task StreamingAssetsAsyncDemo()
     {
-        string cfgRoot = "WebConfigs";
-        string atlasFile = "WebConfigs/atlas.json";
+        string cfgRoot = "StreamingConfigs";
+        string atlasFile = "StreamingConfigs/atlas.json";
 
         Atlas = new ConfigAtlas();
 

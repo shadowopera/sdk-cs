@@ -53,7 +53,7 @@ TESTDATA_DIR="$ROOT_DIR/tests/testdata"
 UNITY_CONFIG_DIRS=(
     "$ROOT_DIR/unity/ArchmageDev/Assets/Configs"
     "$ROOT_DIR/unity/ArchmageDev/Assets/Resources/StaticConfigs"
-    "$ROOT_DIR/unity/ArchmageDev/Assets/StreamingAssets/WebConfigs"
+    "$ROOT_DIR/unity/ArchmageDev/Assets/StreamingAssets/StreamingConfigs"
 )
 
 echo ""
