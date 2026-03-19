@@ -73,19 +73,19 @@ namespace Conf
 
     public partial class StringTable
     {
-        public bool TryLookup(StringCfgId cfgID, out StringCfg? cfg)
+        public bool TryLookup(StringCfgId cfgId, out StringCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "StringTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "StringTable", out cfg);
         }
 
-        public StringCfg? Lookup(StringCfgId cfgID)
+        public StringCfg? Lookup(StringCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<StringCfgId, StringCfg>(cfgID, this!, "StringTable");
+            return ConfigAtlas.Lookup<StringCfgId, StringCfg>(cfgId, this!, "StringTable");
         }
 
-        internal XRef<StringCfgId, StringCfg> RefLookup(StringCfgId cfgID)
+        internal XRef<StringCfgId, StringCfg> RefLookup(StringCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<StringCfgId, StringCfg>(cfgID, this!, "StringTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<StringCfgId, StringCfg>(cfgId, this!, "StringTable"));
         }
     }
 

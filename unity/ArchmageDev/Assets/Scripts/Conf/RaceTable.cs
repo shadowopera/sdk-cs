@@ -36,19 +36,19 @@ namespace Conf
 
     public partial class RaceTable
     {
-        public bool TryLookup(RaceCfgId cfgID, out RaceCfg? cfg)
+        public bool TryLookup(RaceCfgId cfgId, out RaceCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "RaceTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "RaceTable", out cfg);
         }
 
-        public RaceCfg? Lookup(RaceCfgId cfgID)
+        public RaceCfg? Lookup(RaceCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgID, this!, "RaceTable");
+            return ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgId, this!, "RaceTable");
         }
 
-        internal XRef<RaceCfgId, RaceCfg> RefLookup(RaceCfgId cfgID)
+        internal XRef<RaceCfgId, RaceCfg> RefLookup(RaceCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgID, this!, "RaceTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgId, this!, "RaceTable"));
         }
     }
 

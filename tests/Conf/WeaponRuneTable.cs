@@ -30,19 +30,19 @@ namespace Conf
 
     public partial class WeaponRuneTable
     {
-        public bool TryLookup(WeaponRuneCfgId cfgID, out WeaponRuneCfg? cfg)
+        public bool TryLookup(WeaponRuneCfgId cfgId, out WeaponRuneCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "WeaponRuneTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "WeaponRuneTable", out cfg);
         }
 
-        public WeaponRuneCfg? Lookup(WeaponRuneCfgId cfgID)
+        public WeaponRuneCfg? Lookup(WeaponRuneCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable");
+            return ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgId, this!, "WeaponRuneTable");
         }
 
-        internal XRef<WeaponRuneCfgId, WeaponRuneCfg> RefLookup(WeaponRuneCfgId cfgID)
+        internal XRef<WeaponRuneCfgId, WeaponRuneCfg> RefLookup(WeaponRuneCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgID, this!, "WeaponRuneTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgId, this!, "WeaponRuneTable"));
         }
     }
 

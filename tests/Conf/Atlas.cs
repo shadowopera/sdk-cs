@@ -99,25 +99,25 @@ namespace Conf
             where T : class
             => new XRef<V, T>(rawValue, refValue);
 
-        internal static bool TryLookup<K, V>(K cfgID, Dictionary<K, V> tbl, string tblName, out V? cfg)
+        internal static bool TryLookup<K, V>(K cfgId, Dictionary<K, V> tbl, string tblName, out V? cfg)
             where K : notnull
             where V : class
         {
-            if (tbl.TryGetValue(cfgID, out cfg))
+            if (tbl.TryGetValue(cfgId, out cfg))
                 return true;
             cfg = null;
             return false;
         }
 
-        internal static V? Lookup<K, V>(K cfgID, Dictionary<K, V> tbl, string tblName)
+        internal static V? Lookup<K, V>(K cfgId, Dictionary<K, V> tbl, string tblName)
             where K : notnull
             where V : class
         {
-            if (cfgID is IZero z && z.IsZero)
+            if (cfgId is IZero z && z.IsZero)
                 return null;
-            if (tbl.TryGetValue(cfgID, out var cfg))
+            if (tbl.TryGetValue(cfgId, out var cfg))
                 return cfg;
-            throw new KeyNotFoundException(string.Format("{0}: config entry not found for Id {1}", tblName, cfgID));
+            throw new KeyNotFoundException(string.Format("{0}: config entry not found for Id {1}", tblName, cfgId));
         }
 
         static void PubtypeCheck()

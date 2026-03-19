@@ -50,19 +50,19 @@ namespace Conf
 
     public partial class VtSkillTable
     {
-        public bool TryLookup(VtSkillCfgId cfgID, out VtSkillCfg? cfg)
+        public bool TryLookup(VtSkillCfgId cfgId, out VtSkillCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "VtSkillTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "VtSkillTable", out cfg);
         }
 
-        public VtSkillCfg? Lookup(VtSkillCfgId cfgID)
+        public VtSkillCfg? Lookup(VtSkillCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgID, this!, "VtSkillTable");
+            return ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgId, this!, "VtSkillTable");
         }
 
-        internal XRef<VtSkillCfgId, VtSkillCfg> RefLookup(VtSkillCfgId cfgID)
+        internal XRef<VtSkillCfgId, VtSkillCfg> RefLookup(VtSkillCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgID, this!, "VtSkillTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgId, this!, "VtSkillTable"));
         }
     }
 

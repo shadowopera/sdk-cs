@@ -53,19 +53,19 @@ namespace Conf
 
     public partial class VtItemXTable
     {
-        public bool TryLookup(VtItemXCfgId cfgID, out VtItemXCfg? cfg)
+        public bool TryLookup(VtItemXCfgId cfgId, out VtItemXCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "VtItemXTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "VtItemXTable", out cfg);
         }
 
-        public VtItemXCfg? Lookup(VtItemXCfgId cfgID)
+        public VtItemXCfg? Lookup(VtItemXCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgID, this!, "VtItemXTable");
+            return ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgId, this!, "VtItemXTable");
         }
 
-        internal XRef<VtItemXCfgId, VtItemXCfg> RefLookup(VtItemXCfgId cfgID)
+        internal XRef<VtItemXCfgId, VtItemXCfg> RefLookup(VtItemXCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgID, this!, "VtItemXTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgId, this!, "VtItemXTable"));
         }
     }
 

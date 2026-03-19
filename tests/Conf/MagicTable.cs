@@ -28,19 +28,19 @@ namespace Conf
 
     public partial class MagicTable
     {
-        public bool TryLookup(MagicCfgId cfgID, out MagicCfg? cfg)
+        public bool TryLookup(MagicCfgId cfgId, out MagicCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "MagicTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "MagicTable", out cfg);
         }
 
-        public MagicCfg? Lookup(MagicCfgId cfgID)
+        public MagicCfg? Lookup(MagicCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgID, this!, "MagicTable");
+            return ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgId, this!, "MagicTable");
         }
 
-        internal XRef<MagicCfgId, MagicCfg> RefLookup(MagicCfgId cfgID)
+        internal XRef<MagicCfgId, MagicCfg> RefLookup(MagicCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgID, this!, "MagicTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgId, this!, "MagicTable"));
         }
     }
 

@@ -53,19 +53,19 @@ namespace Conf
 
     public partial class RefTable
     {
-        public bool TryLookup(RefCfgId cfgID, out RefCfg? cfg)
+        public bool TryLookup(RefCfgId cfgId, out RefCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "RefTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "RefTable", out cfg);
         }
 
-        public RefCfg? Lookup(RefCfgId cfgID)
+        public RefCfg? Lookup(RefCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgID, this!, "RefTable");
+            return ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgId, this!, "RefTable");
         }
 
-        internal XRef<RefCfgId, RefCfg> RefLookup(RefCfgId cfgID)
+        internal XRef<RefCfgId, RefCfg> RefLookup(RefCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgID, this!, "RefTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgId, this!, "RefTable"));
         }
     }
 

@@ -49,19 +49,19 @@ namespace Conf
 
     public partial class HeroTable
     {
-        public bool TryLookup(HeroCfgId cfgID, out HeroCfg? cfg)
+        public bool TryLookup(HeroCfgId cfgId, out HeroCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgID, this!, "HeroTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this!, "HeroTable", out cfg);
         }
 
-        public HeroCfg? Lookup(HeroCfgId cfgID)
+        public HeroCfg? Lookup(HeroCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgID, this!, "HeroTable");
+            return ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgId, this!, "HeroTable");
         }
 
-        internal XRef<HeroCfgId, HeroCfg> RefLookup(HeroCfgId cfgID)
+        internal XRef<HeroCfgId, HeroCfg> RefLookup(HeroCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgID, ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgID, this!, "HeroTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgId, this!, "HeroTable"));
         }
     }
 
