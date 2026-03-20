@@ -10,9 +10,8 @@ Represents a 4D vector. Serialized as JSON array [x, y, z, w].
 public struct Vec4<T>
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec4<T>](./shadop.archmage.vec4-1.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec4<T>](../shadop-archmage-vec4-1/)<br>
 Implements IEquatable<Vec4<T>><br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md), JsonConverterAttribute
 
 ## Properties
 
@@ -84,7 +83,7 @@ bool Equals(Vec4<T> other)
 
 #### Parameters
 
-`other` [Vec4<T>](./shadop.archmage.vec4-1.md)<br>
+`other` [Vec4<T>](../shadop-archmage-vec4-1/)<br>
 
 #### Returns
 

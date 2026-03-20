@@ -10,8 +10,7 @@ Manages multilingual text with automatic fallback to a default language.
 public class I18n
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [I18n](./shadop.archmage.i18n.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [I18n](../shadop-archmage-i18n/)<br>
 
 **Remarks:**
 
@@ -124,12 +123,12 @@ Path to the JSON file (flat object with string keys/values).
 `language` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The language code to merge into.
 
-`fs` [IFS](./shadop.archmage.ifs.md)<br>
+`fs` [IFS](../shadop-archmage-ifs/)<br>
 Optional file system abstraction; defaults to [File.ReadAllBytes(String)](https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readallbytes) if null.
 
 #### Exceptions
 
-[ArchmageException](./shadop.archmage.archmageexception.md)<br>
+[ArchmageException](../shadop-archmage-archmageexception/)<br>
 Thrown if reading the file or parsing JSON fails.
 
 ### **MergeL10nFileAsync(String, String, IFS, CancellationToken)**
@@ -148,7 +147,7 @@ Path to the JSON file (flat object with string keys/values).
 `language` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The language code to merge into.
 
-`fs` [IFS](./shadop.archmage.ifs.md)<br>
+`fs` [IFS](../shadop-archmage-ifs/)<br>
 Optional file system abstraction; defaults to [File.ReadAllBytesAsync(String, CancellationToken)](https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readallbytesasync) if null.
 
 `cancellationToken` [CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken)<br>
@@ -160,7 +159,7 @@ Token to cancel the operation.
 
 #### Exceptions
 
-[ArchmageException](./shadop.archmage.archmageexception.md)<br>
+[ArchmageException](../shadop-archmage-archmageexception/)<br>
 Thrown if reading the file or parsing JSON fails.
 
 ### **GetText(String, String, String&)**
@@ -212,5 +211,5 @@ The translation string.
 
 #### Exceptions
 
-[ArchmageException](./shadop.archmage.archmageexception.md)<br>
+[ArchmageException](../shadop-archmage-archmageexception/)<br>
 Thrown if the key is not found in either the requested or fallback language.

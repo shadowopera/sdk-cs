@@ -10,8 +10,7 @@ Represents the structure of an Atlas index JSON file (atlas.json).
 public class AtlasJson
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasJson](./shadop.archmage.atlasjson.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasJson](../shadop-archmage-atlasjson/)<br>
 
 **Remarks:**
 
@@ -29,7 +28,7 @@ public VersionInfo Version { get; set; }
 
 #### Property Value
 
-[VersionInfo](./shadop.archmage.versioninfo.md)<br>
+[VersionInfo](../shadop-archmage-versioninfo/)<br>
 
 ### **Unique**
 

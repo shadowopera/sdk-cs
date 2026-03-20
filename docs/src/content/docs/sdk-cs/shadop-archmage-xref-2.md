@@ -10,8 +10,7 @@ Represents a cross-table reference using a raw identifier and a resolved object 
 public struct XRef<V, T>
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [XRef<V, T>](./shadop.archmage.xref-2.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md), JsonConverterAttribute
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [XRef<V, T>](../shadop-archmage-xref-2/)<br>
 
 **Remarks:**
 

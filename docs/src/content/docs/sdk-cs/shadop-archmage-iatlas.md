@@ -10,7 +10,6 @@ Configuration collection managed by the Atlas loading system.
 public interface IAtlas
 ```
 
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md)
 
 **Remarks:**
 
@@ -29,7 +28,7 @@ void SetDataVersion(VersionInfo v)
 
 #### Parameters
 
-`v` [VersionInfo](./shadop.archmage.versioninfo.md)<br>
+`v` [VersionInfo](../shadop-archmage-versioninfo/)<br>
 
 ### **AtlasItems()**
 

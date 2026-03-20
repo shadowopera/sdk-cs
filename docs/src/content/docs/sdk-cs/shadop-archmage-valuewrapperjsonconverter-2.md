@@ -18,7 +18,7 @@ The value wrapper struct type.
 `V`<br>
 The underlying value type.
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → JsonConverter<T> → [ValueWrapperJsonConverter<T, V>](./shadop.archmage.valuewrapperjsonconverter-2.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → JsonConverter<T> → [ValueWrapperJsonConverter<T, V>](../shadop-archmage-valuewrapperjsonconverter-2/)
 
 ## Properties
 

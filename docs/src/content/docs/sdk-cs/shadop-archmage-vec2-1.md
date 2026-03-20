@@ -10,9 +10,8 @@ Represents a 2D vector. Serialized as JSON array [x, y].
 public struct Vec2<T>
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec2<T>](./shadop.archmage.vec2-1.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec2<T>](../shadop-archmage-vec2-1/)<br>
 Implements IEquatable<Vec2<T>><br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md), JsonConverterAttribute
 
 ## Properties
 
@@ -60,7 +59,7 @@ bool Equals(Vec2<T> other)
 
 #### Parameters
 
-`other` [Vec2<T>](./shadop.archmage.vec2-1.md)<br>
+`other` [Vec2<T>](../shadop-archmage-vec2-1/)<br>
 
 #### Returns
 

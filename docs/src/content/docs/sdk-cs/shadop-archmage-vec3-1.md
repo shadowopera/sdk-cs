@@ -10,9 +10,8 @@ Represents a 3D vector. Serialized as JSON array [x, y, z].
 public struct Vec3<T>
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec3<T>](./shadop.archmage.vec3-1.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec3<T>](../shadop-archmage-vec3-1/)<br>
 Implements IEquatable<Vec3<T>><br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md), JsonConverterAttribute
 
 ## Properties
 
@@ -72,7 +71,7 @@ bool Equals(Vec3<T> other)
 
 #### Parameters
 
-`other` [Vec3<T>](./shadop.archmage.vec3-1.md)<br>
+`other` [Vec3<T>](../shadop-archmage-vec3-1/)<br>
 
 #### Returns
 

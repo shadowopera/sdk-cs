@@ -10,9 +10,8 @@ Namespace: Shadop.Archmage
 public class Tup5<T0, T1, T2, T3, T4> : 
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Tup5<T0, T1, T2, T3, T4>](./shadop.archmage.tup5-5.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Tup5<T0, T1, T2, T3, T4>](../shadop-archmage-tup5-5/)<br>
 Implements IEquatable<Tup5<T0, T1, T2, T3, T4>><br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
 
 ## Properties
 
@@ -124,7 +123,7 @@ public bool Equals(Tup5<T0, T1, T2, T3, T4> other)
 
 #### Parameters
 
-`other` [Tup5<T0, T1, T2, T3, T4>](./shadop.archmage.tup5-5.md)<br>
+`other` [Tup5<T0, T1, T2, T3, T4>](../shadop-archmage-tup5-5/)<br>
 
 #### Returns
 

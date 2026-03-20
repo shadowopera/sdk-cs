@@ -10,8 +10,7 @@ Constants used by the Atlas system.
 public static class AtlasConstants
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasConstants](./shadop.archmage.atlasconstants.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasConstants](../shadop-archmage-atlasconstants/)<br>
 
 ## Fields
 

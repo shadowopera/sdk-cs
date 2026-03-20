@@ -10,8 +10,7 @@ JSON converter for Vec2 that serializes to/from [x, y] array.
 public class Vec2JsonConverter : Newtonsoft.Json.JsonConverter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [Vec2JsonConverter](./shadop.archmage.vec2jsonconverter.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [Vec2JsonConverter](../shadop-archmage-vec2jsonconverter/)<br>
 
 ## Properties
 

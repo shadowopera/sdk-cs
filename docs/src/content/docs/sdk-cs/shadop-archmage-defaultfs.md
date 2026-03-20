@@ -10,9 +10,8 @@ Default implementation of the IFS interface using standard System.IO operations.
 public class DefaultFS : IFS
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [DefaultFS](./shadop.archmage.defaultfs.md)<br>
-Implements [IFS](./shadop.archmage.ifs.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [DefaultFS](../shadop-archmage-defaultfs/)<br>
+Implements [IFS](../shadop-archmage-ifs/)<br>
 
 ## Constructors
 

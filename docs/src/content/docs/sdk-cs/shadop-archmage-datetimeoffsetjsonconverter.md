@@ -10,8 +10,7 @@ Newtonsoft.Json converter for DateTimeOffset.
 public class DateTimeOffsetJsonConverter : Newtonsoft.Json.JsonConverter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [DateTimeOffsetJsonConverter](./shadop.archmage.datetimeoffsetjsonconverter.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [DateTimeOffsetJsonConverter](../shadop-archmage-datetimeoffsetjsonconverter/)<br>
 
 ## Properties
 

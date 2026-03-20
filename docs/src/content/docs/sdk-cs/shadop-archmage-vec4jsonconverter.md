@@ -10,8 +10,7 @@ JSON converter for Vec4 that serializes to/from [x, y, z, w] array.
 public class Vec4JsonConverter : Newtonsoft.Json.JsonConverter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [Vec4JsonConverter](./shadop.archmage.vec4jsonconverter.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [Vec4JsonConverter](../shadop-archmage-vec4jsonconverter/)<br>
 
 ## Properties
 

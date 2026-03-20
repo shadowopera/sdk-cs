@@ -10,7 +10,6 @@ Interface for logging during Atlas loading and operations.
 public interface IAtlasLogger
 ```
 
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md)
 
 **Remarks:**
 

@@ -10,8 +10,7 @@ Extension methods for fluent configuration of AtlasOptions using the builder pat
 public static class AtlasOptionExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasOptionExtensions](./shadop.archmage.atlasoptionextensions.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md), [ExtensionAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.extensionattribute)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasOptionExtensions](../shadop-archmage-atlasoptionextensions/)<br>
 
 **Remarks:**
 
@@ -29,13 +28,13 @@ public static AtlasOptions WithLogger(AtlasOptions opts, IAtlasLogger logger)
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
-`logger` [IAtlasLogger](./shadop.archmage.iatlaslogger.md)<br>
+`logger` [IAtlasLogger](../shadop-archmage-iatlaslogger/)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -52,13 +51,13 @@ public static AtlasOptions WithFS(AtlasOptions opts, IFS fs)
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
-`fs` [IFS](./shadop.archmage.ifs.md)<br>
+`fs` [IFS](../shadop-archmage-ifs/)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -75,13 +74,13 @@ public static AtlasOptions WithAtlasModifier(AtlasOptions opts, Action<AtlasJson
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 `modifier` [Action<AtlasJson>](https://docs.microsoft.com/en-us/dotnet/api/system.action-1)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -98,13 +97,13 @@ public static AtlasOptions WithWhitelist(AtlasOptions opts, IEnumerable<string> 
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 `whitelist` [IEnumerable<String>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -121,13 +120,13 @@ public static AtlasOptions WithBlacklist(AtlasOptions opts, IEnumerable<string> 
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 `blacklist` [IEnumerable<String>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -144,13 +143,13 @@ public static AtlasOptions WithOverrideRoot(AtlasOptions opts, string rootPath)
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 `rootPath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -167,13 +166,13 @@ public static AtlasOptions WithOverrideFS(AtlasOptions opts, IFS fs)
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
-`fs` [IFS](./shadop.archmage.ifs.md)<br>
+`fs` [IFS](../shadop-archmage-ifs/)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -190,13 +189,13 @@ public static AtlasOptions WithLoadStrategy(AtlasOptions opts, AtlasLoadStrategy
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
-`strategy` [AtlasLoadStrategy](./shadop.archmage.atlasloadstrategy.md)<br>
+`strategy` [AtlasLoadStrategy](../shadop-archmage-atlasloadstrategy/)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -213,13 +212,13 @@ public static AtlasOptions WithAsyncLoadStrategy(AtlasOptions opts, AtlasAsyncLo
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
-`strategy` [AtlasAsyncLoadStrategy](./shadop.archmage.atlasasyncloadstrategy.md)<br>
+`strategy` [AtlasAsyncLoadStrategy](../shadop-archmage-atlasasyncloadstrategy/)<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 
@@ -236,13 +235,13 @@ public static AtlasOptions WithJsonSettings(AtlasOptions opts, JsonSerializerSet
 
 #### Parameters
 
-`opts` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 `settings` JsonSerializerSettings<br>
 
 #### Returns
 
-[AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+[AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
 #### Exceptions
 

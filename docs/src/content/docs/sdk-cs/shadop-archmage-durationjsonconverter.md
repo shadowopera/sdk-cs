@@ -10,8 +10,7 @@ Newtonsoft.Json converter for Duration serialization and deserialization.
 public class DurationJsonConverter : Newtonsoft.Json.JsonConverter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [DurationJsonConverter](./shadop.archmage.durationjsonconverter.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [DurationJsonConverter](../shadop-archmage-durationjsonconverter/)<br>
 
 ## Properties
 

@@ -68,7 +68,7 @@ mkdir -p docs/src/content/docs/guides-cs/
     echo "  order: 99"
     echo "---"
     echo ""
-    cat CHANGELOG.md
+    tail -n +3 CHANGELOG.md
 } > docs/src/content/docs/guides-cs/CHANGELOG.md
 
 # Clean previous generated API docs

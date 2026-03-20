@@ -10,7 +10,6 @@ File system abstraction for Archmage configuration loading.
 public interface IFS
 ```
 
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md)
 
 ## Methods
 

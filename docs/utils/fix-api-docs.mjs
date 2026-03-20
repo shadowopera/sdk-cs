@@ -28,6 +28,13 @@ files.forEach((file) => {
   // 1.2 Remove "Type Parameters" section if it only contains bare type names (T0, T1, V, etc.)
   content = content.replace(/^#### Type Parameters\r?\n\r?\n(?:`[A-Z0-9]+`<br>\r?\n(?:\r?\n)?)+(?=(?:####|Inheritance|Implements|Attributes|\[Object\]|$))/gm, '');
 
+  // 1.3 Remove "Attributes" lines (compiler attributes like NullableContextAttribute are noise for readers)
+  content = content.replace(/^Attributes .*(\r?\n)?/gm, '');
+
+  // 1.4 Rewrite relative .md links: (./foo.bar.md) -> (../foo-bar/)
+  content = content.replace(/\(\.\/([^.)]+(?:\.[^.)]+)*)\.md([)#])/g,
+    (_, p1, p2) => `(../${p1.replace(/\./g, '-')}/${p2}`);
+
   let finalContent = '';
 
   // Skip adding frontmatter if file already has it

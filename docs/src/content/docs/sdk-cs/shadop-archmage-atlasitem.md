@@ -10,8 +10,7 @@ Configuration item within an Atlas.
 public class AtlasItem
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasItem](./shadop.archmage.atlasitem.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [AtlasItem](../shadop-archmage-atlasitem/)<br>
 
 ## Properties
 

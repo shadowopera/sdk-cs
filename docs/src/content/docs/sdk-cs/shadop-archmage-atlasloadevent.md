@@ -10,13 +10,12 @@ Progress event data reported during asynchronous Atlas item loading.
 public struct AtlasLoadEvent
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [AtlasLoadEvent](./shadop.archmage.atlasloadevent.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md), [IsReadOnlyAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.isreadonlyattribute)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [AtlasLoadEvent](../shadop-archmage-atlasloadevent/)<br>
 
 **Remarks:**
 
 AtlasLoadEvent instances are reported to an [IProgress<T>](https://docs.microsoft.com/en-us/dotnet/api/system.iprogress-1)
- implementation passed to [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)](./shadop.archmage.archmage.md#loadatlasasyncstring-string-iatlas-atlasoptions-iprogressatlasloadevent-cancellationtoken).
+ implementation passed to [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-iprogressatlasloadevent-cancellationtoken).
  This allows consumers to track loading progress and provide feedback to the user.
 
 The Elapsed property can be used to implement timeouts or progress visualization.
@@ -41,7 +40,7 @@ public AtlasLoadStage Stage { get; }
 
 #### Property Value
 
-[AtlasLoadStage](./shadop.archmage.atlasloadstage.md)<br>
+[AtlasLoadStage](../shadop-archmage-atlasloadstage/)<br>
 
 ### **FilePath**
 
@@ -77,7 +76,7 @@ AtlasLoadEvent(string key, AtlasLoadStage stage, string filePath, TimeSpan elaps
 
 `key` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-`stage` [AtlasLoadStage](./shadop.archmage.atlasloadstage.md)<br>
+`stage` [AtlasLoadStage](../shadop-archmage-atlasloadstage/)<br>
 
 `filePath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 

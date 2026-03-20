@@ -10,8 +10,7 @@ JSON converter for Vec3 that serializes to/from [x, y, z] array.
 public class Vec3JsonConverter : Newtonsoft.Json.JsonConverter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [Vec3JsonConverter](./shadop.archmage.vec3jsonconverter.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [Vec3JsonConverter](../shadop-archmage-vec3jsonconverter/)<br>
 
 ## Properties
 

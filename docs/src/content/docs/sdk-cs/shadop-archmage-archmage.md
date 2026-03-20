@@ -10,8 +10,7 @@ Provides utility functions.
 public static class Archmage
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Archmage](./shadop.archmage.archmage.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Archmage](../shadop-archmage-archmage/)<br>
 
 ## Methods
 
@@ -25,7 +24,7 @@ public static void DumpAtlas(IAtlas atlas, string outputDir, JsonSerializerSetti
 
 #### Parameters
 
-`atlas` [IAtlas](./shadop.archmage.iatlas.md)<br>
+`atlas` [IAtlas](../shadop-archmage-iatlas/)<br>
 
 `outputDir` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
@@ -76,10 +75,10 @@ Path to atlas.json containing mapping definitions.
 `cfgRoot` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 Root directory where configuration JSON files are located.
 
-`atlas` [IAtlas](./shadop.archmage.iatlas.md)<br>
+`atlas` [IAtlas](../shadop-archmage-iatlas/)<br>
 The Atlas implementation to populate with loaded items.
 
-`options` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`options` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 Optional loading configuration. If null, default options are used.
 
 `progress` [IProgress<AtlasLoadEvent>](https://docs.microsoft.com/en-us/dotnet/api/system.iprogress-1)<br>
@@ -87,7 +86,7 @@ Optional callback for receiving progress reports.
 
 #### Exceptions
 
-[ArchmageException](./shadop.archmage.archmageexception.md)<br>
+[ArchmageException](../shadop-archmage-archmageexception/)<br>
 Thrown if loading fails at any stage.
 
 **Remarks:**
@@ -119,10 +118,10 @@ Path to atlas.json containing mapping definitions.
 `cfgRoot` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 Root directory where configuration JSON files are located.
 
-`atlas` [IAtlas](./shadop.archmage.iatlas.md)<br>
+`atlas` [IAtlas](../shadop-archmage-iatlas/)<br>
 The Atlas implementation to populate with loaded items.
 
-`options` [AtlasOptions](./shadop.archmage.atlasoptions.md)<br>
+`options` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 Optional loading configuration. If null, default options are used.
 
 `progress` [IProgress<AtlasLoadEvent>](https://docs.microsoft.com/en-us/dotnet/api/system.iprogress-1)<br>
@@ -138,7 +137,7 @@ A Task representing the asynchronous loading operation.
 
 #### Exceptions
 
-[ArchmageException](./shadop.archmage.archmageexception.md)<br>
+[ArchmageException](../shadop-archmage-archmageexception/)<br>
 Thrown if loading fails at any stage.
 
 [OperationCanceledException](https://docs.microsoft.com/en-us/dotnet/api/system.operationcanceledexception)<br>
@@ -160,7 +159,7 @@ public static Int64[] ShardDuration(Duration duration)
 
 #### Parameters
 
-`duration` [Duration](./shadop.archmage.duration.md)<br>
+`duration` [Duration](../shadop-archmage-duration/)<br>
 
 #### Returns
 
@@ -180,11 +179,11 @@ public static Duration ParseDurationShards(Int64[] shards)
 
 #### Returns
 
-[Duration](./shadop.archmage.duration.md)<br>
+[Duration](../shadop-archmage-duration/)<br>
 
 #### Exceptions
 
-[ArchmageException](./shadop.archmage.archmageexception.md)<br>
+[ArchmageException](../shadop-archmage-archmageexception/)<br>
 Thrown if invalid format or unknown type.
 
 ### **MakeTuple<T0>(T0)**

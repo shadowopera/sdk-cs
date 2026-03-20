@@ -10,9 +10,8 @@ Represents a duration as a signed number of nanoseconds.
 public struct Duration
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Duration](./shadop.archmage.duration.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Duration](../shadop-archmage-duration/)<br>
 Implements [IEquatable<Duration>](https://docs.microsoft.com/en-us/dotnet/api/system.iequatable-1), [IComparable<Duration>](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable-1)<br>
-Attributes [IsReadOnlyAttribute](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.isreadonlyattribute), JsonConverterAttribute
 
 **Remarks:**
 
@@ -92,7 +91,7 @@ Duration Abs()
 
 #### Returns
 
-[Duration](./shadop.archmage.duration.md)<br>
+[Duration](../shadop-archmage-duration/)<br>
 
 ### **Hours()**
 
@@ -174,12 +173,12 @@ Duration Truncate(Duration m)
 
 #### Parameters
 
-`m` [Duration](./shadop.archmage.duration.md)<br>
+`m` [Duration](../shadop-archmage-duration/)<br>
 The divisor duration. If zero or negative, this duration is returned unchanged.
 
 #### Returns
 
-[Duration](./shadop.archmage.duration.md)<br>
+[Duration](../shadop-archmage-duration/)<br>
 A Duration truncated to a multiple of m.
 
 ### **Round(Duration)**
@@ -192,12 +191,12 @@ Duration Round(Duration m)
 
 #### Parameters
 
-`m` [Duration](./shadop.archmage.duration.md)<br>
+`m` [Duration](../shadop-archmage-duration/)<br>
 The divisor duration. If zero or negative, this duration is returned unchanged.
 
 #### Returns
 
-[Duration](./shadop.archmage.duration.md)<br>
+[Duration](../shadop-archmage-duration/)<br>
 A Duration rounded to the nearest multiple of m.
 
 ### **ToString()**
@@ -243,7 +242,7 @@ Duration FromTimeSpan(TimeSpan timeSpan)
 
 #### Returns
 
-[Duration](./shadop.archmage.duration.md)<br>
+[Duration](../shadop-archmage-duration/)<br>
 
 ### **CompareTo(Duration)**
 
@@ -253,7 +252,7 @@ int CompareTo(Duration other)
 
 #### Parameters
 
-`other` [Duration](./shadop.archmage.duration.md)<br>
+`other` [Duration](../shadop-archmage-duration/)<br>
 
 #### Returns
 
@@ -267,7 +266,7 @@ bool Equals(Duration other)
 
 #### Parameters
 
-`other` [Duration](./shadop.archmage.duration.md)<br>
+`other` [Duration](../shadop-archmage-duration/)<br>
 
 #### Returns
 

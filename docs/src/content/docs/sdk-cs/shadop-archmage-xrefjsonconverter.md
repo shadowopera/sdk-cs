@@ -10,8 +10,7 @@ Newtonsoft.Json converter for XRef types that handles serialization and deserial
 public class XRefJsonConverter : Newtonsoft.Json.JsonConverter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [XRefJsonConverter](./shadop.archmage.xrefjsonconverter.md)<br>
-Attributes [NullableContextAttribute](./system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](./system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → [XRefJsonConverter](../shadop-archmage-xrefjsonconverter/)<br>
 
 **Remarks:**
 

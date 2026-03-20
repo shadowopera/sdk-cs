@@ -18,7 +18,7 @@ The value wrapper struct type.
 `V`<br>
 The underlying value type.
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → TypeConverter → [ValueWrapperTypeConverter<T, V>](./shadop.archmage.valuewrappertypeconverter-2.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → TypeConverter → [ValueWrapperTypeConverter<T, V>](../shadop-archmage-valuewrappertypeconverter-2/)
 
 ## Constructors
 
