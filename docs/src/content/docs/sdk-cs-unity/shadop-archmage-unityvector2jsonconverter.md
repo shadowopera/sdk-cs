@@ -1,19 +1,19 @@
 ---
 title: 'UnityVector2JsonConverter'
+description: 'Newtonsoft.Json converter for UnityEngine.Vector2. Serializes to/from [x, y] array format.'
 ---
 
 Namespace: Shadop.Archmage
 
-JSON converter for UnityEngine.Vector2.
+JSON converter for `UnityEngine.Vector2`.
 Serializes to/from `[x, y]` array format.
-Null values deserialize to Vector2.zero.
+Null values deserialize to `Vector2.zero`.
 
 ```csharp
 public class UnityVector2JsonConverter : JsonConverter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [JsonConverter](https://www.newtonsoft.com/json/help/html/T_Newtonsoft_Json_JsonConverter.htm) → [UnityVector2JsonConverter](./shadop-archmage-unityvector2jsonconverter.md)<br>
-Attributes [NullableContextAttribute](../sdk-cs/system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](../sdk-cs/system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [JsonConverter](https://www.newtonsoft.com/json/help/html/T_Newtonsoft_Json_JsonConverter.htm) → [UnityVector2JsonConverter](.)
 
 ## Constructors
 

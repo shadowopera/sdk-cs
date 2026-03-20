@@ -1,18 +1,18 @@
 ---
 title: 'UnityJsonSettingsFactory'
+description: 'Factory for creating JsonSerializerSettings with Unity vector converters pre-registered.'
 ---
 
 Namespace: Shadop.Archmage
 
-Factory for creating JsonSerializerSettings pre-configured with Unity vector converters.
-Supports: Vector2, Vector3, Vector4, Vector2Int, Vector3Int.
+Factory for creating `JsonSerializerSettings` pre-configured with Unity vector converters.
+Supports: `Vector2`, `Vector3`, `Vector4`, `Vector2Int`, `Vector3Int`.
 
 ```csharp
 public static class UnityJsonSettingsFactory
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityJsonSettingsFactory](./shadop-archmage-unityjsonsettingsfactory.md)<br>
-Attributes [NullableContextAttribute](../sdk-cs/system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](../sdk-cs/system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityJsonSettingsFactory](.)
 
 ## Methods
 

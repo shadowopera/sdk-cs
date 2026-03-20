@@ -1,5 +1,6 @@
 ---
 title: 'UnityAtlasLogger'
+description: 'IAtlasLogger adapter that pipes Archmage log output to the Unity Console.'
 ---
 
 Namespace: Shadop.Archmage
@@ -10,9 +11,8 @@ Simple logger adapter to pipe Archmage internal output to Unity Console.
 public class UnityAtlasLogger : IAtlasLogger
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAtlasLogger](./shadop.archmage.unityatlaslogger.md)<br>
-Implements [IAtlasLogger](../sdk-cs/shadop.archmage.iatlaslogger.md)<br>
-Attributes [NullableContextAttribute](../sdk-cs/system.runtime.compilerservices.nullablecontextattribute.md), [NullableAttribute](../sdk-cs/system.runtime.compilerservices.nullableattribute.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAtlasLogger](.)<br>
+Implements [IAtlasLogger](/sdk-cs/shadop-archmage-iatlaslogger)
 
 ## Constructors
 
