@@ -1,28 +1,48 @@
-# Auto detect text files and perform LF normalization
+# Default — normalize line endings in repo, checkout as-is
 * text=auto eol=lf
 
-# Unity files
-*.cs text eol=lf
-*.meta text eol=lf
-*.asmdef text eol=lf
-*.json text eol=lf
-*.md text eol=lf
-*.yml text eol=lf
-*.yaml text eol=lf
-*.xml text eol=lf
-*.shader text eol=lf
+# Unity YAML assets — force LF, use UnityYAMLMerge for merges
+*.anim     text eol=lf merge=unityyamlmerge
+*.asset    text eol=lf merge=unityyamlmerge
+*.controller text eol=lf merge=unityyamlmerge
+*.mat      text eol=lf merge=unityyamlmerge
+*.meta     text eol=lf merge=unityyamlmerge
+*.prefab   text eol=lf merge=unityyamlmerge
+*.unity    text eol=lf merge=unityyamlmerge
+*.mixer    text eol=lf
+*.asmdef   text eol=lf
+*.asmref   text eol=lf
+*.spriteatlas text eol=lf
+*.preset   text eol=lf
 
-# Binary files
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.gif binary
-*.ico binary
-*.dll binary
-*.so binary
-*.dylib binary
+# C# / shaders
+*.cs       text eol=lf
+*.shader   text eol=lf
+*.hlsl     text eol=lf
+*.cginc    text eol=lf
 
 # Windows-specific files that require CRLF
 *.sln      text eol=crlf
 *.slnx     text eol=crlf
 *.csproj   text eol=crlf
+
+# Binary — never touch line endings (prevents corruption)
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.psd      binary
+*.tga      binary
+*.tif      binary
+*.tiff     binary
+*.exr      binary
+*.fbx      binary
+*.obj      binary
+*.blend    binary
+*.mp3      binary
+*.wav      binary
+*.ogg      binary
+*.mp4      binary
+*.mov      binary
+*.dll      binary
+*.exe      binary
