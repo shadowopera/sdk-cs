@@ -7,7 +7,7 @@ import { Aside } from '@astrojs/starlight/components';
 
 Namespace: Shadop.Archmage
 
-Implements the [IFS](/sdk-cs/shadop-archmage-ifs) interface to load files from Unity `StreamingAssets` via `UnityWebRequest`.
+Implements the [IFS](../../sdk-cs/shadop-archmage-ifs/) interface to load files from Unity `StreamingAssets` via `UnityWebRequest`.
 Paths are resolved relative to `Application.streamingAssetsPath`.
 
 ```csharp
@@ -15,7 +15,7 @@ public class UnityStreamingAssetsFS : IFS
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityStreamingAssetsFS](.)<br />
-Implements [IFS](/sdk-cs/shadop-archmage-ifs)
+Implements [IFS](../../sdk-cs/shadop-archmage-ifs/)
 
 <Aside type="caution">
   Only asynchronous loading is supported. Calling `ReadAllBytes` will throw.

@@ -5,14 +5,14 @@ description: 'IFS implementation that loads files via Unity Addressables.'
 
 Namespace: Shadop.Archmage
 
-Implements the [IFS](/sdk-cs/shadop-archmage-ifs) interface to load files via Unity Addressables.
+Implements the [IFS](../../sdk-cs/shadop-archmage-ifs/) interface to load files via Unity Addressables.
 
 ```csharp
 public class UnityAddressablesFS : IFS
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAddressablesFS](.)<br>
-Implements [IFS](/sdk-cs/shadop-archmage-ifs)
+Implements [IFS](../../sdk-cs/shadop-archmage-ifs/)
 
 ## Constructors
 

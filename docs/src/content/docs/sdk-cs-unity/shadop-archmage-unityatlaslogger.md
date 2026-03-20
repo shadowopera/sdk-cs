@@ -12,7 +12,7 @@ public class UnityAtlasLogger : IAtlasLogger
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAtlasLogger](.)<br>
-Implements [IAtlasLogger](/sdk-cs/shadop-archmage-iatlaslogger)
+Implements [IAtlasLogger](../../sdk-cs/shadop-archmage-iatlaslogger/)
 
 ## Constructors
 
