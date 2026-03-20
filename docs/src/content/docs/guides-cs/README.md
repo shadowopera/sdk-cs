@@ -53,8 +53,9 @@ and click the **Manual-installation** button for instructions.
 2. In the left sidebar, click **In Project**, then select **Archmage** from the package list
 3. On the Archmage info page, select the **Samples** tab and click **Import** (or **Reimport**) next to **Integration**
 
-> [!NOTE]
-> **Unity Signature Warning**: Unity may display a "Missing Signature" warning. This is expected for OpenUPM packages. Archmage is safe to use - the warning does not affect functionality. Simply proceed with your development as usual.
+:::note
+**Unity Signature Warning**: Unity may display a "Missing Signature" warning. This is expected for OpenUPM packages. Archmage is safe to use - the warning does not affect functionality. Simply proceed with your development as usual.
+:::
 
 ### .NET (via NuGet)
 
