@@ -99,35 +99,36 @@ if ! node utils/fix-api-docs.mjs; then
     printError "fix-api-docs.mjs failed"
     exit 1
 fi
+cd ..
 
 # Sync generated docs to the main docs site
 printMessage "Syncing assets ..."
-if ! rsync -av --delete src/assets/archmage/ ../../docs/archmage/src/assets/archmage/; then
+if ! rsync -av --delete docs/src/assets/archmage/ ../docs/archmage/src/assets/archmage/; then
     printError "rsync assets failed"
     exit 1
 fi
 
 printMessage "Syncing guides-cs ..."
-if ! rsync -av --delete src/content/docs/guides-cs/ ../../docs/archmage/src/content/docs/guides-cs/; then
+if ! rsync -av --delete docs/src/content/docs/guides-cs/ ../docs/archmage/src/content/docs/guides-cs/; then
     printError "rsync guides-cs failed"
     exit 1
 fi
 
 printMessage "Syncing sdk-cs ..."
-if ! rsync -av --delete src/content/docs/sdk-cs/ ../../docs/archmage/src/content/docs/sdk-cs/; then
+if ! rsync -av --delete docs/src/content/docs/sdk-cs/ ../docs/archmage/src/content/docs/sdk-cs/; then
     printError "rsync sdk-cs failed"
     exit 1
 fi
 
 printMessage "Syncing sdk-cs-unity ..."
-if ! rsync -av --delete src/content/docs/sdk-cs-unity/ ../../docs/archmage/src/content/docs/sdk-cs-unity/; then
+if ! rsync -av --delete docs/src/content/docs/sdk-cs-unity/ ../docs/archmage/src/content/docs/sdk-cs-unity/; then
     printError "rsync sdk-cs-unity failed"
     exit 1
 fi
 
 # Stage all changes in the main docs site
 printMessage "Staging changes in docs site ..."
-cd ../../docs
+cd ../docs
 git add -A
 
 echo
