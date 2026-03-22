@@ -35,6 +35,9 @@ files.forEach((file) => {
   content = content.replace(/\(\.\/([^.)]+(?:\.[^.)]+)*)\.md([)#])/g,
     (_, p1, p2) => `(../${p1.replace(/\./g, '-')}/${p2}`);
 
+  // 1.5 Strip links for AtlasLoadStrategy and AtlasAsyncLoadStrategy, keep text only
+  content = content.replace(/\[(Atlas(?:Async)?LoadStrategy)\]\([^)]*\)/g, '$1');
+
   let finalContent = '';
 
   // Skip adding frontmatter if file already has it

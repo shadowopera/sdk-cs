@@ -191,7 +191,7 @@ public static AtlasOptions WithLoadStrategy(AtlasOptions opts, AtlasLoadStrategy
 
 `opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
-`strategy` [AtlasLoadStrategy](../shadop-archmage-atlasloadstrategy/)<br>
+`strategy` AtlasLoadStrategy<br>
 
 #### Returns
 
@@ -214,7 +214,7 @@ public static AtlasOptions WithAsyncLoadStrategy(AtlasOptions opts, AtlasAsyncLo
 
 `opts` [AtlasOptions](../shadop-archmage-atlasoptions/)<br>
 
-`strategy` [AtlasAsyncLoadStrategy](../shadop-archmage-atlasasyncloadstrategy/)<br>
+`strategy` AtlasAsyncLoadStrategy<br>
 
 #### Returns
 
