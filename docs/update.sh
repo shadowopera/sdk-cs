@@ -61,15 +61,10 @@ mkdir -p docs/src/content/docs/guides-cs/
 } > docs/src/content/docs/guides-cs/README.md
 
 # Process CHANGELOG.md for Starlight
-{
-    echo "---"
-    echo "title: 'Changelog'"
-    echo "sidebar:"
-    echo "  order: 99"
-    echo "---"
-    echo ""
-    tail -n +3 CHANGELOG.md
-} > docs/src/content/docs/guides-cs/CHANGELOG.md
+if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/guides-cs/CHANGELOG.md; then
+    printError "starlight-changelog.sh failed"
+    exit 1
+fi
 
 # Clean previous generated API docs
 printMessage "Cleaning docs/src/content/docs/sdk-cs/ ..."

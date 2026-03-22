@@ -108,15 +108,7 @@ while true; do
             fi
 
             printMessage "Creating Starlight version of CHANGELOG.md..."
-            if ! {
-                echo "---"
-                echo "title: 'Changelog'"
-                echo "sidebar:"
-                echo "  order: 99"
-                echo "---"
-                echo ""
-                cat CHANGELOG.md
-            } > docs/src/content/docs/guides-cs/CHANGELOG.md; then
+            if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/guides-cs/CHANGELOG.md; then
                 printError "Failed to create Starlight CHANGELOG.md."
                 exit 1
             fi
