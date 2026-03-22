@@ -21,21 +21,21 @@ namespace Conf
     public partial class StringCfg
     {
         [JsonIgnore]
-        public StringCfgId Id { get; set; } = null!;
+        public StringCfgId Id { get; set; } = string.Empty;
         [JsonProperty("B")]
         public String_B? B { get; set; }
         // desc-E
         [JsonProperty("E")]
-        public string E { get; set; } = null!;
+        public string E { get; set; } = string.Empty;
         // def-validate
         [JsonProperty("def-validate")]
-        public string DefValidate { get; set; } = null!;
+        public string DefValidate { get; set; } = string.Empty;
         // def-postprocess
         [JsonProperty("def-postprocess")]
-        public string DefPostprocess { get; set; } = null!;
+        public string DefPostprocess { get; set; } = string.Empty;
         // desc-I
         [JsonProperty("I")]
-        public string I { get; set; } = null!;
+        public string I { get; set; } = string.Empty;
         // desc-K
         [JsonProperty("K")]
         public XRef<RaceCfgId, RaceCfg> K { get; set; }
@@ -57,7 +57,7 @@ namespace Conf
         public Rab? Bar { get; set; }
         // desc-B.car
         [JsonProperty("car")]
-        public string Car { get; set; } = null!;
+        public string Car { get; set; } = string.Empty;
     }
 
     // Rab represents $.*.B.bar
@@ -65,10 +65,10 @@ namespace Conf
     {
         // desc-B.bar.foo
         [JsonProperty("foo")]
-        public string Foo { get; set; } = null!;
+        public string Foo { get; set; } = string.Empty;
         // desc-B.bar.qux
         [JsonProperty("qux")]
-        public string Qux { get; set; } = null!;
+        public string Qux { get; set; } = string.Empty;
     }
 
     public partial class StringTable

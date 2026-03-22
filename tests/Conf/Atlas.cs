@@ -97,7 +97,7 @@ namespace Conf
         internal static XRef<V, T> MakeXRef<V, T>(V rawValue, T? refValue)
             where V : notnull
             where T : class
-            => new XRef<V, T>(rawValue, refValue);
+            => new(rawValue, refValue);
 
         internal static bool TryLookup<K, V>(K cfgId, Dictionary<K, V> tbl, string tblName, out V? cfg)
             where K : notnull

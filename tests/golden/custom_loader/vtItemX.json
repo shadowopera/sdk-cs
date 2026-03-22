@@ -2,7 +2,7 @@
   "1": {
     "name": "Potion",
     "price": 100,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 0.0,
@@ -13,7 +13,7 @@
   "2": {
     "name": "Hi-Potion",
     "price": 200,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 0.0,
@@ -24,7 +24,7 @@
   "3": {
     "name": "Ether",
     "price": 300,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 0.0,
@@ -68,7 +68,7 @@
   "1100": {
     "name": "Aegis Ward",
     "price": 1000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 500.0,
     "dps": 89.0,
@@ -79,7 +79,7 @@
   "1101": {
     "name": "Iron Bastion",
     "price": 2000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 1000.0,
     "dps": 99.0,
@@ -93,7 +93,7 @@
   "1102": {
     "name": "Frostguard",
     "price": 3000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 1500.0,
     "dps": 105.0,
@@ -104,7 +104,7 @@
   "1103": {
     "name": "Stormveil",
     "price": 4000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 2000.0,
     "dps": 109.0,
@@ -117,7 +117,7 @@
   "1104": {
     "name": "Void Mirror",
     "price": 5000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 2500.0,
     "dps": 112.0,
@@ -128,7 +128,7 @@
   "1200": {
     "name": "Arcane Flare",
     "price": 1500,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 1.0,
@@ -144,7 +144,7 @@
   "1201": {
     "name": "Verdant Scepter",
     "price": 2000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 1.0,
@@ -164,7 +164,7 @@
   "1000": {
     "name": "Dragonfang Blade",
     "price": 1000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 36.5,
@@ -175,7 +175,7 @@
   "1001": {
     "name": "Shadowrend",
     "price": 2000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 47.8,
@@ -186,7 +186,7 @@
   "1002": {
     "name": "Emberheart",
     "price": 3000,
-    "desc": null,
+    "desc": "",
     "special-skill": 0,
     "armor": 0.0,
     "dps": 168.0,

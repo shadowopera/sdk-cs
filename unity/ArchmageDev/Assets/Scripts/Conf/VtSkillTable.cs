@@ -23,9 +23,9 @@ namespace Conf
         [JsonIgnore]
         public VtSkillCfgId Id { get; set; }
         [JsonProperty("name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; } = string.Empty;
         [JsonProperty("class")]
-        public string Class { get; set; } = null!;
+        public string Class { get; set; } = string.Empty;
         [JsonProperty("Foo")]
         public Dictionary<long, VtSkill_FooEntry>? Foo { get; set; }
         // reagent
@@ -40,7 +40,7 @@ namespace Conf
     {
         // X1a
         [JsonProperty("X1")]
-        public string X1 { get; set; } = null!;
+        public string X1 { get; set; } = string.Empty;
         [JsonProperty("X2")]
         public Duration X2 { get; set; }
         // X5

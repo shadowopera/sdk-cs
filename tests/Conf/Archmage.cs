@@ -13,7 +13,8 @@ namespace Conf
     {
         public static VersionInfo CodeVersion()
         {
-            var str = @"{
+            var str = @"
+{
     ""workspace"": """",
     ""tags"": [],
     ""branch"": ""main"",

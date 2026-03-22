@@ -16,7 +16,7 @@ namespace Conf
     public partial class CharacterCfg
     {
         [JsonProperty("id")]
-        public string Id { get; set; } = null!;
+        public string Id { get; set; } = string.Empty;
         // name config
         [JsonProperty("name")]
         public L10n Name { get; set; }
@@ -47,7 +47,7 @@ namespace Conf
         [JsonProperty("r1")]
         public long R1 { get; set; }
         [JsonProperty("r2")]
-        public string R2 { get; set; } = null!;
+        public string R2 { get; set; } = string.Empty;
     }
 
     #region Trifles

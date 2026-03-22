@@ -23,11 +23,11 @@ namespace Conf
         [JsonIgnore]
         public VtItemXCfgId Id { get; set; }
         [JsonProperty("name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; } = string.Empty;
         [JsonProperty("price")]
         public long Price { get; set; }
         [JsonProperty("desc")]
-        public string Desc { get; set; } = null!;
+        public string Desc { get; set; } = string.Empty;
         [JsonProperty("special-skill")]
         public long SpecialSkill { get; set; }
         [JsonProperty("armor")]
@@ -46,7 +46,7 @@ namespace Conf
     public partial class VtItemX_AttributeBonusEntry
     {
         [JsonProperty("attr")]
-        public string Attr { get; set; } = null!;
+        public string Attr { get; set; } = string.Empty;
         [JsonProperty("bonus")]
         public long Bonus { get; set; }
     }

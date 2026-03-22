@@ -23,7 +23,7 @@ namespace Conf
         [JsonIgnore]
         public WeaponRuneCfgId Id { get; set; }
         [JsonProperty("runeName")]
-        public string RuneName { get; set; } = null!;
+        public string RuneName { get; set; } = string.Empty;
         [JsonProperty("power")]
         public long Power { get; set; }
     }

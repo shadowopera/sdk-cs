@@ -25,7 +25,7 @@ namespace Conf
         public double XFloat64 { get; set; }
         // desc-x-string
         [JsonProperty("x-string")]
-        public string XString { get; set; } = null!;
+        public string XString { get; set; } = string.Empty;
         // desc-x-bool
         [JsonProperty("x-bool")]
         public bool XBool { get; set; }
@@ -34,7 +34,7 @@ namespace Conf
         public Duration XDuration { get; set; }
         // desc-x-path
         [JsonProperty("x-path")]
-        public string XPath { get; set; } = null!;
+        public string XPath { get; set; } = string.Empty;
         // desc-x-datetime
         [JsonProperty("x-datetime")]
         public DateTimeOffset XDatetime { get; set; }
@@ -79,7 +79,7 @@ namespace Conf
         [JsonProperty("fieldX")]
         public long FieldX { get; set; }
         [JsonProperty("fieldY")]
-        public string FieldY { get; set; } = null!;
+        public string FieldY { get; set; } = string.Empty;
     }
 
     #region Trifles
