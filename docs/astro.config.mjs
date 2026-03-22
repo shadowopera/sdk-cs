@@ -3,6 +3,7 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+	trailingSlash: 'always',
 	integrations: [
 		starlight({
 			title: 'Archmage Docs',
