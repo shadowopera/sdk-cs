@@ -16,7 +16,7 @@ namespace Conf
         public long Value { get; internal set; }
     }
 
-    public partial class RefTable : Dictionary<RefCfgId, RefCfg?> {}
+    public partial class RefTable : Dictionary<RefCfgId, RefCfg> {}
 
     public partial class RefCfg
     {

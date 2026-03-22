@@ -16,7 +16,7 @@ namespace Conf
         public string Value { get; internal set; }
     }
 
-    public partial class RaceTable : Dictionary<RaceCfgId, RaceCfg?> {}
+    public partial class RaceTable : Dictionary<RaceCfgId, RaceCfg> {}
 
     public partial class RaceCfg
     {

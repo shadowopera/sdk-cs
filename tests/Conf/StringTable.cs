@@ -16,7 +16,7 @@ namespace Conf
         public string Value { get; internal set; }
     }
 
-    public partial class StringTable : Dictionary<StringCfgId, StringCfg?> {}
+    public partial class StringTable : Dictionary<StringCfgId, StringCfg> {}
 
     public partial class StringCfg
     {

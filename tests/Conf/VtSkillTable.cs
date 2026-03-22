@@ -16,7 +16,7 @@ namespace Conf
         public long Value { get; internal set; }
     }
 
-    public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg?> {}
+    public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg> {}
 
     public partial class VtSkillCfg
     {

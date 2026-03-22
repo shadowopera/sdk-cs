@@ -16,7 +16,7 @@ namespace Conf
         public long Value { get; internal set; }
     }
 
-    public partial class HeroTable : Dictionary<HeroCfgId, HeroCfg?> {}
+    public partial class HeroTable : Dictionary<HeroCfgId, HeroCfg> {}
 
     public partial class HeroCfg
     {

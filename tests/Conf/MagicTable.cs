@@ -16,7 +16,7 @@ namespace Conf
         public long Value { get; internal set; }
     }
 
-    public partial class MagicTable : Dictionary<MagicCfgId, MagicCfg?> {}
+    public partial class MagicTable : Dictionary<MagicCfgId, MagicCfg> {}
 
     public partial class MagicCfg
     {

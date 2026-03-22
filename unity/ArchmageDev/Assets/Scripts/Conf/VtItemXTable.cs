@@ -16,7 +16,7 @@ namespace Conf
         public long Value { get; internal set; }
     }
 
-    public partial class VtItemXTable : Dictionary<VtItemXCfgId, VtItemXCfg?> {}
+    public partial class VtItemXTable : Dictionary<VtItemXCfgId, VtItemXCfg> {}
 
     public partial class VtItemXCfg
     {
