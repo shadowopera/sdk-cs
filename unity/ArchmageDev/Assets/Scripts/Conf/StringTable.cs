@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class StringCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public StringCfgId Id { get; set; } = string.Empty;
         [JsonProperty("B")]
         public String_B? B { get; set; }

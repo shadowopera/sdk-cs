@@ -1,5 +1,6 @@
 {
   "2": {
+    "id": 2,
     "heroName": "hero[2].heroName",
     "startLevel": 5,
     "referrer": [
@@ -30,6 +31,7 @@
     ]
   },
   "3": {
+    "id": 3,
     "heroName": "hero[3].heroName",
     "startLevel": 7,
     "referrer": null,
@@ -44,6 +46,7 @@
     "referrer-sort-compact": null
   },
   "5": {
+    "id": 5,
     "heroName": "hero[5].heroName",
     "startLevel": 10,
     "referrer": [

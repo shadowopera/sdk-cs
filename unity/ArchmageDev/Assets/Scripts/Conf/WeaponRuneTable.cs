@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class WeaponRuneCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public WeaponRuneCfgId Id { get; set; }
         [JsonProperty("runeName")]
         public string RuneName { get; set; } = string.Empty;

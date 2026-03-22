@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class RaceCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public RaceCfgId Id { get; set; } = string.Empty;
         [JsonProperty("birthplace")]
         public L10n Birthplace { get; set; }

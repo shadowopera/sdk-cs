@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class VtItemXCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public VtItemXCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;

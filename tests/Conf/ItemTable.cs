@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class ItemCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public ItemCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;

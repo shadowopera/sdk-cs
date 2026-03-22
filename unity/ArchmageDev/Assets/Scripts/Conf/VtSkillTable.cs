@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class VtSkillCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public VtSkillCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;

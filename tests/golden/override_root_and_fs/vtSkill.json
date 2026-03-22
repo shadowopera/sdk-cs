@@ -1,5 +1,6 @@
 {
   "1": {
+    "id": 1,
     "name": "Fireball",
     "class": "Mage",
     "Foo": {
@@ -16,6 +17,7 @@
     "weapons": null
   },
   "2": {
+    "id": 2,
     "name": "Cleave",
     "class": "Warrior",
     "Foo": {
@@ -37,6 +39,7 @@
     "weapons": null
   },
   "3": {
+    "id": 3,
     "name": "Power Word",
     "class": "Priest",
     "Foo": {
@@ -53,6 +56,7 @@
     "weapons": null
   },
   "101": {
+    "id": 101,
     "name": "Arcane Mastery",
     "class": "Mage",
     "Foo": {
@@ -66,6 +70,7 @@
     "weapons": null
   },
   "102": {
+    "id": 102,
     "name": "Toughness",
     "class": "Warrior",
     "Foo": {
@@ -88,6 +93,7 @@
     ]
   },
   "103": {
+    "id": 103,
     "name": "Spiritual Guidance",
     "class": "Priest",
     "Foo": {

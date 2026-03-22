@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class RefCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public RefCfgId Id { get; set; }
         // desc-B
         [JsonProperty("B")]

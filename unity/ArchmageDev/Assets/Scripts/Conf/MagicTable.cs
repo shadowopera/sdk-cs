@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class MagicCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public MagicCfgId Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;

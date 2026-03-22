@@ -1,5 +1,6 @@
 {
   "1": {
+    "id": 1,
     "name": "Potion",
     "price": 100,
     "desc": "",
@@ -11,6 +12,7 @@
     "attributeBonus": null
   },
   "2": {
+    "id": 2,
     "name": "Hi-Potion",
     "price": 200,
     "desc": "",
@@ -22,6 +24,7 @@
     "attributeBonus": null
   },
   "3": {
+    "id": 3,
     "name": "Ether",
     "price": 300,
     "desc": "",
@@ -33,6 +36,7 @@
     "attributeBonus": null
   },
   "11": {
+    "id": 11,
     "name": "Dark Crystal",
     "price": 0,
     "desc": "A mysterious crystal pulsating with dark energy. It is linked to the eighth element and essential for accessing the final confrontation beneath the surface of the moon.",
@@ -44,6 +48,7 @@
     "attributeBonus": null
   },
   "12": {
+    "id": 12,
     "name": "Adamantite",
     "price": 0,
     "desc": "A rare, super-hard metal ore sought by craftsmen and warriors alike. Used to forge some of the strongest weapons and armor in the realm.",
@@ -55,6 +60,7 @@
     "attributeBonus": null
   },
   "13": {
+    "id": 13,
     "name": "Airship Parts",
     "price": 0,
     "desc": "A collection of mechanical components needed to repair or assemble an airship. Once restored, it grants the party free travel across the world’s skies.",
@@ -66,6 +72,7 @@
     "attributeBonus": null
   },
   "1100": {
+    "id": 1100,
     "name": "Aegis Ward",
     "price": 1000,
     "desc": "",
@@ -77,6 +84,7 @@
     "attributeBonus": null
   },
   "1101": {
+    "id": 1101,
     "name": "Iron Bastion",
     "price": 2000,
     "desc": "",
@@ -91,6 +99,7 @@
     "attributeBonus": null
   },
   "1102": {
+    "id": 1102,
     "name": "Frostguard",
     "price": 3000,
     "desc": "",
@@ -102,6 +111,7 @@
     "attributeBonus": null
   },
   "1103": {
+    "id": 1103,
     "name": "Stormveil",
     "price": 4000,
     "desc": "",
@@ -115,6 +125,7 @@
     "attributeBonus": null
   },
   "1104": {
+    "id": 1104,
     "name": "Void Mirror",
     "price": 5000,
     "desc": "",
@@ -126,6 +137,7 @@
     "attributeBonus": null
   },
   "1200": {
+    "id": 1200,
     "name": "Arcane Flare",
     "price": 1500,
     "desc": "",
@@ -142,6 +154,7 @@
     ]
   },
   "1201": {
+    "id": 1201,
     "name": "Verdant Scepter Plus",
     "price": 2050,
     "desc": "",
@@ -162,6 +175,7 @@
     ]
   },
   "1000": {
+    "id": 1000,
     "name": "Dragonfang Blade",
     "price": 1200,
     "desc": "",
@@ -173,6 +187,7 @@
     "attributeBonus": null
   },
   "1001": {
+    "id": 1001,
     "name": "Shadowrend",
     "price": 2000,
     "desc": "",
@@ -184,6 +199,7 @@
     "attributeBonus": null
   },
   "1002": {
+    "id": 1002,
     "name": "Emberheart",
     "price": 3000,
     "desc": "",

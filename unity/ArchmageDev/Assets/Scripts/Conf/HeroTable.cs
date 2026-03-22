@@ -20,7 +20,7 @@ namespace Conf
 
     public partial class HeroCfg
     {
-        [JsonIgnore]
+        [JsonProperty("id")]
         public HeroCfgId Id { get; set; }
         [JsonProperty("heroName")]
         public L10n HeroName { get; set; }
