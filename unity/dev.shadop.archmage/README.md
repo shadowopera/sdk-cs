@@ -193,14 +193,14 @@ var opts = new AtlasOptions().WithFS(new EmbeddedFS());
 
 ### XRef — Cross-table Reference
 
-`XRef<V, T>` pairs a raw key (`RawValue`) with a resolved reference (`Ref`) set during `BindRefs`. The identifier type `V` should be `int`, `long`, or `string`.
+`XRef<V, T>` pairs a raw key (`RawValue`) with a resolved reference (`Ref`) set during `BindRefs`.
 
 ```csharp
 // In generated config class:
-public XRef<long, HeroCfg> BossRef { get; set; }
+public XRef<HeroCfgId, HeroCfg> Boss { get; set; }
 
 // After loading:
-var boss = atlas.HeroTable[1].BossRef.Ref;   // resolved object
+var boss = atlas.HeroTable[1].Boss.Ref;   // resolved object
 ```
 
 ### Duration

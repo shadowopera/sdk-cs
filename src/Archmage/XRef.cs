@@ -11,8 +11,6 @@ namespace Shadop.Archmage
     /// <para>XRef is a two-part structure: it stores both the raw identifier (serialized to JSON)
     /// and the resolved reference (set during the binding phase). This enables lazy resolution of references
     /// after all data is loaded.</para>
-    /// <para><strong>Important:</strong> V should be int, long, or string (the identifier type).
-    /// Using other types may cause issues during serialization or reference binding.</para>
     /// </remarks>
     [JsonConverter(typeof(XRefJsonConverter))]
     public struct XRef<V, T>
