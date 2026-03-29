@@ -8,7 +8,7 @@
 
     <!-- NuGet Metadata -->
     <PackageId>Shadop.Archmage</PackageId>
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
     <Title>Archmage</Title>
     <Authors>Shadop</Authors>
     <Description>This is the runtime library for the Archmage game configuration system, which loads and manages configurations from JSON files with support for i18n, cross-table references, durations, and layered overrides.</Description>
