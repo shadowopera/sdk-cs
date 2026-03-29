@@ -31,6 +31,18 @@ scripts/release.sh [<version>]
 
 **Archmage** is a C# configuration management SDK (namespace `Shadop.Archmage`) for loading JSON-based game configs, targeting both .NET (`net8.0`, `netstandard2.1`) and Unity. The core library lives in `src/Archmage/`; the `unity/dev.shadop.archmage/Runtime/` directory is a mirror synced via `scripts/rsync-unity.sh`.
 
+### Unity Package Structure
+
+The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
+
+| Assembly | asmdef | Source | Notes |
+|---|---|---|---|
+| `Shadop.Archmage` | `Runtime/Shadop.Archmage.asmdef` | `src/Archmage/*.cs` | Pure C#, `noEngineReferences: true` |
+| `Shadop.Archmage.Unity` | `Runtime/Unity/Shadop.Archmage.Unity.asmdef` | `src/Archmage/Unity/*.cs` | Unity engine adapters (`UnityResourcesFS`, `UnityStreamingAssetsFS`, `UnityAtlasLogger`, `UnityVectorJsonConverter`) |
+| `Shadop.Archmage.Unity.Addressables` | `Runtime/Unity/Addressables/Shadop.Archmage.Unity.Addressables.asmdef` | `src/Archmage/Unity/Addressables/*.cs` | Addressables adapter; only compiled when `com.unity.addressables` is installed (`defineConstraints: ["UNITY_ADDRESSABLES"]`) |
+
+`Shadop.Archmage.Unity` and `Shadop.Archmage.Unity.Addressables` both reference `Shadop.Archmage`. The asmdef files are not synced by rsync — they live directly in the Unity package directory.
+
 ### Entry Point
 
 `Archmage` (static class) exposes `LoadAtlas()` / `LoadAtlasAsync()`, both configured via `AtlasOptions` (fluent builder using extension methods in `AtlasOptionExtensions.cs`).

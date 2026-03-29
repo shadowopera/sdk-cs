@@ -1,8 +1,8 @@
 {
-    "name": "Shadop.Archmage.Integration",
+    "name": "Shadop.Archmage.Unity.Addressables",
     "rootNamespace": "Shadop.Archmage",
     "references": [
-        "Shadop.Archmage.Runtime",
+        "Shadop.Archmage",
         "Unity.Addressables",
         "Unity.ResourceManager"
     ],
@@ -12,7 +12,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNITY_ADDRESSABLES"
+    ],
     "versionDefines": [
         {
             "name": "com.unity.addressables",

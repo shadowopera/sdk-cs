@@ -1,5 +1,5 @@
 {
-  "name": "Shadop.Archmage.Runtime",
+  "name": "Shadop.Archmage",
   "rootNamespace": "Shadop.Archmage",
   "references": [],
   "includePlatforms": [],

@@ -1,6 +1,7 @@
-<Solution>
-  <Project Path="Assembly-CSharp-Editor.csproj"></Project>
-  <Project Path="Assembly-CSharp.csproj"></Project>
-  <Project Path="Shadop.Archmage.Integration.csproj"></Project>
-  <Project Path="Shadop.Archmage.Runtime.csproj"></Project>
+﻿<Solution>
+  <Project Path="Shadop.Archmage.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Shadop.Archmage.Unity.csproj" />
+  <Project Path="Shadop.Archmage.Unity.Addressables.csproj" />
 </Solution>
