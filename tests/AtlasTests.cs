@@ -349,7 +349,7 @@ namespace Shadop.Archmage.Tests
             Assert.StartsWith("<archmage> Failed to load atlas item: \"prop_floats\"", err.Message);
             Assert.NotNull(err.InnerException);
             Assert.IsType<Exception>(err.InnerException);
-            Assert.Equal("Cannot find $.single['prop_floats']['/'] in ../../../testdata/atlas.json.", err.InnerException.Message);
+            Assert.Equal("Could not find $.single['prop_floats']['/'] in ../../../testdata/atlas.json.", err.InnerException.Message);
         }
 
         [Fact]
