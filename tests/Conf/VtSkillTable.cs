@@ -28,7 +28,7 @@ namespace Conf
         public string Class { get; set; } = string.Empty;
         [JsonProperty("Foo")]
         public Dictionary<long, VtSkill_FooEntry>? Foo { get; set; }
-        // reagent
+        /// <summary>reagent</summary>
         [JsonProperty("reagent")]
         public long Reagent { get; set; }
         [JsonProperty("weapons")]
@@ -38,12 +38,12 @@ namespace Conf
     // VtSkill_FooEntry represents $.*.Foo.*
     public partial class VtSkill_FooEntry
     {
-        // X1a
+        /// <summary>X1a</summary>
         [JsonProperty("X1")]
         public string X1 { get; set; } = string.Empty;
         [JsonProperty("X2")]
         public Duration X2 { get; set; }
-        // X5
+        /// <summary>X5</summary>
         [JsonProperty("X5")]
         public long X5 { get; set; }
     }

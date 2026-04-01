@@ -17,13 +17,13 @@ namespace Conf
     {
         [JsonProperty("id")]
         public string Id { get; set; } = string.Empty;
-        // name config
+        /// <summary>name config</summary>
         [JsonProperty("name")]
         public L10n Name { get; set; }
-        // race config
+        /// <summary>race config</summary>
         [JsonProperty("race")]
         public XRef<RaceCfgId, RaceCfg> Race { get; set; }
-        // health config
+        /// <summary>health config</summary>
         [JsonProperty("health")]
         public long Health { get; set; }
         [JsonProperty("attack")]
@@ -32,7 +32,7 @@ namespace Conf
         public bool IsPlayable { get; set; }
         [JsonProperty("skills")]
         public List<string>? Skills { get; set; }
-        // my runes
+        /// <summary>my runes</summary>
         [JsonProperty("runes")]
         public List<XRef<WeaponRuneCfgId, WeaponRuneCfg>>? Runes { get; set; }
         [JsonProperty("ultimateSkill")]

@@ -13,22 +13,22 @@ namespace Conf
 {
     public partial class PropFloatsCfg
     {
-        // desc-B
+        /// <summary>desc-B</summary>
         [JsonProperty("B")]
         public double B { get; set; }
-        // desc-C
+        /// <summary>desc-C</summary>
         [JsonProperty("C")]
         public float C { get; set; }
-        // desc-D
+        /// <summary>desc-D</summary>
         [JsonProperty("D")]
         public double D { get; set; }
-        // desc-E
+        /// <summary>desc-E</summary>
         [JsonProperty("E")]
         public float E { get; set; }
-        // desc-F
+        /// <summary>desc-F</summary>
         [JsonProperty("F")]
         public double F { get; set; }
-        // desc-G
+        /// <summary>desc-G</summary>
         [JsonProperty("G")]
         public double G { get; set; }
     }

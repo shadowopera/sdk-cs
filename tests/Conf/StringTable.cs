@@ -24,28 +24,28 @@ namespace Conf
         public StringCfgId Id { get; set; } = string.Empty;
         [JsonProperty("B")]
         public String_B? B { get; set; }
-        // desc-E
+        /// <summary>desc-E</summary>
         [JsonProperty("E")]
         public string E { get; set; } = string.Empty;
-        // def-validate
+        /// <summary>def-validate</summary>
         [JsonProperty("def-validate")]
         public string DefValidate { get; set; } = string.Empty;
-        // def-postprocess
+        /// <summary>def-postprocess</summary>
         [JsonProperty("def-postprocess")]
         public string DefPostprocess { get; set; } = string.Empty;
-        // desc-I
+        /// <summary>desc-I</summary>
         [JsonProperty("I")]
         public string I { get; set; } = string.Empty;
-        // desc-K
+        /// <summary>desc-K</summary>
         [JsonProperty("K")]
         public XRef<RaceCfgId, RaceCfg> K { get; set; }
-        // desc-referer1
+        /// <summary>desc-referer1</summary>
         [JsonProperty("referer1")]
         public XRef<RefCfgId, RefCfg> Referer1 { get; set; }
-        // desc-referer2
+        /// <summary>desc-referer2</summary>
         [JsonProperty("referer2")]
         public XRef<RefCfgId, RefCfg> Referer2 { get; set; }
-        // desc-referer-n
+        /// <summary>desc-referer-n</summary>
         [JsonProperty("referer-n")]
         public List<XRef<RefCfgId, RefCfg>>? RefererN { get; set; }
     }
@@ -55,7 +55,7 @@ namespace Conf
     {
         [JsonProperty("bar")]
         public Rab? Bar { get; set; }
-        // desc-B.car
+        /// <summary>desc-B.car</summary>
         [JsonProperty("car")]
         public string Car { get; set; } = string.Empty;
     }
@@ -63,10 +63,10 @@ namespace Conf
     // Rab represents $.*.B.bar
     public partial class Rab
     {
-        // desc-B.bar.foo
+        /// <summary>desc-B.bar.foo</summary>
         [JsonProperty("foo")]
         public string Foo { get; set; } = string.Empty;
-        // desc-B.bar.qux
+        /// <summary>desc-B.bar.qux</summary>
         [JsonProperty("qux")]
         public string Qux { get; set; } = string.Empty;
     }

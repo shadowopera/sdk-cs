@@ -22,31 +22,31 @@ namespace Conf
     {
         [JsonProperty("id")]
         public RefCfgId Id { get; set; }
-        // desc-B
+        /// <summary>desc-B</summary>
         [JsonProperty("B")]
         public XRef<WeaponRuneCfgId, WeaponRuneCfg> B { get; set; }
-        // desc-C
+        /// <summary>desc-C</summary>
         [JsonProperty("C")]
         public long C { get; set; }
-        // desc-D
+        /// <summary>desc-D</summary>
         [JsonProperty("D")]
         public XRef<ItemCfgId, ItemCfg> D { get; set; }
-        // desc-E
+        /// <summary>desc-E</summary>
         [JsonProperty("E")]
         public XRef<MagicCfgId, MagicCfg> E { get; set; }
-        // desc-F
+        /// <summary>desc-F</summary>
         [JsonProperty("F")]
         public XRef<RaceCfgId, RaceCfg> F { get; set; }
-        // desc-G
+        /// <summary>desc-G</summary>
         [JsonProperty("G")]
         public XRef<HeroCfgId, HeroCfg> G { get; set; }
-        // desc-H
+        /// <summary>desc-H</summary>
         [JsonProperty("H")]
         public List<XRef<StringCfgId, StringCfg>>? H { get; set; }
-        // desc-J
+        /// <summary>desc-J</summary>
         [JsonProperty("J")]
         public XRef<ItemCfgId, ItemCfg> J { get; set; }
-        // desc-K
+        /// <summary>desc-K</summary>
         [JsonProperty("K")]
         public XRef<RaceCfgId, RaceCfg> K { get; set; }
     }
