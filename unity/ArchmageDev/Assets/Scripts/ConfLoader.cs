@@ -227,7 +227,7 @@ public class ConfLoader : MonoBehaviour
         // 2. Access a cross-table reference via XRef.Ref.
         var firstChar = Atlas.CharacterArray[0];
         Debug.Log($"[ConfLoader] CharacterArray[0]: ID={firstChar.Id}, Attack={firstChar.Attack}");
-        Debug.Log($"[ConfLoader] CharacterArray[0].Race.RawValue: {firstChar.Race.RawValue}");
+        Debug.Log($"[ConfLoader] CharacterArray[0].Race.CfgId: {firstChar.Race.CfgId}");
         Debug.Log($"[ConfLoader] CharacterArray[0].Race.Ref.Birthplace: {firstChar.Race.Ref.Birthplace.Text}");
 
         // 3. Query localized text via L10n.

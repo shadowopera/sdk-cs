@@ -147,14 +147,14 @@ namespace Conf
     {
         internal void BindRefs(ConfigAtlas atlas)
         {
-            K = atlas.RaceTable.RefLookup(K.RawValue);
-            Referer1 = atlas.RefTable.RefLookup(Referer1.RawValue);
-            Referer2 = atlas.RefTable.RefLookup(Referer2.RawValue);
+            K = atlas.RaceTable.RefLookup(K.CfgId);
+            Referer1 = atlas.RefTable.RefLookup(Referer1.CfgId);
+            Referer2 = atlas.RefTable.RefLookup(Referer2.CfgId);
             if (RefererN != null)
             {
                 for (var i = 0; i < RefererN.Count; i++)
                 {
-                    RefererN[i] = atlas.RefTable.RefLookup(RefererN[i].RawValue);
+                    RefererN[i] = atlas.RefTable.RefLookup(RefererN[i].CfgId);
                 }
             }
         }

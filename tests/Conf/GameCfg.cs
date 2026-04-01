@@ -69,7 +69,7 @@ namespace Conf
         public Vec4<float> XVector4 { get; set; }
         // desc-x-vector4x
         [JsonProperty("x-vector4x")]
-        public Vec4<int> XVector4x { get; set; }
+        public Vec4<ushort> XVector4x { get; set; }
     }
 
     // Game_XObject represents $['x-object']
@@ -87,7 +87,7 @@ namespace Conf
     {
         void IRefBinder.BindRefs(ConfigAtlas atlas)
         {
-            XRef = atlas.WeaponRuneTable.RefLookup(XRef.RawValue);
+            XRef = atlas.WeaponRuneTable.RefLookup(XRef.CfgId);
         }
     }
 

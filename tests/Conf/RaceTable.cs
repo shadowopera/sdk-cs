@@ -110,20 +110,20 @@ namespace Conf
     {
         internal void BindRefs(ConfigAtlas atlas)
         {
-            Referrer1 = atlas.RefTable.RefLookup(Referrer1.RawValue);
-            Referrer2 = atlas.StringTable.RefLookup(Referrer2.RawValue);
+            Referrer1 = atlas.RefTable.RefLookup(Referrer1.CfgId);
+            Referrer2 = atlas.StringTable.RefLookup(Referrer2.CfgId);
             if (Heroes1 != null)
             {
                 for (var i = 0; i < Heroes1.Count; i++)
                 {
-                    Heroes1[i] = atlas.HeroTable.RefLookup(Heroes1[i].RawValue);
+                    Heroes1[i] = atlas.HeroTable.RefLookup(Heroes1[i].CfgId);
                 }
             }
             if (Heroes2 != null)
             {
                 for (var i = 0; i < Heroes2.Count; i++)
                 {
-                    Heroes2[i] = atlas.HeroTable.RefLookup(Heroes2[i].RawValue);
+                    Heroes2[i] = atlas.HeroTable.RefLookup(Heroes2[i].CfgId);
                 }
             }
         }

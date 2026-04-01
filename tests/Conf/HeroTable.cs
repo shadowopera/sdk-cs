@@ -127,7 +127,7 @@ namespace Conf
             {
                 for (var i = 0; i < Referrer.Count; i++)
                 {
-                    Referrer[i] = atlas.RefTable.RefLookup(Referrer[i].RawValue);
+                    Referrer[i] = atlas.RefTable.RefLookup(Referrer[i].CfgId);
                 }
             }
             if (RaceCombo != null)
@@ -142,21 +142,21 @@ namespace Conf
             {
                 for (var i = 0; i < ReferrerSort.Count; i++)
                 {
-                    ReferrerSort[i] = atlas.RefTable.RefLookup(ReferrerSort[i].RawValue);
+                    ReferrerSort[i] = atlas.RefTable.RefLookup(ReferrerSort[i].CfgId);
                 }
             }
             if (ReferrerCompact != null)
             {
                 for (var i = 0; i < ReferrerCompact.Count; i++)
                 {
-                    ReferrerCompact[i] = atlas.RefTable.RefLookup(ReferrerCompact[i].RawValue);
+                    ReferrerCompact[i] = atlas.RefTable.RefLookup(ReferrerCompact[i].CfgId);
                 }
             }
             if (ReferrerSortCompact != null)
             {
                 for (var i = 0; i < ReferrerSortCompact.Count; i++)
                 {
-                    ReferrerSortCompact[i] = atlas.RefTable.RefLookup(ReferrerSortCompact[i].RawValue);
+                    ReferrerSortCompact[i] = atlas.RefTable.RefLookup(ReferrerSortCompact[i].CfgId);
                 }
             }
         }
@@ -166,8 +166,8 @@ namespace Conf
     {
         internal void BindRefs(ConfigAtlas atlas)
         {
-            Race1 = atlas.RaceTable.RefLookup(Race1.RawValue);
-            Race2 = atlas.RaceTable.RefLookup(Race2.RawValue);
+            Race1 = atlas.RaceTable.RefLookup(Race1.CfgId);
+            Race2 = atlas.RaceTable.RefLookup(Race2.CfgId);
         }
     }
 

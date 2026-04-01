@@ -68,12 +68,12 @@ namespace Conf
     {
         internal void BindRefs(ConfigAtlas atlas)
         {
-            Race = atlas.RaceTable.RefLookup(Race.RawValue);
+            Race = atlas.RaceTable.RefLookup(Race.CfgId);
             if (Runes != null)
             {
                 for (var i1 = 0; i1 < Runes.Count; i1++)
                 {
-                    Runes[i1] = atlas.WeaponRuneTable.RefLookup(Runes[i1].RawValue);
+                    Runes[i1] = atlas.WeaponRuneTable.RefLookup(Runes[i1].CfgId);
                 }
             }
         }

@@ -205,7 +205,7 @@ var opts = new AtlasOptions().WithFS(new EmbeddedFS());
 
 ### XRef — Cross-table Reference
 
-`XRef<V, T>` pairs a raw key (`RawValue`) with a resolved reference (`Ref`) set during `BindRefs`.
+`XRef<V, T>` pairs a config ID (`CfgId`) with a resolved reference (`Ref`) set during `BindRefs`.
 
 ```csharp
 // In generated config class:

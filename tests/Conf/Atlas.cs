@@ -94,10 +94,10 @@ namespace Conf
             Extension.OnLoaded(this);
         }
 
-        internal static XRef<V, T> MakeXRef<V, T>(V rawValue, T? refValue)
+        internal static XRef<V, T> MakeXRef<V, T>(V cfgId, T? refValue)
             where V : notnull
             where T : class
-            => new(rawValue, refValue);
+            => new(cfgId, refValue);
 
         internal static bool TryLookup<K, V>(K cfgId, Dictionary<K, V> tbl, string tblName, out V? cfg)
             where K : notnull

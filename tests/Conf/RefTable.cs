@@ -127,20 +127,20 @@ namespace Conf
     {
         internal void BindRefs(ConfigAtlas atlas)
         {
-            B = atlas.WeaponRuneTable.RefLookup(B.RawValue);
-            D = atlas.ItemTable.RefLookup(D.RawValue);
-            E = atlas.MagicTable.RefLookup(E.RawValue);
-            F = atlas.RaceTable.RefLookup(F.RawValue);
-            G = atlas.HeroTable.RefLookup(G.RawValue);
+            B = atlas.WeaponRuneTable.RefLookup(B.CfgId);
+            D = atlas.ItemTable.RefLookup(D.CfgId);
+            E = atlas.MagicTable.RefLookup(E.CfgId);
+            F = atlas.RaceTable.RefLookup(F.CfgId);
+            G = atlas.HeroTable.RefLookup(G.CfgId);
             if (H != null)
             {
                 for (var i1 = 0; i1 < H.Count; i1++)
                 {
-                    H[i1] = atlas.StringTable.RefLookup(H[i1].RawValue);
+                    H[i1] = atlas.StringTable.RefLookup(H[i1].CfgId);
                 }
             }
-            J = atlas.ItemTable.RefLookup(J.RawValue);
-            K = atlas.RaceTable.RefLookup(K.RawValue);
+            J = atlas.ItemTable.RefLookup(J.CfgId);
+            K = atlas.RaceTable.RefLookup(K.CfgId);
         }
     }
 

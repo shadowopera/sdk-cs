@@ -313,7 +313,7 @@ namespace Shadop.Archmage
 
             if (files.Count == 0)
             {
-                throw new Exception($"Cannot find {keyPath} in {atlasFile}.");
+                throw new Exception($"Could not find {keyPath} in {atlasFile}.");
             }
 
             var overrideFiles = new List<string>();

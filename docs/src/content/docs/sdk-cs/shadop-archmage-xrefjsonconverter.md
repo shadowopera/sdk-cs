@@ -4,7 +4,7 @@ title: 'XRefJsonConverter'
 
 Namespace: Shadop.Archmage
 
-Newtonsoft.Json converter for XRef types that handles serialization and deserialization.
+Newtonsoft.Json converter for XRef types.
 
 ```csharp
 public class XRefJsonConverter : Newtonsoft.Json.JsonConverter
@@ -14,7 +14,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 **Remarks:**
 
-This converter only serializes/deserializes the RawValue property.
+This converter only serializes/deserializes the CfgId property.
  The Ref property is never serialized to JSON and is ignored during deserialization.
  The Ref property should be populated during the reference binding phase (via Atlas.BindRefs).
 
@@ -66,7 +66,7 @@ public bool CanConvert(Type objectType)
 
 ### **ReadJson(JsonReader, Type, Object, JsonSerializer)**
 
-Deserializes JSON as RawValue; Ref set to null (bound later via BindRefs).
+Reads JSON value into CfgId; Ref set to null (bound later via BindRefs).
 
 ```csharp
 public object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -88,7 +88,7 @@ public object ReadJson(JsonReader reader, Type objectType, object existingValue,
 
 ### **WriteJson(JsonWriter, Object, JsonSerializer)**
 
-Serializes XRef as RawValue only (Ref property ignored).
+Serializes XRef as CfgId only (Ref property ignored).
 
 ```csharp
 public void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

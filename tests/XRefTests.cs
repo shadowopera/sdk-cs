@@ -24,7 +24,7 @@ namespace Shadop.Archmage.Tests
                 }
 
                 var ref2 = JsonConvert.DeserializeObject<XRef<int, string>>(data);
-                Assert.Equal(v, ref2.RawValue);
+                Assert.Equal(v, ref2.CfgId);
                 Assert.Null(ref2.Ref);
             }
         }

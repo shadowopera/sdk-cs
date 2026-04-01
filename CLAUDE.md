@@ -73,7 +73,7 @@ The `Archmage` static class is split across two `partial class` files: `AtlasLoa
 
 ### Special Types
 
-- **`XRef<V, T>`** — Cross-table reference; raw value stored, resolved in bind phase via `IRefBinder`
+- **`XRef<V, T>`** — Cross-table reference; config ID stored, resolved in bind phase via `IRefBinder`
 - **`Duration`** — Nanosecond-precision duration with compact shard encoding; custom JSON converter
 - **`I18n`** — Multi-language text with fallback; loaded from locale JSON files
 - **`Vec2/3/4<T>`**, **`Tup1–7`** — Typed vectors and tuples for structured config fields

@@ -30,7 +30,7 @@ namespace Conf
                         if (v3 == null) continue;
                         for (var i4 = 0; i4 < v3.Count; i4++)
                         {
-                            v3[i4] = atlas.HeroTable.RefLookup(v3[i4].RawValue);
+                            v3[i4] = atlas.HeroTable.RefLookup(v3[i4].CfgId);
                         }
                     }
                 }
