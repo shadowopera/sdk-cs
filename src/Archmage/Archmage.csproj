@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/shadowopera/sdk-cs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageTags>archmage;atlas;cfg;config;configuration;table;override;json</PackageTags>
+    <PackageTags>archmage;atlas;cfg;config;configuration;excel;table;override;json</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <!-- Build Options -->
@@ -34,7 +34,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Unity\**" />
+    <Compile Remove="Sdk\Unity\**" />
   </ItemGroup>
 
   <ItemGroup>

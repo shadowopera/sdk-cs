@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Shadop.Archmage.Tests</RootNamespace>
+    <RootNamespace>Shadop.Archmage.Sdk.Tests</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>

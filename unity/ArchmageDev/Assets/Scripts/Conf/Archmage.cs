@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Shadop.Archmage;
+using Shadop.Archmage.Sdk;
 
 namespace Conf
 {

@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Conf;
 using Newtonsoft.Json;
-using Shadop.Archmage;
+using Shadop.Archmage.Sdk;
 using Xunit;
 
-namespace Shadop.Archmage.Tests
+namespace Shadop.Archmage.Sdk.Tests
 {
     public partial class AtlasTests
     {

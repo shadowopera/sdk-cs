@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Shadop.Archmage;
+using Shadop.Archmage.Sdk;
 
-namespace Shadop.Archmage.Tests
+namespace Shadop.Archmage.Sdk.Tests
 {
     class ScavengerLogger : IAtlasLogger
     {

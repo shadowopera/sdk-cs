@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
-using Shadop.Archmage;
+using Shadop.Archmage.Sdk;
 using Xunit;
 
-namespace Shadop.Archmage.Tests
+namespace Shadop.Archmage.Sdk.Tests
 {
     public class MergeJsonTests
     {

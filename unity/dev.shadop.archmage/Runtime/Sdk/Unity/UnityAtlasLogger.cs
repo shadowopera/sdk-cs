@@ -1,0 +1,19 @@
+#nullable enable
+
+#if UNITY_5_3_OR_NEWER
+
+namespace Shadop.Archmage.Sdk
+{
+    /// <summary>
+    /// Simple logger adapter to pipe Archmage internal output to Unity Console.
+    /// </summary>
+    public class UnityAtlasLogger : IAtlasLogger
+    {
+        public void Info(string message)
+        {
+            UnityEngine.Debug.Log($"{message}");
+        }
+    }
+}
+
+#endif

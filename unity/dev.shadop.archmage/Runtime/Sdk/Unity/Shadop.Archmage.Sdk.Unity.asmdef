@@ -1,0 +1,16 @@
+{
+    "name": "Shadop.Archmage.Sdk.Unity",
+    "rootNamespace": "Shadop.Archmage.Sdk",
+    "references": [
+        "Shadop.Archmage.Sdk"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

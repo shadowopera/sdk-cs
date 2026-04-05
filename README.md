@@ -290,7 +290,7 @@ ver?.ShortID  // "a1b2c3d"
 
 ```
 sdk-cs/
-├── src/Archmage/                   # C# source (canonical)
+├── src/Archmage/Sdk/               # C# source (canonical)
 │   └── Unity/                      # Unity-specific adapters (FS, Logger)
 ├── unity/
 │   ├── ArchmageDev/                # Unity demo & development project

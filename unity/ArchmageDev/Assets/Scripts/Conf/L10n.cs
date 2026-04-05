@@ -3,7 +3,7 @@
 #nullable enable
 
 using System;
-using Shadop.Archmage;
+using Shadop.Archmage.Sdk;
 using Newtonsoft.Json;
 
 namespace Conf

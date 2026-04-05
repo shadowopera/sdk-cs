@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Conf;
-using Shadop.Archmage;
+using Shadop.Archmage.Sdk;
 
 #pragma warning disable UNT0006
 
