@@ -43,6 +43,9 @@ namespace Conf
         /// <summary>desc-x-l10n</summary>
         [JsonProperty("x-l10n")]
         public L10n XL10n { get; set; }
+        /// <summary>desc-x-rgba</summary>
+        [JsonProperty("x-rgba")]
+        public Rgba XRgba { get; set; }
         /// <summary>desc-x-array1</summary>
         [JsonProperty("x-array1")]
         public List<long>? XArray1 { get; set; }
