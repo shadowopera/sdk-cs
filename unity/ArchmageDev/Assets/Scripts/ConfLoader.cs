@@ -238,5 +238,8 @@ public class ConfLoader : MonoBehaviour
         Debug.Log($"[ConfLoader] GameCfg.XVector2 (Vector2Int): {Atlas.GameCfg.XVector2}");
         Debug.Log($"[ConfLoader] GameCfg.XVector3 (Vector3): {Atlas.GameCfg.XVector3}");
         Debug.Log($"[ConfLoader] GameCfg.XVector4 (Vector4): {Atlas.GameCfg.XVector4}");
+
+        // 5. Convert Rgba to Unity Color.
+        Debug.Log($"[ConfLoader] GameCfg.XRgba (Rgba): {Atlas.GameCfg.XRgba.ToColor()}");
     }
 }
