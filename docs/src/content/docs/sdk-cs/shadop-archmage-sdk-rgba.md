@@ -136,7 +136,7 @@ bool TryParse(string s, Rgba& result)
 
 ### **ToString()**
 
-Returns the color as `"#RRGGBBAA"`.
+Returns the color as `"#RRGGBB"` when alpha is 0xFF, otherwise `"#RRGGBBAA"`.
 
 ```csharp
 string ToString()

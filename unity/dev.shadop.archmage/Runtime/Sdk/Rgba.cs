@@ -101,18 +101,31 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Returns the color as <c>"#RRGGBBAA"</c>.
+        /// Returns the color as <c>"#RRGGBB"</c> when alpha is 0xFF, otherwise <c>"#RRGGBBAA"</c>.
         /// </summary>
         public override string ToString()
         {
-            return string.Create(9, this, (span, c) =>
+            if (A == 0xFF)
             {
-                span[0] = '#';
-                span[1] = HexUpper[c.R >> 4]; span[2] = HexUpper[c.R & 0xF];
-                span[3] = HexUpper[c.G >> 4]; span[4] = HexUpper[c.G & 0xF];
-                span[5] = HexUpper[c.B >> 4]; span[6] = HexUpper[c.B & 0xF];
-                span[7] = HexUpper[c.A >> 4]; span[8] = HexUpper[c.A & 0xF];
-            });
+                return string.Create(7, this, (span, c) =>
+                {
+                    span[0] = '#';
+                    span[1] = HexUpper[c.R >> 4]; span[2] = HexUpper[c.R & 0xF];
+                    span[3] = HexUpper[c.G >> 4]; span[4] = HexUpper[c.G & 0xF];
+                    span[5] = HexUpper[c.B >> 4]; span[6] = HexUpper[c.B & 0xF];
+                });
+            }
+            else
+            {
+                return string.Create(9, this, (span, c) =>
+                {
+                    span[0] = '#';
+                    span[1] = HexUpper[c.R >> 4]; span[2] = HexUpper[c.R & 0xF];
+                    span[3] = HexUpper[c.G >> 4]; span[4] = HexUpper[c.G & 0xF];
+                    span[5] = HexUpper[c.B >> 4]; span[6] = HexUpper[c.B & 0xF];
+                    span[7] = HexUpper[c.A >> 4]; span[8] = HexUpper[c.A & 0xF];
+                });
+            }
         }
 
         public bool Equals(Rgba other) => R == other.R && G == other.G && B == other.B && A == other.A;

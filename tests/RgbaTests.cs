@@ -66,10 +66,17 @@ namespace Shadop.Archmage.Sdk.Tests
         // ── ToString ─────────────────────────────────────────────────────────
 
         [Fact]
-        public void ToString_ProducesRgbaFormat()
+        public void ToString_PartialAlpha_ProducesRgbaFormat()
         {
             var c = new Rgba(0x1A, 0x2B, 0x3C, 0x4D);
             Assert.Equal("#1A2B3C4D", c.ToString());
+        }
+
+        [Fact]
+        public void ToString_FullAlpha_ProducesRgbFormat()
+        {
+            var c = new Rgba(0x1A, 0x2B, 0x3C, 0xFF);
+            Assert.Equal("#1A2B3C", c.ToString());
         }
 
         [Fact]
@@ -81,11 +88,27 @@ namespace Shadop.Archmage.Sdk.Tests
         // ── JSON serialization ───────────────────────────────────────────────
 
         [Fact]
-        public void Marshal_NonZero_ProducesRgbaString()
+        public void Marshal_NonZero_FullAlpha_ProducesRgbString()
         {
             var c = new Rgba(0xFF, 0x80, 0x00, 0xFF);
             var json = JsonConvert.SerializeObject(c);
-            Assert.Equal("\"#FF8000FF\"", json);
+            Assert.Equal("\"#FF8000\"", json);
+        }
+
+        [Fact]
+        public void Marshal_NonZero_PartialAlpha_ProducesRgbaString()
+        {
+            var c = new Rgba(0xFF, 0x80, 0x00, 0x7F);
+            var json = JsonConvert.SerializeObject(c);
+            Assert.Equal("\"#FF80007F\"", json);
+        }
+
+        [Fact]
+        public void Marshal_ZeroAlpha_NonZeroRgb_ProducesRgbaString()
+        {
+            var c = new Rgba(0xFF, 0x80, 0x00, 0x00);
+            var json = JsonConvert.SerializeObject(c);
+            Assert.Equal("\"#FF800000\"", json);
         }
 
         [Fact]

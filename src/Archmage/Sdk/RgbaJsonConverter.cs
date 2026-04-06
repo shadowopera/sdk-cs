@@ -35,7 +35,20 @@ namespace Shadop.Archmage.Sdk
 
         public override void WriteJson(JsonWriter writer, Rgba value, JsonSerializer serializer)
         {
-            writer.WriteValue(value.IsZero ? string.Empty : value.ToString());
+            switch (value.A)
+            {
+                case 0xFF:
+                    writer.WriteValue(value.ToString());
+                    break;
+
+                case 0x00 when value.R == 0 && value.G == 0 && value.B == 0:
+                    writer.WriteValue(string.Empty);
+                    break;
+
+                default:
+                    writer.WriteValue(value.ToString());
+                    break;
+            }
         }
     }
 }
