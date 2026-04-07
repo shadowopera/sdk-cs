@@ -11,7 +11,7 @@
     <Version>0.9.0</Version>
     <Title>Archmage</Title>
     <Authors>Shadop</Authors>
-    <Description>This is the runtime library for the Archmage game configuration system, which loads and manages configurations from JSON files with support for i18n, cross-table references, durations, and layered overrides.</Description>
+    <Description>This is the runtime library for the Archmage game configuration system, which loads and manages configurations from JSON files with support for i18n, cross-table references, durations, and data types ranging from primitives to recursive structures.</Description>
     <PackageProjectUrl>https://archmage.shadop.dev/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/shadowopera/sdk-cs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
