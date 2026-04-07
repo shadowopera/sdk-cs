@@ -332,12 +332,6 @@ dotnet test tests/Archmage.Tests.csproj --filter "FullyQualifiedName~TestName"
 UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj   # regenerate golden files
 ```
 
-### Sync to Unity
-
-```bash
-scripts/rsync-unity.sh
-```
-
 ## License
 
 Apache 2.0. See [LICENSE](LICENSE) for details.
