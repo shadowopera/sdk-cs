@@ -8,7 +8,8 @@ sidebar:
 
 This is the runtime library for the [Archmage](https://archmage.shadop.dev/) game
 configuration system, which loads and manages configurations from JSON files with
-support for i18n, cross-table references, durations, and layered overrides.
+support for i18n, cross-table references, durations, and data types ranging from
+primitives to recursive structures.
 
 It is built around the concept of an **Atlas** — a registry that maps named keys
 to configurations. Each key points to one or more JSON files; **Archmage** reads
@@ -23,6 +24,7 @@ and calls post-load hooks.
 - **Whitelist / blacklist** to load only a subset of items
 - **Layered overrides**: additional directories or filesystems supply JSON that
   is merged into the base data at load time, field by field
+- **Unity support**: built-in adapters for Addressables, Resources, and StreamingAssets
 
 ## Requirements
 
@@ -274,6 +276,16 @@ string label = hero.Name.Text;
 `Tup1`–`Tup7` are heterogeneous tuples. They serialize as JSON objects with keys
 `item0`, `item1`, etc. (0-based). Fields are accessed as `.Item0`, `.Item1`, etc.,
 and deconstruction is supported.
+
+### Rgba
+
+A color type with `R`, `G`, `B`, `A` byte channels. In Unity, `.ToColor()`
+converts it to `UnityEngine.Color`.
+
+```csharp
+var color = Rgba.Parse("#FF8000");   // R=255, G=128, B=0, A=255
+color.ToString();                    // "#FF8000"
+```
 
 ## Data Versioning
 
