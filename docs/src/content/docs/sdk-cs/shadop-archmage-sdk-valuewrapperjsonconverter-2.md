@@ -7,7 +7,7 @@ Namespace: Shadop.Archmage.Sdk
 JSON converter for value wrapper structs that hold a single  value.
 
 ```csharp
-public abstract class ValueWrapperJsonConverter<T, V> : 
+public abstract class ValueWrapperJsonConverter<T, V>
 ```
 
 #### Type Parameters

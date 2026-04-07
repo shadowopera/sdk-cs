@@ -38,6 +38,24 @@ files.forEach((file) => {
   // 1.5 Strip links for AtlasLoadStrategy and AtlasAsyncLoadStrategy, keep text only
   content = content.replace(/\[(Atlas(?:Async)?LoadStrategy)\]\([^)]*\)/g, '$1');
 
+  // 1.6 Clean up .NET reflection-style generic type names
+  // e.g. Newtonsoft.Json.JsonConverter`1[[Shadop.Archmage.Sdk.Rgba, Archmage, ...]] -> JsonConverter<Rgba>
+  content = content.replace(
+    /(?:[\w.]+\.)?(\w+)`\d+\[\[(.+?)\]\]/g,
+    (_, className, innerArgs) => {
+      const args = innerArgs.split('],[');
+      const shortArgs = args.map(arg => arg.split(',')[0].trim().split('.').pop());
+      return `${className}<${shortArgs.join(', ')}>`;
+    }
+  );
+
+  // 1.7 Remove trailing " : " (dangling colon) from type declaration lines
+  // e.g. "public class Tup2<T0, T1> : " -> "public class Tup2<T0, T1>"
+  content = content.replace(
+    /^(\s*(?:(?:public|sealed|abstract|static|partial)\s+)*(?:class|struct|interface|record)\b[^\n]*?)\s*:\s*$/gm,
+    '$1'
+  );
+
   let finalContent = '';
 
   // Skip adding frontmatter if file already has it

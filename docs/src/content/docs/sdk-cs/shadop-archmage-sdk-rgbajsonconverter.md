@@ -7,7 +7,7 @@ Namespace: Shadop.Archmage.Sdk
 Newtonsoft.Json converter for [Rgba](../shadop-archmage-sdk-rgba/).
 
 ```csharp
-public class RgbaJsonConverter : Newtonsoft.Json.JsonConverter`1[[Shadop.Archmage.Sdk.Rgba, Archmage, Version=0.8.0.0, Culture=neutral, PublicKeyToken=null]]
+public class RgbaJsonConverter : JsonConverter<Rgba>
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → JsonConverter → JsonConverter<Rgba> → [RgbaJsonConverter](../shadop-archmage-sdk-rgbajsonconverter/)<br>

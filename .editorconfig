@@ -8,6 +8,13 @@ trim_trailing_whitespace = true
 charset = utf-8
 
 [*.cs]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
 #### 1. Accessibility Modifiers ####
 # Prefer omitting default accessibility modifiers (e.g., omit 'private' where it is the default)
 dotnet_style_require_accessibility_modifiers = omit_if_default:none
@@ -58,3 +65,11 @@ dotnet_diagnostic.IDE0007.severity = none
 
 # IDE0039: Use local function
 dotnet_diagnostic.IDE0039.severity = none
+
+[*.{js,mjs,cjs,jsx,ts,tsx}]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true

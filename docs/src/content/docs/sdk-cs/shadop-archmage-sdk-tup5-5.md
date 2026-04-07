@@ -7,7 +7,7 @@ Namespace: Shadop.Archmage.Sdk
 0-based tuple with 5 elements. JSON serializes as {"item0": ..., ..., "item4": ...}.
 
 ```csharp
-public class Tup5<T0, T1, T2, T3, T4> : 
+public class Tup5<T0, T1, T2, T3, T4>
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Tup5<T0, T1, T2, T3, T4>](../shadop-archmage-sdk-tup5-5/)<br>
