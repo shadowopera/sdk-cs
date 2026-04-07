@@ -210,32 +210,6 @@ var opts = new AtlasOptions().WithFS(new EmbeddedFS());
 
 ## Special Types
 
-### XRef — Cross-table Reference
-
-`XRef<V, T>` pairs a config ID (`CfgId`) with a resolved reference (`Ref`) set during `BindRefs`.
-
-```csharp
-// In generated config class:
-public XRef<HeroCfgId, HeroCfg> Boss { get; set; }
-
-// After loading:
-var boss = atlas.HeroTable[1].Boss.Ref;   // resolved object
-```
-
-### Duration
-
-A nanosecond-precision duration type. It serializes as a compact integer array in JSON (e.g., `[0, 5]` = 5 seconds).
-
-```csharp
-Duration d = Duration.Second * 90 + Duration.Millisecond * 500;
-d.ToString();      // "1m30s500ms"
-d.Seconds();       // 90.5
-d.Milliseconds();  // 90500
-d.ToTimeSpan();    // TimeSpan
-```
-
-Arithmetic operators (`+`, `-`, `*`, `/`, `%`) and comparisons are supported.
-
 ### I18n — Localization
 
 `I18n` holds per-language translations and falls back to a default language when a key is missing.
@@ -262,15 +236,31 @@ L10n.GetPreferredLanguage = () => "zh-CN";
 string label = hero.Name.Text;
 ```
 
-### Vec
+### XRef — Cross-table Reference
 
-`Vec2<T>`, `Vec3<T>`, `Vec4<T>` are typed vectors. Fields are accessed as `.X`, `.Y`, `.Z`, `.W`.
+`XRef<V, T>` pairs a config ID (`CfgId`) with a resolved reference (`Ref`) set during `BindRefs`.
 
-### Tup
+```csharp
+// In generated config class:
+public XRef<HeroCfgId, HeroCfg> Boss { get; set; }
 
-`Tup1`–`Tup7` are heterogeneous tuples. They serialize as JSON objects with keys
-`item0`, `item1`, etc. (0-based). Fields are accessed as `.Item0`, `.Item1`, etc.,
-and deconstruction is supported.
+// After loading:
+var boss = atlas.HeroTable[1].Boss.Ref;   // resolved object
+```
+
+### Duration
+
+A nanosecond-precision duration type. It serializes as a compact integer array in JSON (e.g., `[0, 5]` = 5 seconds).
+
+```csharp
+Duration d = Duration.Second * 90 + Duration.Millisecond * 500;
+d.ToString();      // "1m30s500ms"
+d.Seconds();       // 90.5
+d.Milliseconds();  // 90500
+d.ToTimeSpan();    // TimeSpan
+```
+
+Arithmetic operators (`+`, `-`, `*`, `/`, `%`) and comparisons are supported.
 
 ### Rgba
 
@@ -281,6 +271,16 @@ converts it to `UnityEngine.Color`.
 var color = Rgba.Parse("#FF8000");   // R=255, G=128, B=0, A=255
 color.ToString();                    // "#FF8000"
 ```
+
+### Tup
+
+`Tup1`–`Tup7` are heterogeneous tuples. They serialize as JSON objects with keys
+`item0`, `item1`, etc. (0-based). Fields are accessed as `.Item0`, `.Item1`, etc.,
+and deconstruction is supported.
+
+### Vec
+
+`Vec2<T>`, `Vec3<T>`, `Vec4<T>` are typed vectors. Fields are accessed as `.X`, `.Y`, `.Z`, `.W`.
 
 ## Data Versioning
 
