@@ -11,9 +11,10 @@ using Shadop.Archmage.Sdk;
 
 namespace Conf
 {
+    [Serializable]
     public partial struct WeaponRuneCfgId
     {
-        public long Value { get; internal set; }
+        public long Value;
     }
 
     public partial class WeaponRuneTable : Dictionary<WeaponRuneCfgId, WeaponRuneCfg> {}

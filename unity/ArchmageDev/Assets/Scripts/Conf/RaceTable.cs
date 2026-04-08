@@ -11,9 +11,10 @@ using Shadop.Archmage.Sdk;
 
 namespace Conf
 {
+    [Serializable]
     public partial struct RaceCfgId
     {
-        public string Value { get; internal set; }
+        public string Value;
     }
 
     public partial class RaceTable : Dictionary<RaceCfgId, RaceCfg> {}

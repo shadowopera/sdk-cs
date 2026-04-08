@@ -11,9 +11,10 @@ using Shadop.Archmage.Sdk;
 
 namespace Conf
 {
+    [Serializable]
     public partial struct VtSkillCfgId
     {
-        public long Value { get; internal set; }
+        public long Value;
     }
 
     public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg> {}
