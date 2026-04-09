@@ -5,15 +5,15 @@ shopt -s nullglob
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-SRC_DIR="$ROOT_DIR/src/Archmage"
-PKG_DIR="$ROOT_DIR/unity/dev.shadop.archmage"
-DST_DIR="$PKG_DIR/Runtime"
+PKG_ROOT="$ROOT_DIR/unity/dev.shadop.archmage"
+SRC_DIR1="$ROOT_DIR/src/Archmage/Sdk"
+DST_DIR1="$PKG_ROOT/Runtime"
 
-mkdir -p "$DST_DIR"
+mkdir -p "$DST_DIR1"
 
 for name in "README.md" "CHANGELOG.md" "LICENSE"; do
     src_file="$ROOT_DIR/$name"
-    dst_file="$PKG_DIR/$name"
+    dst_file="$PKG_ROOT/$name"
 
     if [[ -f "$src_file" ]]; then
         if [[ "$name" == "README.md" ]]; then
@@ -44,7 +44,7 @@ done
 CONF_DIR="$ROOT_DIR/unity/ArchmageDev/Assets/Scripts/Conf"
 mkdir -p "$CONF_DIR"
 
-rsync -a --delete --exclude="obj/" --exclude="bin/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR/" "$DST_DIR/"
+rsync -a --delete --exclude="obj/" --exclude="bin/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR1/" "$DST_DIR1/"
 
 # Sync testdata JSON files to Unity config directories (independent of above counters)
 TESTDATA_DIR="$ROOT_DIR/tests/testdata"
