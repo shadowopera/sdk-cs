@@ -2,14 +2,12 @@
 
 #nullable enable
 
-using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using Shadop.Archmage.Sdk;
 
 namespace Conf
 {
-    public partial class ConfigAtlas : IAtlas
+    public partial class ConfigAtlas
     {
         public static VersionInfo CodeVersion()
         {

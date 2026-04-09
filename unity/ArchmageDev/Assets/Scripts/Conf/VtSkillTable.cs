@@ -15,6 +15,7 @@ namespace Conf
     public partial struct VtSkillCfgId
     {
         public long Value;
+        public VtSkillCfg Cfg => ConfigAtlas.Instance.VtSkillTable[Value]!;
     }
 
     public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg> { }
@@ -53,17 +54,17 @@ namespace Conf
     {
         public bool TryLookup(VtSkillCfgId cfgId, out VtSkillCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgId, this!, "VtSkillTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this, "VtSkillTable", out cfg);
         }
 
         public VtSkillCfg? Lookup(VtSkillCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgId, this!, "VtSkillTable");
+            return ConfigAtlas.Lookup(cfgId, this, "VtSkillTable");
         }
 
         internal XRef<VtSkillCfgId, VtSkillCfg> RefLookup(VtSkillCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<VtSkillCfgId, VtSkillCfg>(cfgId, this!, "VtSkillTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup(cfgId, this, "VtSkillTable"));
         }
     }
 
@@ -73,6 +74,7 @@ namespace Conf
     [TypeConverter(typeof(VtSkillCfgIdTypeConverter))]
     public partial struct VtSkillCfgId : IEquatable<VtSkillCfgId>, IZero
     {
+        public VtSkillCfgId(long value) { Value = value; }
         public static implicit operator VtSkillCfgId(long value) => new() { Value = value };
         public static implicit operator long(VtSkillCfgId obj) => obj.Value;
 
@@ -84,7 +86,7 @@ namespace Conf
         public static bool operator !=(VtSkillCfgId left, VtSkillCfgId right) => left.Value != right.Value;
 
         public override string ToString() => Value.ToString();
-        public bool IsZero => Value == default;
+        public bool IsZero => Value == 0;
     }
 
     internal class VtSkillCfgIdJsonConverter : ValueWrapperJsonConverter<VtSkillCfgId, long>

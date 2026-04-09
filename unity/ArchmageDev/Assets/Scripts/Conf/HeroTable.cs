@@ -15,6 +15,7 @@ namespace Conf
     public partial struct HeroCfgId
     {
         public long Value;
+        public HeroCfg Cfg => ConfigAtlas.Instance.HeroTable[Value]!;
     }
 
     public partial class HeroTable : Dictionary<HeroCfgId, HeroCfg> { }
@@ -52,17 +53,17 @@ namespace Conf
     {
         public bool TryLookup(HeroCfgId cfgId, out HeroCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgId, this!, "HeroTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this, "HeroTable", out cfg);
         }
 
         public HeroCfg? Lookup(HeroCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgId, this!, "HeroTable");
+            return ConfigAtlas.Lookup(cfgId, this, "HeroTable");
         }
 
         internal XRef<HeroCfgId, HeroCfg> RefLookup(HeroCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<HeroCfgId, HeroCfg>(cfgId, this!, "HeroTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup(cfgId, this, "HeroTable"));
         }
     }
 
@@ -72,6 +73,7 @@ namespace Conf
     [TypeConverter(typeof(HeroCfgIdTypeConverter))]
     public partial struct HeroCfgId : IEquatable<HeroCfgId>, IZero
     {
+        public HeroCfgId(long value) { Value = value; }
         public static implicit operator HeroCfgId(long value) => new() { Value = value };
         public static implicit operator long(HeroCfgId obj) => obj.Value;
 
@@ -83,7 +85,7 @@ namespace Conf
         public static bool operator !=(HeroCfgId left, HeroCfgId right) => left.Value != right.Value;
 
         public override string ToString() => Value.ToString();
-        public bool IsZero => Value == default;
+        public bool IsZero => Value == 0;
     }
 
     internal class HeroCfgIdJsonConverter : ValueWrapperJsonConverter<HeroCfgId, long>

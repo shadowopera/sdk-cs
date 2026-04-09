@@ -15,6 +15,7 @@ namespace Conf
     public partial struct MagicCfgId
     {
         public long Value;
+        public MagicCfg Cfg => ConfigAtlas.Instance.MagicTable[Value]!;
     }
 
     public partial class MagicTable : Dictionary<MagicCfgId, MagicCfg> { }
@@ -31,17 +32,17 @@ namespace Conf
     {
         public bool TryLookup(MagicCfgId cfgId, out MagicCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgId, this!, "MagicTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this, "MagicTable", out cfg);
         }
 
         public MagicCfg? Lookup(MagicCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgId, this!, "MagicTable");
+            return ConfigAtlas.Lookup(cfgId, this, "MagicTable");
         }
 
         internal XRef<MagicCfgId, MagicCfg> RefLookup(MagicCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<MagicCfgId, MagicCfg>(cfgId, this!, "MagicTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup(cfgId, this, "MagicTable"));
         }
     }
 
@@ -51,6 +52,7 @@ namespace Conf
     [TypeConverter(typeof(MagicCfgIdTypeConverter))]
     public partial struct MagicCfgId : IEquatable<MagicCfgId>, IZero
     {
+        public MagicCfgId(long value) { Value = value; }
         public static implicit operator MagicCfgId(long value) => new() { Value = value };
         public static implicit operator long(MagicCfgId obj) => obj.Value;
 
@@ -62,7 +64,7 @@ namespace Conf
         public static bool operator !=(MagicCfgId left, MagicCfgId right) => left.Value != right.Value;
 
         public override string ToString() => Value.ToString();
-        public bool IsZero => Value == default;
+        public bool IsZero => Value == 0;
     }
 
     internal class MagicCfgIdJsonConverter : ValueWrapperJsonConverter<MagicCfgId, long>

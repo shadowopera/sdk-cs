@@ -15,6 +15,7 @@ namespace Conf
     public partial struct VtItemXCfgId
     {
         public long Value;
+        public VtItemXCfg Cfg => ConfigAtlas.Instance.VtItemXTable[Value]!;
     }
 
     public partial class VtItemXTable : Dictionary<VtItemXCfgId, VtItemXCfg> { }
@@ -56,17 +57,17 @@ namespace Conf
     {
         public bool TryLookup(VtItemXCfgId cfgId, out VtItemXCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgId, this!, "VtItemXTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this, "VtItemXTable", out cfg);
         }
 
         public VtItemXCfg? Lookup(VtItemXCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgId, this!, "VtItemXTable");
+            return ConfigAtlas.Lookup(cfgId, this, "VtItemXTable");
         }
 
         internal XRef<VtItemXCfgId, VtItemXCfg> RefLookup(VtItemXCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<VtItemXCfgId, VtItemXCfg>(cfgId, this!, "VtItemXTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup(cfgId, this, "VtItemXTable"));
         }
     }
 
@@ -76,6 +77,7 @@ namespace Conf
     [TypeConverter(typeof(VtItemXCfgIdTypeConverter))]
     public partial struct VtItemXCfgId : IEquatable<VtItemXCfgId>, IZero
     {
+        public VtItemXCfgId(long value) { Value = value; }
         public static implicit operator VtItemXCfgId(long value) => new() { Value = value };
         public static implicit operator long(VtItemXCfgId obj) => obj.Value;
 
@@ -87,7 +89,7 @@ namespace Conf
         public static bool operator !=(VtItemXCfgId left, VtItemXCfgId right) => left.Value != right.Value;
 
         public override string ToString() => Value.ToString();
-        public bool IsZero => Value == default;
+        public bool IsZero => Value == 0;
     }
 
     internal class VtItemXCfgIdJsonConverter : ValueWrapperJsonConverter<VtItemXCfgId, long>

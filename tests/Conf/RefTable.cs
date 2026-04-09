@@ -15,6 +15,7 @@ namespace Conf
     public partial struct RefCfgId
     {
         public long Value;
+        public RefCfg Cfg => ConfigAtlas.Instance.RefTable[Value]!;
     }
 
     public partial class RefTable : Dictionary<RefCfgId, RefCfg> { }
@@ -56,17 +57,17 @@ namespace Conf
     {
         public bool TryLookup(RefCfgId cfgId, out RefCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgId, this!, "RefTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this, "RefTable", out cfg);
         }
 
         public RefCfg? Lookup(RefCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgId, this!, "RefTable");
+            return ConfigAtlas.Lookup(cfgId, this, "RefTable");
         }
 
         internal XRef<RefCfgId, RefCfg> RefLookup(RefCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<RefCfgId, RefCfg>(cfgId, this!, "RefTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup(cfgId, this, "RefTable"));
         }
     }
 
@@ -76,6 +77,7 @@ namespace Conf
     [TypeConverter(typeof(RefCfgIdTypeConverter))]
     public partial struct RefCfgId : IEquatable<RefCfgId>, IZero
     {
+        public RefCfgId(long value) { Value = value; }
         public static implicit operator RefCfgId(long value) => new() { Value = value };
         public static implicit operator long(RefCfgId obj) => obj.Value;
 
@@ -87,7 +89,7 @@ namespace Conf
         public static bool operator !=(RefCfgId left, RefCfgId right) => left.Value != right.Value;
 
         public override string ToString() => Value.ToString();
-        public bool IsZero => Value == default;
+        public bool IsZero => Value == 0;
     }
 
     internal class RefCfgIdJsonConverter : ValueWrapperJsonConverter<RefCfgId, long>

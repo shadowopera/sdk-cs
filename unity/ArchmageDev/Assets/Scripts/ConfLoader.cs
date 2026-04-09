@@ -1,11 +1,7 @@
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using Conf;
 using Shadop.Archmage.Sdk;
 
@@ -220,26 +216,33 @@ public class ConfLoader : MonoBehaviour
 
     void ShowAtlasBasicFeatures()
     {
+        // IMPORTANT: Set the global ConfigAtlas.
+        ConfigAtlas.Instance = Atlas;
+
         // 1. Look up a config entry by ID from a dictionary-based table.
-        Atlas.HeroTable.TryLookup(2, out var hero);
+        var cfgId = new HeroCfgId(2);
+        Atlas.HeroTable.TryLookup(cfgId, out var hero);
         Debug.Log($"[ConfLoader] HeroTable[2]: StartLevel={hero.StartLevel}");
 
-        // 2. Access a cross-table reference via XRef.Ref.
+        // 2. Do the same, but in a more convenient way.
+        Debug.Log($"[ConfLoader] HeroTable[2]: StartLevel={cfgId.Cfg.StartLevel} (shortcut)");
+
+        // 3. Access a cross-table reference via XRef.Ref.
         var firstChar = Atlas.CharacterArray[0];
         Debug.Log($"[ConfLoader] CharacterArray[0]: ID={firstChar.Id}, Attack={firstChar.Attack}");
         Debug.Log($"[ConfLoader] CharacterArray[0].Race.CfgId: {firstChar.Race.CfgId}");
         Debug.Log($"[ConfLoader] CharacterArray[0].Race.Ref.Birthplace: {firstChar.Race.Ref.Birthplace.Text}");
 
-        // 3. Query localized text via L10n.
+        // 4. Query localized text via L10n.
         Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {Atlas.HeroTable[3].HeroName.Text}");
         Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {Atlas.GameCfg.XL10n.Text}");
 
-        // 4. Show Unity Built-in vectors.
+        // 5. Show Unity Built-in vectors.
         Debug.Log($"[ConfLoader] GameCfg.XVector2 (Vector2Int): {Atlas.GameCfg.XVector2}");
         Debug.Log($"[ConfLoader] GameCfg.XVector3 (Vector3): {Atlas.GameCfg.XVector3}");
         Debug.Log($"[ConfLoader] GameCfg.XVector4 (Vector4): {Atlas.GameCfg.XVector4}");
 
-        // 5. Convert Rgba to Unity Color.
+        // 6. Convert Rgba to Unity Color.
         Debug.Log($"[ConfLoader] GameCfg.XRgba (Rgba): {Atlas.GameCfg.XRgba.ToColor()}");
     }
 }

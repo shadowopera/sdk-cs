@@ -15,6 +15,7 @@ namespace Conf
     public partial struct WeaponRuneCfgId
     {
         public long Value;
+        public WeaponRuneCfg Cfg => ConfigAtlas.Instance.WeaponRuneTable[Value]!;
     }
 
     public partial class WeaponRuneTable : Dictionary<WeaponRuneCfgId, WeaponRuneCfg> { }
@@ -33,17 +34,17 @@ namespace Conf
     {
         public bool TryLookup(WeaponRuneCfgId cfgId, out WeaponRuneCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgId, this!, "WeaponRuneTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this, "WeaponRuneTable", out cfg);
         }
 
         public WeaponRuneCfg? Lookup(WeaponRuneCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgId, this!, "WeaponRuneTable");
+            return ConfigAtlas.Lookup(cfgId, this, "WeaponRuneTable");
         }
 
         internal XRef<WeaponRuneCfgId, WeaponRuneCfg> RefLookup(WeaponRuneCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<WeaponRuneCfgId, WeaponRuneCfg>(cfgId, this!, "WeaponRuneTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup(cfgId, this, "WeaponRuneTable"));
         }
     }
 
@@ -53,6 +54,7 @@ namespace Conf
     [TypeConverter(typeof(WeaponRuneCfgIdTypeConverter))]
     public partial struct WeaponRuneCfgId : IEquatable<WeaponRuneCfgId>, IZero
     {
+        public WeaponRuneCfgId(long value) { Value = value; }
         public static implicit operator WeaponRuneCfgId(long value) => new() { Value = value };
         public static implicit operator long(WeaponRuneCfgId obj) => obj.Value;
 
@@ -64,7 +66,7 @@ namespace Conf
         public static bool operator !=(WeaponRuneCfgId left, WeaponRuneCfgId right) => left.Value != right.Value;
 
         public override string ToString() => Value.ToString();
-        public bool IsZero => Value == default;
+        public bool IsZero => Value == 0;
     }
 
     internal class WeaponRuneCfgIdJsonConverter : ValueWrapperJsonConverter<WeaponRuneCfgId, long>

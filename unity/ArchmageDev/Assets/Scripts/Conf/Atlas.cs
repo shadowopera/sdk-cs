@@ -10,6 +10,9 @@ namespace Conf
 {
     public partial class ConfigAtlas : IAtlas
     {
+        // Instance must be set before calling any XxxCfgId.Cfg.
+        public static ConfigAtlas Instance = null!;
+
         Dictionary<string, AtlasItem> _m = null!;
         public AtlasExtension Extension { get; private set; }
         public VersionInfo? DataVersion { get; private set; }
@@ -125,7 +128,7 @@ namespace Conf
             var m = new HashSet<string>();
             m.Add("Rab"); // string
             if (m.Count != 1)
-                throw new System.Exception("conflicting pubtype detected");
+                throw new Exception("conflicting pubtype detected");
         }
     }
 

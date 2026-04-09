@@ -15,6 +15,7 @@ namespace Conf
     public partial struct RaceCfgId
     {
         public string Value;
+        public RaceCfg Cfg => ConfigAtlas.Instance.RaceTable[Value]!;
     }
 
     public partial class RaceTable : Dictionary<RaceCfgId, RaceCfg> { }
@@ -39,17 +40,17 @@ namespace Conf
     {
         public bool TryLookup(RaceCfgId cfgId, out RaceCfg? cfg)
         {
-            return ConfigAtlas.TryLookup(cfgId, this!, "RaceTable", out cfg);
+            return ConfigAtlas.TryLookup(cfgId, this, "RaceTable", out cfg);
         }
 
         public RaceCfg? Lookup(RaceCfgId cfgId)
         {
-            return ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgId, this!, "RaceTable");
+            return ConfigAtlas.Lookup(cfgId, this, "RaceTable");
         }
 
         internal XRef<RaceCfgId, RaceCfg> RefLookup(RaceCfgId cfgId)
         {
-            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup<RaceCfgId, RaceCfg>(cfgId, this!, "RaceTable"));
+            return ConfigAtlas.MakeXRef(cfgId, ConfigAtlas.Lookup(cfgId, this, "RaceTable"));
         }
     }
 
@@ -59,6 +60,7 @@ namespace Conf
     [TypeConverter(typeof(RaceCfgIdTypeConverter))]
     public partial struct RaceCfgId : IEquatable<RaceCfgId>, IZero
     {
+        public RaceCfgId(string value) { Value = value; }
         public static implicit operator RaceCfgId(string value) => new() { Value = value };
         public static implicit operator string(RaceCfgId obj) => obj.Value;
 

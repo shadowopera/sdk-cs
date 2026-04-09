@@ -32,7 +32,7 @@ namespace Conf
     {
         public override bool CanConvert(Type objectType) => objectType == typeof(L10n);
 
-        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.String)
                 return new L10n((string)reader.Value!);
