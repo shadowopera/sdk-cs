@@ -20,6 +20,7 @@ public class ConfLoader : MonoBehaviour
         ResourcesConcurrentAsync,
         StreamingAssetsAsync,
         StreamingAssetsConcurrentAsync,
+        DirectAccess,
     }
 
     [Header("Settings")]
@@ -45,6 +46,9 @@ public class ConfLoader : MonoBehaviour
             case DemoType.StreamingAssetsAsync:
             case DemoType.StreamingAssetsConcurrentAsync:
                 await StreamingAssetsAsyncDemo();
+                break;
+            case DemoType.DirectAccess:
+                DirectAccessDemo();
                 break;
         }
     }
@@ -184,6 +188,37 @@ public class ConfLoader : MonoBehaviour
             await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, Atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityStreamingAssetsFS(), cfgRoot);
+            ShowAtlasBasicFeatures();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[ConfLoader] Failed to load config: {ex}");
+        }
+    }
+
+    void DirectAccessDemo()
+    {
+        // IMPORTANT: This method works only pre-build. During the build process,
+        // Unity packages assets, so regular file access no longer works.
+        string cfgRoot = "Assets/Configs";
+        string atlasFile = "Assets/Configs/atlas.json";
+
+        Atlas = new ConfigAtlas();
+
+        var options = new AtlasOptions()
+            .WithLogger(new UnityAtlasLogger())
+            .WithJsonSettings(UnityJsonSettingsFactory.Create())
+            .WithAtlasModifier(atlasJson =>
+            {
+                atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
+            });
+
+        try
+        {
+            Debug.Log("[ConfLoader] Starting sync config loading (DirectAccess)...");
+            Archmage.LoadAtlas(atlasFile, cfgRoot, Atlas, options);
+            Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
+            InitI18n(new DefaultFS(), cfgRoot);
             ShowAtlasBasicFeatures();
         }
         catch (Exception ex)
