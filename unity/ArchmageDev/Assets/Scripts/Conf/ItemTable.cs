@@ -17,7 +17,7 @@ namespace Conf
         public long Value;
     }
 
-    public partial class ItemTable : Dictionary<ItemCfgId, ItemCfg> {}
+    public partial class ItemTable : Dictionary<ItemCfgId, ItemCfg> { }
 
     public partial class ItemCfg
     {
@@ -93,7 +93,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.Id = key;
+                if (val is not null) val.Id = key;
             }
         }
     }

@@ -36,7 +36,7 @@ namespace Shadop.Archmage.Sdk
                 var textAsset = await handle.Task;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (textAsset == null)
+                if (textAsset is null)
                     throw new FileNotFoundException($"Could not find Addressables key: {address}.");
 
                 // textAsset.bytes returns the raw bytes of the asset — no encoding conversion,

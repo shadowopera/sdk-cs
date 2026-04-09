@@ -17,7 +17,7 @@ namespace Conf
         public long Value;
     }
 
-    public partial class VtItemXTable : Dictionary<VtItemXCfgId, VtItemXCfg> {}
+    public partial class VtItemXTable : Dictionary<VtItemXCfgId, VtItemXCfg> { }
 
     public partial class VtItemXCfg
     {
@@ -107,7 +107,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.Id = key;
+                if (val is not null) val.Id = key;
             }
         }
     }

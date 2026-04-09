@@ -11,7 +11,7 @@ using Shadop.Archmage.Sdk;
 
 namespace Conf
 {
-    public partial class Matrix2Table : Dictionary<string, Dictionary<string, List<List<XRef<HeroCfgId, HeroCfg>>>>?> {}
+    public partial class Matrix2Table : Dictionary<string, Dictionary<string, List<List<XRef<HeroCfgId, HeroCfg>>>>?> { }
 
     #region Trifles
 
@@ -21,13 +21,13 @@ namespace Conf
         {
             foreach (var v1 in this.Values)
             {
-                if (v1 == null) continue;
+                if (v1 is null) continue;
                 foreach (var v2 in v1.Values)
                 {
-                    if (v2 == null) continue;
+                    if (v2 is null) continue;
                     foreach (var v3 in v2)
                     {
-                        if (v3 == null) continue;
+                        if (v3 is null) continue;
                         for (var i4 = 0; i4 < v3.Count; i4++)
                         {
                             v3[i4] = atlas.HeroTable.RefLookup(v3[i4].CfgId);

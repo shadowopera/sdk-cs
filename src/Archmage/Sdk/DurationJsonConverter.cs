@@ -47,7 +47,7 @@ namespace Shadop.Archmage.Sdk
         {
             var duration = (Duration)value!;
             var shards = Archmage.ShardDuration(duration);
-            if (shards == null)
+            if (shards is null)
             {
                 writer.WriteNull();
                 return;

@@ -23,7 +23,7 @@ namespace Shadop.Archmage.Sdk
         /// <exception cref="ArgumentException">Thrown if outputDir is empty or whitespace.</exception>
         public static void DumpAtlas(IAtlas atlas, string outputDir, JsonSerializerSettings? settings = null)
         {
-            if (atlas == null)
+            if (atlas is null)
                 throw new ArgumentNullException(nameof(atlas));
             if (string.IsNullOrWhiteSpace(outputDir))
                 throw new ArgumentException("Output directory cannot be empty.", nameof(outputDir));
@@ -38,7 +38,7 @@ namespace Shadop.Archmage.Sdk
                 var item = kvp.Value;
 
                 // Skip items that are not ready or have no configuration
-                if (!item.Ready || item.Cfg == null)
+                if (!item.Ready || item.Cfg is null)
                     continue;
 
                 try
@@ -65,7 +65,7 @@ namespace Shadop.Archmage.Sdk
             // Write to file
             var filePath = Path.Combine(outputDir, key + ".json");
             var dir = Path.GetDirectoryName(filePath);
-            if (dir != null)
+            if (dir is not null)
                 Directory.CreateDirectory(dir);
             File.WriteAllText(filePath, json, new UTF8Encoding(false));
         }

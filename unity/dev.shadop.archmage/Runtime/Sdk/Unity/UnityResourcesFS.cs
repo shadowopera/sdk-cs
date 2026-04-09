@@ -21,7 +21,7 @@ namespace Shadop.Archmage.Sdk
             var resourcePath = StripExtension(path);
             var textAsset = Resources.Load<TextAsset>(resourcePath);
 
-            if (textAsset == null)
+            if (textAsset is null)
                 throw new FileNotFoundException($"Could not find Resources asset: {resourcePath}.");
 
             var bytes = textAsset.bytes;
@@ -44,7 +44,7 @@ namespace Shadop.Archmage.Sdk
 
             var textAsset = resourceRequest.asset as TextAsset;
 
-            if (textAsset == null)
+            if (textAsset is null)
                 throw new FileNotFoundException($"Could not find Resources asset: {resourcePath}.");
 
             var bytes = textAsset.bytes;

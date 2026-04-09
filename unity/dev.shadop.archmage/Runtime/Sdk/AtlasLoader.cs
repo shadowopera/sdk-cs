@@ -47,7 +47,7 @@ namespace Shadop.Archmage.Sdk
             IProgress<AtlasLoadEvent>? progress = null)
         {
             options ??= new AtlasOptions();
-            if (options.AsyncLoadStrategy != null)
+            if (options.AsyncLoadStrategy is not null)
                 throw new ArchmageException("Cannot use WithAsyncLoadStrategy with synchronous LoadAtlas.");
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, progress).GetAwaiter().GetResult();
             atlas.OnLoaded();
@@ -79,7 +79,7 @@ namespace Shadop.Archmage.Sdk
             CancellationToken cancellationToken = default)
         {
             options ??= new AtlasOptions();
-            if (options.LoadStrategy != null)
+            if (options.LoadStrategy is not null)
                 throw new ArchmageException("Cannot use WithLoadStrategy with asynchronous LoadAtlasAsync.");
             await LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, progress, cancellationToken);
             // Invoke in the caller's thread.
@@ -105,7 +105,7 @@ namespace Shadop.Archmage.Sdk
             // Verify override directories exist
             foreach (var overrideConfig in options.OverrideConfigs)
             {
-                if (overrideConfig.FS == null)
+                if (overrideConfig.FS is null)
                 {
                     if (!options.FS.DirectoryExists(overrideConfig.RootPath!))
                         throw new ArchmageException($"Invalid override root directory \"{overrideConfig.RootPath}\".");
@@ -126,7 +126,7 @@ namespace Shadop.Archmage.Sdk
                 throw new ArchmageException($"Invalid \"{atlasFile}\".", ex);
             }
 
-            if (atlasJson == null)
+            if (atlasJson is null)
             {
                 throw new ArchmageException($"Invalid \"{atlasFile}\".");
             }
@@ -141,7 +141,7 @@ namespace Shadop.Archmage.Sdk
             var items = atlas.AtlasItems();
 
             // Validate whitelist/blacklist keys exist
-            if (options.Whitelist != null)
+            if (options.Whitelist is not null)
             {
                 foreach (var v in options.Whitelist)
                 {
@@ -149,7 +149,7 @@ namespace Shadop.Archmage.Sdk
                         throw new ArchmageException($"Atlas whitelist: unknown item \"{v}\".");
                 }
             }
-            if (options.Blacklist != null)
+            if (options.Blacklist is not null)
             {
                 foreach (var v in options.Blacklist)
                 {
@@ -195,7 +195,7 @@ namespace Shadop.Archmage.Sdk
                     }
                 }
 
-                if (options.AsyncLoadStrategy != null)
+                if (options.AsyncLoadStrategy is not null)
                 {
                     await options.AsyncLoadStrategy(filteredItems, itemLoadAsync, cancellationToken)
                         .ConfigureAwait(false);
@@ -224,7 +224,7 @@ namespace Shadop.Archmage.Sdk
                     }
                 }
 
-                if (options.LoadStrategy != null)
+                if (options.LoadStrategy is not null)
                 {
                     options.LoadStrategy(filteredItems, itemLoad);
                 }
@@ -246,7 +246,7 @@ namespace Shadop.Archmage.Sdk
         internal static JsonSerializerSettings CloneJsonSettings(JsonSerializerSettings? original)
         {
             var settings = new JsonSerializerSettings();
-            if (original != null)
+            if (original is not null)
             {
                 foreach (var prop in typeof(JsonSerializerSettings).GetProperties())
                 {
@@ -268,10 +268,10 @@ namespace Shadop.Archmage.Sdk
 
         static (string cause, bool skip) ShouldSkip(string key, AtlasOptions options)
         {
-            if (options.Whitelist != null && options.Whitelist.Count > 0)
+            if (options.Whitelist is not null && options.Whitelist.Count > 0)
                 return ("whitelist", !options.Whitelist.Contains(key));
 
-            if (options.Blacklist != null && options.Blacklist.Count > 0 && options.Blacklist.Contains(key))
+            if (options.Blacklist is not null && options.Blacklist.Count > 0 && options.Blacklist.Contains(key))
                 return ("blacklist", true);
 
             return ("", false);
@@ -300,7 +300,7 @@ namespace Shadop.Archmage.Sdk
                     break;
                 case AtlasConstants.MappingSingle:
                     var sf = atlasJson.PickFromSingle(key);
-                    files = sf != null ? new List<string> { sf } : new List<string>();
+                    files = sf is not null ? new List<string> { sf } : new List<string>();
                     keyPath = $"$.single['{key}']['/']";
                     break;
                 case AtlasConstants.MappingMultiple:
@@ -344,7 +344,7 @@ namespace Shadop.Archmage.Sdk
                 // Collect overrides for this file
                 foreach (var overrideCfg in options.OverrideConfigs)
                 {
-                    if (overrideCfg.FS != null)
+                    if (overrideCfg.FS is not null)
                     {
                         if (overrideCfg.FS.FileExists(f))
                         {

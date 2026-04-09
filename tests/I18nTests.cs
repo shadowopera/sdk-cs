@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Shadop.Archmage.Sdk;
 using Xunit;
 
 namespace Shadop.Archmage.Sdk.Tests
@@ -87,11 +86,11 @@ namespace Shadop.Archmage.Sdk.Tests
             foreach (var tt in dataset)
             {
                 var i18n = new I18n("en");
-                if (tt.InitialTexts != null)
+                if (tt.InitialTexts is not null)
                 {
                     i18n.MergeTexts(tt.InitialTexts, "en");
                 }
-                if (tt.MergeTexts != null)
+                if (tt.MergeTexts is not null)
                 {
                     i18n.MergeTexts(tt.MergeTexts, tt.Lang);
                 }
@@ -183,7 +182,7 @@ namespace Shadop.Archmage.Sdk.Tests
                 else
                 {
                     Assert.Null(err);
-                    if (tt.expected != null)
+                    if (tt.expected is not null)
                     {
                         Assert.Equivalent(tt.expected, i18n.AllTexts()[tt.Lang]);
                     }

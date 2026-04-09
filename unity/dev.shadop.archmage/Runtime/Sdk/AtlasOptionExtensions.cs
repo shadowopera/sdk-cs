@@ -84,7 +84,7 @@ namespace Shadop.Archmage.Sdk
         /// <exception cref="ArgumentNullException">Thrown if fs is null.</exception>
         public static AtlasOptions WithOverrideFS(this AtlasOptions opts, IFS fs)
         {
-            if (fs == null)
+            if (fs is null)
                 throw new ArgumentNullException(nameof(fs));
 
             opts.OverrideConfigs.Add(new OverrideConfig(fs));

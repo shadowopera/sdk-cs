@@ -17,7 +17,7 @@ namespace Conf
         public long Value;
     }
 
-    public partial class HeroTable : Dictionary<HeroCfgId, HeroCfg> {}
+    public partial class HeroTable : Dictionary<HeroCfgId, HeroCfg> { }
 
     public partial class HeroCfg
     {
@@ -103,7 +103,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.Id = key;
+                if (val is not null) val.Id = key;
             }
         }
     }
@@ -114,7 +114,7 @@ namespace Conf
         {
             foreach (var v1 in this.Values)
             {
-                if (v1 != null)
+                if (v1 is not null)
                     v1.BindRefs(atlas);
             }
         }
@@ -124,36 +124,36 @@ namespace Conf
     {
         internal void BindRefs(ConfigAtlas atlas)
         {
-            if (Referrer != null)
+            if (Referrer is not null)
             {
                 for (var i = 0; i < Referrer.Count; i++)
                 {
                     Referrer[i] = atlas.RefTable.RefLookup(Referrer[i].CfgId);
                 }
             }
-            if (RaceCombo != null)
+            if (RaceCombo is not null)
             {
                 foreach (var v1 in RaceCombo)
                 {
-                    if (v1 != null)
+                    if (v1 is not null)
                         v1.BindRefs(atlas);
                 }
             }
-            if (ReferrerSort != null)
+            if (ReferrerSort is not null)
             {
                 for (var i = 0; i < ReferrerSort.Count; i++)
                 {
                     ReferrerSort[i] = atlas.RefTable.RefLookup(ReferrerSort[i].CfgId);
                 }
             }
-            if (ReferrerCompact != null)
+            if (ReferrerCompact is not null)
             {
                 for (var i = 0; i < ReferrerCompact.Count; i++)
                 {
                     ReferrerCompact[i] = atlas.RefTable.RefLookup(ReferrerCompact[i].CfgId);
                 }
             }
-            if (ReferrerSortCompact != null)
+            if (ReferrerSortCompact is not null)
             {
                 for (var i = 0; i < ReferrerSortCompact.Count; i++)
                 {

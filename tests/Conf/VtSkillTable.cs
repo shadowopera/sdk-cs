@@ -17,7 +17,7 @@ namespace Conf
         public long Value;
     }
 
-    public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg> {}
+    public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg> { }
 
     public partial class VtSkillCfg
     {
@@ -104,7 +104,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.Id = key;
+                if (val is not null) val.Id = key;
             }
         }
     }

@@ -24,7 +24,7 @@ namespace Shadop.Archmage.Sdk
         public static JsonSerializerSettings Create(JsonSerializerSettings? baseSettings = null)
         {
             var settings = new JsonSerializerSettings();
-            if (baseSettings != null)
+            if (baseSettings is not null)
             {
                 foreach (var prop in typeof(JsonSerializerSettings).GetProperties())
                 {
@@ -71,7 +71,7 @@ namespace Shadop.Archmage.Sdk
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value == null)
+            if (value is null)
             {
                 writer.WriteNull();
                 return;
@@ -115,7 +115,7 @@ namespace Shadop.Archmage.Sdk
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value == null)
+            if (value is null)
             {
                 writer.WriteNull();
                 return;
@@ -161,7 +161,7 @@ namespace Shadop.Archmage.Sdk
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value == null)
+            if (value is null)
             {
                 writer.WriteNull();
                 return;
@@ -206,7 +206,7 @@ namespace Shadop.Archmage.Sdk
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value == null)
+            if (value is null)
             {
                 writer.WriteNull();
                 return;
@@ -250,7 +250,7 @@ namespace Shadop.Archmage.Sdk
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value == null)
+            if (value is null)
             {
                 writer.WriteNull();
                 return;

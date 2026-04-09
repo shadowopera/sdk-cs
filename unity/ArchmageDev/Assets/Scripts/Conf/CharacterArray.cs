@@ -11,7 +11,7 @@ using Shadop.Archmage.Sdk;
 
 namespace Conf
 {
-    public partial class CharacterArray : List<CharacterCfg?> {}
+    public partial class CharacterArray : List<CharacterCfg?> { }
 
     public partial class CharacterCfg
     {
@@ -58,7 +58,7 @@ namespace Conf
         {
             foreach (var v1 in this)
             {
-                if (v1 != null)
+                if (v1 is not null)
                     v1.BindRefs(atlas);
             }
         }
@@ -69,7 +69,7 @@ namespace Conf
         internal void BindRefs(ConfigAtlas atlas)
         {
             Race = atlas.RaceTable.RefLookup(Race.CfgId);
-            if (Runes != null)
+            if (Runes is not null)
             {
                 for (var i1 = 0; i1 < Runes.Count; i1++)
                 {

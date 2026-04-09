@@ -45,7 +45,7 @@ namespace Shadop.Archmage.Sdk
         /// <exception cref="ArchmageException">Thrown if invalid format or unknown type.</exception>
         public static Duration ParseDurationShards(long[]? shards)
         {
-            if (shards == null || shards.Length == 0)
+            if (shards is null || shards.Length == 0)
                 return Duration.Zero;
 
             if (shards.Length < 2)

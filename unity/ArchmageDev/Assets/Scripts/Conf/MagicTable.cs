@@ -17,7 +17,7 @@ namespace Conf
         public long Value;
     }
 
-    public partial class MagicTable : Dictionary<MagicCfgId, MagicCfg> {}
+    public partial class MagicTable : Dictionary<MagicCfgId, MagicCfg> { }
 
     public partial class MagicCfg
     {
@@ -82,7 +82,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.Id = key;
+                if (val is not null) val.Id = key;
             }
         }
     }

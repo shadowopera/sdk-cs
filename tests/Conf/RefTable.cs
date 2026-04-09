@@ -17,7 +17,7 @@ namespace Conf
         public long Value;
     }
 
-    public partial class RefTable : Dictionary<RefCfgId, RefCfg> {}
+    public partial class RefTable : Dictionary<RefCfgId, RefCfg> { }
 
     public partial class RefCfg
     {
@@ -107,7 +107,7 @@ namespace Conf
         {
             foreach (var (key, val) in this)
             {
-                if (val != null) val.Id = key;
+                if (val is not null) val.Id = key;
             }
         }
     }
@@ -118,7 +118,7 @@ namespace Conf
         {
             foreach (var v1 in this.Values)
             {
-                if (v1 != null)
+                if (v1 is not null)
                     v1.BindRefs(atlas);
             }
         }
@@ -133,7 +133,7 @@ namespace Conf
             E = atlas.MagicTable.RefLookup(E.CfgId);
             F = atlas.RaceTable.RefLookup(F.CfgId);
             G = atlas.HeroTable.RefLookup(G.CfgId);
-            if (H != null)
+            if (H is not null)
             {
                 for (var i1 = 0; i1 < H.Count; i1++)
                 {
