@@ -64,12 +64,24 @@ public TimeSpan Elapsed { get; }
 
 [TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan)<br>
 
-## Constructors
+### **Total**
 
-### **AtlasLoadEvent(String, AtlasLoadStage, String, TimeSpan)**
+The total number of atlas items to load. Only meaningful for [AtlasLoadStage.ItemsQueued](../shadop-archmage-sdk-atlasloadstage/#itemsqueued).
 
 ```csharp
-AtlasLoadEvent(string key, AtlasLoadStage stage, string filePath, TimeSpan elapsed)
+public int Total { get; }
+```
+
+#### Property Value
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+## Constructors
+
+### **AtlasLoadEvent(String, AtlasLoadStage, String, TimeSpan, Int32)**
+
+```csharp
+AtlasLoadEvent(string key, AtlasLoadStage stage, string filePath, TimeSpan elapsed, int total)
 ```
 
 #### Parameters
@@ -81,3 +93,5 @@ AtlasLoadEvent(string key, AtlasLoadStage stage, string filePath, TimeSpan elaps
 `filePath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 `elapsed` [TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan)<br>
+
+`total` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>

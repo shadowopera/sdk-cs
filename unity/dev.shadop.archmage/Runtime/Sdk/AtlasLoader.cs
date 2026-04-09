@@ -163,7 +163,7 @@ namespace Shadop.Archmage.Sdk
                 .OrderBy(k => k, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            var filteredItems = new List<KeyValuePair<string, AtlasItem>>();
+            var filtered = new List<KeyValuePair<string, AtlasItem>>();
             foreach (var k in sortedKeys)
             {
                 var (cause, skip) = ShouldSkip(k, options);
@@ -172,10 +172,11 @@ namespace Shadop.Archmage.Sdk
                     options.Logger.Info($"<archmage> Skipping atlas item: {k}. cause: {cause}");
                     continue;
                 }
-                filteredItems.Add(new KeyValuePair<string, AtlasItem>(k, items[k]));
+                filtered.Add(new KeyValuePair<string, AtlasItem>(k, items[k]));
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            progress?.Report(new AtlasLoadEvent("", AtlasLoadStage.ItemsQueued, total: filtered.Count));
 
             // Load items
             if (isAsync)
@@ -197,12 +198,12 @@ namespace Shadop.Archmage.Sdk
 
                 if (options.AsyncLoadStrategy is not null)
                 {
-                    await options.AsyncLoadStrategy(filteredItems, itemLoadAsync, cancellationToken)
+                    await options.AsyncLoadStrategy(filtered, itemLoadAsync, cancellationToken)
                         .ConfigureAwait(false);
                 }
                 else
                 {
-                    foreach (var kvp in filteredItems)
+                    foreach (var kvp in filtered)
                     {
                         await itemLoadAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
                     }
@@ -226,11 +227,11 @@ namespace Shadop.Archmage.Sdk
 
                 if (options.LoadStrategy is not null)
                 {
-                    options.LoadStrategy(filteredItems, itemLoad);
+                    options.LoadStrategy(filtered, itemLoad);
                 }
                 else
                 {
-                    foreach (var kvp in filteredItems)
+                    foreach (var kvp in filtered)
                     {
                         itemLoad(kvp.Key, kvp.Value);
                     }
@@ -240,7 +241,7 @@ namespace Shadop.Archmage.Sdk
             // Bind references
             atlas.BindRefs();
 
-            options.Logger.Info($"<archmage> Loaded {filteredItems.Count} config items in {stopwatch.ElapsedMilliseconds}ms");
+            options.Logger.Info($"<archmage> Loaded {filtered.Count} config items in {stopwatch.ElapsedMilliseconds}ms");
         }
 
         internal static JsonSerializerSettings CloneJsonSettings(JsonSerializerSettings? original)
