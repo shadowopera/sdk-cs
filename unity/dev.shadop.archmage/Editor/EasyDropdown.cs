@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace Shadop.Archmage.Editor
+namespace Shadop.Archmage.Sdk.Editor
 {
     public static partial class ArchmageTools
     {

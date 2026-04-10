@@ -1,6 +1,6 @@
 {
-    "name": "Shadop.Archmage.Editor",
-    "rootNamespace": "Shadop.Archmage.Editor",
+    "name": "Shadop.Archmage.Sdk.Editor",
+    "rootNamespace": "Shadop.Archmage.Sdk.Editor",
     "references": [
         "Shadop.Archmage.Sdk"
     ],

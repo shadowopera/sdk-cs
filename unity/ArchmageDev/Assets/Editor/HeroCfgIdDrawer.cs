@@ -2,7 +2,7 @@
 
 using UnityEditor;
 using System;
-using Shadop.Archmage.Editor;
+using Shadop.Archmage.Sdk.Editor;
 using Conf;
 
 [CustomPropertyDrawer(typeof(HeroCfgId))]

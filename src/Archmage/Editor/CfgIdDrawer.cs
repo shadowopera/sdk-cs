@@ -7,7 +7,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace Shadop.Archmage.Editor
+namespace Shadop.Archmage.Sdk.Editor
 {
     /// <summary>
     /// Abstract base for config ID property drawers. Renders an <see cref="ArchmageTools.DrawEasyDropdown{TValue}"/>
