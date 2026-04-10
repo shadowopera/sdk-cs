@@ -63,6 +63,7 @@ If your project uses `.asmdef` files, add the following assembly references:
 - `Shadop.Archmage.Sdk`
 - `Shadop.Archmage.Sdk.Unity`
 - `Shadop.Archmage.Sdk.Unity.Addressables` *(optional, only if using Addressables)*
+- `Shadop.Archmage.Sdk.Unity.Editor` *(optional)*
 
 ### .NET (via NuGet)
 
