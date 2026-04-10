@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.seaeees.simple-folder-icon": {
+      "version": "https://github.com/SeaeeesSan/SimpleFolderIcon.git?path=Packages/com.seaeees.simple-folder-icon",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "61962458dcd75068bd2324cf2ba5fc547d9e1ed8"
+    },
     "com.unity.addressables": {
       "version": "2.9.1",
       "depth": 0,
