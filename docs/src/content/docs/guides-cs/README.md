@@ -24,7 +24,7 @@ and calls post-load hooks.
 - **Whitelist / blacklist** to load only a subset of items
 - **Layered overrides**: additional directories or filesystems supply JSON that
   is merged into the base data at load time, field by field
-- **Unity support**: built-in adapters for Addressables, Resources, and StreamingAssets
+- **Unity support**: built-in adapters for Addressables, Resources, and StreamingAssets; Inspector dropdowns for config ID fields, sourced from the loaded atlas, for easy selection
 
 ## Requirements
 
@@ -74,7 +74,7 @@ dotnet add package Shadop.Archmage
 
 ### Unity (Addressables)
 
-A complete working example is in [`ConfLoader.cs`](https://github.com/shadowopera/sdk-cs/blob/main/unity/ArchmageDev/Assets/Scripts/ConfLoader.cs), covering Addressables, Resources, and StreamingAssets — with sync/async variants, concurrent loading, and I18n setup.
+A complete working example is in [`ConfLoader.cs`](https://github.com/shadowopera/sdk-cs/blob/main/unity/ArchmageDev/Assets/Scripts/ConfLoader.cs), covering Addressables, Resources, and StreamingAssets — with sync/async variants, concurrent loading, and I18n setup. For Inspector integration, see [`ArchmageEditorTools.cs`](https://github.com/shadowopera/sdk-cs/blob/main/unity/ArchmageDev/Assets/Editor/ArchmageEditorTools.cs), which demonstrates config ID dropdown wiring.
 
 The recommended starting point:
 
