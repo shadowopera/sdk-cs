@@ -49,18 +49,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Unity: Removed `Samples~` directory; integration adapters are now first-class Runtime assemblies.
-- Generated config tables now include `Id` in JSON serialization output.
+- Config tables now include `Id` in JSON serialization output.
 
 ## [0.5.0] - 2026-03-22
 
 ### Added
 
 - Added `NullLogger` that discards all log output.
-
-### Changed
-
-- Replaced `null!` string initializers with `string.Empty` in generated config tables.
-- Made config table values non-nullable.
 
 ## [0.4.0] - 2026-03-18
 
@@ -89,7 +84,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improved `L10n` API: replaced `Text(lang)` with a `Text` property that uses `GetPreferredLanguage`.
-- Made `AtlasExtension` and `L10n` classes `partial` to allow user-defined extensions.
 - Removed `[Archmage]` prefix from `UnityAtlasLogger` for cleaner logs.
 
 ## [0.2.0] - 2026-03-14
@@ -98,10 +92,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Unity: `Resources`, `StreamingAssets`, and `Addressables` file system implementations
 - Unity: Integration samples and `changelogUrl` added to `package.json`
-
-### Changed
-
-- Renamed `Custom[Async]Loader` to `[Async]LoadStrategy`
 
 ## [0.1.1] - 2026-03-12
 
