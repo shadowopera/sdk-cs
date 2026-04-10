@@ -8,8 +8,11 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 PKG_ROOT="$ROOT_DIR/unity/dev.shadop.archmage"
 SRC_DIR1="$ROOT_DIR/src/Archmage/Sdk"
 DST_DIR1="$PKG_ROOT/Runtime"
+SRC_DIR2="$ROOT_DIR/src/Archmage/Editor"
+DST_DIR2="$PKG_ROOT/Editor"
 
 mkdir -p "$DST_DIR1"
+mkdir -p "$DST_DIR2"
 
 for name in "README.md" "CHANGELOG.md" "LICENSE"; do
     src_file="$ROOT_DIR/$name"
@@ -45,6 +48,7 @@ CONF_DIR="$ROOT_DIR/unity/ArchmageDev/Assets/Scripts/Conf"
 mkdir -p "$CONF_DIR"
 
 rsync -a --delete --exclude="obj/" --exclude="bin/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR1/" "$DST_DIR1/"
+rsync -a --delete --exclude="obj/" --exclude="bin/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR2/" "$DST_DIR2/"
 
 # Sync testdata JSON files to Unity config directories (independent of above counters)
 TESTDATA_DIR="$ROOT_DIR/tests/testdata"

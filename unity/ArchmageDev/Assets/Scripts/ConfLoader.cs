@@ -22,7 +22,15 @@ public class ConfLoader : MonoBehaviour
     }
 
     [Header("Settings")]
+    [Space(6)]
     public DemoType _demoType = DemoType.AddressablesConcurrentAsync;
+
+    [Header("Easy Config ID Selection")]
+    [Space(6)]
+    // In the Inspector, Archmage displays all Config IDs from the configuration table in
+    // an intuitive dropdown, making selection easy.
+    // See Assets/Editor/ArchmageEditorTools.cs for details.
+    public HeroCfgId _heroCfgId = 2;
 
     public async Task Start()
     {
