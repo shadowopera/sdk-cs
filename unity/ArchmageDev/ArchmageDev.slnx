@@ -1,8 +1,0 @@
-﻿<Solution>
-  <Project Path="Shadop.Archmage.Sdk.csproj" />
-  <Project Path="Shadop.Archmage.Sdk.Unity.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
-  <Project Path="Shadop.Archmage.Editor.csproj" />
-  <Project Path="Shadop.Archmage.Sdk.Unity.Addressables.csproj" />
-</Solution>

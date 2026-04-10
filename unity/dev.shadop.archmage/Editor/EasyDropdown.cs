@@ -19,18 +19,20 @@ namespace Shadop.Archmage.Editor
         /// <param name="position">Rectangle on the screen to use for the property GUI.</param>
         /// <param name="property">SerializedProperty of the field to modify (must contain a value).</param>
         /// <param name="label">The label of the property.</param>
+        /// <param name="header">The header text displayed at the top of the dropdown window.</param>
         /// <param name="values">The array of configuration ID values.</param>
         /// <param name="displayNames">Optional: custom display strings. Length must match values if provided.</param>
         /// <param name="minWindowSize">Optional: minimum size for dropdown window.</param>
         public static void DrawEasyDropdown<TValue>(
             Rect position, SerializedProperty property, GUIContent label,
+            string header,
             TValue[] values, string[]? displayNames = null,
             Vector2 minWindowSize = default)
         {
             EditorGUI.BeginProperty(position, label, property);
             try
             {
-                DrawDropdown(position, property, label, values, displayNames, minWindowSize);
+                DrawDropdown(position, property, label, header, values, displayNames, minWindowSize);
             }
             finally
             {
@@ -40,6 +42,7 @@ namespace Shadop.Archmage.Editor
 
         static void DrawDropdown<TValue>(
             Rect position, SerializedProperty property, GUIContent label,
+            string header,
             TValue[]? values, string[]? displayNames,
             Vector2 minWindowSize)
         {
@@ -86,6 +89,7 @@ namespace Shadop.Archmage.Editor
                 var dropdown = new EasyDropdown<TValue>(
                     new AdvancedDropdownState(),
                     property,
+                    header,
                     values, displayNames,
                     minWindowSize
                 );
@@ -159,6 +163,7 @@ namespace Shadop.Archmage.Editor
         /// </summary>
         private class EasyDropdown<TValue> : AdvancedDropdown
         {
+            readonly string _header;
             readonly TValue[] _values;
             readonly string[] _displayNames;
             readonly SerializedProperty _property;
@@ -166,12 +171,14 @@ namespace Shadop.Archmage.Editor
             public EasyDropdown(
                 AdvancedDropdownState state,
                 SerializedProperty property,
+                string header,
                 TValue[] values, string[]? displayNames,
                 Vector2 minWindowSize) : base(state)
             {
                 if (values is null)
                     throw new ArgumentNullException(nameof(values));
 
+                _header = header;
                 _values = values;
                 _property = property;
 
@@ -197,7 +204,7 @@ namespace Shadop.Archmage.Editor
 
             protected override AdvancedDropdownItem BuildRoot()
             {
-                var root = new AdvancedDropdownItem("root");
+                var root = new AdvancedDropdownItem(_header ?? "root");
 
                 // Build the dropdown tree with index stored in id
                 for (int i = 0; i < _displayNames.Length; i++)
