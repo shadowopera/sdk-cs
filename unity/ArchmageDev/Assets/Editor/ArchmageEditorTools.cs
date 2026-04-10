@@ -19,7 +19,7 @@ namespace Conf.Editor
 
             var total = 1;
             var completed = 0;
-            var slowMotion = false;
+            var progressBarCleared = false;
             var progress = new Progress<AtlasLoadEvent>(evt =>
             {
                 switch (evt.Stage)
@@ -30,13 +30,17 @@ namespace Conf.Editor
                     case AtlasLoadStage.Completed:
                         completed++;
                         float fraction = (float)completed / total;
+                        if (progressBarCleared)
+                            break;
                         EditorUtility.DisplayProgressBar("Loading Game Configs", $"{evt.Key} ({completed}/{total})", fraction);
-                        if (slowMotion)
-                            Thread.Sleep(200);
                         break;
                 }
             });
-            Initialize(progress, clear: () => EditorUtility.ClearProgressBar());
+            Initialize(progress, clear: () =>
+            {
+                progressBarCleared = true;
+                EditorUtility.ClearProgressBar();
+            });
         }
 
         [InitializeOnLoadMethod]
@@ -51,7 +55,7 @@ namespace Conf.Editor
                 return;
             try
             {
-                ConfLoader.DirectAccessDemo();
+                ConfLoader.DirectAccessDemo(progress);
                 InitializeCfgIdDrawers(ConfigAtlas.Instance);
                 Debug.Log("<archmage> CfgIdDrawerManager.Initialize succeeded.");
             }

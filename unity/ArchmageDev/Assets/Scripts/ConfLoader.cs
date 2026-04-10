@@ -202,7 +202,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    public static void DirectAccessDemo()
+    public static void DirectAccessDemo(IProgress<AtlasLoadEvent> progress = null)
     {
         // IMPORTANT: This method works only pre-build. During the build process,
         // Unity packages assets, so regular file access no longer works.
@@ -222,7 +222,7 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting sync config loading (DirectAccess)...");
-            Archmage.LoadAtlas(atlasFile, cfgRoot, atlas, options);
+            Archmage.LoadAtlas(atlasFile, cfgRoot, atlas, options, progress);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             InitI18n(new DefaultFS(), cfgRoot);
             ShowAtlasBasicFeatures(atlas);
