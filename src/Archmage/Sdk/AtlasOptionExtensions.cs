@@ -80,14 +80,15 @@ namespace Shadop.Archmage.Sdk
 
         /// <summary>
         /// Adds custom filesystem as override source (embedded, network, in-memory, etc.).
+        /// When rootPath is specified, override files are resolved relative to that path within the filesystem.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown if fs is null.</exception>
-        public static AtlasOptions WithOverrideFS(this AtlasOptions opts, IFS fs)
+        public static AtlasOptions WithOverrideFS(this AtlasOptions opts, IFS fs, string? rootPath = null)
         {
             if (fs is null)
                 throw new ArgumentNullException(nameof(fs));
 
-            opts.OverrideConfigs.Add(new OverrideConfig(fs));
+            opts.OverrideConfigs.Add(new OverrideConfig(fs, rootPath));
             return opts;
         }
 

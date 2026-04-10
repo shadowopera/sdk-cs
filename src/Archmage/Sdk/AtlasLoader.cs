@@ -110,6 +110,11 @@ namespace Shadop.Archmage.Sdk
                     if (!options.FS.DirectoryExists(overrideConfig.RootPath!))
                         throw new ArchmageException($"Invalid override root directory \"{overrideConfig.RootPath}\".");
                 }
+                else if (overrideConfig.RootPath is not null)
+                {
+                    if (!overrideConfig.FS.DirectoryExists(overrideConfig.RootPath))
+                        throw new ArchmageException($"Invalid override root directory \"{overrideConfig.RootPath}\".");
+                }
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -345,28 +350,18 @@ namespace Shadop.Archmage.Sdk
                 // Collect overrides for this file
                 foreach (var overrideCfg in options.OverrideConfigs)
                 {
-                    if (overrideCfg.FS is not null)
-                    {
-                        if (overrideCfg.FS.FileExists(f))
-                        {
-                            // Report: StartReadingOverride
-                            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, f, stopwatch.Elapsed));
+                    var fs = overrideCfg.FS ?? options.FS;
+                    var ovrPath = overrideCfg.RootPath is not null
+                        ? Path.Combine(overrideCfg.RootPath, f)
+                        : f;
 
-                            overrideFiles.Add(f);
-                            overrides.Add(await readFile(overrideCfg.FS, f).ConfigureAwait(false));
-                        }
-                    }
-                    else
+                    if (fs.FileExists(ovrPath))
                     {
-                        var ovrPath = Path.Combine(overrideCfg.RootPath!, f);
-                        if (options.FS.FileExists(ovrPath))
-                        {
-                            // Report: StartReadingOverride
-                            progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, ovrPath, stopwatch.Elapsed));
+                        // Report: StartReadingOverride
+                        progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, ovrPath, stopwatch.Elapsed));
 
-                            overrideFiles.Add(ovrPath);
-                            overrides.Add(await readFile(options.FS, ovrPath).ConfigureAwait(false));
-                        }
+                        overrideFiles.Add(ovrPath);
+                        overrides.Add(await readFile(fs, ovrPath).ConfigureAwait(false));
                     }
                 }
 

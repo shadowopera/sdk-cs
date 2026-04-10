@@ -156,12 +156,13 @@ public static AtlasOptions WithOverrideRoot(AtlasOptions opts, string rootPath)
 [ArgumentException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentexception)<br>
 Thrown if rootPath is null or whitespace.
 
-### **WithOverrideFS(AtlasOptions, IFS)**
+### **WithOverrideFS(AtlasOptions, IFS, String)**
 
 Adds custom filesystem as override source (embedded, network, in-memory, etc.).
+ When rootPath is specified, override files are resolved relative to that path within the filesystem.
 
 ```csharp
-public static AtlasOptions WithOverrideFS(AtlasOptions opts, IFS fs)
+public static AtlasOptions WithOverrideFS(AtlasOptions opts, IFS fs, string rootPath)
 ```
 
 #### Parameters
@@ -169,6 +170,8 @@ public static AtlasOptions WithOverrideFS(AtlasOptions opts, IFS fs)
 `opts` [AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
 
 `fs` [IFS](../shadop-archmage-sdk-ifs/)<br>
+
+`rootPath` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 #### Returns
 

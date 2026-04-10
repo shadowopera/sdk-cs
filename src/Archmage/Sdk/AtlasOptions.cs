@@ -39,9 +39,9 @@ namespace Shadop.Archmage.Sdk
             FS = null;
         }
 
-        public OverrideConfig(IFS fs)
+        public OverrideConfig(IFS fs, string? rootPath = null)
         {
-            RootPath = null;
+            RootPath = rootPath;
             FS = fs;
         }
 
