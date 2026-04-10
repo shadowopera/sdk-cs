@@ -50,8 +50,8 @@ namespace Shadop.Archmage.Sdk.Editor
     }
 
     /// <summary>
-    /// Generic base for config ID property drawers backed by a <see cref="Dictionary{TId,TCfg}"/> table
-    /// whose raw value is an unmanaged numeric type.
+    /// Generic base for config ID property drawers. <typeparamref name="TId"/> is the config ID struct type;
+    /// <typeparamref name="TValue"/> is the unmanaged numeric type of its underlying raw value.
     /// Manages the static ID-value and display-name arrays; subclasses populate them by calling <see cref="Initialize"/>.
     /// </summary>
     /// <typeparam name="TId">The config ID struct type (e.g. <c>HeroCfgId</c>).</typeparam>
@@ -91,8 +91,8 @@ namespace Shadop.Archmage.Sdk.Editor
     }
 
     /// <summary>
-    /// Generic base for config ID property drawers backed by a <see cref="Dictionary{TId,TCfg}"/> table
-    /// whose raw value is a <see cref="string"/>.
+    /// Generic base for config ID property drawers. <typeparamref name="TId"/> is the config ID struct type
+    /// whose underlying raw value is a <see cref="string"/>.
     /// Manages the static ID-value and display-name arrays; subclasses populate them by calling <see cref="Initialize"/>.
     /// </summary>
     /// <typeparam name="TId">The config ID struct type (e.g. <c>RaceCfgId</c>).</typeparam>

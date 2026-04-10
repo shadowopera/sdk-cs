@@ -17,7 +17,7 @@ namespace Shadop.Archmage.Sdk.Editor
         /// </summary>
         /// <typeparam name="TValue">The underlying data type of the ID (supports: sbyte, byte, short, ushort, int, uint, long, ulong, string).</typeparam>
         /// <param name="position">Rectangle on the screen to use for the property GUI.</param>
-        /// <param name="property">SerializedProperty of the field to modify (must contain a value).</param>
+        /// <param name="property">SerializedProperty of the field to modify.</param>
         /// <param name="label">The label of the property.</param>
         /// <param name="header">The header text displayed at the top of the dropdown window.</param>
         /// <param name="values">The array of configuration ID values.</param>
