@@ -9,12 +9,10 @@ using Shadop.Archmage.Sdk;
 
 public class ConfLoader : MonoBehaviour
 {
-    public ConfigAtlas Atlas { get; private set; }
-
     public enum DemoType
     {
-        Addressables,
-        AddressablesConcurrent,
+        AddressablesAsync,
+        AddressablesConcurrentAsync,
         Resources,
         ResourcesAsync,
         ResourcesConcurrentAsync,
@@ -24,28 +22,28 @@ public class ConfLoader : MonoBehaviour
     }
 
     [Header("Settings")]
-    public DemoType _demoType = DemoType.AddressablesConcurrent;
+    public DemoType _demoType = DemoType.AddressablesConcurrentAsync;
 
-    async Task Start()
+    public async Task Start()
     {
         Debug.Log($"[ConfLoader] DemoType = {_demoType}");
 
         switch (_demoType)
         {
-            case DemoType.Addressables:
-            case DemoType.AddressablesConcurrent:
-                await AddressablesDemo();
+            case DemoType.AddressablesAsync:
+            case DemoType.AddressablesConcurrentAsync:
+                await AddressablesAsyncDemo(_demoType == DemoType.AddressablesConcurrentAsync);
                 break;
             case DemoType.Resources:
                 ResourcesDemo();
                 break;
             case DemoType.ResourcesAsync:
             case DemoType.ResourcesConcurrentAsync:
-                await ResourcesAsyncDemo();
+                await ResourcesAsyncDemo(_demoType == DemoType.ResourcesConcurrentAsync);
                 break;
             case DemoType.StreamingAssetsAsync:
             case DemoType.StreamingAssetsConcurrentAsync:
-                await StreamingAssetsAsyncDemo();
+                await StreamingAssetsAsyncDemo(_demoType == DemoType.StreamingAssetsConcurrentAsync);
                 break;
             case DemoType.DirectAccess:
                 DirectAccessDemo();
@@ -53,7 +51,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    async Task AddressablesDemo()
+    public static async Task AddressablesAsyncDemo(bool concurrent)
     {
         // 1. Set the root directory for configuration loading.
         // In Addressables, the default Address is usually the project-relative path of the asset.
@@ -62,7 +60,7 @@ public class ConfLoader : MonoBehaviour
         string atlasFile = "Assets/Configs/atlas.json";
 
         // 2. Initialize the Atlas instance.
-        Atlas = new ConfigAtlas();
+        var atlas = new ConfigAtlas();
 
         // 3. Configure loading options.
         var options = new AtlasOptions()
@@ -74,7 +72,7 @@ public class ConfLoader : MonoBehaviour
                 atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
             });
 
-        if (_demoType == DemoType.AddressablesConcurrent)
+        if (concurrent)
             options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
             {
                 await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
@@ -83,10 +81,10 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, Atlas, options);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityAddressablesFS(), cfgRoot);
-            ShowAtlasBasicFeatures();
+            ShowAtlasBasicFeatures(atlas);
         }
         catch (Exception ex)
         {
@@ -94,12 +92,12 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    void ResourcesDemo()
+    public static void ResourcesDemo()
     {
         string cfgRoot = "StaticConfigs";
         string atlasFile = "StaticConfigs/atlas.json";
 
-        Atlas = new ConfigAtlas();
+        var atlas = new ConfigAtlas();
 
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
@@ -113,10 +111,10 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting sync config loading (Resources)...");
-            Archmage.LoadAtlas(atlasFile, cfgRoot, Atlas, options);
+            Archmage.LoadAtlas(atlasFile, cfgRoot, atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             InitI18n(new UnityResourcesFS(), cfgRoot);
-            ShowAtlasBasicFeatures();
+            ShowAtlasBasicFeatures(atlas);
         }
         catch (Exception ex)
         {
@@ -124,12 +122,12 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    async Task ResourcesAsyncDemo()
+    public static async Task ResourcesAsyncDemo(bool concurrent)
     {
         string cfgRoot = "StaticConfigs";
         string atlasFile = "StaticConfigs/atlas.json";
 
-        Atlas = new ConfigAtlas();
+        var atlas = new ConfigAtlas();
 
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
@@ -140,7 +138,7 @@ public class ConfLoader : MonoBehaviour
                 atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
             });
 
-        if (_demoType == DemoType.ResourcesConcurrentAsync)
+        if (concurrent)
             options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
             {
                 await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
@@ -149,10 +147,10 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading (Resources)...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, Atlas, options);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityResourcesFS(), cfgRoot);
-            ShowAtlasBasicFeatures();
+            ShowAtlasBasicFeatures(atlas);
         }
         catch (Exception ex)
         {
@@ -160,12 +158,12 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    async Task StreamingAssetsAsyncDemo()
+    public static async Task StreamingAssetsAsyncDemo(bool concurrent)
     {
         string cfgRoot = "StreamingConfigs";
         string atlasFile = "StreamingConfigs/atlas.json";
 
-        Atlas = new ConfigAtlas();
+        var atlas = new ConfigAtlas();
 
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
@@ -176,7 +174,7 @@ public class ConfLoader : MonoBehaviour
                 atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
             });
 
-        if (_demoType == DemoType.StreamingAssetsConcurrentAsync)
+        if (concurrent)
             options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
             {
                 await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
@@ -185,10 +183,10 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading (StreamingAssets)...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, Atlas, options);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityStreamingAssetsFS(), cfgRoot);
-            ShowAtlasBasicFeatures();
+            ShowAtlasBasicFeatures(atlas);
         }
         catch (Exception ex)
         {
@@ -196,14 +194,14 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    void DirectAccessDemo()
+    public static void DirectAccessDemo()
     {
         // IMPORTANT: This method works only pre-build. During the build process,
         // Unity packages assets, so regular file access no longer works.
         string cfgRoot = "Assets/Configs";
         string atlasFile = "Assets/Configs/atlas.json";
 
-        Atlas = new ConfigAtlas();
+        var atlas = new ConfigAtlas();
 
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
@@ -216,10 +214,10 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting sync config loading (DirectAccess)...");
-            Archmage.LoadAtlas(atlasFile, cfgRoot, Atlas, options);
+            Archmage.LoadAtlas(atlasFile, cfgRoot, atlas, options);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             InitI18n(new DefaultFS(), cfgRoot);
-            ShowAtlasBasicFeatures();
+            ShowAtlasBasicFeatures(atlas);
         }
         catch (Exception ex)
         {
@@ -227,7 +225,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    void InitI18n(IFS fs, string cfgRoot)
+    public static void InitI18n(IFS fs, string cfgRoot)
     {
         var en = "en";
         var fr = "fr";
@@ -238,7 +236,7 @@ public class ConfLoader : MonoBehaviour
         L10n.GetPreferredLanguage = () => "fr";
     }
 
-    async Task InitI18nAsync(IFS fs, string cfgRoot)
+    public static async Task InitI18nAsync(IFS fs, string cfgRoot)
     {
         var en = "en";
         var fr = "fr";
@@ -249,35 +247,35 @@ public class ConfLoader : MonoBehaviour
         L10n.GetPreferredLanguage = () => "fr";
     }
 
-    void ShowAtlasBasicFeatures()
+    static void ShowAtlasBasicFeatures(ConfigAtlas atlas)
     {
         // IMPORTANT: Set the global ConfigAtlas.
-        ConfigAtlas.Instance = Atlas;
+        ConfigAtlas.Instance = atlas;
 
         // 1. Look up a config entry by ID from a dictionary-based table.
         var cfgId = new HeroCfgId(2);
-        Atlas.HeroTable.TryLookup(cfgId, out var hero);
+        atlas.HeroTable.TryLookup(cfgId, out var hero);
         Debug.Log($"[ConfLoader] HeroTable[2]: StartLevel={hero.StartLevel}");
 
         // 2. Do the same, but in a more convenient way.
         Debug.Log($"[ConfLoader] HeroTable[2]: StartLevel={cfgId.Cfg.StartLevel} (shortcut)");
 
         // 3. Access a cross-table reference via XRef.Ref.
-        var firstChar = Atlas.CharacterArray[0];
+        var firstChar = atlas.CharacterArray[0];
         Debug.Log($"[ConfLoader] CharacterArray[0]: ID={firstChar.Id}, Attack={firstChar.Attack}");
         Debug.Log($"[ConfLoader] CharacterArray[0].Race.CfgId: {firstChar.Race.CfgId}");
         Debug.Log($"[ConfLoader] CharacterArray[0].Race.Ref.Birthplace: {firstChar.Race.Ref.Birthplace.Text}");
 
         // 4. Query localized text via L10n.
-        Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {Atlas.HeroTable[3].HeroName.Text}");
-        Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {Atlas.GameCfg.XL10n.Text}");
+        Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {atlas.HeroTable[3].HeroName.Text}");
+        Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {atlas.GameCfg.XL10n.Text}");
 
         // 5. Show Unity Built-in vectors.
-        Debug.Log($"[ConfLoader] GameCfg.XVector2 (Vector2Int): {Atlas.GameCfg.XVector2}");
-        Debug.Log($"[ConfLoader] GameCfg.XVector3 (Vector3): {Atlas.GameCfg.XVector3}");
-        Debug.Log($"[ConfLoader] GameCfg.XVector4 (Vector4): {Atlas.GameCfg.XVector4}");
+        Debug.Log($"[ConfLoader] GameCfg.XVector2 (Vector2Int): {atlas.GameCfg.XVector2}");
+        Debug.Log($"[ConfLoader] GameCfg.XVector3 (Vector3): {atlas.GameCfg.XVector3}");
+        Debug.Log($"[ConfLoader] GameCfg.XVector4 (Vector4): {atlas.GameCfg.XVector4}");
 
         // 6. Convert Rgba to Unity Color.
-        Debug.Log($"[ConfLoader] GameCfg.XRgba (Rgba): {Atlas.GameCfg.XRgba.ToColor()}");
+        Debug.Log($"[ConfLoader] GameCfg.XRgba (Rgba): {atlas.GameCfg.XRgba.ToColor()}");
     }
 }
