@@ -121,6 +121,12 @@ if ! rsync -av --delete docs/src/content/docs/sdk-cs-unity/ ../docs/archmage/src
     exit 1
 fi
 
+printMessage "Syncing sdk-cs-unity-editor ..."
+if ! rsync -av --delete docs/src/content/docs/sdk-cs-unity-editor/ ../docs/archmage/src/content/docs/sdk-cs-unity-editor/; then
+    printError "rsync sdk-cs-unity-editor failed"
+    exit 1
+fi
+
 # Stage all changes in the main docs site
 printMessage "Staging changes in docs site ..."
 cd ../docs
