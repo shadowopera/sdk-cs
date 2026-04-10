@@ -2,7 +2,6 @@ using UnityEditor;
 using UnityEngine;
 using System;
 using Shadop.Archmage.Sdk;
-using System.Threading;
 
 namespace Conf.Editor
 {
