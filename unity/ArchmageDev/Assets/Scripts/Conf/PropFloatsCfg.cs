@@ -14,23 +14,17 @@ namespace Conf
     public partial class PropFloatsCfg
     {
         /// <summary>desc-B</summary>
-        [JsonProperty("B")]
-        public double B { get; set; }
+        [JsonProperty("B")] public double B { get; set; }
         /// <summary>desc-C</summary>
-        [JsonProperty("C")]
-        public float C { get; set; }
+        [JsonProperty("C")] public float C { get; set; }
         /// <summary>desc-D</summary>
-        [JsonProperty("D")]
-        public double D { get; set; }
+        [JsonProperty("D")] public double D { get; set; }
         /// <summary>desc-E</summary>
-        [JsonProperty("E")]
-        public float E { get; set; }
+        [JsonProperty("E")] public float E { get; set; }
         /// <summary>desc-F</summary>
-        [JsonProperty("F")]
-        public double F { get; set; }
+        [JsonProperty("F")] public double F { get; set; }
         /// <summary>desc-G</summary>
-        [JsonProperty("G")]
-        public double G { get; set; }
+        [JsonProperty("G")] public double G { get; set; }
     }
 
     #region Trifles

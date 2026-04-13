@@ -22,55 +22,41 @@ namespace Conf
 
     public partial class StringCfg
     {
-        [JsonProperty("id")]
-        public StringCfgId Id { get; set; } = string.Empty;
-        [JsonProperty("B")]
-        public String_B? B { get; set; }
+        [JsonProperty("id")] public StringCfgId Id { get; set; } = string.Empty;
+        [JsonProperty("B")] public String_B? B { get; set; }
         /// <summary>desc-E</summary>
-        [JsonProperty("E")]
-        public string E { get; set; } = string.Empty;
+        [JsonProperty("E")] public string E { get; set; } = string.Empty;
         /// <summary>def-validate</summary>
-        [JsonProperty("def-validate")]
-        public string DefValidate { get; set; } = string.Empty;
+        [JsonProperty("def-validate")] public string DefValidate { get; set; } = string.Empty;
         /// <summary>def-postprocess</summary>
-        [JsonProperty("def-postprocess")]
-        public string DefPostprocess { get; set; } = string.Empty;
+        [JsonProperty("def-postprocess")] public string DefPostprocess { get; set; } = string.Empty;
         /// <summary>desc-I</summary>
-        [JsonProperty("I")]
-        public string I { get; set; } = string.Empty;
+        [JsonProperty("I")] public string I { get; set; } = string.Empty;
         /// <summary>desc-K</summary>
-        [JsonProperty("K")]
-        public XRef<RaceCfgId, RaceCfg> K { get; set; }
+        [JsonProperty("K")] public XRef<RaceCfgId, RaceCfg> K { get; set; }
         /// <summary>desc-referer1</summary>
-        [JsonProperty("referer1")]
-        public XRef<RefCfgId, RefCfg> Referer1 { get; set; }
+        [JsonProperty("referer1")] public XRef<RefCfgId, RefCfg> Referer1 { get; set; }
         /// <summary>desc-referer2</summary>
-        [JsonProperty("referer2")]
-        public XRef<RefCfgId, RefCfg> Referer2 { get; set; }
+        [JsonProperty("referer2")] public XRef<RefCfgId, RefCfg> Referer2 { get; set; }
         /// <summary>desc-referer-n</summary>
-        [JsonProperty("referer-n")]
-        public List<XRef<RefCfgId, RefCfg>>? RefererN { get; set; }
+        [JsonProperty("referer-n")] public List<XRef<RefCfgId, RefCfg>>? RefererN { get; set; }
     }
 
     // String_B represents $.*.B
     public partial class String_B
     {
-        [JsonProperty("bar")]
-        public Rab? Bar { get; set; }
+        [JsonProperty("bar")] public Rab? Bar { get; set; }
         /// <summary>desc-B.car</summary>
-        [JsonProperty("car")]
-        public string Car { get; set; } = string.Empty;
+        [JsonProperty("car")] public string Car { get; set; } = string.Empty;
     }
 
     // Rab represents $.*.B.bar
     public partial class Rab
     {
         /// <summary>desc-B.bar.foo</summary>
-        [JsonProperty("foo")]
-        public string Foo { get; set; } = string.Empty;
+        [JsonProperty("foo")] public string Foo { get; set; } = string.Empty;
         /// <summary>desc-B.bar.qux</summary>
-        [JsonProperty("qux")]
-        public string Qux { get; set; } = string.Empty;
+        [JsonProperty("qux")] public string Qux { get; set; } = string.Empty;
     }
 
     public partial class StringTable

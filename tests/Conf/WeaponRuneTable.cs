@@ -22,12 +22,9 @@ namespace Conf
 
     public partial class WeaponRuneCfg
     {
-        [JsonProperty("id")]
-        public WeaponRuneCfgId Id { get; set; }
-        [JsonProperty("runeName")]
-        public string RuneName { get; set; } = string.Empty;
-        [JsonProperty("power")]
-        public long Power { get; set; }
+        [JsonProperty("id")] public WeaponRuneCfgId Id { get; set; }
+        [JsonProperty("runeName")] public string RuneName { get; set; } = string.Empty;
+        [JsonProperty("power")] public long Power { get; set; }
     }
 
     public partial class WeaponRuneTable

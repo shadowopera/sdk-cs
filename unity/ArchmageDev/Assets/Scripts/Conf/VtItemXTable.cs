@@ -22,35 +22,23 @@ namespace Conf
 
     public partial class VtItemXCfg
     {
-        [JsonProperty("id")]
-        public VtItemXCfgId Id { get; set; }
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
-        [JsonProperty("price")]
-        public long Price { get; set; }
-        [JsonProperty("desc")]
-        public string Desc { get; set; } = string.Empty;
-        [JsonProperty("special-skill")]
-        public long SpecialSkill { get; set; }
-        [JsonProperty("armor")]
-        public float Armor { get; set; }
-        [JsonProperty("dps")]
-        public float Dps { get; set; }
-        [JsonProperty("shield-skills")]
-        public List<long>? ShieldSkills { get; set; }
-        [JsonProperty("power")]
-        public float Power { get; set; }
-        [JsonProperty("attributeBonus")]
-        public List<VtItemX_AttributeBonusEntry>? AttributeBonus { get; set; }
+        [JsonProperty("id")] public VtItemXCfgId Id { get; set; }
+        [JsonProperty("name")] public string Name { get; set; } = string.Empty;
+        [JsonProperty("price")] public long Price { get; set; }
+        [JsonProperty("desc")] public string Desc { get; set; } = string.Empty;
+        [JsonProperty("special-skill")] public long SpecialSkill { get; set; }
+        [JsonProperty("armor")] public float Armor { get; set; }
+        [JsonProperty("dps")] public float Dps { get; set; }
+        [JsonProperty("shield-skills")] public List<long>? ShieldSkills { get; set; }
+        [JsonProperty("power")] public float Power { get; set; }
+        [JsonProperty("attributeBonus")] public List<VtItemX_AttributeBonusEntry>? AttributeBonus { get; set; }
     }
 
     // VtItemX_AttributeBonusEntry represents $.*.attributeBonus.*
     public partial class VtItemX_AttributeBonusEntry
     {
-        [JsonProperty("attr")]
-        public string Attr { get; set; } = string.Empty;
-        [JsonProperty("bonus")]
-        public long Bonus { get; set; }
+        [JsonProperty("attr")] public string Attr { get; set; } = string.Empty;
+        [JsonProperty("bonus")] public long Bonus { get; set; }
     }
 
     public partial class VtItemXTable

@@ -15,74 +15,52 @@ namespace Conf
     public partial class GameCfg
     {
         /// <summary>desc-x-int</summary>
-        [JsonProperty("x-int")]
-        public long XInt { get; set; }
+        [JsonProperty("x-int")] public long XInt { get; set; }
         /// <summary>desc-x-int32</summary>
-        [JsonProperty("x-int32")]
-        public int XInt32 { get; set; }
+        [JsonProperty("x-int32")] public int XInt32 { get; set; }
         /// <summary>desc-x-float64</summary>
-        [JsonProperty("x-float64")]
-        public double XFloat64 { get; set; }
+        [JsonProperty("x-float64")] public double XFloat64 { get; set; }
         /// <summary>desc-x-string</summary>
-        [JsonProperty("x-string")]
-        public string XString { get; set; } = string.Empty;
+        [JsonProperty("x-string")] public string XString { get; set; } = string.Empty;
         /// <summary>desc-x-bool</summary>
-        [JsonProperty("x-bool")]
-        public bool XBool { get; set; }
+        [JsonProperty("x-bool")] public bool XBool { get; set; }
         /// <summary>desc-x-duration</summary>
-        [JsonProperty("x-duration")]
-        public Duration XDuration { get; set; }
+        [JsonProperty("x-duration")] public Duration XDuration { get; set; }
         /// <summary>desc-x-path</summary>
-        [JsonProperty("x-path")]
-        public string XPath { get; set; } = string.Empty;
+        [JsonProperty("x-path")] public string XPath { get; set; } = string.Empty;
         /// <summary>desc-x-datetime</summary>
-        [JsonProperty("x-datetime")]
-        public DateTimeOffset XDatetime { get; set; }
+        [JsonProperty("x-datetime")] public DateTimeOffset XDatetime { get; set; }
         /// <summary>desc-x-ref</summary>
-        [JsonProperty("x-ref")]
-        public XRef<WeaponRuneCfgId, WeaponRuneCfg> XRef { get; set; }
+        [JsonProperty("x-ref")] public XRef<WeaponRuneCfgId, WeaponRuneCfg> XRef { get; set; }
         /// <summary>desc-x-l10n</summary>
-        [JsonProperty("x-l10n")]
-        public L10n XL10n { get; set; }
+        [JsonProperty("x-l10n")] public L10n XL10n { get; set; }
         /// <summary>desc-x-rgba</summary>
-        [JsonProperty("x-rgba")]
-        public Rgba XRgba { get; set; }
+        [JsonProperty("x-rgba")] public Rgba XRgba { get; set; }
         /// <summary>desc-x-array1</summary>
-        [JsonProperty("x-array1")]
-        public List<long>? XArray1 { get; set; }
+        [JsonProperty("x-array1")] public List<long>? XArray1 { get; set; }
         /// <summary>desc-x-array2</summary>
-        [JsonProperty("x-array2")]
-        public List<sbyte>? XArray2 { get; set; }
+        [JsonProperty("x-array2")] public List<sbyte>? XArray2 { get; set; }
         /// <summary>desc-x-map</summary>
-        [JsonProperty("x-map")]
-        public Dictionary<long, string>? XMap { get; set; }
+        [JsonProperty("x-map")] public Dictionary<long, string>? XMap { get; set; }
         /// <summary>desc-x-object</summary>
-        [JsonProperty("x-object")]
-        public Game_XObject? XObject { get; set; }
+        [JsonProperty("x-object")] public Game_XObject? XObject { get; set; }
         /// <summary>desc-x-tuple</summary>
-        [JsonProperty("x-tuple")]
-        public Tup3<long, float, string>? XTuple { get; set; }
+        [JsonProperty("x-tuple")] public Tup3<long, float, string>? XTuple { get; set; }
         /// <summary>desc-x-vector2</summary>
-        [JsonProperty("x-vector2")]
-        public Vector2Int XVector2 { get; set; }
+        [JsonProperty("x-vector2")] public Vector2Int XVector2 { get; set; }
         /// <summary>desc-x-vector3</summary>
-        [JsonProperty("x-vector3")]
-        public Vector3 XVector3 { get; set; }
+        [JsonProperty("x-vector3")] public Vector3 XVector3 { get; set; }
         /// <summary>desc-x-vector4</summary>
-        [JsonProperty("x-vector4")]
-        public Vector4 XVector4 { get; set; }
+        [JsonProperty("x-vector4")] public Vector4 XVector4 { get; set; }
         /// <summary>desc-x-vector4x</summary>
-        [JsonProperty("x-vector4x")]
-        public Vec4<ushort> XVector4x { get; set; }
+        [JsonProperty("x-vector4x")] public Vec4<ushort> XVector4x { get; set; }
     }
 
     // Game_XObject represents $['x-object']
     public partial class Game_XObject
     {
-        [JsonProperty("fieldX")]
-        public long FieldX { get; set; }
-        [JsonProperty("fieldY")]
-        public string FieldY { get; set; } = string.Empty;
+        [JsonProperty("fieldX")] public long FieldX { get; set; }
+        [JsonProperty("fieldY")] public string FieldY { get; set; } = string.Empty;
     }
 
     #region Trifles

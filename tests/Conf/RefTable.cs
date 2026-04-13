@@ -22,35 +22,25 @@ namespace Conf
 
     public partial class RefCfg
     {
-        [JsonProperty("id")]
-        public RefCfgId Id { get; set; }
+        [JsonProperty("id")] public RefCfgId Id { get; set; }
         /// <summary>desc-B</summary>
-        [JsonProperty("B")]
-        public XRef<WeaponRuneCfgId, WeaponRuneCfg> B { get; set; }
+        [JsonProperty("B")] public XRef<WeaponRuneCfgId, WeaponRuneCfg> B { get; set; }
         /// <summary>desc-C</summary>
-        [JsonProperty("C")]
-        public long C { get; set; }
+        [JsonProperty("C")] public long C { get; set; }
         /// <summary>desc-D</summary>
-        [JsonProperty("D")]
-        public XRef<ItemCfgId, ItemCfg> D { get; set; }
+        [JsonProperty("D")] public XRef<ItemCfgId, ItemCfg> D { get; set; }
         /// <summary>desc-E</summary>
-        [JsonProperty("E")]
-        public XRef<MagicCfgId, MagicCfg> E { get; set; }
+        [JsonProperty("E")] public XRef<MagicCfgId, MagicCfg> E { get; set; }
         /// <summary>desc-F</summary>
-        [JsonProperty("F")]
-        public XRef<RaceCfgId, RaceCfg> F { get; set; }
+        [JsonProperty("F")] public XRef<RaceCfgId, RaceCfg> F { get; set; }
         /// <summary>desc-G</summary>
-        [JsonProperty("G")]
-        public XRef<HeroCfgId, HeroCfg> G { get; set; }
+        [JsonProperty("G")] public XRef<HeroCfgId, HeroCfg> G { get; set; }
         /// <summary>desc-H</summary>
-        [JsonProperty("H")]
-        public List<XRef<StringCfgId, StringCfg>>? H { get; set; }
+        [JsonProperty("H")] public List<XRef<StringCfgId, StringCfg>>? H { get; set; }
         /// <summary>desc-J</summary>
-        [JsonProperty("J")]
-        public XRef<ItemCfgId, ItemCfg> J { get; set; }
+        [JsonProperty("J")] public XRef<ItemCfgId, ItemCfg> J { get; set; }
         /// <summary>desc-K</summary>
-        [JsonProperty("K")]
-        public XRef<RaceCfgId, RaceCfg> K { get; set; }
+        [JsonProperty("K")] public XRef<RaceCfgId, RaceCfg> K { get; set; }
     }
 
     public partial class RefTable

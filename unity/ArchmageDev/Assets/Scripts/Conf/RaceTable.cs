@@ -22,18 +22,12 @@ namespace Conf
 
     public partial class RaceCfg
     {
-        [JsonProperty("id")]
-        public RaceCfgId Id { get; set; } = string.Empty;
-        [JsonProperty("birthplace")]
-        public L10n Birthplace { get; set; }
-        [JsonProperty("referrer1")]
-        public XRef<RefCfgId, RefCfg> Referrer1 { get; set; }
-        [JsonProperty("referrer2")]
-        public XRef<StringCfgId, StringCfg> Referrer2 { get; set; }
-        [JsonProperty("heroes1")]
-        public List<XRef<HeroCfgId, HeroCfg>>? Heroes1 { get; set; }
-        [JsonProperty("heroes2")]
-        public List<XRef<HeroCfgId, HeroCfg>>? Heroes2 { get; set; }
+        [JsonProperty("id")] public RaceCfgId Id { get; set; } = string.Empty;
+        [JsonProperty("birthplace")] public L10n Birthplace { get; set; }
+        [JsonProperty("referrer1")] public XRef<RefCfgId, RefCfg> Referrer1 { get; set; }
+        [JsonProperty("referrer2")] public XRef<StringCfgId, StringCfg> Referrer2 { get; set; }
+        [JsonProperty("heroes1")] public List<XRef<HeroCfgId, HeroCfg>>? Heroes1 { get; set; }
+        [JsonProperty("heroes2")] public List<XRef<HeroCfgId, HeroCfg>>? Heroes2 { get; set; }
     }
 
     public partial class RaceTable

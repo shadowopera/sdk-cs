@@ -15,39 +15,27 @@ namespace Conf
 
     public partial class CharacterCfg
     {
-        [JsonProperty("id")]
-        public string Id { get; set; } = string.Empty;
+        [JsonProperty("id")] public string Id { get; set; } = string.Empty;
         /// <summary>name config</summary>
-        [JsonProperty("name")]
-        public L10n Name { get; set; }
+        [JsonProperty("name")] public L10n Name { get; set; }
         /// <summary>race config</summary>
-        [JsonProperty("race")]
-        public XRef<RaceCfgId, RaceCfg> Race { get; set; }
+        [JsonProperty("race")] public XRef<RaceCfgId, RaceCfg> Race { get; set; }
         /// <summary>health config</summary>
-        [JsonProperty("health")]
-        public long Health { get; set; }
-        [JsonProperty("attack")]
-        public double Attack { get; set; }
-        [JsonProperty("isPlayable")]
-        public bool IsPlayable { get; set; }
-        [JsonProperty("skills")]
-        public List<string>? Skills { get; set; }
+        [JsonProperty("health")] public long Health { get; set; }
+        [JsonProperty("attack")] public double Attack { get; set; }
+        [JsonProperty("isPlayable")] public bool IsPlayable { get; set; }
+        [JsonProperty("skills")] public List<string>? Skills { get; set; }
         /// <summary>my runes</summary>
-        [JsonProperty("runes")]
-        public List<XRef<WeaponRuneCfgId, WeaponRuneCfg>>? Runes { get; set; }
-        [JsonProperty("ultimateSkill")]
-        public long UltimateSkill { get; set; }
-        [JsonProperty("ref-crude")]
-        public Character_RefCrude? RefCrude { get; set; }
+        [JsonProperty("runes")] public List<XRef<WeaponRuneCfgId, WeaponRuneCfg>>? Runes { get; set; }
+        [JsonProperty("ultimateSkill")] public long UltimateSkill { get; set; }
+        [JsonProperty("ref-crude")] public Character_RefCrude? RefCrude { get; set; }
     }
 
     // Character_RefCrude represents $.*['ref-crude']
     public partial class Character_RefCrude
     {
-        [JsonProperty("r1")]
-        public long R1 { get; set; }
-        [JsonProperty("r2")]
-        public string R2 { get; set; } = string.Empty;
+        [JsonProperty("r1")] public long R1 { get; set; }
+        [JsonProperty("r2")] public string R2 { get; set; } = string.Empty;
     }
 
     #region Trifles

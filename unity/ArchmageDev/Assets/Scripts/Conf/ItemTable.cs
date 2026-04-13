@@ -22,21 +22,16 @@ namespace Conf
 
     public partial class ItemCfg
     {
-        [JsonProperty("id")]
-        public ItemCfgId Id { get; set; }
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
-        [JsonProperty("price")]
-        public Item_Price? Price { get; set; }
+        [JsonProperty("id")] public ItemCfgId Id { get; set; }
+        [JsonProperty("name")] public string Name { get; set; } = string.Empty;
+        [JsonProperty("price")] public Item_Price? Price { get; set; }
     }
 
     // Item_Price represents $.*.price
     public partial class Item_Price
     {
-        [JsonProperty("one")]
-        public long One { get; set; }
-        [JsonProperty("stack")]
-        public long Stack { get; set; }
+        [JsonProperty("one")] public long One { get; set; }
+        [JsonProperty("stack")] public long Stack { get; set; }
     }
 
     public partial class ItemTable

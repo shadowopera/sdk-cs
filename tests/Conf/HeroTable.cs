@@ -22,31 +22,21 @@ namespace Conf
 
     public partial class HeroCfg
     {
-        [JsonProperty("id")]
-        public HeroCfgId Id { get; set; }
-        [JsonProperty("heroName")]
-        public L10n HeroName { get; set; }
-        [JsonProperty("startLevel")]
-        public long StartLevel { get; set; }
-        [JsonProperty("referrer")]
-        public List<XRef<RefCfgId, RefCfg>>? Referrer { get; set; }
-        [JsonProperty("race-combo")]
-        public List<Hero_RaceComboEntry>? RaceCombo { get; set; }
-        [JsonProperty("referrer-sort")]
-        public List<XRef<RefCfgId, RefCfg>>? ReferrerSort { get; set; }
-        [JsonProperty("referrer-compact")]
-        public List<XRef<RefCfgId, RefCfg>>? ReferrerCompact { get; set; }
-        [JsonProperty("referrer-sort-compact")]
-        public List<XRef<RefCfgId, RefCfg>>? ReferrerSortCompact { get; set; }
+        [JsonProperty("id")] public HeroCfgId Id { get; set; }
+        [JsonProperty("heroName")] public L10n HeroName { get; set; }
+        [JsonProperty("startLevel")] public long StartLevel { get; set; }
+        [JsonProperty("referrer")] public List<XRef<RefCfgId, RefCfg>>? Referrer { get; set; }
+        [JsonProperty("race-combo")] public List<Hero_RaceComboEntry>? RaceCombo { get; set; }
+        [JsonProperty("referrer-sort")] public List<XRef<RefCfgId, RefCfg>>? ReferrerSort { get; set; }
+        [JsonProperty("referrer-compact")] public List<XRef<RefCfgId, RefCfg>>? ReferrerCompact { get; set; }
+        [JsonProperty("referrer-sort-compact")] public List<XRef<RefCfgId, RefCfg>>? ReferrerSortCompact { get; set; }
     }
 
     // Hero_RaceComboEntry represents $.*['race-combo'].*
     public partial class Hero_RaceComboEntry
     {
-        [JsonProperty("race1")]
-        public XRef<RaceCfgId, RaceCfg> Race1 { get; set; }
-        [JsonProperty("race2")]
-        public XRef<RaceCfgId, RaceCfg> Race2 { get; set; }
+        [JsonProperty("race1")] public XRef<RaceCfgId, RaceCfg> Race1 { get; set; }
+        [JsonProperty("race2")] public XRef<RaceCfgId, RaceCfg> Race2 { get; set; }
     }
 
     public partial class HeroTable
