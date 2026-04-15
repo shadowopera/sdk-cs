@@ -26,10 +26,10 @@ namespace Conf
         [JsonProperty("name")] public string Name { get; set; } = string.Empty;
         [JsonProperty("price")] public long Price { get; set; }
         [JsonProperty("desc")] public string Desc { get; set; } = string.Empty;
-        [JsonProperty("special-skill")] public long SpecialSkill { get; set; }
+        [JsonProperty("special-skill")] public string SpecialSkill { get; set; } = string.Empty;
         [JsonProperty("armor")] public float Armor { get; set; }
         [JsonProperty("dps")] public float Dps { get; set; }
-        [JsonProperty("shield-skills")] public List<long>? ShieldSkills { get; set; }
+        [JsonProperty("shield-skills")] public List<string>? ShieldSkills { get; set; }
         [JsonProperty("power")] public float Power { get; set; }
         [JsonProperty("attributeBonus")] public List<VtItemX_AttributeBonusEntry>? AttributeBonus { get; set; }
     }

@@ -1,6 +1,6 @@
 {
-  "1": {
-    "id": 1,
+  "sk1": {
+    "id": "sk1",
     "name": "Fireball",
     "class": "Mage",
     "Foo": {
@@ -14,10 +14,12 @@
       }
     },
     "reagent": 1,
-    "weapons": null
+    "cross-skill1": "",
+    "weapons": null,
+    "cross-skill2": ""
   },
-  "2": {
-    "id": 2,
+  "sk2": {
+    "id": "sk2",
     "name": "Cleave",
     "class": "Warrior",
     "Foo": {
@@ -36,10 +38,12 @@
       }
     },
     "reagent": 11,
-    "weapons": null
+    "cross-skill1": "",
+    "weapons": null,
+    "cross-skill2": ""
   },
-  "3": {
-    "id": 3,
+  "sk3": {
+    "id": "sk3",
     "name": "Power Word",
     "class": "Priest",
     "Foo": {
@@ -53,10 +57,12 @@
       }
     },
     "reagent": 1101,
-    "weapons": null
+    "cross-skill1": "sk103",
+    "weapons": null,
+    "cross-skill2": ""
   },
-  "101": {
-    "id": 101,
+  "sk101": {
+    "id": "sk101",
     "name": "Arcane Mastery",
     "class": "Mage",
     "Foo": {
@@ -67,10 +73,12 @@
       }
     },
     "reagent": 0,
-    "weapons": null
+    "cross-skill1": "",
+    "weapons": null,
+    "cross-skill2": "sk2"
   },
-  "102": {
-    "id": 102,
+  "sk102": {
+    "id": "sk102",
     "name": "Toughness",
     "class": "Warrior",
     "Foo": {
@@ -86,14 +94,16 @@
       }
     },
     "reagent": 0,
+    "cross-skill1": "",
     "weapons": [
       1,
       13,
       1103
-    ]
+    ],
+    "cross-skill2": "sk1"
   },
-  "103": {
-    "id": 103,
+  "sk103": {
+    "id": "sk103",
     "name": "Spiritual Guidance",
     "class": "Priest",
     "Foo": {
@@ -104,9 +114,11 @@
       }
     },
     "reagent": 0,
+    "cross-skill1": "",
     "weapons": [
       1101,
       1201
-    ]
+    ],
+    "cross-skill2": ""
   }
 }

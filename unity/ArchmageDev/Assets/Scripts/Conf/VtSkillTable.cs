@@ -14,7 +14,7 @@ namespace Conf
     [Serializable]
     public partial struct VtSkillCfgId
     {
-        public long Value;
+        public string Value;
         public VtSkillCfg Cfg => ConfigAtlas.Instance.VtSkillTable[Value]!;
     }
 
@@ -22,13 +22,15 @@ namespace Conf
 
     public partial class VtSkillCfg
     {
-        [JsonProperty("id")] public VtSkillCfgId Id { get; set; }
+        [JsonProperty("id")] public VtSkillCfgId Id { get; set; } = string.Empty;
         [JsonProperty("name")] public string Name { get; set; } = string.Empty;
         [JsonProperty("class")] public string Class { get; set; } = string.Empty;
         [JsonProperty("Foo")] public Dictionary<long, VtSkill_FooEntry>? Foo { get; set; }
         /// <summary>reagent</summary>
         [JsonProperty("reagent")] public long Reagent { get; set; }
+        [JsonProperty("cross-skill1")] public string CrossSkill1 { get; set; } = string.Empty;
         [JsonProperty("weapons")] public List<long>? Weapons { get; set; }
+        [JsonProperty("cross-skill2")] public string CrossSkill2 { get; set; } = string.Empty;
     }
 
     // VtSkill_FooEntry represents $.*.Foo.*
@@ -65,9 +67,9 @@ namespace Conf
     [TypeConverter(typeof(VtSkillCfgIdTypeConverter))]
     public partial struct VtSkillCfgId : IEquatable<VtSkillCfgId>, IZero
     {
-        public VtSkillCfgId(long value) { Value = value; }
-        public static implicit operator VtSkillCfgId(long value) => new() { Value = value };
-        public static implicit operator long(VtSkillCfgId obj) => obj.Value;
+        public VtSkillCfgId(string value) { Value = value; }
+        public static implicit operator VtSkillCfgId(string value) => new() { Value = value };
+        public static implicit operator string(VtSkillCfgId obj) => obj.Value;
 
         public bool Equals(VtSkillCfgId other) => Value == other.Value;
         public override bool Equals(object? obj) => obj is VtSkillCfgId other && Equals(other);
@@ -76,19 +78,19 @@ namespace Conf
         public static bool operator ==(VtSkillCfgId left, VtSkillCfgId right) => left.Value == right.Value;
         public static bool operator !=(VtSkillCfgId left, VtSkillCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value.ToString();
-        public bool IsZero => Value == 0;
+        public override string ToString() => Value;
+        public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
-    internal class VtSkillCfgIdJsonConverter : ValueWrapperJsonConverter<VtSkillCfgId, long>
+    internal class VtSkillCfgIdJsonConverter : ValueWrapperJsonConverter<VtSkillCfgId, string>
     {
-        protected override VtSkillCfgId Create(long value) => value;
-        protected override long GetValue(VtSkillCfgId obj) => obj.Value;
+        protected override VtSkillCfgId Create(string value) => value;
+        protected override string GetValue(VtSkillCfgId obj) => obj.Value;
     }
 
-    internal class VtSkillCfgIdTypeConverter : ValueWrapperTypeConverter<VtSkillCfgId, long>
+    internal class VtSkillCfgIdTypeConverter : ValueWrapperTypeConverter<VtSkillCfgId, string>
     {
-        protected override VtSkillCfgId Create(long value) => value;
+        protected override VtSkillCfgId Create(string value) => value;
     }
 
     public partial class VtSkillTable : IApplyKeys

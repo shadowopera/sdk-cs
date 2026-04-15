@@ -27,7 +27,7 @@ namespace Conf
         [JsonProperty("skills")] public List<string>? Skills { get; set; }
         /// <summary>my runes</summary>
         [JsonProperty("runes")] public List<XRef<WeaponRuneCfgId, WeaponRuneCfg>>? Runes { get; set; }
-        [JsonProperty("ultimateSkill")] public long UltimateSkill { get; set; }
+        [JsonProperty("ultimateSkill")] public string UltimateSkill { get; set; } = string.Empty;
         [JsonProperty("ref-crude")] public Character_RefCrude? RefCrude { get; set; }
     }
 
