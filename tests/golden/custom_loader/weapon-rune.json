@@ -13,5 +13,15 @@
     "id": 3,
     "runeName": "Emberstrike",
     "power": 300
+  },
+  "4": {
+    "id": 4,
+    "runeName": "Stormcall",
+    "power": 400
+  },
+  "5": {
+    "id": 5,
+    "runeName": "Voidrend",
+    "power": 500
   }
 }

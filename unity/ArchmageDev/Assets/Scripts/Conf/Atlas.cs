@@ -8,13 +8,21 @@ using Shadop.Archmage.Sdk;
 
 namespace Conf
 {
+    /// <summary>
+    /// Holds all game configuration tables and provides cross-table reference binding.
+    /// </summary>
     public partial class ConfigAtlas : IAtlas
     {
-        // Instance must be set before calling any XxxCfgId.Cfg.
+        /// <summary>
+        /// The active ConfigAtlas. It must be set before calling any XxxCfgId.Cfg.
+        /// </summary>
         public static ConfigAtlas Instance = null!;
 
         Dictionary<string, AtlasItem> _m = null!;
         public AtlasExtension Extension { get; private set; }
+        /// <summary>
+        /// The version info of the config repo at export time.
+        /// </summary>
         public VersionInfo? DataVersion { get; private set; }
 
         public CharacterArray CharacterArray { get; set; }
@@ -71,11 +79,13 @@ namespace Conf
             };
         }
 
+        /// <summary>For internal use only.</summary>
         public void SetDataVersion(VersionInfo? v)
         {
             DataVersion = v;
         }
 
+        /// <summary>For internal use only.</summary>
         public void BindRefs()
         {
             var keys = new List<string>(_m.Keys);
@@ -87,11 +97,18 @@ namespace Conf
             }
         }
 
+        /// <summary>
+        /// Returns the internal map of config-name to AtlasItem.
+        /// </summary>
         public Dictionary<string, AtlasItem> AtlasItems()
         {
             return _m;
         }
 
+        /// <summary>
+        /// Called after all config data has been loaded and refs bound. Delegates to
+        /// AtlasExtension.OnLoaded. For internal use only.
+        /// </summary>
         public void OnLoaded()
         {
             Extension.OnLoaded(this);

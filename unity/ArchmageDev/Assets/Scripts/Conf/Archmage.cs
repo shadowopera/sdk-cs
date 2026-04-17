@@ -9,6 +9,9 @@ namespace Conf
 {
     public partial class ConfigAtlas
     {
+        /// <summary>
+        /// Returns the version info of the config repo at codegen time.
+        /// </summary>
         public static VersionInfo CodeVersion()
         {
             var str = @"

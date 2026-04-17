@@ -8,21 +8,36 @@ using Newtonsoft.Json;
 
 namespace Conf
 {
+    /// <summary>
+    /// A localization key that resolves to translated text via the active I18n instance.
+    /// </summary>
     [JsonConverter(typeof(L10nJsonConverter))]
     public readonly partial struct L10n
     {
         public static L10n Empty = new(string.Empty);
 
-        // GetI18n must be set before calling L10n.GetText() and L10n.Text.
+        /// <summary>
+        /// Returns the active I18n instance. It must be set before calling L10n.GetText or L10n.Text.
+        /// </summary>
         public static Func<I18n>? GetI18n = null;
-        // GetPreferredLanguage must be set before calling L10n.Text.
+        /// <summary>
+        /// Returns the player's current language tag. It must be set before calling L10n.Text.
+        /// </summary>
         public static Func<string>? GetPreferredLanguage = null;
 
         readonly string _key;
 
         public L10n(string key) { _key = key; }
 
+        /// <summary>
+        /// Returns the translation for the given language. Returns true if the key is found, with
+        /// the translated text in <paramref name="text"/>; otherwise false.
+        /// </summary>
         public bool GetText(string lang, out string? text) => GetI18n!().GetText(_key, lang, out text);
+        /// <summary>
+        /// Returns the translation for the player's preferred language, falling back to the
+        /// default language if the key isn't found.
+        /// </summary>
         public string Text => GetI18n!().Text(_key, GetPreferredLanguage!());
 
         public override string ToString() => _key;
