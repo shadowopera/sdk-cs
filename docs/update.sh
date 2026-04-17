@@ -109,6 +109,12 @@ if ! rsync -av --delete docs/src/content/docs/guides-cs/ ../docs/archmage/src/co
     exit 1
 fi
 
+printMessage "Syncing gen-cs ..."
+if ! rsync -av --delete docs/src/content/docs/gen-cs/ ../docs/archmage/src/content/docs/gen-cs/; then
+    printError "rsync gen-cs failed"
+    exit 1
+fi
+
 printMessage "Syncing sdk-cs ..."
 if ! rsync -av --delete docs/src/content/docs/sdk-cs/ ../docs/archmage/src/content/docs/sdk-cs/; then
     printError "rsync sdk-cs failed"
@@ -127,7 +133,7 @@ if ! rsync -av --delete docs/src/content/docs/sdk-cs-unity-editor/ ../docs/archm
     exit 1
 fi
 
-# Stage all changes in the main docs site
+# Stage all changes
 printMessage "Staging changes in docs site ..."
 cd ../docs
 git add -A

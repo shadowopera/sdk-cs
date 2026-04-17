@@ -52,8 +52,8 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.Equal(16, atlas.VtItemXTable.Count);
 
             Assert.Null(atlas.DataVersion);
-            Assert.NotNull(ConfigAtlas.CodeVersion());
-            Assert.Equal("7f3a2b9", ConfigAtlas.CodeVersion().ShortID);
+            Assert.NotNull(ConfigAtlas.CodeVersion);
+            Assert.Equal("7f3a2b9", ConfigAtlas.CodeVersion.ShortID);
         }
 
         [Fact]

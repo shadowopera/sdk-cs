@@ -16,6 +16,10 @@ export default defineConfig({
           autogenerate: { directory: 'guides-cs' },
         },
         {
+          label: 'C# Auto-Generated',
+          autogenerate: { directory: 'gen-cs' },
+        },
+        {
           label: 'C# SDK',
           autogenerate: { directory: 'sdk-cs' },
         },

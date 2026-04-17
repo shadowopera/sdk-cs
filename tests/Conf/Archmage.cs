@@ -10,11 +10,12 @@ namespace Conf
     public partial class ConfigAtlas
     {
         /// <summary>
-        /// Returns the version info of the config repo at codegen time.
+        /// The version info of the config repo at codegen time.
         /// </summary>
-        public static VersionInfo CodeVersion()
+        public static VersionInfo CodeVersion
         {
-            var str = @"
+            get {
+                var str = @"
 {
     ""workspace"": """",
     ""tags"": [],
@@ -29,7 +30,8 @@ namespace Conf
     ],
     ""extra"": {}
 }";
-            return JsonConvert.DeserializeObject<VersionInfo>(str)!;
+                return JsonConvert.DeserializeObject<VersionInfo>(str)!;
+            }
         }
     }
 }
