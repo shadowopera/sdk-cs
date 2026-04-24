@@ -1,6 +1,6 @@
 {
   "name": "dev.shadop.archmage",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "displayName": "Archmage",
   "description": "This is the runtime library for the Archmage game configuration system, which loads and manages configurations from JSON files with support for i18n, cross-table references, durations, and data types ranging from primitives to recursive structures.",
   "unity": "6000.3",
