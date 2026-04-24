@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-04-24
+
+### Added
+
+- Unity: `Vec2/3/4` extension methods to convert to `UnityEngine.Vector2/3/4` and `Vector2/3Int` with zero-allocation support for 10 numeric types.
+- Docs: Documentation for Unity Inspector dropdowns and `ArchmageEditorTools.cs` examples.
+
 ## [0.10.0] - 2026-04-10
 
 ### Added
