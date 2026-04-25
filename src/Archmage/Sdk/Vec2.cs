@@ -1,7 +1,6 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Shadop.Archmage.Sdk
@@ -11,7 +10,7 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     [JsonConverter(typeof(Vec2JsonConverter))]
     public struct Vec2<T> : IEquatable<Vec2<T>>
-        where T : IEquatable<T>
+        where T : unmanaged, IEquatable<T>
     {
         public T X { get; set; }
 
@@ -25,8 +24,7 @@ namespace Shadop.Archmage.Sdk
 
         public bool Equals(Vec2<T> other)
         {
-            return EqualityComparer<T>.Default.Equals(X, other.X) &&
-                   EqualityComparer<T>.Default.Equals(Y, other.Y);
+            return X.Equals(other.X) && Y.Equals(other.Y);
         }
 
         public override bool Equals(object? obj)
