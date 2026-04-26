@@ -13,9 +13,7 @@ namespace Shadop.Archmage.Sdk
         where T : unmanaged, IEquatable<T>
     {
         public T X { get; set; }
-
         public T Y { get; set; }
-
         public T Z { get; set; }
 
         public Vec3(T x, T y, T z)
