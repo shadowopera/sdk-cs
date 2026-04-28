@@ -11,7 +11,11 @@ namespace Shadop.Archmage.Sdk
     {
         public void Info(string message)
         {
+#if ARCHMAGE_DISABLE_DEFAULT_LOGGER || UNITY_5_3_OR_NEWER
+            _ = message;
+#else
             Console.Error.WriteLine($"INF {message}");
+#endif
         }
     }
 }
