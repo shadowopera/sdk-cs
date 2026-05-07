@@ -19,7 +19,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 ### **Create(JsonSerializerSettings)**
 
 Creates JsonSerializerSettings pre-configured with Unity vector converters.
-Each vector type serializes to/from a JSON array: `[x, y]`, `[x, y, z]`, or `[x, y, z, w]`.
+Each vector type serializes to/from a JSON object: `{"x": x, "y": y}`, `{"x": x, "y": y, "z": z}`, etc.
 
 ```csharp
 public static JsonSerializerSettings Create(JsonSerializerSettings? baseSettings = null)

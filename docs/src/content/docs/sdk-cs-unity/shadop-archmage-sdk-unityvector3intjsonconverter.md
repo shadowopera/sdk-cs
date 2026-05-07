@@ -1,13 +1,13 @@
 ---
 title: 'UnityVector3IntJsonConverter'
-description: 'Newtonsoft.Json converter for UnityEngine.Vector3Int. Serializes to/from [x, y, z] array format.'
+description: 'Newtonsoft.Json converter for UnityEngine.Vector3Int. Serializes to/from {"x": x, "y": y, "z": z} object format.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
 JSON converter for `UnityEngine.Vector3Int`.
-Serializes to/from `[x, y, z]` array format.
-Null values deserialize to `Vector3Int.zero`.
+Serializes to/from `{"x": x, "y": y, "z": z}` object format.
+JSON null deserializes to `Vector3Int.zero`.
 
 ```csharp
 public class UnityVector3IntJsonConverter : JsonConverter

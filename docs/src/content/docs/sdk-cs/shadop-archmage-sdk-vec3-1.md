@@ -4,7 +4,7 @@ title: 'Vec3<T>'
 
 Namespace: Shadop.Archmage.Sdk
 
-Represents a 3D vector. Serialized as JSON array [x, y, z].
+Represents a 3D vector.
 
 ```csharp
 public struct Vec3<T>

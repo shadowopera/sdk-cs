@@ -3,6 +3,11 @@
     "id": "char_003",
     "name": "characters[2].name",
     "race": "",
+    "root": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
     "health": 100,
     "attack": 28.5,
     "isPlayable": true,

@@ -4,7 +4,8 @@ title: 'Vec3JsonConverter'
 
 Namespace: Shadop.Archmage.Sdk
 
-JSON converter for Vec3 that serializes to/from [x, y, z] array.
+JSON converter for Vec3 that serializes to/from {"x": x, "y": y, "z": z} object.
+ JSON null deserializes to a zero Vec3.
 
 ```csharp
 public class Vec3JsonConverter : Newtonsoft.Json.JsonConverter

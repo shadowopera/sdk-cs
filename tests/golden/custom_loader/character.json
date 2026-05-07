@@ -3,6 +3,11 @@
     "id": "char_001",
     "name": "character[0].name",
     "race": "Human",
+    "root": {
+      "x": 1,
+      "y": 2,
+      "z": 3
+    },
     "health": 120,
     "attack": 25.5,
     "isPlayable": true,
@@ -19,6 +24,11 @@
     "id": "char_002",
     "name": "character[1].name",
     "race": "",
+    "root": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
     "health": 80,
     "attack": 35.0,
     "isPlayable": true,
@@ -38,6 +48,11 @@
     "id": "char_003",
     "name": "character[2].name",
     "race": "",
+    "root": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
     "health": 100,
     "attack": 28.5,
     "isPlayable": true,
@@ -54,6 +69,11 @@
     "id": "char_004",
     "name": "character[3].name",
     "race": "",
+    "root": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
     "health": 500,
     "attack": 45.0,
     "isPlayable": false,

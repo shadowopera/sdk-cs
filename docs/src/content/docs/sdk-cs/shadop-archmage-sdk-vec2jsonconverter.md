@@ -4,7 +4,8 @@ title: 'Vec2JsonConverter'
 
 Namespace: Shadop.Archmage.Sdk
 
-JSON converter for Vec2 that serializes to/from [x, y] array.
+JSON converter for Vec2 that serializes to/from {"x": x, "y": y} object.
+ JSON null deserializes to a zero Vec2.
 
 ```csharp
 public class Vec2JsonConverter : Newtonsoft.Json.JsonConverter

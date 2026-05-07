@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Represents a 3D vector. Serialized as JSON array [x, y, z].
+    /// Represents a 3D vector.
     /// </summary>
     [JsonConverter(typeof(Vec3JsonConverter))]
     public struct Vec3<T> : IEquatable<Vec3<T>>

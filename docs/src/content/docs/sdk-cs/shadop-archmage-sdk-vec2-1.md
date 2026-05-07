@@ -4,7 +4,7 @@ title: 'Vec2<T>'
 
 Namespace: Shadop.Archmage.Sdk
 
-Represents a 2D vector. Serialized as JSON array [x, y].
+Represents a 2D vector.
 
 ```csharp
 public struct Vec2<T>

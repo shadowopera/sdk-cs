@@ -20,6 +20,7 @@ namespace Conf
         [JsonProperty("name")] public L10n Name { get; set; }
         /// <summary>race config</summary>
         [JsonProperty("race")] public XRef<RaceCfgId, RaceCfg> Race { get; set; }
+        [JsonProperty("root")] public Vec3<long> Root { get; set; }
         /// <summary>health config</summary>
         [JsonProperty("health")] public long Health { get; set; }
         [JsonProperty("attack")] public double Attack { get; set; }
