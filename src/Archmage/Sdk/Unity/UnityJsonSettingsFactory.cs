@@ -44,208 +44,105 @@ namespace Shadop.Archmage.Sdk
     /// <summary>
     /// JSON converter for UnityEngine.Vector2.
     /// Serializes to/from {"x": x, "y": y} object format.
-    /// JSON null deserializes to Vector2.zero.
     /// </summary>
     public class UnityVector2JsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(UnityEngine.Vector2);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector2);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
-                return UnityEngine.Vector2.zero;
-
-            float x = 0, y = 0;
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
-            {
-                string prop = ((string)reader.Value!).ToLowerInvariant();
-                reader.Read();
-                if (prop == "x") x = (float)serializer.Deserialize(reader, typeof(float))!;
-                else if (prop == "y") y = (float)serializer.Deserialize(reader, typeof(float))!;
-                else reader.Skip();
-            }
-            return new UnityEngine.Vector2(x, y);
+            var v = serializer.Deserialize<Vec2<float>>(reader);
+            return new UnityEngine.Vector2(v.X, v.Y);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value is null) { writer.WriteNull(); return; }
-            var vec = (UnityEngine.Vector2)value;
-            writer.WriteStartObject();
-            writer.WritePropertyName("x"); serializer.Serialize(writer, vec.x);
-            writer.WritePropertyName("y"); serializer.Serialize(writer, vec.y);
-            writer.WriteEndObject();
+            var vec = (UnityEngine.Vector2)value!;
+            serializer.Serialize(writer, new Vec2<float>(vec.x, vec.y));
         }
     }
 
     /// <summary>
     /// JSON converter for UnityEngine.Vector3.
     /// Serializes to/from {"x": x, "y": y, "z": z} object format.
-    /// JSON null deserializes to Vector3.zero.
     /// </summary>
     public class UnityVector3JsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(UnityEngine.Vector3);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector3);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
-                return UnityEngine.Vector3.zero;
-
-            float x = 0, y = 0, z = 0;
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
-            {
-                string prop = ((string)reader.Value!).ToLowerInvariant();
-                reader.Read();
-                if (prop == "x") x = (float)serializer.Deserialize(reader, typeof(float))!;
-                else if (prop == "y") y = (float)serializer.Deserialize(reader, typeof(float))!;
-                else if (prop == "z") z = (float)serializer.Deserialize(reader, typeof(float))!;
-                else reader.Skip();
-            }
-            return new UnityEngine.Vector3(x, y, z);
+            var v = serializer.Deserialize<Vec3<float>>(reader);
+            return new UnityEngine.Vector3(v.X, v.Y, v.Z);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value is null) { writer.WriteNull(); return; }
-            var vec = (UnityEngine.Vector3)value;
-            writer.WriteStartObject();
-            writer.WritePropertyName("x"); serializer.Serialize(writer, vec.x);
-            writer.WritePropertyName("y"); serializer.Serialize(writer, vec.y);
-            writer.WritePropertyName("z"); serializer.Serialize(writer, vec.z);
-            writer.WriteEndObject();
+            var vec = (UnityEngine.Vector3)value!;
+            serializer.Serialize(writer, new Vec3<float>(vec.x, vec.y, vec.z));
         }
     }
 
     /// <summary>
     /// JSON converter for UnityEngine.Vector4.
     /// Serializes to/from {"x": x, "y": y, "z": z, "w": w} object format.
-    /// JSON null deserializes to Vector4.zero.
     /// </summary>
     public class UnityVector4JsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(UnityEngine.Vector4);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector4);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
-                return UnityEngine.Vector4.zero;
-
-            float x = 0, y = 0, z = 0, w = 0;
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
-            {
-                string prop = ((string)reader.Value!).ToLowerInvariant();
-                reader.Read();
-                if (prop == "x") x = (float)serializer.Deserialize(reader, typeof(float))!;
-                else if (prop == "y") y = (float)serializer.Deserialize(reader, typeof(float))!;
-                else if (prop == "z") z = (float)serializer.Deserialize(reader, typeof(float))!;
-                else if (prop == "w") w = (float)serializer.Deserialize(reader, typeof(float))!;
-                else reader.Skip();
-            }
-            return new UnityEngine.Vector4(x, y, z, w);
+            var v = serializer.Deserialize<Vec4<float>>(reader);
+            return new UnityEngine.Vector4(v.X, v.Y, v.Z, v.W);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value is null) { writer.WriteNull(); return; }
-            var vec = (UnityEngine.Vector4)value;
-            writer.WriteStartObject();
-            writer.WritePropertyName("x"); serializer.Serialize(writer, vec.x);
-            writer.WritePropertyName("y"); serializer.Serialize(writer, vec.y);
-            writer.WritePropertyName("z"); serializer.Serialize(writer, vec.z);
-            writer.WritePropertyName("w"); serializer.Serialize(writer, vec.w);
-            writer.WriteEndObject();
+            var vec = (UnityEngine.Vector4)value!;
+            serializer.Serialize(writer, new Vec4<float>(vec.x, vec.y, vec.z, vec.w));
         }
     }
 
     /// <summary>
     /// JSON converter for UnityEngine.Vector2Int.
     /// Serializes to/from {"x": x, "y": y} object format.
-    /// JSON null deserializes to Vector2Int.zero.
     /// </summary>
     public class UnityVector2IntJsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(UnityEngine.Vector2Int);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector2Int);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
-                return UnityEngine.Vector2Int.zero;
-
-            int x = 0, y = 0;
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
-            {
-                string prop = ((string)reader.Value!).ToLowerInvariant();
-                reader.Read();
-                if (prop == "x") x = (int)serializer.Deserialize(reader, typeof(int))!;
-                else if (prop == "y") y = (int)serializer.Deserialize(reader, typeof(int))!;
-                else reader.Skip();
-            }
-            return new UnityEngine.Vector2Int(x, y);
+            var v = serializer.Deserialize<Vec2<int>>(reader);
+            return new UnityEngine.Vector2Int(v.X, v.Y);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value is null) { writer.WriteNull(); return; }
-            var vec = (UnityEngine.Vector2Int)value;
-            writer.WriteStartObject();
-            writer.WritePropertyName("x"); serializer.Serialize(writer, vec.x);
-            writer.WritePropertyName("y"); serializer.Serialize(writer, vec.y);
-            writer.WriteEndObject();
+            var vec = (UnityEngine.Vector2Int)value!;
+            serializer.Serialize(writer, new Vec2<int>(vec.x, vec.y));
         }
     }
 
     /// <summary>
     /// JSON converter for UnityEngine.Vector3Int.
     /// Serializes to/from {"x": x, "y": y, "z": z} object format.
-    /// JSON null deserializes to Vector3Int.zero.
     /// </summary>
     public class UnityVector3IntJsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(UnityEngine.Vector3Int);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector3Int);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
-                return UnityEngine.Vector3Int.zero;
-
-            int x = 0, y = 0, z = 0;
-            while (reader.Read() && reader.TokenType != JsonToken.EndObject)
-            {
-                string prop = ((string)reader.Value!).ToLowerInvariant();
-                reader.Read();
-                if (prop == "x") x = (int)serializer.Deserialize(reader, typeof(int))!;
-                else if (prop == "y") y = (int)serializer.Deserialize(reader, typeof(int))!;
-                else if (prop == "z") z = (int)serializer.Deserialize(reader, typeof(int))!;
-                else reader.Skip();
-            }
-            return new UnityEngine.Vector3Int(x, y, z);
+            var v = serializer.Deserialize<Vec3<int>>(reader);
+            return new UnityEngine.Vector3Int(v.X, v.Y, v.Z);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            if (value is null) { writer.WriteNull(); return; }
-            var vec = (UnityEngine.Vector3Int)value;
-            writer.WriteStartObject();
-            writer.WritePropertyName("x"); serializer.Serialize(writer, vec.x);
-            writer.WritePropertyName("y"); serializer.Serialize(writer, vec.y);
-            writer.WritePropertyName("z"); serializer.Serialize(writer, vec.z);
-            writer.WriteEndObject();
+            var vec = (UnityEngine.Vector3Int)value!;
+            serializer.Serialize(writer, new Vec3<int>(vec.x, vec.y, vec.z));
         }
     }
 }
