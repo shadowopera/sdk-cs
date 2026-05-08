@@ -8,14 +8,12 @@ namespace Shadop.Archmage.Sdk
     /// <summary>
     /// Represents a 4D vector.
     /// </summary>
-    [JsonConverter(typeof(Vec4JsonConverter))]
-    public struct Vec4<T> : IEquatable<Vec4<T>>
-        where T : unmanaged, IEquatable<T>
+    public struct Vec4<T> : IEquatable<Vec4<T>> where T : unmanaged, IEquatable<T>
     {
-        public T X { get; set; }
-        public T Y { get; set; }
-        public T Z { get; set; }
-        public T W { get; set; }
+        [JsonProperty("x")] public T X { get; set; }
+        [JsonProperty("y")] public T Y { get; set; }
+        [JsonProperty("z")] public T Z { get; set; }
+        [JsonProperty("w")] public T W { get; set; }
 
         public Vec4(T x, T y, T z, T w)
         {

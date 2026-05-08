@@ -38,7 +38,7 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 | Assembly | asmdef | Source | Notes |
 |---|---|---|---|
 | `Shadop.Archmage.Sdk` | `Runtime/Shadop.Archmage.Sdk.asmdef` | `src/Archmage/Sdk/*.cs` | Pure C#, `noEngineReferences: true` |
-| `Shadop.Archmage.Sdk.Unity` | `Runtime/Unity/Shadop.Archmage.Sdk.Unity.asmdef` | `src/Archmage/Sdk/Unity/*.cs` | Unity engine adapters (`UnityResourcesFS`, `UnityStreamingAssetsFS`, `UnityAtlasLogger`, `UnityVectorJsonConverter`) |
+| `Shadop.Archmage.Sdk.Unity` | `Runtime/Unity/Shadop.Archmage.Sdk.Unity.asmdef` | `src/Archmage/Sdk/Unity/*.cs` | Unity engine adapters (`UnityResourcesFS`, `UnityStreamingAssetsFS`, `UnityAtlasLogger`) |
 | `Shadop.Archmage.Sdk.Unity.Addressables` | `Runtime/Unity/Addressables/Shadop.Archmage.Sdk.Unity.Addressables.asmdef` | `src/Archmage/Sdk/Unity/Addressables/*.cs` | Addressables adapter; only compiled when `com.unity.addressables` is installed (`defineConstraints: ["UNITY_ADDRESSABLES"]`) |
 
 `Shadop.Archmage.Sdk.Unity` and `Shadop.Archmage.Sdk.Unity.Addressables` both reference `Shadop.Archmage.Sdk`. The asmdef files are not synced by rsync — they live directly in the Unity package directory.
@@ -91,7 +91,7 @@ Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` 
 
 ### Dependencies
 
-- `Newtonsoft.Json 13.0.4` — JSON serialization with custom converters (`XRefJsonConverter`, `DurationJsonConverter`, `VecJsonConverter`)
+- `Newtonsoft.Json 13.0.4` — JSON serialization with custom converters (`XRefJsonConverter`, `DurationJsonConverter`)
 - `xunit.v3 2.0.3` — Test framework
 - C# 9.0, nullable enabled, implicit usings disabled
 

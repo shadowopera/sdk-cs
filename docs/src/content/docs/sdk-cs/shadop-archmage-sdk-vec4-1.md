@@ -11,7 +11,7 @@ public struct Vec4<T>
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec4<T>](../shadop-archmage-sdk-vec4-1/)<br>
-Implements IEquatable<Vec4<T>><br>
+Implements IEquatable<Vec4<T>>
 
 ## Properties
 

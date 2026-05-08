@@ -11,7 +11,7 @@ public struct Vec3<T>
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Vec3<T>](../shadop-archmage-sdk-vec3-1/)<br>
-Implements IEquatable<Vec3<T>><br>
+Implements IEquatable<Vec3<T>>
 
 ## Properties
 

@@ -25,10 +25,6 @@ namespace Shadop.Archmage.Sdk.Tests
                 var v2 = JsonConvert.DeserializeObject<Vec2<int>>(data);
                 Assert.Equal(v1, v2);
             }
-
-            var vec = new Vec2<int>(1, 2);
-            vec = JsonConvert.DeserializeObject<Vec2<int>>("null");
-            Assert.Equal(new Vec2<int>(0, 0), vec);
         }
 
         [Fact]
@@ -49,10 +45,6 @@ namespace Shadop.Archmage.Sdk.Tests
                 var v2 = JsonConvert.DeserializeObject<Vec3<double>>(data);
                 Assert.Equal(v1, v2);
             }
-
-            var vec = new Vec3<double>(1, 2, 3);
-            vec = JsonConvert.DeserializeObject<Vec3<double>>("null");
-            Assert.Equal(new Vec3<double>(0, 0, 0), vec);
         }
 
         [Fact]
@@ -73,10 +65,6 @@ namespace Shadop.Archmage.Sdk.Tests
                 var v2 = JsonConvert.DeserializeObject<Vec4<uint>>(data);
                 Assert.Equal(v1, v2);
             }
-
-            var vec = new Vec4<uint>(1, 2, 3, 4);
-            vec = JsonConvert.DeserializeObject<Vec4<uint>>("null");
-            Assert.Equal(new Vec4<uint>(0, 0, 0, 0), vec);
         }
     }
 }

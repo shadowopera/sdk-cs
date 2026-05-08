@@ -8,13 +8,11 @@ namespace Shadop.Archmage.Sdk
     /// <summary>
     /// Represents a 3D vector.
     /// </summary>
-    [JsonConverter(typeof(Vec3JsonConverter))]
-    public struct Vec3<T> : IEquatable<Vec3<T>>
-        where T : unmanaged, IEquatable<T>
+    public struct Vec3<T> : IEquatable<Vec3<T>> where T : unmanaged, IEquatable<T>
     {
-        public T X { get; set; }
-        public T Y { get; set; }
-        public T Z { get; set; }
+        [JsonProperty("x")] public T X { get; set; }
+        [JsonProperty("y")] public T Y { get; set; }
+        [JsonProperty("z")] public T Z { get; set; }
 
         public Vec3(T x, T y, T z)
         {

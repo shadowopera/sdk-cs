@@ -8,12 +8,10 @@ namespace Shadop.Archmage.Sdk
     /// <summary>
     /// Represents a 2D vector.
     /// </summary>
-    [JsonConverter(typeof(Vec2JsonConverter))]
-    public struct Vec2<T> : IEquatable<Vec2<T>>
-        where T : unmanaged, IEquatable<T>
+    public struct Vec2<T> : IEquatable<Vec2<T>> where T : unmanaged, IEquatable<T>
     {
-        public T X { get; set; }
-        public T Y { get; set; }
+        [JsonProperty("x")] public T X { get; set; }
+        [JsonProperty("y")] public T Y { get; set; }
 
         public Vec2(T x, T y)
         {
