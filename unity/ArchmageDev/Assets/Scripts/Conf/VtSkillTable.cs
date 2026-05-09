@@ -71,8 +71,9 @@ namespace Conf
         public static implicit operator VtSkillCfgId(string value) => new() { Value = value };
         public static implicit operator string(VtSkillCfgId obj) => obj.Value;
 
-        public bool Equals(VtSkillCfgId other) => Value == other.Value;
+        [Unity.Burst.BurstDiscard]
         public override bool Equals(object? obj) => obj is VtSkillCfgId other && Equals(other);
+        public bool Equals(VtSkillCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(VtSkillCfgId left, VtSkillCfgId right) => left.Value == right.Value;

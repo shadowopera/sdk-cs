@@ -69,8 +69,9 @@ namespace Conf
         public static implicit operator VtItemXCfgId(long value) => new() { Value = value };
         public static implicit operator long(VtItemXCfgId obj) => obj.Value;
 
-        public bool Equals(VtItemXCfgId other) => Value == other.Value;
+        [Unity.Burst.BurstDiscard]
         public override bool Equals(object? obj) => obj is VtItemXCfgId other && Equals(other);
+        public bool Equals(VtItemXCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(VtItemXCfgId left, VtItemXCfgId right) => left.Value == right.Value;

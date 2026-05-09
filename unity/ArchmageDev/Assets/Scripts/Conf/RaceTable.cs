@@ -58,8 +58,9 @@ namespace Conf
         public static implicit operator RaceCfgId(string value) => new() { Value = value };
         public static implicit operator string(RaceCfgId obj) => obj.Value;
 
-        public bool Equals(RaceCfgId other) => Value == other.Value;
+        [Unity.Burst.BurstDiscard]
         public override bool Equals(object? obj) => obj is RaceCfgId other && Equals(other);
+        public bool Equals(RaceCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(RaceCfgId left, RaceCfgId right) => left.Value == right.Value;

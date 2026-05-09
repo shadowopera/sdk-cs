@@ -137,7 +137,7 @@ namespace Conf
                 return null;
             if (tbl.TryGetValue(cfgId, out var cfg))
                 return cfg;
-            throw new KeyNotFoundException(string.Format("{0}: config entry not found for Id {1}", tblName, cfgId));
+            throw new KeyNotFoundException($"{tblName}: config entry not found for Id {cfgId}");
         }
 
         static void PubtypeCheck()

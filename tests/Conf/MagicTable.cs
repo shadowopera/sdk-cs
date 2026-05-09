@@ -54,8 +54,8 @@ namespace Conf
         public static implicit operator MagicCfgId(long value) => new() { Value = value };
         public static implicit operator long(MagicCfgId obj) => obj.Value;
 
-        public bool Equals(MagicCfgId other) => Value == other.Value;
         public override bool Equals(object? obj) => obj is MagicCfgId other && Equals(other);
+        public bool Equals(MagicCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(MagicCfgId left, MagicCfgId right) => left.Value == right.Value;

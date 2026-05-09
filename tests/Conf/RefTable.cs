@@ -71,8 +71,8 @@ namespace Conf
         public static implicit operator RefCfgId(long value) => new() { Value = value };
         public static implicit operator long(RefCfgId obj) => obj.Value;
 
-        public bool Equals(RefCfgId other) => Value == other.Value;
         public override bool Equals(object? obj) => obj is RefCfgId other && Equals(other);
+        public bool Equals(RefCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(RefCfgId left, RefCfgId right) => left.Value == right.Value;

@@ -55,8 +55,8 @@ namespace Conf
         public static implicit operator WeaponRuneCfgId(long value) => new() { Value = value };
         public static implicit operator long(WeaponRuneCfgId obj) => obj.Value;
 
-        public bool Equals(WeaponRuneCfgId other) => Value == other.Value;
         public override bool Equals(object? obj) => obj is WeaponRuneCfgId other && Equals(other);
+        public bool Equals(WeaponRuneCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(WeaponRuneCfgId left, WeaponRuneCfgId right) => left.Value == right.Value;

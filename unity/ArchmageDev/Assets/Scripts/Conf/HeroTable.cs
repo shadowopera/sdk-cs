@@ -67,8 +67,9 @@ namespace Conf
         public static implicit operator HeroCfgId(long value) => new() { Value = value };
         public static implicit operator long(HeroCfgId obj) => obj.Value;
 
-        public bool Equals(HeroCfgId other) => Value == other.Value;
+        [Unity.Burst.BurstDiscard]
         public override bool Equals(object? obj) => obj is HeroCfgId other && Equals(other);
+        public bool Equals(HeroCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(HeroCfgId left, HeroCfgId right) => left.Value == right.Value;

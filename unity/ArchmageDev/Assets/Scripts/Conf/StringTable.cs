@@ -87,8 +87,9 @@ namespace Conf
         public static implicit operator StringCfgId(string value) => new() { Value = value };
         public static implicit operator string(StringCfgId obj) => obj.Value;
 
-        public bool Equals(StringCfgId other) => Value == other.Value;
+        [Unity.Burst.BurstDiscard]
         public override bool Equals(object? obj) => obj is StringCfgId other && Equals(other);
+        public bool Equals(StringCfgId other) => Value == other.Value;
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(StringCfgId left, StringCfgId right) => left.Value == right.Value;
