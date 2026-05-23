@@ -9,6 +9,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-05-24
+
+### Changed
+
+- SDK: Made `Tup1–7` item properties read-only (`{ get; set; }` → `{ get; }`).
+- SDK: Replaced custom Newtonsoft.Json converters for `Vec2/3/4` with `[JsonProperty]` attributes.
+- Unity: Simplified `UnityVector2/3/4JsonConverter` to delegate serialization through `Vec2/3/4`, removing manual property-by-property read/write logic.
+
 ## [0.12.0] - 2026-05-07
 
 ### Added
