@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
-using Shadop.Archmage.Sdk;
 using Xunit;
 
 namespace Shadop.Archmage.Sdk.Tests
@@ -13,7 +12,7 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             var method = typeof(Archmage).GetMethod("MergeJson", BindingFlags.Static | BindingFlags.NonPublic);
             Assert.NotNull(method);
-            method.Invoke(null, new object[] { target, json, settings! });
+            method.Invoke(null, new [] { target, json, settings! });
         }
 
         public class NestedObject

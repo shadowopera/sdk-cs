@@ -19,7 +19,7 @@ namespace Shadop.Archmage.Sdk
 
         public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue, JsonSerializer serializer)
             => reader.Value is null ? default : reader.Value is V v ?
-            Create(v) : Create((V)Convert.ChangeType(reader.Value, typeof(V))!);
+            Create(v) : Create((V)Convert.ChangeType(reader.Value, typeof(V)));
 
         public override void WriteJson(JsonWriter writer, T value, JsonSerializer serializer)
             => writer.WriteValue(GetValue(value));

@@ -1,6 +1,5 @@
 using System;
 using Newtonsoft.Json;
-using Shadop.Archmage.Sdk;
 using Xunit;
 
 namespace Shadop.Archmage.Sdk.Tests

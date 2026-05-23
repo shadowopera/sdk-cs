@@ -109,7 +109,7 @@ namespace Shadop.Archmage.Sdk.Tests
             public string Data { get; set; } = "";
             public string Lang { get; set; } = "";
             public string ExpErr { get; set; } = "";
-            public Dictionary<string, string>? expected { get; set; }
+            public Dictionary<string, string>? Expected { get; set; }
         }
 
         [Fact]
@@ -122,42 +122,42 @@ namespace Shadop.Archmage.Sdk.Tests
                     Data = "{\"hello\":\"Hello\",\"world\":\"World\"}",
                     Lang = "en",
                     ExpErr = "",
-                    expected = new() { { "hello", "Hello" }, { "world", "World" } }
+                    Expected = new() { { "hello", "Hello" }, { "world", "World" } }
                 },
                 new() {
                     Subject = "empty JSON object",
                     Data = "{}",
                     Lang = "en",
                     ExpErr = "",
-                    expected = new()
+                    Expected = new()
                 },
                 new() {
                     Subject = "JSON with unicode",
                     Data = "{\"hello\":\"你好\",\"world\":\"世界\"}",
                     Lang = "zh",
                     ExpErr = "",
-                    expected = new() { { "hello", "你好" }, { "world", "世界" } }
+                    Expected = new() { { "hello", "你好" }, { "world", "世界" } }
                 },
                 new() {
                     Subject = "invalid JSON",
                     Data = "{invalid json",
                     Lang = "en",
                     ExpErr = "Invalid character after parsing property name",
-                    expected = null
+                    Expected = null
                 },
                 new() {
                     Subject = "malformed JSON",
                     Data = "{\"hello\":}",
                     Lang = "en",
                     ExpErr = "Unexpected character encountered while parsing",
-                    expected = null
+                    Expected = null
                 },
                 new() {
                     Subject = "null JSON",
                     Data = "null",
                     Lang = "en",
                     ExpErr = "",
-                    expected = null
+                    Expected = null
                 },
             };
 
@@ -182,9 +182,9 @@ namespace Shadop.Archmage.Sdk.Tests
                 else
                 {
                     Assert.Null(err);
-                    if (tt.expected is not null)
+                    if (tt.Expected is not null)
                     {
-                        Assert.Equivalent(tt.expected, i18n.AllTexts()[tt.Lang]);
+                        Assert.Equivalent(tt.Expected, i18n.AllTexts()[tt.Lang]);
                     }
                 }
             }
@@ -235,7 +235,7 @@ namespace Shadop.Archmage.Sdk.Tests
                     Expected = "Hello"
                 },
                 new() {
-                    Subject = "prefer requested language over fallback",
+                    Subject = "prefer requested language to fallback",
                     SetupTexts = new() { { "en", new() { { "hello", "Hello" } } }, { "zh", new() { { "hello", "你好" } } } },
                     Fallback = "en",
                     Key = "hello",

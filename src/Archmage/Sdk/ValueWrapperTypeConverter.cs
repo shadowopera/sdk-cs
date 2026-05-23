@@ -20,7 +20,7 @@ namespace Shadop.Archmage.Sdk
             => sourceType == typeof(string);
 
         public override object ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-            => Create((V)Convert.ChangeType((string)value, typeof(V))!);
+            => Create((V)Convert.ChangeType((string)value, typeof(V)));
 
         public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
             => destinationType == typeof(string);
