@@ -11,14 +11,13 @@ public class Tup2<T0, T1>
 ```
 
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Tup2<T0, T1>](../shadop-archmage-sdk-tup2-2/)<br>
-Implements IEquatable<Tup2<T0, T1>><br>
 
 ## Properties
 
 ### **Item0**
 
 ```csharp
-public T0 Item0 { get; }
+public T0 Item0 { get; set; }
 ```
 
 #### Property Value
@@ -28,7 +27,7 @@ T0<br>
 ### **Item1**
 
 ```csharp
-public T1 Item1 { get; }
+public T1 Item1 { get; set; }
 ```
 
 #### Property Value
@@ -72,44 +71,6 @@ public void Deconstruct(T0& item0, T1& item1)
 `item0` T0&<br>
 
 `item1` T1&<br>
-
-### **Equals(Tup2<T0, T1>)**
-
-```csharp
-public bool Equals(Tup2<T0, T1> other)
-```
-
-#### Parameters
-
-`other` [Tup2<T0, T1>](../shadop-archmage-sdk-tup2-2/)<br>
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **Equals(Object)**
-
-```csharp
-public bool Equals(object obj)
-```
-
-#### Parameters
-
-`obj` [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)<br>
-
-#### Returns
-
-[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **GetHashCode()**
-
-```csharp
-public int GetHashCode()
-```
-
-#### Returns
-
-[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 ### **ToString()**
 
