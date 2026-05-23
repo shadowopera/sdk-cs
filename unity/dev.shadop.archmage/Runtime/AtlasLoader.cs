@@ -59,7 +59,7 @@ namespace Shadop.Archmage.Sdk
         /// <remarks>
         /// <para>This method performs the same operations as LoadAtlas but asynchronously, providing non-blocking I/O.
         /// Progress events are reported via the IProgress interface to allow UI updates and status tracking.
-        /// Loading can be cancelled via the CancellationToken.</para>
+        /// Loading can be canceled via the CancellationToken.</para>
         /// </remarks>
         /// <param name="atlasFile">Path to atlas.json containing mapping definitions.</param>
         /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
@@ -186,7 +186,7 @@ namespace Shadop.Archmage.Sdk
             // Load items
             if (isAsync)
             {
-                async Task itemLoadAsync(string key, AtlasItem item, CancellationToken ct)
+                async Task ItemLoadAsync(string key, AtlasItem item, CancellationToken ct)
                 {
                     ct.ThrowIfCancellationRequested();
                     try
@@ -203,20 +203,20 @@ namespace Shadop.Archmage.Sdk
 
                 if (options.AsyncLoadStrategy is not null)
                 {
-                    await options.AsyncLoadStrategy(filtered, itemLoadAsync, cancellationToken)
+                    await options.AsyncLoadStrategy(filtered, ItemLoadAsync, cancellationToken)
                         .ConfigureAwait(false);
                 }
                 else
                 {
                     foreach (var kvp in filtered)
                     {
-                        await itemLoadAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
+                        await ItemLoadAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
             else
             {
-                void itemLoad(string key, AtlasItem item)
+                void ItemLoad(string key, AtlasItem item)
                 {
                     try
                     {
@@ -232,13 +232,13 @@ namespace Shadop.Archmage.Sdk
 
                 if (options.LoadStrategy is not null)
                 {
-                    options.LoadStrategy(filtered, itemLoad);
+                    options.LoadStrategy(filtered, ItemLoad);
                 }
                 else
                 {
                     foreach (var kvp in filtered)
                     {
-                        itemLoad(kvp.Key, kvp.Value);
+                        ItemLoad(kvp.Key, kvp.Value);
                     }
                 }
             }
@@ -408,7 +408,7 @@ namespace Shadop.Archmage.Sdk
             item.Ready = true;
         }
 
-        static readonly JsonMergeSettings MergeSettings = new()
+        static readonly JsonMergeSettings _mergeSettings = new()
         {
             MergeArrayHandling = MergeArrayHandling.Replace,
             MergeNullValueHandling = MergeNullValueHandling.Merge
@@ -447,7 +447,7 @@ namespace Shadop.Archmage.Sdk
 
             if (targetToken is JContainer targetContainer && patch is JContainer patchContainer)
             {
-                targetContainer.Merge(patchContainer, MergeSettings);
+                targetContainer.Merge(patchContainer, _mergeSettings);
             }
 
             jsonSerializer.ObjectCreationHandling = ObjectCreationHandling.Replace;

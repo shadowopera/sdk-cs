@@ -34,15 +34,13 @@ namespace Shadop.Archmage.Sdk
             var uri = fullPath.Contains("://") ? fullPath : "file://" + fullPath;
 
             await Awaitable.MainThreadAsync();
-
             using var request = UnityWebRequest.Get(uri);
-
-            // Wire cancellation to abort the in-flight request.
-            // The registration is disposed with the using block to avoid holding
-            // a reference to the request after it has been released.
-            using var registration = cancellationToken.Register(() => request.Abort());
             cancellationToken.ThrowIfCancellationRequested();
 
+            // Wire cancellation to abort the in-flight request.
+            // The registration is disposed asynchronously to avoid blocking the main thread
+            // and holding a reference to the request after it has been released.
+            await using var registration = cancellationToken.Register(request.Abort);
             await request.SendWebRequest();
 
             cancellationToken.ThrowIfCancellationRequested();

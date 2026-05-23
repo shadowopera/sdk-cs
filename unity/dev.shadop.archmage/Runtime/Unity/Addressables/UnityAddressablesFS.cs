@@ -45,7 +45,7 @@ namespace Shadop.Archmage.Sdk
             }
             finally
             {
-                // Release the asset handle even if loading fails or is cancelled.
+                // Release the asset handle even if loading fails or is canceled.
                 Addressables.Release(handle);
             }
         }

@@ -55,8 +55,8 @@ namespace Shadop.Archmage.Sdk
         static void DumpAtlasItem(string key, AtlasItem item, string outputDir, JsonSerializerSettings? settings)
         {
             // Serialize item to JSON with LF line endings
-            var sb = new System.Text.StringBuilder();
-            using var sw = new System.IO.StringWriter(sb) { NewLine = "\n" };
+            var sb = new StringBuilder();
+            using var sw = new StringWriter(sb) { NewLine = "\n" };
             using var jw = new JsonTextWriter(sw) { IndentChar = ' ', Indentation = 2 };
             JsonSerializer.Create(settings).Serialize(jw, item.Cfg);
             sb.Append('\n');

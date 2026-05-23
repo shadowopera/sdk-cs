@@ -74,15 +74,15 @@ namespace Shadop.Archmage.Sdk.Editor
         /// </summary>
         /// <param name="header">The header text displayed at the top of the dropdown window.</param>
         /// <param name="ids">The ID collection of the config table.</param>
-        /// <param name="id2value">Extracts the raw value from a config ID (e.g. <c>id => id.Value</c>).</param>
+        /// <param name="id2Value">Extracts the raw value from a config ID (e.g. <c>id => id.Value</c>).</param>
         /// <param name="format">Formats a raw value into its display string.</param>
-        protected static void Initialize(string header, ICollection<TId> ids, Func<TId, TValue> id2value, Func<TValue, string> format)
+        protected static void Initialize(string header, ICollection<TId> ids, Func<TId, TValue> id2Value, Func<TValue, string> format)
         {
             var i = 1;
             _header = header;
             _idValues = ids.Count > 0 ? new TValue[ids.Count + 1] : Array.Empty<TValue>();
             foreach (var id in ids)
-                _idValues[i++] = id2value(id);
+                _idValues[i++] = id2Value(id);
             Array.Sort(_idValues);
             _displayNames = BuildDisplayNames(_idValues, format, 1);
             if (_displayNames.Length > 0)
@@ -113,15 +113,15 @@ namespace Shadop.Archmage.Sdk.Editor
         /// </summary>
         /// <param name="header">The header text displayed at the top of the dropdown window.</param>
         /// <param name="ids">The ID collection of the config table.</param>
-        /// <param name="id2value">Extracts the raw value from a config ID (e.g. <c>id => id.Value</c>).</param>
+        /// <param name="id2Value">Extracts the raw value from a config ID (e.g. <c>id => id.Value</c>).</param>
         /// <param name="format">Formats a raw value into its display string.</param>
-        protected static void Initialize(string header, ICollection<TId> ids, Func<TId, string> id2value, Func<string, string> format)
+        protected static void Initialize(string header, ICollection<TId> ids, Func<TId, string> id2Value, Func<string, string> format)
         {
             var i = 1;
             _header = header;
             _idValues = ids.Count > 0 ? new string[ids.Count + 1] : Array.Empty<string>();
             foreach (var id in ids)
-                _idValues[i++] = id2value(id);
+                _idValues[i++] = id2Value(id);
             _idValues[0] = string.Empty;
             Array.Sort(_idValues);
             _displayNames = BuildDisplayNames(_idValues, format, 1);

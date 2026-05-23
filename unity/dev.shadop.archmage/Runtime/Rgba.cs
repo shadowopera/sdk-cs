@@ -16,7 +16,7 @@ namespace Shadop.Archmage.Sdk
     [JsonConverter(typeof(RgbaJsonConverter))]
     public readonly struct Rgba : IEquatable<Rgba>, IZero
     {
-        private static readonly char[] HexUpper = "0123456789ABCDEF".ToCharArray();
+        private static readonly char[] _hexUpper = "0123456789ABCDEF".ToCharArray();
 
         public byte R { get; }
         public byte G { get; }
@@ -110,9 +110,9 @@ namespace Shadop.Archmage.Sdk
                 return string.Create(7, this, (span, c) =>
                 {
                     span[0] = '#';
-                    span[1] = HexUpper[c.R >> 4]; span[2] = HexUpper[c.R & 0xF];
-                    span[3] = HexUpper[c.G >> 4]; span[4] = HexUpper[c.G & 0xF];
-                    span[5] = HexUpper[c.B >> 4]; span[6] = HexUpper[c.B & 0xF];
+                    span[1] = _hexUpper[c.R >> 4]; span[2] = _hexUpper[c.R & 0xF];
+                    span[3] = _hexUpper[c.G >> 4]; span[4] = _hexUpper[c.G & 0xF];
+                    span[5] = _hexUpper[c.B >> 4]; span[6] = _hexUpper[c.B & 0xF];
                 });
             }
             else
@@ -120,10 +120,10 @@ namespace Shadop.Archmage.Sdk
                 return string.Create(9, this, (span, c) =>
                 {
                     span[0] = '#';
-                    span[1] = HexUpper[c.R >> 4]; span[2] = HexUpper[c.R & 0xF];
-                    span[3] = HexUpper[c.G >> 4]; span[4] = HexUpper[c.G & 0xF];
-                    span[5] = HexUpper[c.B >> 4]; span[6] = HexUpper[c.B & 0xF];
-                    span[7] = HexUpper[c.A >> 4]; span[8] = HexUpper[c.A & 0xF];
+                    span[1] = _hexUpper[c.R >> 4]; span[2] = _hexUpper[c.R & 0xF];
+                    span[3] = _hexUpper[c.G >> 4]; span[4] = _hexUpper[c.G & 0xF];
+                    span[5] = _hexUpper[c.B >> 4]; span[6] = _hexUpper[c.B & 0xF];
+                    span[7] = _hexUpper[c.A >> 4]; span[8] = _hexUpper[c.A & 0xF];
                 });
             }
         }

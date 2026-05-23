@@ -51,7 +51,7 @@ namespace Shadop.Archmage.Sdk
         /// <exception cref="ArgumentNullException">Thrown if whitelist is null.</exception>
         public static AtlasOptions WithWhitelist(this AtlasOptions opts, IEnumerable<string> whitelist)
         {
-            opts.Whitelist = whitelist?.ToList() ?? throw new ArgumentNullException(nameof(whitelist));
+            opts.Whitelist = whitelist.ToList() ?? throw new ArgumentNullException(nameof(whitelist));
             return opts;
         }
 
@@ -61,7 +61,7 @@ namespace Shadop.Archmage.Sdk
         /// <exception cref="ArgumentNullException">Thrown if blacklist is null.</exception>
         public static AtlasOptions WithBlacklist(this AtlasOptions opts, IEnumerable<string> blacklist)
         {
-            opts.Blacklist = blacklist?.ToList() ?? throw new ArgumentNullException(nameof(blacklist));
+            opts.Blacklist = blacklist.ToList() ?? throw new ArgumentNullException(nameof(blacklist));
             return opts;
         }
 

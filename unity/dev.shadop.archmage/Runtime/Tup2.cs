@@ -12,10 +12,10 @@ namespace Shadop.Archmage.Sdk
     public class Tup2<T0, T1> : IEquatable<Tup2<T0, T1>>
     {
         [JsonProperty("item0")]
-        public T0 Item0 { get; set; }
+        public T0 Item0 { get; }
 
         [JsonProperty("item1")]
-        public T1 Item1 { get; set; }
+        public T1 Item1 { get; }
 
         public Tup2(T0 item0, T1 item1)
         {

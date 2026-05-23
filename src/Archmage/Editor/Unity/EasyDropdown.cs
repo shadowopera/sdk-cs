@@ -175,11 +175,8 @@ namespace Shadop.Archmage.Sdk.Editor
                 TValue[] values, string[]? displayNames,
                 Vector2 minWindowSize) : base(state)
             {
-                if (values is null)
-                    throw new ArgumentNullException(nameof(values));
-
                 _header = header;
-                _values = values;
+                _values = values ?? throw new ArgumentNullException(nameof(values));
                 _property = property;
 
                 // Pre-calculate display names
@@ -204,7 +201,7 @@ namespace Shadop.Archmage.Sdk.Editor
 
             protected override AdvancedDropdownItem BuildRoot()
             {
-                var root = new AdvancedDropdownItem(_header ?? "root");
+                var root = new AdvancedDropdownItem(_header);
 
                 // Build the dropdown tree with index stored in id
                 for (int i = 0; i < _displayNames.Length; i++)

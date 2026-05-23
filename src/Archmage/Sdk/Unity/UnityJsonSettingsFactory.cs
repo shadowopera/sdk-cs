@@ -47,17 +47,17 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     public class UnityVector2JsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector2);
+        public override bool CanConvert(Type objectType) => objectType == typeof(Vector2);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             var v = serializer.Deserialize<Vec2<float>>(reader);
-            return new UnityEngine.Vector2(v.X, v.Y);
+            return new Vector2(v.X, v.Y);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var vec = (UnityEngine.Vector2)value!;
+            var vec = (Vector2)value!;
             serializer.Serialize(writer, new Vec2<float>(vec.x, vec.y));
         }
     }
@@ -68,17 +68,17 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     public class UnityVector3JsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector3);
+        public override bool CanConvert(Type objectType) => objectType == typeof(Vector3);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             var v = serializer.Deserialize<Vec3<float>>(reader);
-            return new UnityEngine.Vector3(v.X, v.Y, v.Z);
+            return new Vector3(v.X, v.Y, v.Z);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var vec = (UnityEngine.Vector3)value!;
+            var vec = (Vector3)value!;
             serializer.Serialize(writer, new Vec3<float>(vec.x, vec.y, vec.z));
         }
     }
@@ -89,17 +89,17 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     public class UnityVector4JsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector4);
+        public override bool CanConvert(Type objectType) => objectType == typeof(Vector4);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             var v = serializer.Deserialize<Vec4<float>>(reader);
-            return new UnityEngine.Vector4(v.X, v.Y, v.Z, v.W);
+            return new Vector4(v.X, v.Y, v.Z, v.W);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var vec = (UnityEngine.Vector4)value!;
+            var vec = (Vector4)value!;
             serializer.Serialize(writer, new Vec4<float>(vec.x, vec.y, vec.z, vec.w));
         }
     }
@@ -110,17 +110,17 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     public class UnityVector2IntJsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector2Int);
+        public override bool CanConvert(Type objectType) => objectType == typeof(Vector2Int);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             var v = serializer.Deserialize<Vec2<int>>(reader);
-            return new UnityEngine.Vector2Int(v.X, v.Y);
+            return new Vector2Int(v.X, v.Y);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var vec = (UnityEngine.Vector2Int)value!;
+            var vec = (Vector2Int)value!;
             serializer.Serialize(writer, new Vec2<int>(vec.x, vec.y));
         }
     }
@@ -131,17 +131,17 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     public class UnityVector3IntJsonConverter : JsonConverter
     {
-        public override bool CanConvert(Type objectType) => objectType == typeof(UnityEngine.Vector3Int);
+        public override bool CanConvert(Type objectType) => objectType == typeof(Vector3Int);
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             var v = serializer.Deserialize<Vec3<int>>(reader);
-            return new UnityEngine.Vector3Int(v.X, v.Y, v.Z);
+            return new Vector3Int(v.X, v.Y, v.Z);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var vec = (UnityEngine.Vector3Int)value!;
+            var vec = (Vector3Int)value!;
             serializer.Serialize(writer, new Vec3<int>(vec.x, vec.y, vec.z));
         }
     }
