@@ -15,7 +15,7 @@ namespace Conf
     public partial struct ItemCfgId
     {
         public long Value;
-        public ItemCfg Cfg => ConfigAtlas.Instance.ItemTable[Value]!;
+        public readonly ItemCfg Cfg => ConfigAtlas.Instance.ItemTable[Value]!;
     }
 
     public partial class ItemTable : Dictionary<ItemCfgId, ItemCfg> { }
@@ -63,15 +63,15 @@ namespace Conf
         public static implicit operator long(ItemCfgId obj) => obj.Value;
 
         [Unity.Burst.BurstDiscard]
-        public override bool Equals(object? obj) => obj is ItemCfgId other && Equals(other);
-        public bool Equals(ItemCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is ItemCfgId other && Equals(other);
+        public readonly bool Equals(ItemCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(ItemCfgId left, ItemCfgId right) => left.Value == right.Value;
         public static bool operator !=(ItemCfgId left, ItemCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value.ToString();
-        public bool IsZero => Value == 0;
+        public override readonly string ToString() => Value.ToString();
+        public readonly bool IsZero => Value == 0;
     }
 
     internal class ItemCfgIdJsonConverter : ValueWrapperJsonConverter<ItemCfgId, long>

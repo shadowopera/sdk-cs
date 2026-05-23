@@ -48,8 +48,7 @@ namespace Conf
         {
             foreach (var v1 in this)
             {
-                if (v1 is not null)
-                    v1.BindRefs(atlas);
+                v1?.BindRefs(atlas);
             }
         }
     }

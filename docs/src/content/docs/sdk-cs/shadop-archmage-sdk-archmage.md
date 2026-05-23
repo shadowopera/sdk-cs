@@ -147,7 +147,7 @@ Thrown if cancellation is requested.
 
 This method performs the same operations as LoadAtlas but asynchronously, providing non-blocking I/O.
  Progress events are reported via the IProgress interface to allow UI updates and status tracking.
- Loading can be cancelled via the CancellationToken.
+ Loading can be canceled via the CancellationToken.
 
 ### **ShardDuration(Duration)**
 

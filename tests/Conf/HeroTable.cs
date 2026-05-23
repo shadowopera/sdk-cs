@@ -15,7 +15,7 @@ namespace Conf
     public partial struct HeroCfgId
     {
         public long Value;
-        public HeroCfg Cfg => ConfigAtlas.Instance.HeroTable[Value]!;
+        public readonly HeroCfg Cfg => ConfigAtlas.Instance.HeroTable[Value]!;
     }
 
     public partial class HeroTable : Dictionary<HeroCfgId, HeroCfg> { }
@@ -67,15 +67,15 @@ namespace Conf
         public static implicit operator HeroCfgId(long value) => new() { Value = value };
         public static implicit operator long(HeroCfgId obj) => obj.Value;
 
-        public override bool Equals(object? obj) => obj is HeroCfgId other && Equals(other);
-        public bool Equals(HeroCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is HeroCfgId other && Equals(other);
+        public readonly bool Equals(HeroCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(HeroCfgId left, HeroCfgId right) => left.Value == right.Value;
         public static bool operator !=(HeroCfgId left, HeroCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value.ToString();
-        public bool IsZero => Value == 0;
+        public override readonly string ToString() => Value.ToString();
+        public readonly bool IsZero => Value == 0;
     }
 
     internal class HeroCfgIdJsonConverter : ValueWrapperJsonConverter<HeroCfgId, long>
@@ -106,8 +106,7 @@ namespace Conf
         {
             foreach (var v1 in this.Values)
             {
-                if (v1 is not null)
-                    v1.BindRefs(atlas);
+                v1?.BindRefs(atlas);
             }
         }
     }
@@ -127,8 +126,7 @@ namespace Conf
             {
                 foreach (var v1 in RaceCombo)
                 {
-                    if (v1 is not null)
-                        v1.BindRefs(atlas);
+                    v1?.BindRefs(atlas);
                 }
             }
             if (ReferrerSort is not null)

@@ -15,7 +15,7 @@ namespace Conf
     public partial struct StringCfgId
     {
         public string Value;
-        public StringCfg Cfg => ConfigAtlas.Instance.StringTable[Value]!;
+        public readonly StringCfg Cfg => ConfigAtlas.Instance.StringTable[Value]!;
     }
 
     public partial class StringTable : Dictionary<StringCfgId, StringCfg> { }
@@ -88,14 +88,14 @@ namespace Conf
         public static implicit operator string(StringCfgId obj) => obj.Value;
 
         [Unity.Burst.BurstDiscard]
-        public override bool Equals(object? obj) => obj is StringCfgId other && Equals(other);
-        public bool Equals(StringCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is StringCfgId other && Equals(other);
+        public readonly bool Equals(StringCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(StringCfgId left, StringCfgId right) => left.Value == right.Value;
         public static bool operator !=(StringCfgId left, StringCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value;
+        public override readonly string ToString() => Value;
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
@@ -127,8 +127,7 @@ namespace Conf
         {
             foreach (var v1 in this.Values)
             {
-                if (v1 is not null)
-                    v1.BindRefs(atlas);
+                v1?.BindRefs(atlas);
             }
         }
     }

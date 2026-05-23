@@ -15,7 +15,7 @@ namespace Conf
     public partial struct WeaponRuneCfgId
     {
         public long Value;
-        public WeaponRuneCfg Cfg => ConfigAtlas.Instance.WeaponRuneTable[Value]!;
+        public readonly WeaponRuneCfg Cfg => ConfigAtlas.Instance.WeaponRuneTable[Value]!;
     }
 
     public partial class WeaponRuneTable : Dictionary<WeaponRuneCfgId, WeaponRuneCfg> { }
@@ -55,15 +55,15 @@ namespace Conf
         public static implicit operator WeaponRuneCfgId(long value) => new() { Value = value };
         public static implicit operator long(WeaponRuneCfgId obj) => obj.Value;
 
-        public override bool Equals(object? obj) => obj is WeaponRuneCfgId other && Equals(other);
-        public bool Equals(WeaponRuneCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is WeaponRuneCfgId other && Equals(other);
+        public readonly bool Equals(WeaponRuneCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(WeaponRuneCfgId left, WeaponRuneCfgId right) => left.Value == right.Value;
         public static bool operator !=(WeaponRuneCfgId left, WeaponRuneCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value.ToString();
-        public bool IsZero => Value == 0;
+        public override readonly string ToString() => Value.ToString();
+        public readonly bool IsZero => Value == 0;
     }
 
     internal class WeaponRuneCfgIdJsonConverter : ValueWrapperJsonConverter<WeaponRuneCfgId, long>

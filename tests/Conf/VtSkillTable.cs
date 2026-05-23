@@ -15,7 +15,7 @@ namespace Conf
     public partial struct VtSkillCfgId
     {
         public string Value;
-        public VtSkillCfg Cfg => ConfigAtlas.Instance.VtSkillTable[Value]!;
+        public readonly VtSkillCfg Cfg => ConfigAtlas.Instance.VtSkillTable[Value]!;
     }
 
     public partial class VtSkillTable : Dictionary<VtSkillCfgId, VtSkillCfg> { }
@@ -71,14 +71,14 @@ namespace Conf
         public static implicit operator VtSkillCfgId(string value) => new() { Value = value };
         public static implicit operator string(VtSkillCfgId obj) => obj.Value;
 
-        public override bool Equals(object? obj) => obj is VtSkillCfgId other && Equals(other);
-        public bool Equals(VtSkillCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is VtSkillCfgId other && Equals(other);
+        public readonly bool Equals(VtSkillCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(VtSkillCfgId left, VtSkillCfgId right) => left.Value == right.Value;
         public static bool operator !=(VtSkillCfgId left, VtSkillCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value;
+        public override readonly string ToString() => Value;
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 

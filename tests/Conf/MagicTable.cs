@@ -15,7 +15,7 @@ namespace Conf
     public partial struct MagicCfgId
     {
         public long Value;
-        public MagicCfg Cfg => ConfigAtlas.Instance.MagicTable[Value]!;
+        public readonly MagicCfg Cfg => ConfigAtlas.Instance.MagicTable[Value]!;
     }
 
     public partial class MagicTable : Dictionary<MagicCfgId, MagicCfg> { }
@@ -54,15 +54,15 @@ namespace Conf
         public static implicit operator MagicCfgId(long value) => new() { Value = value };
         public static implicit operator long(MagicCfgId obj) => obj.Value;
 
-        public override bool Equals(object? obj) => obj is MagicCfgId other && Equals(other);
-        public bool Equals(MagicCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is MagicCfgId other && Equals(other);
+        public readonly bool Equals(MagicCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(MagicCfgId left, MagicCfgId right) => left.Value == right.Value;
         public static bool operator !=(MagicCfgId left, MagicCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value.ToString();
-        public bool IsZero => Value == 0;
+        public override readonly string ToString() => Value.ToString();
+        public readonly bool IsZero => Value == 0;
     }
 
     internal class MagicCfgIdJsonConverter : ValueWrapperJsonConverter<MagicCfgId, long>

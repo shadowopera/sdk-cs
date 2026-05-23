@@ -15,7 +15,7 @@ namespace Conf
     public partial struct VtItemXCfgId
     {
         public long Value;
-        public VtItemXCfg Cfg => ConfigAtlas.Instance.VtItemXTable[Value]!;
+        public readonly VtItemXCfg Cfg => ConfigAtlas.Instance.VtItemXTable[Value]!;
     }
 
     public partial class VtItemXTable : Dictionary<VtItemXCfgId, VtItemXCfg> { }
@@ -69,15 +69,15 @@ namespace Conf
         public static implicit operator VtItemXCfgId(long value) => new() { Value = value };
         public static implicit operator long(VtItemXCfgId obj) => obj.Value;
 
-        public override bool Equals(object? obj) => obj is VtItemXCfgId other && Equals(other);
-        public bool Equals(VtItemXCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is VtItemXCfgId other && Equals(other);
+        public readonly bool Equals(VtItemXCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(VtItemXCfgId left, VtItemXCfgId right) => left.Value == right.Value;
         public static bool operator !=(VtItemXCfgId left, VtItemXCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value.ToString();
-        public bool IsZero => Value == 0;
+        public override readonly string ToString() => Value.ToString();
+        public readonly bool IsZero => Value == 0;
     }
 
     internal class VtItemXCfgIdJsonConverter : ValueWrapperJsonConverter<VtItemXCfgId, long>

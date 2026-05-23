@@ -15,7 +15,7 @@ namespace Conf
     public partial struct RaceCfgId
     {
         public string Value;
-        public RaceCfg Cfg => ConfigAtlas.Instance.RaceTable[Value]!;
+        public readonly RaceCfg Cfg => ConfigAtlas.Instance.RaceTable[Value]!;
     }
 
     public partial class RaceTable : Dictionary<RaceCfgId, RaceCfg> { }
@@ -59,14 +59,14 @@ namespace Conf
         public static implicit operator string(RaceCfgId obj) => obj.Value;
 
         [Unity.Burst.BurstDiscard]
-        public override bool Equals(object? obj) => obj is RaceCfgId other && Equals(other);
-        public bool Equals(RaceCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is RaceCfgId other && Equals(other);
+        public readonly bool Equals(RaceCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(RaceCfgId left, RaceCfgId right) => left.Value == right.Value;
         public static bool operator !=(RaceCfgId left, RaceCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value;
+        public override readonly string ToString() => Value;
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
@@ -98,8 +98,7 @@ namespace Conf
         {
             foreach (var v1 in this.Values)
             {
-                if (v1 is not null)
-                    v1.BindRefs(atlas);
+                v1?.BindRefs(atlas);
             }
         }
     }

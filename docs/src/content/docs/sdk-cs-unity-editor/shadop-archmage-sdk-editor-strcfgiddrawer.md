@@ -20,7 +20,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 Populates the static ID-value and display-name arrays from a table's ID collection. Index 0 is reserved for a `"" (Default)` entry; remaining entries are sorted ascending.
 
 ```csharp
-protected static void Initialize(string header, ICollection<TId> ids, Func<TId, string> id2value, Func<string, string> format)
+protected static void Initialize(string header, ICollection<TId> ids, Func<TId, string> id2Value, Func<string, string> format)
 ```
 
 #### Parameters
@@ -31,7 +31,7 @@ The header text displayed at the top of the dropdown window.
 `ids` [ICollection\<TId\>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.icollection-1)<br>
 The ID collection of the config table.
 
-`id2value` [Func\<TId, String\>](https://docs.microsoft.com/en-us/dotnet/api/system.func-2)<br>
+`id2Value` [Func\<TId, String\>](https://docs.microsoft.com/en-us/dotnet/api/system.func-2)<br>
 Extracts the raw value from a config ID (e.g. `id => id.Value`).
 
 `format` [Func\<String, String\>](https://docs.microsoft.com/en-us/dotnet/api/system.func-2)<br>

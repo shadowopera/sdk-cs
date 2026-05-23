@@ -15,7 +15,7 @@ namespace Conf
     public partial struct RefCfgId
     {
         public long Value;
-        public RefCfg Cfg => ConfigAtlas.Instance.RefTable[Value]!;
+        public readonly RefCfg Cfg => ConfigAtlas.Instance.RefTable[Value]!;
     }
 
     public partial class RefTable : Dictionary<RefCfgId, RefCfg> { }
@@ -71,15 +71,15 @@ namespace Conf
         public static implicit operator RefCfgId(long value) => new() { Value = value };
         public static implicit operator long(RefCfgId obj) => obj.Value;
 
-        public override bool Equals(object? obj) => obj is RefCfgId other && Equals(other);
-        public bool Equals(RefCfgId other) => Value == other.Value;
-        public override int GetHashCode() => Value.GetHashCode();
+        public override readonly bool Equals(object? obj) => obj is RefCfgId other && Equals(other);
+        public readonly bool Equals(RefCfgId other) => Value == other.Value;
+        public override readonly int GetHashCode() => Value.GetHashCode();
 
         public static bool operator ==(RefCfgId left, RefCfgId right) => left.Value == right.Value;
         public static bool operator !=(RefCfgId left, RefCfgId right) => left.Value != right.Value;
 
-        public override string ToString() => Value.ToString();
-        public bool IsZero => Value == 0;
+        public override readonly string ToString() => Value.ToString();
+        public readonly bool IsZero => Value == 0;
     }
 
     internal class RefCfgIdJsonConverter : ValueWrapperJsonConverter<RefCfgId, long>
@@ -110,8 +110,7 @@ namespace Conf
         {
             foreach (var v1 in this.Values)
             {
-                if (v1 is not null)
-                    v1.BindRefs(atlas);
+                v1?.BindRefs(atlas);
             }
         }
     }

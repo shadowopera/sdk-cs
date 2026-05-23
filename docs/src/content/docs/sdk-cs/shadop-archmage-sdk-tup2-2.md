@@ -18,7 +18,7 @@ Implements IEquatable<Tup2<T0, T1>><br>
 ### **Item0**
 
 ```csharp
-public T0 Item0 { get; set; }
+public T0 Item0 { get; }
 ```
 
 #### Property Value
@@ -28,7 +28,7 @@ T0<br>
 ### **Item1**
 
 ```csharp
-public T1 Item1 { get; set; }
+public T1 Item1 { get; }
 ```
 
 #### Property Value
