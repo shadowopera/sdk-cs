@@ -3,23 +3,17 @@ root = true
 [*]
 indent_style = space
 indent_size = 4
-insert_final_newline = true
 trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf
 charset = utf-8
 
 [*.cs]
-indent_style = space
-indent_size = 4
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-#### 1. Accessibility Modifiers ####
+#### Accessibility Modifiers
 # Prefer omitting default accessibility modifiers (e.g., omit 'private' where it is the default)
 dotnet_style_require_accessibility_modifiers = omit_if_default:none
 
-#### 2. Naming Conventions ####
+#### Naming Conventions
 # Private fields: underscore + camelCase (_camelCase)
 dotnet_naming_rule.private_members_with_underscore.symbols = private_fields
 dotnet_naming_rule.private_members_with_underscore.style = prefix_underscore
@@ -41,7 +35,7 @@ dotnet_naming_symbols.public_members.applicable_accessibilities = public,protect
 
 dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 
-#### 3. C# Coding Style Best Practices ####
+#### C# Coding Style Best Practices
 # Use 'var' when the type is apparent from the assignment
 dotnet_style_predefined_type_for_locals_parameters_declarations = true:suggestion
 csharp_style_var_for_built_in_types = true:none
@@ -50,26 +44,26 @@ csharp_style_var_when_type_is_apparent = true:none
 # Namespace style: use block-scoped for netstandard2.1 compatibility
 csharp_style_namespace_declarations = block_scoped:silent
 
-#### 4. Using Directive Organization ####
+#### Using Directive Organization
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
 
 # IDE0130: Namespace does not match folder structure
 dotnet_style_namespace_match_folder = false
 
-# IDE0040: Remove accessibility modifiers
+# Remove accessibility modifiers
 dotnet_diagnostic.IDE0040.severity = none
 
-# IDE0007: Use implicit type
+# Use implicit type
 dotnet_diagnostic.IDE0007.severity = none
 
-# IDE0039: Use local function
+# Use local function
 dotnet_diagnostic.IDE0039.severity = none
 
 [*.{js,mjs,cjs,jsx,ts,tsx}]
 indent_style = space
 indent_size = 2
-end_of_line = lf
-charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
+end_of_line = lf
+charset = utf-8
