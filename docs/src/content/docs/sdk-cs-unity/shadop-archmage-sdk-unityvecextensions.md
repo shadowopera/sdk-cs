@@ -1,5 +1,5 @@
 ---
-title: 'VecExtensions'
+title: 'UnityVecExtensions'
 description: 'Extension methods for converting Vec2, Vec3, and Vec4 to Unity Vector types.'
 ---
 
@@ -8,10 +8,10 @@ Namespace: Shadop.Archmage.Sdk
 Extension methods for [Vec2](../../sdk-cs/shadop-archmage-sdk-vec2-1/), [Vec3](../../sdk-cs/shadop-archmage-sdk-vec3-1/), and [Vec4](../../sdk-cs/shadop-archmage-sdk-vec4-1/).
 
 ```csharp
-public static class VecExtensions
+public static class UnityVecExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [VecExtensions](.)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityVecExtensions](.)
 
 ## Supported Types
 

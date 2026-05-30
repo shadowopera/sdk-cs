@@ -9,12 +9,12 @@ namespace Shadop.Archmage.Sdk.Tests
         [Fact]
         public void TestVec2()
         {
-            var rnd = new Random(42);
+            var rng = new Random(42);
             Func<int> genNum = () =>
             {
-                var w = rnd.Next(100);
+                var w = rng.Next(100);
                 if (w < 35) return 0;
-                return rnd.Next();
+                return rng.Next();
             };
 
             for (int i = 0; i < 1000; i++)
@@ -29,12 +29,12 @@ namespace Shadop.Archmage.Sdk.Tests
         [Fact]
         public void TestVec3()
         {
-            var rnd = new Random(42);
+            var rng = new Random(42);
             Func<double> genNum = () =>
             {
-                var w = rnd.Next(100);
+                var w = rng.Next(100);
                 if (w < 35) return 0;
-                return rnd.NextDouble();
+                return rng.NextDouble();
             };
 
             for (int i = 0; i < 1000; i++)
@@ -49,12 +49,12 @@ namespace Shadop.Archmage.Sdk.Tests
         [Fact]
         public void TestVec4()
         {
-            var rnd = new Random(42);
+            var rng = new Random(42);
             Func<uint> genNum = () =>
             {
-                var w = rnd.Next(100);
+                var w = rng.Next(100);
                 if (w < 35) return 0;
-                return unchecked((uint)rnd.Next());
+                return unchecked((uint)rng.Next());
             };
 
             for (int i = 0; i < 1000; i++)

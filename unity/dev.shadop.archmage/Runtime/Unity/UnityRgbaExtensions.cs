@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Shadop.Archmage.Sdk
 {
-    public static class RgbaExtensions
+    public static class UnityRgbaExtensions
     {
         /// <summary>
         /// Converts an <see cref="Rgba"/> value to a <c>UnityEngine.Color</c>.

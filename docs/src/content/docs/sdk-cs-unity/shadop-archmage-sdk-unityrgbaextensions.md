@@ -1,5 +1,5 @@
 ---
-title: 'RgbaExtensions'
+title: 'UnityRgbaExtensions'
 description: 'Extension methods for converting Rgba to UnityEngine.Color.'
 ---
 
@@ -8,10 +8,10 @@ Namespace: Shadop.Archmage.Sdk
 Extension methods for [Rgba](../../sdk-cs/shadop-archmage-sdk-rgba/).
 
 ```csharp
-public static class RgbaExtensions
+public static class UnityRgbaExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [RgbaExtensions](.)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityRgbaExtensions](.)
 
 ## Methods
 

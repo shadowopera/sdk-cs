@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Shadop.Archmage.Sdk
 {
-    public static class VecExtensions
+    public static class UnityVecExtensions
     {
         #region Vec2 Extensions
 

@@ -157,13 +157,13 @@ namespace Shadop.Archmage.Sdk.Tests
         [Fact]
         public void RoundTrip_RandomColors()
         {
-            var rnd = new Random(42);
+            var rng = new Random(42);
             for (int i = 0; i < 1000; i++)
             {
-                byte r = (byte)rnd.Next(256);
-                byte g = (byte)rnd.Next(256);
-                byte b = (byte)rnd.Next(256);
-                byte a = (byte)rnd.Next(256);
+                byte r = (byte)rng.Next(256);
+                byte g = (byte)rng.Next(256);
+                byte b = (byte)rng.Next(256);
+                byte a = (byte)rng.Next(256);
                 var original = new Rgba(r, g, b, a);
                 var json = JsonConvert.SerializeObject(original);
                 var restored = JsonConvert.DeserializeObject<Rgba>(json);
