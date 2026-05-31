@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.14.0] - 2026-05-31
+
+### Added
+
+- SDK: Added `MinMax<T>` struct for representing a numeric range with `Min` and `Max` values.
+- SDK: Added `MinMaxExtensions` containing `System.Random`-based `Sample` overloads for all numeric types.
+- Unity: Added `UnityMinMaxExtensions` containing `Sample` overloads using Unity's global `Random` generator.
+
+### Changed
+
+- Unity: Renamed `RgbaExtensions` to `UnityRgbaExtensions` and `VecExtensions` to `UnityVecExtensions` for consistency.
+
 ## [0.13.1] - 2026-05-24
 
 ### Changed
