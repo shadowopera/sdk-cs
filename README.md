@@ -273,15 +273,19 @@ var color = Rgba.Parse("#FF8000");   // R=255, G=128, B=0, A=255
 color.ToString();                    // "#FF8000"
 ```
 
+### MinMax
+
+`MinMax<T>` is a numeric range bounded by `Min` and `Max`. The `Sample` extension methods draw a random value from the range.
+
+### Vec
+
+`Vec2<T>`, `Vec3<T>`, `Vec4<T>` are typed vectors. Fields are accessed as `.X`, `.Y`, `.Z`, `.W`.
+
 ### Tup
 
 `Tup1`–`Tup7` are heterogeneous tuples. They serialize as JSON objects with keys
 `item0`, `item1`, etc. (0-based). Fields are accessed as `.Item0`, `.Item1`, etc.,
 and deconstruction is supported.
-
-### Vec
-
-`Vec2<T>`, `Vec3<T>`, `Vec4<T>` are typed vectors. Fields are accessed as `.X`, `.Y`, `.Z`, `.W`.
 
 ## Data Versioning
 
