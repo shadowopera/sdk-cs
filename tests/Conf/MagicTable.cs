@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Shadop.Archmage.Sdk;
 
@@ -28,7 +29,7 @@ namespace Conf
 
     public partial class MagicTable
     {
-        public bool TryLookup(MagicCfgId cfgId, out MagicCfg? cfg)
+        public bool TryLookup(MagicCfgId cfgId, [NotNullWhen(true)] out MagicCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgId, this, "MagicTable", out cfg);
         }

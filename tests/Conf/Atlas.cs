@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Shadop.Archmage.Sdk;
 
 namespace Conf
@@ -18,7 +19,9 @@ namespace Conf
         /// </summary>
         public static ConfigAtlas Instance = null!;
 
-        Dictionary<string, AtlasItem> _m = null!;
+        /// <summary>
+        /// The user-defined configuration extensions.
+        /// </summary>
         public AtlasExtension Extension { get; private set; }
         /// <summary>
         /// The version info of the config repo at export time.
@@ -38,6 +41,8 @@ namespace Conf
         public VtItemXTable VtItemXTable { get; set; }
         public VtSkillTable VtSkillTable { get; set; }
         public WeaponRuneTable WeaponRuneTable { get; set; }
+
+        Dictionary<string, AtlasItem> _m = null!;
 
         public ConfigAtlas()
         {
@@ -119,7 +124,7 @@ namespace Conf
             where T : class
             => new(cfgId, refValue);
 
-        internal static bool TryLookup<K, V>(K cfgId, Dictionary<K, V> tbl, string tblName, out V? cfg)
+        internal static bool TryLookup<K, V>(K cfgId, Dictionary<K, V> tbl, string tblName, [NotNullWhen(true)] out V? cfg)
             where K : notnull
             where V : class
         {

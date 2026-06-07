@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Shadop.Archmage.Sdk;
 
@@ -36,7 +37,7 @@ namespace Conf
 
     public partial class ItemTable
     {
-        public bool TryLookup(ItemCfgId cfgId, out ItemCfg? cfg)
+        public bool TryLookup(ItemCfgId cfgId, [NotNullWhen(true)] out ItemCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgId, this, "ItemTable", out cfg);
         }

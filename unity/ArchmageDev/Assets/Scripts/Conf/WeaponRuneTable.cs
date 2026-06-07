@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Shadop.Archmage.Sdk;
 
@@ -29,7 +30,7 @@ namespace Conf
 
     public partial class WeaponRuneTable
     {
-        public bool TryLookup(WeaponRuneCfgId cfgId, out WeaponRuneCfg? cfg)
+        public bool TryLookup(WeaponRuneCfgId cfgId, [NotNullWhen(true)] out WeaponRuneCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgId, this, "WeaponRuneTable", out cfg);
         }

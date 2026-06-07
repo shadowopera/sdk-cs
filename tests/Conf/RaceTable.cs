@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Shadop.Archmage.Sdk;
 
@@ -32,7 +33,7 @@ namespace Conf
 
     public partial class RaceTable
     {
-        public bool TryLookup(RaceCfgId cfgId, out RaceCfg? cfg)
+        public bool TryLookup(RaceCfgId cfgId, [NotNullWhen(true)] out RaceCfg? cfg)
         {
             return ConfigAtlas.TryLookup(cfgId, this, "RaceTable", out cfg);
         }
