@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -135,7 +136,7 @@ namespace Shadop.Archmage.Sdk
         /// <param name="language">The preferred language code.</param>
         /// <param name="text">The retrieved text, or null if not found.</param>
         /// <returns>True if the key was found in either the requested or fallback language; otherwise, false.</returns>
-        public bool GetText(string key, string language, out string? text)
+        public bool GetText(string key, string language, [NotNullWhen(true)] out string? text)
         {
             // Try requested language
             if (_texts.TryGetValue(language, out var languageTexts) &&
