@@ -282,6 +282,12 @@ color.ToString();                    // "#FF8000"
 
 `MinMax<T>` is a numeric range bounded by `Min` and `Max`. The `Sample` extension methods draw a random value from the range.
 
+### WeightedPool
+
+`WeightedPool<T>` holds parallel `Items` and `Weights` arrays. The `Sample` / `SampleIndex`
+extension methods draw an item (or its index) at random with probability proportional to its
+weight.
+
 ### Vec
 
 `Vec2<T>`, `Vec3<T>`, `Vec4<T>` are typed vectors. Fields are accessed as `.X`, `.Y`, `.Z`, `.W`.
