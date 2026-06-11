@@ -31,6 +31,7 @@ namespace Conf
         [JsonProperty("runes")] public List<XRef<WeaponRuneCfgId, WeaponRuneCfg>>? Runes { get; set; }
         [JsonProperty("ultimateSkill")] public string UltimateSkill { get; set; } = string.Empty;
         [JsonProperty("ref-crude")] public Character_RefCrude? RefCrude { get; set; }
+        [JsonProperty("hero")] public XRef<HeroCfgId, HeroCfg> Hero { get; set; }
     }
 
     // Character_RefCrude represents $.*['ref-crude']
@@ -65,6 +66,7 @@ namespace Conf
                     Runes[i1] = atlas.WeaponRuneTable.RefLookup(Runes[i1].CfgId);
                 }
             }
+            Hero = atlas.HeroTable.RefLookup(Hero.CfgId);
         }
     }
 

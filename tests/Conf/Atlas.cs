@@ -128,10 +128,7 @@ namespace Conf
             where K : notnull
             where V : class
         {
-            if (tbl.TryGetValue(cfgId, out cfg))
-                return true;
-            cfg = null;
-            return false;
+            return tbl.TryGetValue(cfgId, out cfg);
         }
 
         internal static V? Lookup<K, V>(K cfgId, Dictionary<K, V> tbl, string tblName)
