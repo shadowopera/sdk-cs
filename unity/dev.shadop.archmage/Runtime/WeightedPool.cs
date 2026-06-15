@@ -9,7 +9,7 @@ namespace Shadop.Archmage.Sdk
     /// The <c>Sample</c> and <c>SampleIndex</c> extension methods (in
     /// <see cref="WeightedPoolExtensions"/>) draw an item at random with probability
     /// proportional to its weight. The <c>SampleWithNoise</c> and <c>SampleIndexWithNoise</c>
-    /// methods map a caller-supplied noise value across the cumulative weights instead.
+    /// methods map a caller-supplied noise value to an item deterministically according to the weights.
     /// </summary>
     public class WeightedPool<T>
     {
@@ -34,7 +34,7 @@ namespace Shadop.Archmage.Sdk
         [JsonIgnore] public int Count => Items?.Length ?? 0;
 
         /// <summary>
-        /// Maps the <paramref name="noise"/> value (0 to 1) to an item according to the weights.
+        /// Maps the <paramref name="noise"/> value to an item deterministically according to the weights.
         /// <c>noise &lt; 0</c> returns the first item with non-zero weight; <c>noise &gt;= 1</c>
         /// returns the last. Throws if the pool is empty or the total weight is zero.
         /// </summary>
@@ -44,8 +44,8 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Maps the <paramref name="noise"/> value (0 to 1) to an item index according to the weights.
-        /// <c>noise &lt; 0</c> returns the first index with non-zero weight; <c>noise &gt;= 1</c>
+        /// Maps the <paramref name="noise"/> value to an item index deterministically according to the weights.
+        /// <c>noise &lt; 0</c> returns the first item index with non-zero weight; <c>noise &gt;= 1</c>
         /// returns the last. Throws if the pool is empty or the total weight is zero.
         /// </summary>
         public int SampleIndexWithNoise(float noise)

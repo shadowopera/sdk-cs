@@ -8,7 +8,7 @@ Holds items alongside their selection weights in two parallel arrays of equal le
  The `Sample` and `SampleIndex` extension methods (in
  [WeightedPoolExtensions](../shadop-archmage-sdk-weightedpoolextensions/)) draw an item at random with probability
  proportional to its weight. The `SampleWithNoise` and `SampleIndexWithNoise`
- methods map a caller-supplied noise value across the cumulative weights instead.
+ methods map a caller-supplied noise value to an item deterministically according to the weights.
 
 ```csharp
 public class WeightedPool<T>
@@ -78,7 +78,7 @@ public WeightedPool(T[] items, Int32[] weights)
 
 ### **SampleWithNoise(Single)**
 
-Maps the `noise` value (0 to 1) to an item according to the weights.
+Maps the `noise` value to an item deterministically according to the weights.
  `noise < 0` returns the first item with non-zero weight; `noise >= 1`
  returns the last. Throws if the pool is empty or the total weight is zero.
 
@@ -96,8 +96,8 @@ T<br>
 
 ### **SampleIndexWithNoise(Single)**
 
-Maps the `noise` value (0 to 1) to an item index according to the weights.
- `noise < 0` returns the first index with non-zero weight; `noise >= 1`
+Maps the `noise` value to an item index deterministically according to the weights.
+ `noise < 0` returns the first item index with non-zero weight; `noise >= 1`
  returns the last. Throws if the pool is empty or the total weight is zero.
 
 ```csharp
