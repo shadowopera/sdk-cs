@@ -104,6 +104,62 @@ namespace Shadop.Archmage.Sdk.Tests
         }
 
         [Fact]
+        public void TestNoiseEmptyThrows()
+        {
+            var wp = new WeightedPool<int>();
+            Assert.Throws<ArchmageException>(() => wp.SampleWithNoise(0.5f));
+        }
+
+        [Fact]
+        public void TestNoiseZeroTotalThrows()
+        {
+            var wp = new WeightedPool<int>(new[] { 1, 2, 3 }, new[] { 0, 0, 0 });
+            Assert.Throws<ArchmageException>(() => wp.SampleIndexWithNoise(0.5f));
+        }
+
+        [Fact]
+        public void TestNoiseTotalOverLimitThrows()
+        {
+            var wp = new WeightedPool<int>(new[] { 0, 1 }, new[] { 500_000_001, 500_000_000 });
+            Assert.Throws<ArchmageException>(() => wp.SampleIndexWithNoise(0.5f));
+        }
+
+        [Fact]
+        public void TestNoiseBoundaries()
+        {
+            // Leading and trailing zero-weight items must be skipped at the boundaries.
+            var wp = new WeightedPool<int>(new[] { 0, 1, 2, 3 }, new[] { 0, 5, 5, 0 });
+            Assert.Equal(1, wp.SampleIndexWithNoise(-0.1f)); // below 0 -> first non-zero index
+            Assert.Equal(1, wp.SampleIndexWithNoise(0f));
+            Assert.Equal(2, wp.SampleIndexWithNoise(1f));    // >= 1 -> last non-zero index
+            Assert.Equal(2, wp.SampleIndexWithNoise(2f));
+        }
+
+        [Fact]
+        public void TestNoiseProportional()
+        {
+            // value = floor(noise * total); index i owns [cumBefore, cumBefore + weight).
+            // Noise picked inside each band to avoid float rounding on bucket boundaries.
+            var wp = new WeightedPool<int>(new[] { 0, 1, 2 }, new[] { 1, 2, 3 }); // total 6
+            Assert.Equal(0, wp.SampleIndexWithNoise(0f));     // value 0   -> [0,1)
+            Assert.Equal(0, wp.SampleIndexWithNoise(0.1f));   // value 0   -> [0,1)
+            Assert.Equal(1, wp.SampleIndexWithNoise(0.25f));  // value 1   -> [1,3)
+            Assert.Equal(1, wp.SampleIndexWithNoise(0.4f));   // value 2   -> [1,3)
+            Assert.Equal(2, wp.SampleIndexWithNoise(0.6f));   // value 3   -> [3,6)
+            Assert.Equal(2, wp.SampleIndexWithNoise(0.9f));   // value 5   -> [3,6)
+        }
+
+        [Fact]
+        public void TestNoiseZeroWeightNeverSelected()
+        {
+            var wp = new WeightedPool<int>(new[] { 10, 20, 30 }, new[] { 5, 0, 5 });
+            for (int i = 0; i <= 1000; i++)
+            {
+                Assert.NotEqual(1, wp.SampleIndexWithNoise(i / 1000f));
+            }
+        }
+
+        [Fact]
         public void TestJsonRoundTrip()
         {
             var a = new WeightedPool<int>(new[] { 1, 2, 3 }, new[] { 4, 5, 6 });
