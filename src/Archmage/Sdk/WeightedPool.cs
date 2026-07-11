@@ -8,8 +8,8 @@ namespace Shadop.Archmage.Sdk
     /// Holds items alongside their selection weights in two parallel arrays of equal length.
     /// The <c>Sample</c> and <c>SampleIndex</c> extension methods (in
     /// <see cref="WeightedPoolExtensions"/>) draw an item at random with probability
-    /// proportional to its weight. The <c>SampleWithNoise</c> and <c>SampleIndexWithNoise</c>
-    /// methods map a caller-supplied noise value to an item deterministically according to the weights.
+    /// proportional to its weight. The <c>SampleWith</c> and <c>SampleIndexWith</c>
+    /// methods map a caller-supplied value to an item deterministically according to the weights.
     /// </summary>
     public class WeightedPool<T>
     {
@@ -34,25 +34,25 @@ namespace Shadop.Archmage.Sdk
         [JsonIgnore] public int Count => Items?.Length ?? 0;
 
         /// <summary>
-        /// Maps the <paramref name="noise"/> value to an item deterministically according to the weights.
-        /// <c>noise &lt; 0</c> returns the first item with non-zero weight; <c>noise &gt;= 1</c>
+        /// Maps the <paramref name="value"/> to an item deterministically according to the weights.
+        /// <c>value &lt; 0</c> returns the first item with non-zero weight; <c>value &gt;= 1</c>
         /// returns the last. Throws if the pool is empty or the total weight is zero.
         /// </summary>
-        public T SampleWithNoise(float noise)
+        public T SampleWith(float value)
         {
-            return Items![SampleIndexWithNoise(noise)];
+            return Items![SampleIndexWith(value)];
         }
 
         /// <summary>
-        /// Maps the <paramref name="noise"/> value to an item index deterministically according to the weights.
-        /// <c>noise &lt; 0</c> returns the first item index with non-zero weight; <c>noise &gt;= 1</c>
+        /// Maps the <paramref name="value"/> to an item index deterministically according to the weights.
+        /// <c>value &lt; 0</c> returns the first item index with non-zero weight; <c>value &gt;= 1</c>
         /// returns the last. Throws if the pool is empty or the total weight is zero.
         /// </summary>
-        public int SampleIndexWithNoise(float noise)
+        public int SampleIndexWith(float value)
         {
             if (Items == null || Items.Length == 0)
             {
-                throw new ArchmageException("WeightedPool.SampleIndexWithNoise: empty pool");
+                throw new ArchmageException("WeightedPool.SampleIndexWith: empty pool");
             }
 
             int[] weights = Weights!;
@@ -63,34 +63,34 @@ namespace Shadop.Archmage.Sdk
             }
             if (total == 0)
             {
-                throw new ArchmageException("WeightedPool.SampleIndexWithNoise: total weight is zero");
+                throw new ArchmageException("WeightedPool.SampleIndexWith: total weight is zero");
             }
             if (total > _maxTotalWeight)
             {
-                throw new ArchmageException("WeightedPool.SampleIndexWithNoise: total weight exceeds 1,000,000,000");
+                throw new ArchmageException("WeightedPool.SampleIndexWith: total weight exceeds 1,000,000,000");
             }
 
-            int value = (int)((double)noise * total);
-            if (value >= total)
+            int pos = (int)((double)value * total);
+            if (pos >= total)
             {
-                value = (int)total - 1;
+                pos = (int)total - 1;
             }
-            else if (value < 0)
+            else if (pos < 0)
             {
-                value = 0;
+                pos = 0;
             }
 
             int acc = 0;
             for (int i = 0; i < weights.Length; i++)
             {
                 acc += weights[i];
-                if (acc > value)
+                if (acc > pos)
                 {
                     return i;
                 }
             }
 
-            throw new ArchmageException("WeightedPool.SampleIndexWithNoise: unreachable");
+            throw new ArchmageException("WeightedPool.SampleIndexWith: unreachable");
         }
     }
 }
