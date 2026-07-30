@@ -13,7 +13,7 @@ namespace Shadop.Archmage.Sdk
         public const string SingleMappingDefaultKey = "/";
 
         /// <summary>
-        /// Indicates one-to-one mapping between key and file.
+        /// Indicates a one-to-one mapping between a key and a file.
         /// </summary>
         public const string MappingUnique = "unique";
 

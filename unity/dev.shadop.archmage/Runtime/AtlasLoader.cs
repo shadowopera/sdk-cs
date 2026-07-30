@@ -19,7 +19,7 @@ namespace Shadop.Archmage.Sdk
     public static partial class Archmage
     {
         /// <summary>
-        /// Loads an Atlas synchronously from the specified index file and root directory.
+        /// Loads an Atlas synchronously from the specified manifest file and root directory.
         /// </summary>
         /// <remarks>
         /// <para>This method performs the following steps:</para>

@@ -61,7 +61,7 @@ JsonSerializerSettings<br>
 
 ### **LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)**
 
-Loads an Atlas synchronously from the specified index file and root directory.
+Loads an Atlas synchronously from the specified manifest file and root directory.
 
 ```csharp
 public static void LoadAtlas(string atlasFile, string cfgRoot, IAtlas atlas, AtlasOptions options, IProgress<AtlasLoadEvent> progress)
