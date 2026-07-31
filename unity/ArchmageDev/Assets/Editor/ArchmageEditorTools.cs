@@ -12,45 +12,58 @@ namespace Conf.Editor
 {
     public static partial class ArchmageEditorTools
     {
+        [MenuItem("Tools/Reload Game Configs for Editor", true)]
+        static bool ValidateReloadGameConfigs() => !EditorApplication.isPlayingOrWillChangePlaymode;
+
         [MenuItem("Tools/Reload Game Configs for Editor")]
         public static void ReloadGameConfigs()
         {
-            if (EditorApplication.isPlaying)
-            {
-                Debug.LogWarning("<archmage> Do not reload game configs for Unity Editor in Play mode.");
-                return;
-            }
-
-            var total = 1;
-            var completed = 0;
-            var progressBarCleared = false;
-            var progress = new Progress<AtlasLoadEvent>(evt =>
-            {
-                switch (evt.Stage)
-                {
-                    case AtlasLoadStage.ItemsQueued:
-                        total = evt.Total;
-                        break;
-                    case AtlasLoadStage.Completed:
-                        completed++;
-                        float fraction = (float)completed / total;
-                        if (progressBarCleared)
-                            break;
-                        EditorUtility.DisplayProgressBar("Loading Game Configs", $"{evt.Key} ({completed}/{total})", fraction);
-                        break;
-                }
-            });
-            Initialize(progress, clear: () =>
-            {
-                progressBarCleared = true;
-                EditorUtility.ClearProgressBar();
-            });
+            EditorUtility.DisplayProgressBar("Loading Game Configs", "Loading...", 0f);
+            Initialize(clear: EditorUtility.ClearProgressBar);
         }
 
         [InitializeOnLoadMethod]
         public static void AutoLoadGameConfigs()
         {
+            // NOTE: this relies on domain reload. With Enter Play Mode Options -> Reload Domain
+            // disabled, the method does not run when entering play mode, and the drawers keep
+            // pointing at the atlas loaded for the editor.
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                // Assumes that the game loads the config atlas and sets ConfigAtlas.Instance on its own;
+                // wait for that instead of loading a second copy here.
+                EditorApplication.update -= MonitorRuntimeAtlasInstance;
+                EditorApplication.update += MonitorRuntimeAtlasInstance;
+                return;
+            }
             Initialize();
+        }
+
+        static void MonitorRuntimeAtlasInstance()
+        {
+            var atlas = ConfigAtlas.Instance;
+            if (atlas != null)
+            {
+                EditorApplication.update -= MonitorRuntimeAtlasInstance;
+                try
+                {
+                    InitializeCfgIdDrawers(atlas);
+                    RepaintEditorWindows();
+                    Debug.Log("<archmage> CfgIdDrawerManager.Initialize succeeded (Runtime Bound).");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"<archmage> CfgIdDrawerManager.Initialize failed: {ex}");
+                }
+                return;
+            }
+
+            if (!EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                // Play mode ended before the runtime atlas was ready; load one for the editor.
+                EditorApplication.update -= MonitorRuntimeAtlasInstance;
+                Initialize();
+            }
         }
 
         static void Initialize(IProgress<AtlasLoadEvent>? progress = null, Action? clear = null)
@@ -59,14 +72,15 @@ namespace Conf.Editor
             {
                 ConfLoader.DirectAccessDemo(progress);
 
-                var atlas = (ConfigAtlas?)ConfigAtlas.Instance;
-                if (atlas is null)
+                var atlas = ConfigAtlas.Instance;
+                if (atlas == null)
                 {
                     Debug.LogWarning("<archmage> CfgIdDrawerManager.Initialize failed: ConfigAtlas.Instance is null.");
                     return;
                 }
 
                 InitializeCfgIdDrawers(atlas);
+                RepaintEditorWindows();
                 Debug.Log("<archmage> CfgIdDrawerManager.Initialize succeeded.");
             }
             catch (Exception ex)
@@ -77,6 +91,14 @@ namespace Conf.Editor
             {
                 clear?.Invoke();
             }
+        }
+
+        static void RepaintEditorWindows()
+        {
+            // The inspector types (InspectorWindow, PropertyEditor) are internal, and matching
+            // them by name misses the floating ones, so repaint everything.
+            foreach (var w in Resources.FindObjectsOfTypeAll<EditorWindow>())
+                w.Repaint();
         }
 
         static void InitializeCfgIdDrawers(ConfigAtlas atlas)
