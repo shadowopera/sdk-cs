@@ -145,6 +145,130 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.StartsWith("<archmage> Atlas blacklist: unknown item \"gm\".", err.Message);
         }
 
+        [Theory]
+        [InlineData("x3")]
+        [InlineData("x5")]
+        public void TestAtlas_WithVariant(string variant)
+        {
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithWhitelist(new[] { "prop_floats" })
+                .WithVariant("prop_floats", variant);
+
+            var atlas = new ConfigAtlas();
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            CheckUpdateGolden(atlas, "../../../golden/variant_" + variant);
+
+            Assert.Equal(variant, atlas.AtlasItems()["prop_floats"].Variant);
+        }
+
+        [Fact]
+        public void TestAtlas_WithVariant_Default()
+        {
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithWhitelist(new[] { "game", "weapon-rune", "vtSkill" });
+
+            var atlas = new ConfigAtlas();
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+
+            var items = atlas.AtlasItems();
+            Assert.Equal("/", items["game"].Variant);
+            Assert.Equal("", items["weapon-rune"].Variant);
+            Assert.Equal("", items["vtSkill"].Variant);
+        }
+
+        [Fact]
+        public void TestAtlas_WithVariant_LastWins()
+        {
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithWhitelist(new[] { "prop_floats" })
+                .WithVariant("prop_floats", "x3")
+                .WithVariant("prop_floats", "x5");
+
+            var atlas = new ConfigAtlas();
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+            CheckUpdateGolden(atlas, "../../../golden/variant_x5");
+        }
+
+        [Fact]
+        public void TestAtlas_WithVariant_UnknownItem()
+        {
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithBlacklist(new[] { "prop_floats" })
+                .WithVariant("prop_float", "x5");
+
+            var atlas = new ConfigAtlas();
+            var err = Assert.Throws<ArchmageException>(
+                () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
+            Assert.StartsWith("<archmage> Atlas variant: unknown item \"prop_float\".", err.Message);
+        }
+
+        [Fact]
+        public void TestAtlas_WithVariant_EmptyVariant()
+        {
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithWhitelist(new[] { "prop_floats" })
+                .WithVariant("prop_floats", "");
+
+            var atlas = new ConfigAtlas();
+            var err = Assert.Throws<ArchmageException>(
+                () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
+            Assert.StartsWith("<archmage> Atlas variant: empty variant for item \"prop_floats\".", err.Message);
+        }
+
+        [Fact]
+        public void TestAtlas_WithVariant_NullArgument()
+        {
+            var opts = DefaultOpts();
+            Assert.Throws<ArgumentNullException>(() => opts.WithVariant(null!, "x5"));
+            Assert.Throws<ArgumentNullException>(() => opts.WithVariant("prop_floats", null!));
+        }
+
+        [Fact]
+        public void TestAtlas_WithVariant_NotFound()
+        {
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithWhitelist(new[] { "prop_floats" })
+                .WithVariant("prop_floats", "x9");
+
+            var atlas = new ConfigAtlas();
+            var err = Assert.Throws<ArchmageException>(
+                () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
+            Assert.StartsWith("<archmage> Failed to load atlas item: \"prop_floats\"", err.Message);
+            Assert.NotNull(err.InnerException);
+            Assert.Equal("Could not find $.variant['prop_floats']['x9'] in ../../../testdata/atlas.json.",
+                err.InnerException.Message);
+        }
+
+        [Fact]
+        public void TestAtlas_WithVariant_SkippedItem()
+        {
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithBlacklist(new[] { "prop_floats" })
+                .WithVariant("prop_floats", "x9")
+                .WithVariant("hero", "x5");
+
+            var atlas = new ConfigAtlas();
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
+
+            var items = atlas.AtlasItems();
+            Assert.False(items["prop_floats"].Ready);
+            Assert.Equal("", items["hero"].Variant);
+        }
+
         [Fact]
         public void TestAtlas_WithOverrideRoot()
         {

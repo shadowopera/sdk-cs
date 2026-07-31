@@ -163,6 +163,15 @@ namespace Shadop.Archmage.Sdk
                 }
             }
 
+            // Validate variant selections
+            foreach (var v in options.Variants.Keys.OrderBy(k => k, StringComparer.OrdinalIgnoreCase))
+            {
+                if (!items.ContainsKey(v))
+                    throw new ArchmageException($"Atlas variant: unknown item \"{v}\".");
+                if (string.IsNullOrEmpty(options.Variants[v]))
+                    throw new ArchmageException($"Atlas variant: empty variant for item \"{v}\".");
+            }
+
             // Sort by key (case-insensitive) and filter
             var sortedKeys = items.Keys
                 .OrderBy(k => k, StringComparer.OrdinalIgnoreCase)
@@ -305,9 +314,12 @@ namespace Shadop.Archmage.Sdk
                     keyPath = $"$.unique['{key}']";
                     break;
                 case AtlasConstants.MappingVariant:
-                    var sf = atlasJson.PickFromVariant(key);
+                    var variant = options.Variants.TryGetValue(key, out var sv)
+                        ? sv : AtlasConstants.VariantMappingDefaultKey;
+                    item.Variant = variant;
+                    var sf = atlasJson.PickFromVariant(key, variant);
                     files = sf is not null ? new List<string> { sf } : new List<string>();
-                    keyPath = $"$.variant['{key}']['/']";
+                    keyPath = $"$.variant['{key}']['{variant}']";
                     break;
                 case AtlasConstants.MappingMany:
                     files = atlasJson.Many.TryGetValue(key, out var mf) ? mf : new List<string>();

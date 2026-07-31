@@ -66,6 +66,22 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
+        /// Selects the variant to load for the item identified by key (a variant-mapped item
+        /// that is not given a variant falls back to "/").
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if key or variant is null.</exception>
+        public static AtlasOptions WithVariant(this AtlasOptions opts, string key, string variant)
+        {
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+            if (variant is null)
+                throw new ArgumentNullException(nameof(variant));
+
+            opts.Variants[key] = variant;
+            return opts;
+        }
+
+        /// <summary>
         /// Adds directory as override source (processed in order; each can override previous).
         /// </summary>
         /// <exception cref="ArgumentException">Thrown if rootPath is null or whitespace.</exception>

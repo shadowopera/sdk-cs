@@ -133,6 +133,32 @@ public static AtlasOptions WithBlacklist(AtlasOptions opts, IEnumerable<string> 
 [ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception)<br>
 Thrown if blacklist is null.
 
+### **WithVariant(AtlasOptions, String, String)**
+
+Selects the variant to load for the item identified by key (a variant-mapped item
+ that is not given a variant falls back to "/").
+
+```csharp
+public static AtlasOptions WithVariant(AtlasOptions opts, string key, string variant)
+```
+
+#### Parameters
+
+`opts` [AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
+
+`key` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+`variant` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
+#### Returns
+
+[AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
+
+#### Exceptions
+
+[ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception)<br>
+Thrown if key or variant is null.
+
 ### **WithOverrideRoot(AtlasOptions, String)**
 
 Adds directory as override source (processed in order; each can override previous).

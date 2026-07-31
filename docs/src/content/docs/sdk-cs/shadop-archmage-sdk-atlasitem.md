@@ -50,6 +50,18 @@ public string Key { get; set; }
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
+### **Variant**
+
+The variant used by a variant-mapped item, defaulting to "/". Empty for other mappings.
+
+```csharp
+public string Variant { get; set; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
 ### **Ready**
 
 Whether this item has been successfully loaded.

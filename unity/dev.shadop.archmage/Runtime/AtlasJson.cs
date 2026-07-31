@@ -38,17 +38,15 @@ namespace Shadop.Archmage.Sdk
         public Dictionary<string, List<string>> Many { get; set; } = new();
 
         /// <summary>
-        /// Retrieves the default file path for a variant-mapped key.
+        /// Retrieves the file path for the specified key and variant.
         /// </summary>
         /// <param name="key">The item key to look up.</param>
-        /// <returns>The default file path (associated with "/") if found; otherwise null.</returns>
-        internal string? PickFromVariant(string key)
+        /// <param name="variant">The variant to look up, "/" being the default one.</param>
+        /// <returns>The file path associated with the variant if found; otherwise null.</returns>
+        internal string? PickFromVariant(string key, string variant)
         {
-            if (Variant.TryGetValue(key, out var subMap) &&
-                subMap.TryGetValue(AtlasConstants.VariantMappingDefaultKey, out var path))
-            {
+            if (Variant.TryGetValue(key, out var subMap) && subMap.TryGetValue(variant, out var path))
                 return path;
-            }
             return null;
         }
     }

@@ -23,6 +23,7 @@ namespace Shadop.Archmage.Sdk
         internal Action<AtlasJson>? AtlasModifier { get; set; }
         internal List<string>? Whitelist { get; set; }
         internal List<string>? Blacklist { get; set; }
+        internal Dictionary<string, string> Variants { get; set; } = new();
         internal AtlasLoadStrategy? LoadStrategy { get; set; }
         internal AtlasAsyncLoadStrategy? AsyncLoadStrategy { get; set; }
         internal JsonSerializerSettings? JsonSettings { get; set; }

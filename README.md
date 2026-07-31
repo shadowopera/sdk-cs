@@ -149,6 +149,8 @@ var opts = new AtlasOptions()
     .WithWhitelist(new[] { "hero", "item" })
     // skip these keys
     .WithBlacklist(new[] { "debug" })
+    // select a variant
+    .WithVariant("game", "hard")
     // add an override directory
     .WithOverrideRoot("configs/override/")
     // add an override filesystem
@@ -161,6 +163,9 @@ var opts = new AtlasOptions()
 
 **Whitelist / Blacklist** — If a whitelist is set, only listed keys are loaded (blacklist
 is ignored). All keys must exist in the atlas or an exception is thrown.
+
+**Variant selection** — A variant-mapped key loads its `"/"` variant unless `WithVariant`
+selects another one. The variant in use is recorded in `AtlasItem.Variant`.
 
 **Override layers** — Each `WithOverrideRoot` / `WithOverrideFS` call adds another
 override source. When loading an item, each override source is checked in the order they

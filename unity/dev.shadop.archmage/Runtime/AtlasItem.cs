@@ -23,6 +23,11 @@ namespace Shadop.Archmage.Sdk
         public string Key { get; set; } = string.Empty;
 
         /// <summary>
+        /// The variant used by a variant-mapped item, defaulting to "/". Empty for other mappings.
+        /// </summary>
+        public string Variant { get; set; } = string.Empty;
+
+        /// <summary>
         /// Whether this item has been successfully loaded.
         /// </summary>
         public bool Ready { get; set; }
