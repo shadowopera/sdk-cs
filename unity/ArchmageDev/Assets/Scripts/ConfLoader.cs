@@ -77,7 +77,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityAddressablesFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
+                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
             });
 
         if (concurrent)
@@ -113,7 +113,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityResourcesFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
+                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
             });
 
         try
@@ -143,7 +143,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityResourcesFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
+                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
             });
 
         if (concurrent)
@@ -179,7 +179,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityStreamingAssetsFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
+                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
             });
 
         if (concurrent)
@@ -216,7 +216,7 @@ public class ConfLoader : MonoBehaviour
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
+                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
             });
 
         try

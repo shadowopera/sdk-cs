@@ -69,17 +69,17 @@ namespace Conf
             _m = new Dictionary<string, AtlasItem>
             {
                 { "character", new AtlasItem { Cfg = CharacterArray, Mapping = "unique" } },
-                { "game", new AtlasItem { Cfg = GameCfg, Mapping = "single" } },
+                { "game", new AtlasItem { Cfg = GameCfg, Mapping = "variant" } },
                 { "hero", new AtlasItem { Cfg = HeroTable, Mapping = "unique" } },
                 { "Item", new AtlasItem { Cfg = ItemTable, Mapping = "unique" } },
                 { "Magic", new AtlasItem { Cfg = MagicTable, Mapping = "unique" } },
                 { "matrix2", new AtlasItem { Cfg = Matrix2Table, Mapping = "unique" } },
-                { "prop_floats", new AtlasItem { Cfg = PropFloatsCfg, Mapping = "single" } },
+                { "prop_floats", new AtlasItem { Cfg = PropFloatsCfg, Mapping = "variant" } },
                 { "Race", new AtlasItem { Cfg = RaceTable, Mapping = "unique" } },
                 { "ref", new AtlasItem { Cfg = RefTable, Mapping = "unique" } },
                 { "string", new AtlasItem { Cfg = StringTable, Mapping = "unique" } },
-                { "vtItemX", new AtlasItem { Cfg = VtItemXTable, Mapping = "multiple" } },
-                { "vtSkill", new AtlasItem { Cfg = VtSkillTable, Mapping = "multiple" } },
+                { "vtItemX", new AtlasItem { Cfg = VtItemXTable, Mapping = "many" } },
+                { "vtSkill", new AtlasItem { Cfg = VtSkillTable, Mapping = "many" } },
                 { "weapon-rune", new AtlasItem { Cfg = WeaponRuneTable, Mapping = "unique" } },
             };
         }

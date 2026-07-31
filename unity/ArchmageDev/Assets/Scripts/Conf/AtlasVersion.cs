@@ -15,7 +15,7 @@ namespace Conf
         public static VersionInfo CodeVersion
         {
             get {
-                var str = @"
+				var str = @"
 {
     ""workspace"": """",
     ""tags"": [],

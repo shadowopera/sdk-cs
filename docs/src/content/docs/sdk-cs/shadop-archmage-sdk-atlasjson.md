@@ -42,24 +42,24 @@ public Dictionary<string, string> Unique { get; set; }
 
 [Dictionary<String, String>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<br>
 
-### **Single**
+### **Variant**
 
-One-to-many conditional mapping (key → {case → file path}). Use "/" as the default case.
+One-to-many variant mapping (key → {case → file path}). Use "/" as the default case.
 
 ```csharp
-public Dictionary<string, Dictionary<string, string>> Single { get; set; }
+public Dictionary<string, Dictionary<string, string>> Variant { get; set; }
 ```
 
 #### Property Value
 
 [Dictionary<String, Dictionary<String, String>>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.dictionary-2)<br>
 
-### **Multiple**
+### **Many**
 
 One-to-many list mapping (key → [file paths]). Files merged in order.
 
 ```csharp
-public Dictionary<string, List<string>> Multiple { get; set; }
+public Dictionary<string, List<string>> Many { get; set; }
 ```
 
 #### Property Value

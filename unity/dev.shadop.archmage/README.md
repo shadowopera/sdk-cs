@@ -103,8 +103,8 @@ Archmage.LoadAtlas("configs/atlas.json", "configs/", atlas);
 | Strategy | Shape | Behavior |
 |---|---|---|
 | unique | `key → "file.json"` | Deserializes one file into the config object |
-| single | `key → { "/": "file.json", "alt": "file-alt.json" }` | Selects one file by case; `"/"` is the default |
-| multiple | `key → ["a.json", "b.json"]` | Deserializes and merges multiple files in order |
+| variant | `key → { "/": "file.json", "alt": "file-alt.json" }` | Selects one variant by case; `"/"` is the default |
+| many | `key → ["a.json", "b.json"]` | Deserializes and merges multiple files in order |
 
 Example `atlas.json`:
 
@@ -114,10 +114,10 @@ Example `atlas.json`:
         "hero": "hero.json",
         "item": "clutter/item.json"
     },
-    "single": {
+    "variant": {
         "game": { "/": "game.json", "hard": "game_hard.json" }
     },
-    "multiple": {
+    "many": {
         "weapon": [ "vtbl/weapon-sword.json", "vtbl/weapon-staff.json" ]
     }
 }

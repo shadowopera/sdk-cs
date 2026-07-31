@@ -13,7 +13,7 @@ namespace Shadop.Archmage.Sdk
         public object? Cfg { get; set; }
 
         /// <summary>
-        /// The mapping strategy: "unique", "single", or "multiple".
+        /// The mapping strategy: "unique", "variant", or "many".
         /// </summary>
         public string Mapping { get; set; } = string.Empty;
 

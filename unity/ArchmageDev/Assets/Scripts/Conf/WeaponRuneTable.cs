@@ -68,13 +68,13 @@ namespace Conf
         public readonly bool IsZero => Value == 0;
     }
 
-    internal class WeaponRuneCfgIdJsonConverter : ValueWrapperJsonConverter<WeaponRuneCfgId, long>
+    class WeaponRuneCfgIdJsonConverter : ValueWrapperJsonConverter<WeaponRuneCfgId, long>
     {
         protected override WeaponRuneCfgId Create(long value) => value;
         protected override long GetValue(WeaponRuneCfgId obj) => obj.Value;
     }
 
-    internal class WeaponRuneCfgIdTypeConverter : ValueWrapperTypeConverter<WeaponRuneCfgId, long>
+    class WeaponRuneCfgIdTypeConverter : ValueWrapperTypeConverter<WeaponRuneCfgId, long>
     {
         protected override WeaponRuneCfgId Create(long value) => value;
     }

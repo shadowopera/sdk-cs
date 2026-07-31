@@ -58,7 +58,7 @@ while true; do
     VERSION_ARG=""
 
     if [[ "$RESULT" == "DONE" ]]; then
-        printImportantMessage "Release complete!"
+        printImportantMessage "Release completed!"
         printMessage "Delete release.json when ready for the next release."
         printImportantMessage "Run 'git push --follow-tags' to publish."
         exit 0

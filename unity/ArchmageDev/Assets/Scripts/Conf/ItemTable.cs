@@ -75,13 +75,13 @@ namespace Conf
         public readonly bool IsZero => Value == 0;
     }
 
-    internal class ItemCfgIdJsonConverter : ValueWrapperJsonConverter<ItemCfgId, long>
+    class ItemCfgIdJsonConverter : ValueWrapperJsonConverter<ItemCfgId, long>
     {
         protected override ItemCfgId Create(long value) => value;
         protected override long GetValue(ItemCfgId obj) => obj.Value;
     }
 
-    internal class ItemCfgIdTypeConverter : ValueWrapperTypeConverter<ItemCfgId, long>
+    class ItemCfgIdTypeConverter : ValueWrapperTypeConverter<ItemCfgId, long>
     {
         protected override ItemCfgId Create(long value) => value;
     }

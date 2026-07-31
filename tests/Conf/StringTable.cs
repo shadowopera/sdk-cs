@@ -99,13 +99,13 @@ namespace Conf
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
-    internal class StringCfgIdJsonConverter : ValueWrapperJsonConverter<StringCfgId, string>
+    class StringCfgIdJsonConverter : ValueWrapperJsonConverter<StringCfgId, string>
     {
         protected override StringCfgId Create(string value) => value;
         protected override string GetValue(StringCfgId obj) => obj.Value;
     }
 
-    internal class StringCfgIdTypeConverter : ValueWrapperTypeConverter<StringCfgId, string>
+    class StringCfgIdTypeConverter : ValueWrapperTypeConverter<StringCfgId, string>
     {
         protected override StringCfgId Create(string value) => value;
     }

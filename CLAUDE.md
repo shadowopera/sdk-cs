@@ -51,8 +51,8 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 
 1. Read and parse `atlas.json` — defines three mapping strategies:
    - **`unique`**: key → file path (one-to-one)
-   - **`single`**: key → `{case → file path}` (conditional; use `"/"` as default case)
-   - **`multiple`**: key → `[file paths]` (list; files merged in order)
+   - **`variant`**: key → `{case → file path}` (variants; use `"/"` as default case)
+   - **`many`**: key → `[file paths]` (list; files merged in order)
 2. Apply any registered `AtlasModifier` callbacks to the parsed atlas data
 3. For each config item: read files via `IFS`, deserialize, merge JSON, then apply overrides
 4. Call `IAtlas.BindRefs()` to resolve cross-table references
@@ -98,6 +98,6 @@ Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` 
 ### Release & CI
 
 - **`scripts/bump-version.sh`** — bumps `<Version>` in `Archmage.csproj` and `unity/.../package.json`, commits, and creates an annotated git tag; use `--yes` to skip interactive prompts
-- **`scripts/release.sh`** + **`scripts/__impl/release/main.go`** — step-driven release automation; state persisted in `scripts/release.json`; steps: checkVersion → runTests1 → updateChangelog → syncUnity → runTests2 → bumpVersion
+- **`scripts/release.sh`** + **`scripts/__impl/release/main.go`** — step-driven release automation; state persisted in `release.json`; steps: checkVersion → runTests1 → updateChangelog → syncUnity → runTests2 → bumpVersion
 - **`scripts/reconcile-unity-meta.sh`** — checks Unity `.meta` file consistency
 - **`.github/workflows/publish-nuget.yml`** — publishes to NuGet on `v*` tag push; verifies tag version matches `Archmage.csproj`, runs tests, packs, and pushes with `NUGET_API_KEY` secret

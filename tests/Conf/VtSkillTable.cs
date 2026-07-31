@@ -83,13 +83,13 @@ namespace Conf
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
-    internal class VtSkillCfgIdJsonConverter : ValueWrapperJsonConverter<VtSkillCfgId, string>
+    class VtSkillCfgIdJsonConverter : ValueWrapperJsonConverter<VtSkillCfgId, string>
     {
         protected override VtSkillCfgId Create(string value) => value;
         protected override string GetValue(VtSkillCfgId obj) => obj.Value;
     }
 
-    internal class VtSkillCfgIdTypeConverter : ValueWrapperTypeConverter<VtSkillCfgId, string>
+    class VtSkillCfgIdTypeConverter : ValueWrapperTypeConverter<VtSkillCfgId, string>
     {
         protected override VtSkillCfgId Create(string value) => value;
     }

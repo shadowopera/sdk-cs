@@ -8,23 +8,23 @@ namespace Shadop.Archmage.Sdk
     public static class AtlasConstants
     {
         /// <summary>
-        /// Key for the default file in a MappingSingle group.
+        /// Key for the default file in a MappingVariant group.
         /// </summary>
-        public const string SingleMappingDefaultKey = "/";
+        public const string VariantMappingDefaultKey = "/";
 
         /// <summary>
-        /// Indicates one-to-one mapping between key and file.
+        /// Indicates a one-to-one mapping between a key and a file.
         /// </summary>
         public const string MappingUnique = "unique";
 
         /// <summary>
-        /// Indicates that a key maps to a single file from a set of files.
+        /// Indicates that a key maps to multiple file variants, only one of which is loaded.
         /// </summary>
-        public const string MappingSingle = "single";
+        public const string MappingVariant = "variant";
 
         /// <summary>
-        /// Indicates that a key maps to multiple files loaded and merged as one.
+        /// Indicates that a key maps to multiple files loaded separately and merged into one.
         /// </summary>
-        public const string MappingMultiple = "multiple";
+        public const string MappingMany = "many";
     }
 }

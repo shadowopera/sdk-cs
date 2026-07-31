@@ -26,26 +26,26 @@ namespace Shadop.Archmage.Sdk
         public Dictionary<string, string> Unique { get; set; } = new();
 
         /// <summary>
-        /// One-to-many conditional mapping (key → {case → file path}). Use "/" as the default case.
+        /// One-to-many variant mapping (key → {case → file path}). Use "/" as the default case.
         /// </summary>
-        [JsonProperty("single")]
-        public Dictionary<string, Dictionary<string, string>> Single { get; set; } = new();
+        [JsonProperty("variant")]
+        public Dictionary<string, Dictionary<string, string>> Variant { get; set; } = new();
 
         /// <summary>
         /// One-to-many list mapping (key → [file paths]). Files merged in order.
         /// </summary>
-        [JsonProperty("multiple")]
-        public Dictionary<string, List<string>> Multiple { get; set; } = new();
+        [JsonProperty("many")]
+        public Dictionary<string, List<string>> Many { get; set; } = new();
 
         /// <summary>
-        /// Retrieves the default file path for a single-mapped key.
+        /// Retrieves the default file path for a variant-mapped key.
         /// </summary>
         /// <param name="key">The item key to look up.</param>
         /// <returns>The default file path (associated with "/") if found; otherwise null.</returns>
-        internal string? PickFromSingle(string key)
+        internal string? PickFromVariant(string key)
         {
-            if (Single.TryGetValue(key, out var subMap) &&
-                subMap.TryGetValue(AtlasConstants.SingleMappingDefaultKey, out var path))
+            if (Variant.TryGetValue(key, out var subMap) &&
+                subMap.TryGetValue(AtlasConstants.VariantMappingDefaultKey, out var path))
             {
                 return path;
             }

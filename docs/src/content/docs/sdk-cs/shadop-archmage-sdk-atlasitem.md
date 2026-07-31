@@ -28,7 +28,7 @@ public object Cfg { get; set; }
 
 ### **Mapping**
 
-The mapping strategy: "unique", "single", or "multiple".
+The mapping strategy: "unique", "variant", or "many".
 
 ```csharp
 public string Mapping { get; set; }

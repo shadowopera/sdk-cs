@@ -304,14 +304,14 @@ namespace Shadop.Archmage.Sdk
                     files = atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
                     keyPath = $"$.unique['{key}']";
                     break;
-                case AtlasConstants.MappingSingle:
-                    var sf = atlasJson.PickFromSingle(key);
+                case AtlasConstants.MappingVariant:
+                    var sf = atlasJson.PickFromVariant(key);
                     files = sf is not null ? new List<string> { sf } : new List<string>();
-                    keyPath = $"$.single['{key}']['/']";
+                    keyPath = $"$.variant['{key}']['/']";
                     break;
-                case AtlasConstants.MappingMultiple:
-                    files = atlasJson.Multiple.TryGetValue(key, out var mf) ? mf : new List<string>();
-                    keyPath = $"$.multiple['{key}']";
+                case AtlasConstants.MappingMany:
+                    files = atlasJson.Many.TryGetValue(key, out var mf) ? mf : new List<string>();
+                    keyPath = $"$.many['{key}']";
                     break;
                 default:
                     throw new Exception($"Unsupported mapping: {item.Mapping}.");

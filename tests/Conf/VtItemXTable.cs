@@ -81,13 +81,13 @@ namespace Conf
         public readonly bool IsZero => Value == 0;
     }
 
-    internal class VtItemXCfgIdJsonConverter : ValueWrapperJsonConverter<VtItemXCfgId, long>
+    class VtItemXCfgIdJsonConverter : ValueWrapperJsonConverter<VtItemXCfgId, long>
     {
         protected override VtItemXCfgId Create(long value) => value;
         protected override long GetValue(VtItemXCfgId obj) => obj.Value;
     }
 
-    internal class VtItemXCfgIdTypeConverter : ValueWrapperTypeConverter<VtItemXCfgId, long>
+    class VtItemXCfgIdTypeConverter : ValueWrapperTypeConverter<VtItemXCfgId, long>
     {
         protected override VtItemXCfgId Create(long value) => value;
     }

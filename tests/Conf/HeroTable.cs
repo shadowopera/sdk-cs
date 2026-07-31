@@ -79,13 +79,13 @@ namespace Conf
         public readonly bool IsZero => Value == 0;
     }
 
-    internal class HeroCfgIdJsonConverter : ValueWrapperJsonConverter<HeroCfgId, long>
+    class HeroCfgIdJsonConverter : ValueWrapperJsonConverter<HeroCfgId, long>
     {
         protected override HeroCfgId Create(long value) => value;
         protected override long GetValue(HeroCfgId obj) => obj.Value;
     }
 
-    internal class HeroCfgIdTypeConverter : ValueWrapperTypeConverter<HeroCfgId, long>
+    class HeroCfgIdTypeConverter : ValueWrapperTypeConverter<HeroCfgId, long>
     {
         protected override HeroCfgId Create(long value) => value;
     }

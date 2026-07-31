@@ -74,10 +74,10 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             Action<AtlasJson> atlasModifier = (atlasJson) =>
             {
-                atlasJson.Single["prop_floats"]["/"] = atlasJson.Single["prop_floats"]["x5"];
+                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
                 atlasJson.Unique.Remove("character");
                 atlasJson.Unique.Remove("matrix2");
-                atlasJson.Single.Remove("game");
+                atlasJson.Variant.Remove("game");
             };
 
             var logger = new ScavengerLogger();
@@ -181,7 +181,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var fsys = new Dictionary<string, byte[]>
             {
                 { "testdata/atlas.json", Encoding.UTF8.GetBytes(
-                    "{\"version\":{\"branch\":\"test-branch\",\"id\":\"123456\"},\"single\":{\"game\":{\"/\":\"game.json\"}},\"multiple\":{},\"unique\":{}}") },
+                    "{\"version\":{\"branch\":\"test-branch\",\"id\":\"123456\"},\"variant\":{\"game\":{\"/\":\"game.json\"}},\"many\":{},\"unique\":{}}") },
                 { "testdata/game.json", Encoding.UTF8.GetBytes("{\"x-string\":\"hello memory fs\"}") }
             };
 
@@ -356,7 +356,7 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.StartsWith("<archmage> Failed to load atlas item: \"prop_floats\"", err.Message);
             Assert.NotNull(err.InnerException);
             Assert.IsType<Exception>(err.InnerException);
-            Assert.Equal("Could not find $.single['prop_floats']['/'] in ../../../testdata/atlas.json.",
+            Assert.Equal("Could not find $.variant['prop_floats']['/'] in ../../../testdata/atlas.json.",
                 err.InnerException.Message);
         }
 

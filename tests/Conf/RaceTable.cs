@@ -70,13 +70,13 @@ namespace Conf
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
-    internal class RaceCfgIdJsonConverter : ValueWrapperJsonConverter<RaceCfgId, string>
+    class RaceCfgIdJsonConverter : ValueWrapperJsonConverter<RaceCfgId, string>
     {
         protected override RaceCfgId Create(string value) => value;
         protected override string GetValue(RaceCfgId obj) => obj.Value;
     }
 
-    internal class RaceCfgIdTypeConverter : ValueWrapperTypeConverter<RaceCfgId, string>
+    class RaceCfgIdTypeConverter : ValueWrapperTypeConverter<RaceCfgId, string>
     {
         protected override RaceCfgId Create(string value) => value;
     }

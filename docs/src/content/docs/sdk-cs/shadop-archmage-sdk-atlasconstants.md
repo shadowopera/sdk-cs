@@ -14,34 +14,34 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ## Fields
 
-### **SingleMappingDefaultKey**
+### **VariantMappingDefaultKey**
 
-Key for the default file in a MappingSingle group.
+Key for the default file in a MappingVariant group.
 
 ```csharp
-public static string SingleMappingDefaultKey;
+public static string VariantMappingDefaultKey;
 ```
 
 ### **MappingUnique**
 
-Indicates one-to-one mapping between key and file.
+Indicates a one-to-one mapping between a key and a file.
 
 ```csharp
 public static string MappingUnique;
 ```
 
-### **MappingSingle**
+### **MappingVariant**
 
-Indicates that a key maps to a single file from a set of files.
+Indicates that a key maps to multiple file variants, only one of which is loaded.
 
 ```csharp
-public static string MappingSingle;
+public static string MappingVariant;
 ```
 
-### **MappingMultiple**
+### **MappingMany**
 
-Indicates that a key maps to multiple files loaded and merged as one.
+Indicates that a key maps to multiple files loaded separately and merged into one.
 
 ```csharp
-public static string MappingMultiple;
+public static string MappingMany;
 ```

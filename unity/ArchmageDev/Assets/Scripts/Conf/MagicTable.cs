@@ -67,13 +67,13 @@ namespace Conf
         public readonly bool IsZero => Value == 0;
     }
 
-    internal class MagicCfgIdJsonConverter : ValueWrapperJsonConverter<MagicCfgId, long>
+    class MagicCfgIdJsonConverter : ValueWrapperJsonConverter<MagicCfgId, long>
     {
         protected override MagicCfgId Create(long value) => value;
         protected override long GetValue(MagicCfgId obj) => obj.Value;
     }
 
-    internal class MagicCfgIdTypeConverter : ValueWrapperTypeConverter<MagicCfgId, long>
+    class MagicCfgIdTypeConverter : ValueWrapperTypeConverter<MagicCfgId, long>
     {
         protected override MagicCfgId Create(long value) => value;
     }
