@@ -9,7 +9,7 @@ namespace Shadop.Archmage.Sdk
     /// Represents the structure of an Atlas index JSON file (atlas.json).
     /// </summary>
     /// <remarks>
-    /// atlas.json contains VCS metadata and three mapping strategies that define how configuration item keys map to JSON files.
+    /// `atlas.json` contains VCS metadata (optional) and three file mapping sections: `unique`, `variant`, and `many`.
     /// </remarks>
     public class AtlasJson
     {

@@ -14,7 +14,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 **Remarks:**
 
-atlas.json contains VCS metadata and three mapping strategies that define how configuration item keys map to JSON files.
+`atlas.json` contains VCS metadata (optional) and three file mapping sections: `unique`, `variant`, and `many`.
 
 ## Properties
 
