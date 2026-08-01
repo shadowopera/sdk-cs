@@ -49,7 +49,9 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.NotNull(atlas.Matrix2Table["key1"]!["key2"][0][0].Ref);
             Assert.Equal(16, atlas.VtItemXTable.Count);
 
-            Assert.Null(atlas.DataVersion);
+            Assert.NotNull(atlas.DataVersion);
+            Assert.Equal("v1.0.0", atlas.DataVersion!.Semver);
+            Assert.Null(atlas.DataVersion.Branch);
             Assert.NotNull(ConfigAtlas.CodeVersion);
             Assert.Equal("7f3a2b9", ConfigAtlas.CodeVersion.ShortID);
         }

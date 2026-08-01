@@ -4,7 +4,7 @@ title: 'VersionInfo'
 
 Namespace: Shadop.Archmage.Sdk
 
-Represents VCS version metadata.
+Represents the version metadata for a build.
 
 ```csharp
 public class VersionInfo
@@ -13,6 +13,18 @@ public class VersionInfo
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [VersionInfo](../shadop-archmage-sdk-versioninfo/)<br>
 
 ## Properties
+
+### **Semver**
+
+The semantic version supplied via the --semver CLI flag.
+
+```csharp
+public string Semver { get; set; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 ### **Workspace**
 

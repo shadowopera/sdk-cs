@@ -7,10 +7,14 @@ using Newtonsoft.Json;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Represents VCS version metadata.
+    /// Represents the version metadata for a build.
     /// </summary>
     public class VersionInfo
     {
+        /// <summary>The semantic version supplied via the --semver CLI flag.</summary>
+        [JsonProperty("semver")]
+        public string? Semver { get; set; }
+
         /// <summary>The workspace name.</summary>
         [JsonProperty("workspace")]
         public string? Workspace { get; set; }

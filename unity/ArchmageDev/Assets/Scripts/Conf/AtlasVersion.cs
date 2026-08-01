@@ -17,6 +17,7 @@ namespace Conf
             get {
 				var str = @"
 {
+    ""semver"": ""v1.0.0"",
     ""workspace"": """",
     ""tags"": [],
     ""branch"": ""main"",
