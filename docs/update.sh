@@ -43,14 +43,15 @@ if ! rsync -av archmage.jpg docs/src/assets/archmage/archmage.jpg; then
     exit 1
 fi
 
-rm -rf docs/src/content/docs/guides-cs/
-mkdir -p docs/src/content/docs/guides-cs/
+rm -rf docs/src/content/docs/overview-cs/
+mkdir -p docs/src/content/docs/overview-cs/
 
 # Process README.md for Starlight
 {
     echo "---"
-    echo "title: 'Overview'"
+    echo "title: 'C# SDK Overview'"
     echo "sidebar:"
+    echo "  label: Overview"
     echo "  order: 1"
     echo "---"
     echo ""
@@ -58,10 +59,10 @@ mkdir -p docs/src/content/docs/guides-cs/
         perl -0777 -pe 's/^# Archmage\n\n//m' | \
         perl -pe 's|\./archmage\.jpg|../../../assets/archmage/archmage.jpg|g' | \
         perl -0777 -pe 's/^> \[!NOTE\]\n((?:> [^\n]*\n?)+)/my $b=$1; $b=~s{^> }{}gm; ":::note\n${b}:::\n"/gme'
-} > docs/src/content/docs/guides-cs/README.md
+} > docs/src/content/docs/overview-cs/README.md
 
 # Process CHANGELOG.md for Starlight
-if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/guides-cs/CHANGELOG.md; then
+if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/overview-cs/CHANGELOG.md; then
     printError "starlight-changelog.sh failed"
     exit 1
 fi
@@ -103,9 +104,9 @@ if ! rsync -av --delete docs/src/assets/archmage/ ../docs/archmage/src/assets/ar
     exit 1
 fi
 
-printMessage "Syncing guides-cs ..."
-if ! rsync -av --delete docs/src/content/docs/guides-cs/ ../docs/archmage/src/content/docs/guides-cs/; then
-    printError "rsync guides-cs failed"
+printMessage "Syncing overview-cs ..."
+if ! rsync -av --delete docs/src/content/docs/overview-cs/ ../docs/archmage/src/content/docs/overview-cs/; then
+    printError "rsync overview-cs failed"
     exit 1
 fi
 

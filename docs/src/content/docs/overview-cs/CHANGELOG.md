@@ -1,6 +1,7 @@
 ---
-title: 'Changelog'
+title: 'C# SDK Changelog'
 sidebar:
+  label: Changelog
   order: 99
 ---
 
@@ -148,7 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `IZero` interface and `ValueWrapperJsonConverter` / `ValueWrapperTypeConverter` for better primitive wrapper support.
 - Added `IFS` support and `MergeL10nFileAsync` variant to `MergeL10nFile` in `I18n`.
-- New documentation site built with Astro and Starlight, including comprehensive API docs and C# guides.
+- New documentation site built with Astro and Starlight.
 
 ### Changed
 

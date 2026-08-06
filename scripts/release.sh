@@ -108,13 +108,13 @@ while true; do
             fi
 
             printMessage "Creating Starlight version of CHANGELOG.md..."
-            if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/guides-cs/CHANGELOG.md; then
+            if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/overview-cs/CHANGELOG.md; then
                 printError "Failed to create Starlight CHANGELOG.md."
                 exit 1
             fi
 
             printMessage "Staging CHANGELOG.md files..."
-            if ! git add CHANGELOG.md unity/dev.shadop.archmage/CHANGELOG.md docs/src/content/docs/guides-cs/CHANGELOG.md; then
+            if ! git add CHANGELOG.md unity/dev.shadop.archmage/CHANGELOG.md docs/src/content/docs/overview-cs/CHANGELOG.md; then
                 printError "Failed to stage CHANGELOG.md files."
                 exit 1
             fi

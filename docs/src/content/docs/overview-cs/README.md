@@ -1,6 +1,7 @@
 ---
-title: 'Overview'
+title: 'C# SDK Overview'
 sidebar:
+  label: Overview
   order: 1
 ---
 

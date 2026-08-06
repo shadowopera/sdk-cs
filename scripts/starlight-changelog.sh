@@ -6,8 +6,9 @@ OUTPUT="$2"
 
 {
     echo "---"
-    echo "title: 'Changelog'"
+    echo "title: 'C# SDK Changelog'"
     echo "sidebar:"
+    echo "  label: Changelog"
     echo "  order: 99"
     echo "---"
     echo ""

@@ -12,12 +12,8 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'C# Guides',
-          autogenerate: { directory: 'guides-cs' },
-        },
-        {
-          label: 'C# Auto-Generated',
-          autogenerate: { directory: 'gen-cs' },
+          label: 'C# SDK Overview',
+          autogenerate: { directory: 'overview-cs' },
         },
         {
           label: 'C# SDK',
@@ -30,6 +26,10 @@ export default defineConfig({
         {
           label: 'C# SDK (Unity Editor)',
           autogenerate: { directory: 'sdk-cs-unity-editor' },
+        },
+        {
+          label: 'C# Auto-Generated',
+          autogenerate: { directory: 'gen-cs' },
         },
       ],
     }),
