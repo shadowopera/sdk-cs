@@ -39,6 +39,7 @@ namespace Conf
         public RefTable RefTable { get; set; }
         public StringTable StringTable { get; set; }
         public VtItemXTable VtItemXTable { get; set; }
+        public VtQuestTable VtQuestTable { get; set; }
         public VtSkillTable VtSkillTable { get; set; }
         public WeaponRuneTable WeaponRuneTable { get; set; }
 
@@ -59,6 +60,7 @@ namespace Conf
             RefTable = new RefTable();
             StringTable = new StringTable();
             VtItemXTable = new VtItemXTable();
+            VtQuestTable = new VtQuestTable();
             VtSkillTable = new VtSkillTable();
             WeaponRuneTable = new WeaponRuneTable();
             BuildMap();
@@ -79,6 +81,7 @@ namespace Conf
                 { "ref", new AtlasItem { Cfg = RefTable, Mapping = "unique" } },
                 { "string", new AtlasItem { Cfg = StringTable, Mapping = "unique" } },
                 { "vtItemX", new AtlasItem { Cfg = VtItemXTable, Mapping = "many" } },
+                { "vtQuest", new AtlasItem { Cfg = VtQuestTable, Mapping = "many" } },
                 { "vtSkill", new AtlasItem { Cfg = VtSkillTable, Mapping = "many" } },
                 { "weapon-rune", new AtlasItem { Cfg = WeaponRuneTable, Mapping = "unique" } },
             };

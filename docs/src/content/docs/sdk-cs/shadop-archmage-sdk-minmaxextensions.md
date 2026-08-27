@@ -175,3 +175,19 @@ public static double Sample(MinMax<double> mm, Random rng)
 #### Returns
 
 [Double](https://docs.microsoft.com/en-us/dotnet/api/system.double)<br>
+
+### **Sample(MinMax<Duration>, Random)**
+
+```csharp
+public static Duration Sample(MinMax<Duration> mm, Random rng)
+```
+
+#### Parameters
+
+`mm` [MinMax<Duration>](../shadop-archmage-sdk-minmax-1/)<br>
+
+`rng` [Random](https://docs.microsoft.com/en-us/dotnet/api/system.random)<br>
+
+#### Returns
+
+[Duration](../shadop-archmage-sdk-duration/)<br>

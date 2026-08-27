@@ -277,7 +277,7 @@ color.ToString();                    // "#FF8000"
 
 ### MinMax
 
-`MinMax<T>` is a numeric range bounded by `Min` and `Max`. The `Sample` extension methods draw a random value from the range.
+`MinMax<T>` is a range bounded by `Min` and `Max`. The `Sample` extension methods draw a random value from the range. `T` may be any built-in numeric type, or `Duration`.
 
 ### WeightedPool
 

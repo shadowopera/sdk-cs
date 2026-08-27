@@ -70,6 +70,13 @@ namespace Shadop.Archmage.Sdk
         {
             return mm.Min + (double)Random.value * (mm.Max - mm.Min);
         }
+
+        public static Duration Sample(this MinMax<Duration> mm)
+        {
+            long min = mm.Min.Milliseconds();
+            long max = mm.Max.Milliseconds();
+            return new Duration((min + Random.Range(0, (int)(max - min + 1))) * 1_000_000);
+        }
     }
 }
 

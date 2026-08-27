@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -123,6 +124,65 @@ namespace Shadop.Archmage.Sdk.Tests
 
             Assert.True(hitMin, "Min was never sampled");
             Assert.True(hitMax, "Max was never sampled");
+        }
+
+        [Fact]
+        public void TestDurationSampleInBounds()
+        {
+            var rng = new Random(42);
+            var ms = Duration.Millisecond;
+            var ranges = new[]
+            {
+                new MinMax<Duration>(Duration.Zero, Duration.Zero),
+                new MinMax<Duration>(ms * 5, ms * 5),
+                new MinMax<Duration>(ms, ms * 2),
+                new MinMax<Duration>(ms * -10, ms * 10),
+                new MinMax<Duration>(Duration.Second * 3, Duration.Minute * 2),
+                new MinMax<Duration>(Duration.Zero, ms * 1_000_000_000),
+            };
+
+            foreach (var mm in ranges)
+            {
+                for (int i = 0; i < 10000; i++)
+                {
+                    var v = mm.Sample(rng);
+                    Assert.True(v >= mm.Min && v <= mm.Max, $"{v} not in [{mm.Min}, {mm.Max}]");
+                    Assert.True(v.Nanoseconds() % 1_000_000 == 0, $"{v} is not a whole number of milliseconds");
+                }
+            }
+        }
+
+        [Fact]
+        public void TestDurationEndpointsReachable()
+        {
+            var rng = new Random(42);
+            var ms = Duration.Millisecond;
+            var mm = new MinMax<Duration>(ms, ms * 3);
+            var seen = new HashSet<Duration>();
+
+            for (int i = 0; i < 10000; i++)
+            {
+                seen.Add(mm.Sample(rng));
+            }
+
+            Assert.Equal(3, seen.Count);
+            Assert.Contains(ms, seen);
+            Assert.Contains(ms * 2, seen);
+            Assert.Contains(ms * 3, seen);
+        }
+
+        [Fact]
+        public void TestDurationJsonRoundTrip()
+        {
+            var a = new MinMax<Duration>(Duration.Second * 3, Duration.Minute * 2);
+            var json = JsonConvert.SerializeObject(a);
+            Assert.Equal("{\"min\":[0,3],\"max\":[0,120]}", json);
+            Assert.Equal(a, JsonConvert.DeserializeObject<MinMax<Duration>>(json));
+
+            var b = new MinMax<Duration>(Duration.Zero, Duration.Millisecond * 1500);
+            var json2 = JsonConvert.SerializeObject(b);
+            Assert.Equal("{\"min\":null,\"max\":[1,1500]}", json2);
+            Assert.Equal(b, JsonConvert.DeserializeObject<MinMax<Duration>>(json2));
         }
 
         [Fact]

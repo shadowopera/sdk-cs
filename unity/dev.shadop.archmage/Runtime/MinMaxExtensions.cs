@@ -77,5 +77,12 @@ namespace Shadop.Archmage.Sdk
             double r = rng.Next(_closedUnitOutcomes) * _inverseDoubleSignificand;
             return mm.Min + r * (mm.Max - mm.Min);
         }
+
+        public static Duration Sample(this MinMax<Duration> mm, Random rng)
+        {
+            long min = mm.Min.Milliseconds();
+            long max = mm.Max.Milliseconds();
+            return new Duration((min + rng.Next(0, (int)(max - min + 1))) * 1_000_000);
+        }
     }
 }
