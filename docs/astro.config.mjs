@@ -13,23 +13,23 @@ export default defineConfig({
       sidebar: [
         {
           label: 'C# SDK Overview',
-          autogenerate: { directory: 'overview-cs' },
+          items: [{ autogenerate: { directory: 'overview-cs' } }],
         },
         {
           label: 'C# SDK',
-          autogenerate: { directory: 'sdk-cs' },
+          items: [{ autogenerate: { directory: 'sdk-cs' } }],
         },
         {
           label: 'C# SDK (Unity)',
-          autogenerate: { directory: 'sdk-cs-unity' },
+          items: [{ autogenerate: { directory: 'sdk-cs-unity' } }],
         },
         {
           label: 'C# SDK (Unity Editor)',
-          autogenerate: { directory: 'sdk-cs-unity-editor' },
+          items: [{ autogenerate: { directory: 'sdk-cs-unity-editor' } }],
         },
         {
           label: 'C# Auto-Generated',
-          autogenerate: { directory: 'gen-cs' },
+          items: [{ autogenerate: { directory: 'gen-cs' } }],
         },
       ],
     }),
