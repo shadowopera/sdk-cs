@@ -16,7 +16,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ### **Semver**
 
-The semantic version supplied via the --semver CLI flag.
+The semantic version supplied via the `--semver` CLI flag.
 
 ```csharp
 public string Semver { get; set; }
