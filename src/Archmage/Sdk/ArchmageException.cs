@@ -8,7 +8,7 @@ namespace Shadop.Archmage.Sdk
     /// Exception thrown by the Archmage SDK during configuration loading and processing.
     /// </summary>
     /// <remarks>
-    /// All exceptions raised by the SDK use this exception type and automatically include the "&lt;archmage&gt;"
+    /// All exceptions raised by the SDK use this exception type and automatically include the <c>&lt;archmage&gt;</c>
     /// prefix in the message for easy identification.
     /// </remarks>
     public class ArchmageException : Exception

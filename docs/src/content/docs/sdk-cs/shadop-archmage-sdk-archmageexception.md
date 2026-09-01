@@ -15,7 +15,7 @@ Implements [ISerializable](https://docs.microsoft.com/en-us/dotnet/api/system.ru
 
 **Remarks:**
 
-All exceptions raised by the SDK use this exception type and automatically include the "<archmage>"
+All exceptions raised by the SDK use this exception type and automatically include the `<archmage>`
  prefix in the message for easy identification.
 
 ## Properties
