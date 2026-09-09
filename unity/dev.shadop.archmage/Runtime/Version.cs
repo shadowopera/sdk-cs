@@ -11,7 +11,7 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     public class VersionInfo
     {
-        /// <summary>The semantic version supplied via the --semver CLI flag.</summary>
+        /// <summary>The semantic version supplied via the <c>--semver</c> CLI flag.</summary>
         [JsonProperty("semver")]
         public string? Semver { get; set; }
 
