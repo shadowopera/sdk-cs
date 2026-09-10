@@ -59,7 +59,7 @@ mkdir -p docs/src/content/docs/overview-cs/
         perl -0777 -pe 's/^# Archmage\n\n//m' | \
         perl -pe 's|\./archmage\.jpg|../../../assets/archmage/archmage.jpg|g' | \
         perl -0777 -pe 's/^> \[!NOTE\]\n((?:> [^\n]*\n?)+)/my $b=$1; $b=~s{^> }{}gm; ":::note\n${b}:::\n"/gme'
-} > docs/src/content/docs/overview-cs/README.md
+} > docs/src/content/docs/overview-cs/sdk-cs.mdx
 
 # Process CHANGELOG.md for Starlight
 if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/overview-cs/CHANGELOG.md; then
