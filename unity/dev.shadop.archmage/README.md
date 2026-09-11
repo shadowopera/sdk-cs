@@ -21,9 +21,9 @@ generated C# types, resolves cross-table references, and calls post-load hooks.
 - **Duration** — nanosecond precision; formats as human-readable strings such as `1s200ms`
 - **MinMax** — random value selection within a range
 - **WeightedPool** — weighted random selection with probability proportional to item weight
-- **Variants** — switch an item among alternative data sets at load time via `WithVariant`
+- **Variants** — switch an item to an alternative data set at load time via `WithVariant`
 - **Whitelist/Blacklist** — load only a subset of items
-- **Layered overrides** — additional override sources (a directory path or a custom file system) whose matched files are merged into the base configs, field by field, at load time
+- **Layered overrides** — merge files with matching relative paths from additional override sources (a directory path or a custom file system) into the base configs, field by field, at load time
 - **Synchronous and asynchronous loading** — progress reporting, cancellation, and pluggable strategies for parallel loading
 - **Pluggable file system** — load from embedded resources, in-memory data, or any other source via `IFS`
 - **Versioning** — VCS metadata (branch, commit, timestamp, etc.), when present in `atlas.json`, is available on the loaded atlas
