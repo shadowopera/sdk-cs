@@ -26,7 +26,7 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Sets custom filesystem (in-memory, embedded, virtual, etc. — does not affect override sources).
+        /// Sets custom filesystem (in-memory, embedded, virtual, etc.).
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown if fs is null.</exception>
         public static AtlasOptions WithFS(this AtlasOptions opts, IFS fs)

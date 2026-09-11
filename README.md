@@ -1,26 +1,35 @@
 ![Archmage](./archmage.jpg)
 
-# Archmage
+# C# SDK Overview
 
-This is the runtime library for the [Archmage](https://archmage.shadop.dev/) game
-configuration system, which loads and manages configurations from JSON files with
-support for i18n, cross-table references, durations, and data types ranging from
-primitives to recursive structures.
+The C# SDK is the runtime library that C# applications use to load and
+access config data exported by Archmage.
 
-It is built around the concept of an **Atlas** — a registry that maps named keys
-to configurations. Each key points to one or more JSON files; **Archmage** reads
-and deserializes them into generated C# objects, resolves cross-table references,
-and calls post-load hooks.
+[Archmage](https://shadop.dev/archmage/) is a configuration solution for
+game development: specifications for how to structure config data, define
+fields, and fill in each value; pipelines that export runtime data and
+generate strongly typed code; multi-language SDKs for loading and accessing
+that data at runtime; and a collaborative editing workflow for teams.
 
-**Key features**:
+The SDK is built around the concept of an **Atlas** — a registry that maps named
+keys to configurations. Each key is associated with one or more JSON files.
+At runtime, the SDK reads these files, deserializes them into instances of
+generated C# types, resolves cross-table references, and calls post-load hooks.
 
-- **I18n** for multi-language text management with automatic fallback
-- **XRef** for cross-table reference resolution via `IAtlas.BindRefs`
-- **Duration** with nanosecond precision and compact JSON array encoding
-- **Whitelist / blacklist** to load only a subset of items
-- **Layered overrides**: additional directories or filesystems supply JSON that
-  is merged into the base data at load time, field by field
-- **Unity support**: built-in adapters for Addressables, Resources, and StreamingAssets; Inspector dropdowns for config ID fields, sourced from the loaded atlas, for easy selection
+**Key features**
+
+- **I18n** — multi-language text management with automatic fallback
+- **XRef** — cross-table reference resolution via `IAtlas.BindRefs`
+- **Duration** — nanosecond precision; formats as human-readable strings such as `1s200ms`
+- **MinMax** — random value selection within a range
+- **WeightedPool** — weighted random selection with probability proportional to item weight
+- **Variants** — switch an item among alternative data sets at load time via `WithVariant`
+- **Whitelist/Blacklist** — load only a subset of items
+- **Layered overrides** — additional override sources (a directory path or a custom file system) whose matched files are merged into the base configs, field by field, at load time
+- **Synchronous and asynchronous loading** — progress reporting, cancellation, and pluggable strategies for parallel loading
+- **Pluggable file system** — load from embedded resources, in-memory data, or any other source via `IFS`
+- **Versioning** — VCS metadata (branch, commit, timestamp, etc.), when present in `atlas.json`, is available on the loaded atlas
+- **Unity support** — built-in adapters for Addressables, Resources, and `StreamingAssets`; Inspector dropdowns for config ID fields, populated from the loaded atlas, for easy selection
 
 ## Requirements
 
@@ -51,7 +60,7 @@ openupm add dev.shadop.archmage
 ```
 
 > [!NOTE]
-> **Unity Signature Warning**: Unity may display a "Missing Signature" warning. This is expected for OpenUPM packages. Archmage is safe to use - the warning does not affect functionality. Simply proceed with your development as usual.
+> **Unity Signature Warning**: Unity may display a "Missing Signature" warning. This is expected for OpenUPM packages. Archmage is safe to use — the warning does not affect functionality. Simply proceed with your development as usual.
 
 If your project uses `.asmdef` files, add the following assembly references:
 
@@ -141,9 +150,9 @@ Configure loading via the fluent `AtlasOptions` builder:
 
 ```csharp
 var opts = new AtlasOptions()
-    // custom logger (default: console)
+    // custom logger (default: stderr; silent in Unity)
     .WithLogger(myLogger)
-    // custom filesystem for reading base config files (default: System.IO)
+    // replace the default filesystem (System.IO)
     .WithFS(myFS)
     // load only these keys
     .WithWhitelist(new[] { "hero", "item" })
@@ -161,7 +170,7 @@ var opts = new AtlasOptions()
     .WithJsonSettings(customSettings);
 ```
 
-**Whitelist / Blacklist** — If a whitelist is set, only listed keys are loaded (blacklist
+**Whitelist / Blacklist** — If a non-empty whitelist is set, only listed keys are loaded (blacklist
 is ignored). All keys must exist in the atlas or an exception is thrown.
 
 **Variant selection** — A variant-mapped key loads its `"/"` variant unless `WithVariant`
@@ -176,7 +185,7 @@ Field-level merge rules during override processing:
 
 | Value in override | Behavior |
 |---|---|
-| `null` | Resets the target field to its default value or raise an exception |
+| `null` | Resets the target field to its default value or raises an exception |
 | JSON object | Recursively merges — only fields present in the override are updated, others remain unchanged |
 | Any other value | Overwrites the field |
 
@@ -279,7 +288,7 @@ color.ToString();                    // "#FF8000"
 
 ### MinMax
 
-`MinMax<T>` is a range bounded by `Min` and `Max`. The `Sample` extension methods draw a random value from the range. `T` may be any built-in numeric type, or `Duration`.
+`MinMax<T>` is a range bounded by `Min` and `Max`. The `Sample` extension methods draw a random value from the range. `T` may be any integer type, `float`, `double`, or `Duration`.
 
 ### WeightedPool
 
@@ -327,15 +336,22 @@ ver?.ShortID  // "a1b2c3d"
 
 ```
 sdk-cs/
-├── src/Archmage/Sdk/               # C# source (canonical)
-│   └── Unity/                      # Unity-specific adapters (FS, Logger)
+├── src/Archmage/
+│   ├── Sdk/                        # C# runtime source (canonical)
+│   │   └── Unity/                  # Unity adapters (FS, logger, JSON settings, type extensions)
+│   │       └── Addressables/       # Addressables FS adapter
+│   └── Editor/Unity/               # Inspector dropdowns for config ID fields
 ├── unity/
 │   ├── ArchmageDev/                # Unity demo & development project
 │   └── dev.shadop.archmage/        # Unity package (OpenUPM)
-│       └── Runtime/                # Synced from src/Archmage/
-├── scripts/
-│   └── rsync-unity.sh              # src/ → unity/.../Runtime/ sync
-└── tests/                          # xunit.v3 tests + generated Conf/ fixtures
+├── tests/                          # xunit.v3 tests
+│   ├── Conf/                       # Generated config code
+│   ├── testdata/                   # atlas.json and config JSON
+│   ├── override/                   # Override-layer JSON
+│   └── golden/                     # Expected DumpAtlas output
+├── scripts/                        # Unity sync, version bump, release
+│   └── rsync-unity.sh              # src/ → unity/dev.shadop.archmage/ sync
+└── docs/                           # Documentation site (Starlight)
 ```
 
 ### Build & Test

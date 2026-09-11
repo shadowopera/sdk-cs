@@ -43,7 +43,7 @@ Thrown if logger is null.
 
 ### **WithFS(AtlasOptions, IFS)**
 
-Sets custom filesystem (in-memory, embedded, virtual, etc. — does not affect override sources).
+Sets custom filesystem (in-memory, embedded, virtual, etc.).
 
 ```csharp
 public static AtlasOptions WithFS(AtlasOptions opts, IFS fs)
