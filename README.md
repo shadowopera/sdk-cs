@@ -1,4 +1,4 @@
-![Archmage](./archmage.jpg)
+![Archmage](./images/archmage.jpg)
 
 # C# SDK Overview
 

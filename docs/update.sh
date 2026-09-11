@@ -38,8 +38,8 @@ cd ..
 # Sync image and prepare guide docs
 printMessage "Syncing assets and preparing guide docs ..."
 mkdir -p docs/src/assets/archmage/
-if ! rsync -av archmage.jpg docs/src/assets/archmage/archmage.jpg; then
-    printError "rsync archmage.jpg failed"
+if ! rsync -av images/archmage.jpg docs/src/assets/archmage/archmage.jpg; then
+    printError "rsync images/archmage.jpg failed"
     exit 1
 fi
 
@@ -57,7 +57,7 @@ mkdir -p docs/src/content/docs/overview-cs/
     echo ""
     perl -0777 -pe 's/\n---\s+## Development.*//s' README.md | \
         perl -0777 -pe 's/^# Archmage\n\n//m' | \
-        perl -pe 's|\./archmage\.jpg|../../../assets/archmage/archmage.jpg|g' | \
+        perl -pe 's|\./images/archmage\.jpg|../../../assets/archmage/archmage.jpg|g' | \
         perl -0777 -pe 's/^> \[!NOTE\]\n((?:> [^\n]*\n?)+)/my $b=$1; $b=~s{^> }{}gm; ":::note\n${b}:::\n"/gme'
 } > docs/src/content/docs/overview-cs/sdk-cs.mdx
 
