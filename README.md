@@ -328,6 +328,11 @@ ver?.Branch   // "main"
 ver?.ShortID  // "a1b2c3d"
 ```
 
+## See Also
+
+- **Documentation**: https://docs.shadop.dev/archmage/overview-cs/sdk-cs/
+- **Source Code**: https://github.com/shadowopera/sdk-cs
+
 ---
 
 ## Development
