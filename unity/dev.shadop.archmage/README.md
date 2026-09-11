@@ -1,6 +1,6 @@
 # C# SDK Overview
 
-The C# SDK is the runtime library that C# applications use to load and
+The C# SDK is the runtime library through which C# applications load and
 access config data exported by Archmage.
 
 [Archmage](https://shadop.dev/archmage/) is a configuration solution for
