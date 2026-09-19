@@ -18,18 +18,22 @@ export default defineConfig({
         {
           label: 'C# SDK',
           items: [{ autogenerate: { directory: 'sdk-cs' } }],
+          collapsed: true,
         },
         {
           label: 'C# SDK (Unity)',
           items: [{ autogenerate: { directory: 'sdk-cs-unity' } }],
+          collapsed: true,
         },
         {
           label: 'C# SDK (Unity Editor)',
           items: [{ autogenerate: { directory: 'sdk-cs-unity-editor' } }],
+          collapsed: true,
         },
         {
-          label: 'C# Auto-Generated',
+          label: 'C# Generated Code',
           items: [{ autogenerate: { directory: 'gen-cs' } }],
+          collapsed: true,
         },
       ],
     }),
