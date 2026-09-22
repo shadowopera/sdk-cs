@@ -21,7 +21,7 @@ type Release struct {
 	} `json:"steps"`
 }
 
-var semverRe = regexp.MustCompile(`^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$`)
+var _semverRe = regexp.MustCompile(`^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$`)
 
 const releaseFile = "release.json"
 
@@ -45,7 +45,7 @@ func main() {
 		runMark(os.Args[2])
 	case len(os.Args) == 2:
 		version := strings.TrimPrefix(strings.TrimPrefix(os.Args[1], "v"), "V")
-		if !semverRe.MatchString(version) {
+		if !_semverRe.MatchString(version) {
 			panic("unknown command or invalid semver: " + os.Args[1])
 		}
 		runNext(version)
@@ -82,7 +82,7 @@ func runNext(version string) {
 
 	rel := loadRelease()
 
-	if !semverRe.MatchString(rel.Version) {
+	if !_semverRe.MatchString(rel.Version) {
 		panic("invalid semver format in release.json: " + rel.Version)
 	}
 
@@ -129,7 +129,7 @@ func saveRelease(rel *Release) {
 func setStep(rel *Release, name string, value int) bool {
 	v := reflect.ValueOf(&rel.Steps).Elem()
 	t := v.Type()
-	for i := 0; i < t.NumField(); i++ {
+	for i := range t.NumField() {
 		if t.Field(i).Tag.Get("json") == name {
 			v.Field(i).SetInt(int64(value))
 			return true
