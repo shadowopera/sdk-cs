@@ -2,7 +2,7 @@
 title: 'C# SDK Changelog'
 sidebar:
   label: Changelog
-  order: 99
+  order: 100
 ---
 
 All notable changes to this project will be documented in this file.
@@ -126,7 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Unity: Removed `Samples~` directory; integration adapters are now first-class Runtime assemblies.
-- Config tables now include `Id` in JSON serialization output.
+- Config tables now include `id` in JSON serialization output.
 
 ## [0.5.0] - 2026-03-22
 
