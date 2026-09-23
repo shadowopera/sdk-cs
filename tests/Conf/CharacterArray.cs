@@ -20,7 +20,7 @@ namespace Conf
         /// <summary>name config</summary>
         [JsonProperty("name")] public L10n Name { get; set; }
         /// <summary>race config</summary>
-        [JsonProperty("race")] public XRef<RaceCfgId, RaceCfg> Race { get; set; }
+        [JsonProperty("race")] public XRef<RaceCfgId, RaceCfg> Race { get; set; } = new(string.Empty, null);
         [JsonProperty("root")] public Vec3<long> Root { get; set; }
         /// <summary>health config</summary>
         [JsonProperty("health")] public long Health { get; set; }
@@ -29,7 +29,7 @@ namespace Conf
         [JsonProperty("skills")] public List<string>? Skills { get; set; }
         /// <summary>my runes</summary>
         [JsonProperty("runes")] public List<XRef<WeaponRuneCfgId, WeaponRuneCfg>>? Runes { get; set; }
-        [JsonProperty("ultimateSkill")] public string UltimateSkill { get; set; } = string.Empty;
+        [JsonProperty("ultimateSkill")] public XRef<VtSkillCfgId, VtSkillCfg> UltimateSkill { get; set; } = new(string.Empty, null);
         [JsonProperty("ref-crude")] public Character_RefCrude? RefCrude { get; set; }
         [JsonProperty("hero")] public XRef<HeroCfgId, HeroCfg> Hero { get; set; }
     }
@@ -66,6 +66,7 @@ namespace Conf
                     Runes[i1] = atlas.WeaponRuneTable.RefLookup(Runes[i1].CfgId);
                 }
             }
+            UltimateSkill = atlas.VtSkillTable.RefLookup(UltimateSkill.CfgId);
             Hero = atlas.HeroTable.RefLookup(Hero.CfgId);
         }
     }

@@ -25,11 +25,11 @@ namespace Conf
     {
         [JsonProperty("id")] public VtQuestCfgId Id { get; set; }
         [JsonProperty("name")] public string Name { get; set; } = string.Empty;
-        [JsonProperty("chosenBy")] public List<long>? ChosenBy { get; set; }
-        [JsonProperty("nextQuest")] public long NextQuest { get; set; }
+        [JsonProperty("chosenBy")] public List<XRef<VtQuestCfgId, VtQuestCfg>>? ChosenBy { get; set; }
+        [JsonProperty("nextQuest")] public XRef<VtQuestCfgId, VtQuestCfg> NextQuest { get; set; }
         [JsonProperty("desc")] public L10n Desc { get; set; }
         [JsonProperty("origin")] public string Origin { get; set; } = string.Empty;
-        [JsonProperty("unlockedBy")] public long UnlockedBy { get; set; }
+        [JsonProperty("unlockedBy")] public XRef<VtQuestCfgId, VtQuestCfg> UnlockedBy { get; set; }
         [JsonProperty("refreshInterval")] public MinMax<Duration> RefreshInterval { get; set; }
     }
 
@@ -92,6 +92,33 @@ namespace Conf
             {
                 if (val is not null) val.Id = key;
             }
+        }
+    }
+
+    public partial class VtQuestTable : IRefBinder
+    {
+        void IRefBinder.BindRefs(ConfigAtlas atlas)
+        {
+            foreach (var v1 in this.Values)
+            {
+                v1?.BindRefs(atlas);
+            }
+        }
+    }
+
+    public partial class VtQuestCfg
+    {
+        internal void BindRefs(ConfigAtlas atlas)
+        {
+            if (ChosenBy is not null)
+            {
+                for (var i = 0; i < ChosenBy.Count; i++)
+                {
+                    ChosenBy[i] = atlas.VtQuestTable.RefLookup(ChosenBy[i].CfgId);
+                }
+            }
+            NextQuest = atlas.VtQuestTable.RefLookup(NextQuest.CfgId);
+            UnlockedBy = atlas.VtQuestTable.RefLookup(UnlockedBy.CfgId);
         }
     }
 

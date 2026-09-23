@@ -27,10 +27,10 @@ namespace Conf
         [JsonProperty("name")] public string Name { get; set; } = string.Empty;
         [JsonProperty("price")] public long Price { get; set; }
         [JsonProperty("desc")] public string Desc { get; set; } = string.Empty;
-        [JsonProperty("special-skill")] public string SpecialSkill { get; set; } = string.Empty;
+        [JsonProperty("special-skill")] public XRef<VtSkillCfgId, VtSkillCfg> SpecialSkill { get; set; } = new(string.Empty, null);
         [JsonProperty("armor")] public float Armor { get; set; }
         [JsonProperty("dps")] public float Dps { get; set; }
-        [JsonProperty("shield-skills")] public List<string>? ShieldSkills { get; set; }
+        [JsonProperty("shield-skills")] public List<XRef<VtSkillCfgId, VtSkillCfg>>? ShieldSkills { get; set; }
         [JsonProperty("power")] public float Power { get; set; }
         [JsonProperty("attributeBonus")] public List<VtItemX_AttributeBonusEntry>? AttributeBonus { get; set; }
     }
@@ -99,6 +99,32 @@ namespace Conf
             foreach (var (key, val) in this)
             {
                 if (val is not null) val.Id = key;
+            }
+        }
+    }
+
+    public partial class VtItemXTable : IRefBinder
+    {
+        void IRefBinder.BindRefs(ConfigAtlas atlas)
+        {
+            foreach (var v1 in this.Values)
+            {
+                v1?.BindRefs(atlas);
+            }
+        }
+    }
+
+    public partial class VtItemXCfg
+    {
+        internal void BindRefs(ConfigAtlas atlas)
+        {
+            SpecialSkill = atlas.VtSkillTable.RefLookup(SpecialSkill.CfgId);
+            if (ShieldSkills is not null)
+            {
+                for (var i = 0; i < ShieldSkills.Count; i++)
+                {
+                    ShieldSkills[i] = atlas.VtSkillTable.RefLookup(ShieldSkills[i].CfgId);
+                }
             }
         }
     }

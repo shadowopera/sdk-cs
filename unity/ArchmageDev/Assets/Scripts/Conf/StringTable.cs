@@ -34,7 +34,7 @@ namespace Conf
         /// <summary>desc-I</summary>
         [JsonProperty("I")] public string I { get; set; } = string.Empty;
         /// <summary>desc-K</summary>
-        [JsonProperty("K")] public XRef<RaceCfgId, RaceCfg> K { get; set; }
+        [JsonProperty("K")] public XRef<RaceCfgId, RaceCfg> K { get; set; } = new(string.Empty, null);
         /// <summary>desc-referer1</summary>
         [JsonProperty("referer1")] public XRef<RefCfgId, RefCfg> Referer1 { get; set; }
         /// <summary>desc-referer2</summary>
@@ -86,24 +86,24 @@ namespace Conf
     {
         public StringCfgId(string value) { Value = value; }
         public static implicit operator StringCfgId(string value) => new() { Value = value };
-        public static implicit operator string(StringCfgId obj) => obj.Value;
+        public static implicit operator string(StringCfgId obj) => obj.Value ?? string.Empty;
 
         [Unity.Burst.BurstDiscard]
         public override readonly bool Equals(object? obj) => obj is StringCfgId other && Equals(other);
-        public readonly bool Equals(StringCfgId other) => Value == other.Value;
-        public override readonly int GetHashCode() => Value.GetHashCode();
+        public readonly bool Equals(StringCfgId other) => (Value ?? string.Empty) == (other.Value ?? string.Empty);
+        public override readonly int GetHashCode() => (Value ?? string.Empty).GetHashCode();
 
-        public static bool operator ==(StringCfgId left, StringCfgId right) => left.Value == right.Value;
-        public static bool operator !=(StringCfgId left, StringCfgId right) => left.Value != right.Value;
+        public static bool operator ==(StringCfgId left, StringCfgId right) => left.Equals(right);
+        public static bool operator !=(StringCfgId left, StringCfgId right) => !left.Equals(right);
 
-        public override readonly string ToString() => Value;
+        public override readonly string ToString() => Value ?? string.Empty;
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
     class StringCfgIdJsonConverter : ValueWrapperJsonConverter<StringCfgId, string>
     {
         protected override StringCfgId Create(string value) => value;
-        protected override string GetValue(StringCfgId obj) => obj.Value;
+        protected override string GetValue(StringCfgId obj) => obj.Value ?? string.Empty;
     }
 
     class StringCfgIdTypeConverter : ValueWrapperTypeConverter<StringCfgId, string>

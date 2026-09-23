@@ -36,8 +36,8 @@ namespace Conf
     // Hero_RaceComboEntry represents $.*['race-combo'].*
     public partial class Hero_RaceComboEntry
     {
-        [JsonProperty("race1")] public XRef<RaceCfgId, RaceCfg> Race1 { get; set; }
-        [JsonProperty("race2")] public XRef<RaceCfgId, RaceCfg> Race2 { get; set; }
+        [JsonProperty("race1")] public XRef<RaceCfgId, RaceCfg> Race1 { get; set; } = new(string.Empty, null);
+        [JsonProperty("race2")] public XRef<RaceCfgId, RaceCfg> Race2 { get; set; } = new(string.Empty, null);
     }
 
     public partial class HeroTable

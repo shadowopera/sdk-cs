@@ -28,10 +28,10 @@ namespace Conf
         [JsonProperty("class")] public string Class { get; set; } = string.Empty;
         [JsonProperty("Foo")] public Dictionary<long, VtSkill_FooEntry>? Foo { get; set; }
         /// <summary>reagent</summary>
-        [JsonProperty("reagent")] public long Reagent { get; set; }
-        [JsonProperty("cross-skill1")] public string CrossSkill1 { get; set; } = string.Empty;
-        [JsonProperty("weapons")] public List<long>? Weapons { get; set; }
-        [JsonProperty("cross-skill2")] public string CrossSkill2 { get; set; } = string.Empty;
+        [JsonProperty("reagent")] public XRef<VtItemXCfgId, VtItemXCfg> Reagent { get; set; }
+        [JsonProperty("cross-skill1")] public XRef<VtSkillCfgId, VtSkillCfg> CrossSkill1 { get; set; } = new(string.Empty, null);
+        [JsonProperty("weapons")] public List<XRef<VtItemXCfgId, VtItemXCfg>>? Weapons { get; set; }
+        [JsonProperty("cross-skill2")] public XRef<VtSkillCfgId, VtSkillCfg> CrossSkill2 { get; set; } = new(string.Empty, null);
     }
 
     // VtSkill_FooEntry represents $.*.Foo.*
@@ -70,24 +70,24 @@ namespace Conf
     {
         public VtSkillCfgId(string value) { Value = value; }
         public static implicit operator VtSkillCfgId(string value) => new() { Value = value };
-        public static implicit operator string(VtSkillCfgId obj) => obj.Value;
+        public static implicit operator string(VtSkillCfgId obj) => obj.Value ?? string.Empty;
 
         [Unity.Burst.BurstDiscard]
         public override readonly bool Equals(object? obj) => obj is VtSkillCfgId other && Equals(other);
-        public readonly bool Equals(VtSkillCfgId other) => Value == other.Value;
-        public override readonly int GetHashCode() => Value.GetHashCode();
+        public readonly bool Equals(VtSkillCfgId other) => (Value ?? string.Empty) == (other.Value ?? string.Empty);
+        public override readonly int GetHashCode() => (Value ?? string.Empty).GetHashCode();
 
-        public static bool operator ==(VtSkillCfgId left, VtSkillCfgId right) => left.Value == right.Value;
-        public static bool operator !=(VtSkillCfgId left, VtSkillCfgId right) => left.Value != right.Value;
+        public static bool operator ==(VtSkillCfgId left, VtSkillCfgId right) => left.Equals(right);
+        public static bool operator !=(VtSkillCfgId left, VtSkillCfgId right) => !left.Equals(right);
 
-        public override readonly string ToString() => Value;
+        public override readonly string ToString() => Value ?? string.Empty;
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
     class VtSkillCfgIdJsonConverter : ValueWrapperJsonConverter<VtSkillCfgId, string>
     {
         protected override VtSkillCfgId Create(string value) => value;
-        protected override string GetValue(VtSkillCfgId obj) => obj.Value;
+        protected override string GetValue(VtSkillCfgId obj) => obj.Value ?? string.Empty;
     }
 
     class VtSkillCfgIdTypeConverter : ValueWrapperTypeConverter<VtSkillCfgId, string>
@@ -103,6 +103,34 @@ namespace Conf
             {
                 if (val is not null) val.Id = key;
             }
+        }
+    }
+
+    public partial class VtSkillTable : IRefBinder
+    {
+        void IRefBinder.BindRefs(ConfigAtlas atlas)
+        {
+            foreach (var v1 in this.Values)
+            {
+                v1?.BindRefs(atlas);
+            }
+        }
+    }
+
+    public partial class VtSkillCfg
+    {
+        internal void BindRefs(ConfigAtlas atlas)
+        {
+            Reagent = atlas.VtItemXTable.RefLookup(Reagent.CfgId);
+            CrossSkill1 = atlas.VtSkillTable.RefLookup(CrossSkill1.CfgId);
+            if (Weapons is not null)
+            {
+                for (var i1 = 0; i1 < Weapons.Count; i1++)
+                {
+                    Weapons[i1] = atlas.VtItemXTable.RefLookup(Weapons[i1].CfgId);
+                }
+            }
+            CrossSkill2 = atlas.VtSkillTable.RefLookup(CrossSkill2.CfgId);
         }
     }
 

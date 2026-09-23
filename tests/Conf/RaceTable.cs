@@ -26,7 +26,7 @@ namespace Conf
         [JsonProperty("id")] public RaceCfgId Id { get; set; } = string.Empty;
         [JsonProperty("birthplace")] public L10n Birthplace { get; set; }
         [JsonProperty("referrer1")] public XRef<RefCfgId, RefCfg> Referrer1 { get; set; }
-        [JsonProperty("referrer2")] public XRef<StringCfgId, StringCfg> Referrer2 { get; set; }
+        [JsonProperty("referrer2")] public XRef<StringCfgId, StringCfg> Referrer2 { get; set; } = new(string.Empty, null);
         [JsonProperty("heroes1")] public List<XRef<HeroCfgId, HeroCfg>>? Heroes1 { get; set; }
         [JsonProperty("heroes2")] public List<XRef<HeroCfgId, HeroCfg>>? Heroes2 { get; set; }
     }
@@ -57,23 +57,23 @@ namespace Conf
     {
         public RaceCfgId(string value) { Value = value; }
         public static implicit operator RaceCfgId(string value) => new() { Value = value };
-        public static implicit operator string(RaceCfgId obj) => obj.Value;
+        public static implicit operator string(RaceCfgId obj) => obj.Value ?? string.Empty;
 
         public override readonly bool Equals(object? obj) => obj is RaceCfgId other && Equals(other);
-        public readonly bool Equals(RaceCfgId other) => Value == other.Value;
-        public override readonly int GetHashCode() => Value.GetHashCode();
+        public readonly bool Equals(RaceCfgId other) => (Value ?? string.Empty) == (other.Value ?? string.Empty);
+        public override readonly int GetHashCode() => (Value ?? string.Empty).GetHashCode();
 
-        public static bool operator ==(RaceCfgId left, RaceCfgId right) => left.Value == right.Value;
-        public static bool operator !=(RaceCfgId left, RaceCfgId right) => left.Value != right.Value;
+        public static bool operator ==(RaceCfgId left, RaceCfgId right) => left.Equals(right);
+        public static bool operator !=(RaceCfgId left, RaceCfgId right) => !left.Equals(right);
 
-        public override readonly string ToString() => Value;
+        public override readonly string ToString() => Value ?? string.Empty;
         public bool IsZero => string.IsNullOrEmpty(Value);
     }
 
     class RaceCfgIdJsonConverter : ValueWrapperJsonConverter<RaceCfgId, string>
     {
         protected override RaceCfgId Create(string value) => value;
-        protected override string GetValue(RaceCfgId obj) => obj.Value;
+        protected override string GetValue(RaceCfgId obj) => obj.Value ?? string.Empty;
     }
 
     class RaceCfgIdTypeConverter : ValueWrapperTypeConverter<RaceCfgId, string>

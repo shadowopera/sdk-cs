@@ -171,7 +171,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "game", "weapon-rune", "vtSkill" });
+                .WithWhitelist(new[] { "game", "weapon-rune", "vtSkill", "vtItemX" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);

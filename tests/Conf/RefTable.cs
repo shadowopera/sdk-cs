@@ -33,7 +33,7 @@ namespace Conf
         /// <summary>desc-E</summary>
         [JsonProperty("E")] public XRef<MagicCfgId, MagicCfg> E { get; set; }
         /// <summary>desc-F</summary>
-        [JsonProperty("F")] public XRef<RaceCfgId, RaceCfg> F { get; set; }
+        [JsonProperty("F")] public XRef<RaceCfgId, RaceCfg> F { get; set; } = new(string.Empty, null);
         /// <summary>desc-G</summary>
         [JsonProperty("G")] public XRef<HeroCfgId, HeroCfg> G { get; set; }
         /// <summary>desc-H</summary>
@@ -41,7 +41,7 @@ namespace Conf
         /// <summary>desc-J</summary>
         [JsonProperty("J")] public XRef<ItemCfgId, ItemCfg> J { get; set; }
         /// <summary>desc-K</summary>
-        [JsonProperty("K")] public XRef<RaceCfgId, RaceCfg> K { get; set; }
+        [JsonProperty("K")] public XRef<RaceCfgId, RaceCfg> K { get; set; } = new(string.Empty, null);
     }
 
     public partial class RefTable
