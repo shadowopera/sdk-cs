@@ -98,6 +98,6 @@ Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` 
 ### Release & CI
 
 - **`scripts/bump-version.sh`** — bumps `<Version>` in `Archmage.csproj` and `unity/.../package.json`, commits, and creates an annotated git tag; use `--yes` to skip interactive prompts
-- **`scripts/release.sh`** + **`scripts/__impl/release/main.go`** — step-driven release automation; state persisted in `release.json`; steps: checkVersion → runTests1 → updateChangelog → syncUnity → runTests2 → bumpVersion
+- **`scripts/release.sh`** — step-driven release automation; progress tracked in `release.json` by the `relstep` CLI (`go install github.com/shadowopera/archmage/tools/relstep@latest`); steps are declared in `STEP_LIST`
 - **`scripts/reconcile-unity-meta.sh`** — checks Unity `.meta` file consistency
 - **`.github/workflows/publish-nuget.yml`** — publishes to NuGet on `v*` tag push; verifies tag version matches `Archmage.csproj`, runs tests, packs, and pushes with `NUGET_API_KEY` secret
