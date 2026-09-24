@@ -7,7 +7,9 @@
         "ArchmageDevCore",
         "Shadop.Archmage.Sdk",
         "Shadop.Archmage.Sdk.Unity",
-        "Shadop.Archmage.Sdk.Unity.Addressables"
+        "Shadop.Archmage.Sdk.Unity.Addressables",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
