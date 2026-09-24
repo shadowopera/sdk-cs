@@ -104,7 +104,7 @@ namespace Conf.Editor
         static void InitializeCfgIdDrawers(ConfigAtlas atlas)
         {
             // Initialize XxxCfgIdDrawer on demand
-            HeroCfgIdDrawer.Initialize(atlas.HeroTable, v => $"{v} ({new HeroCfgId(v).Cfg.HeroName.Text})");
+            HeroCfgIdDrawer.Initialize(atlas.HeroTable, v => $"{v} ({new HeroCfgId(v).Cfg.Name.Text})");
         }
     }
 }

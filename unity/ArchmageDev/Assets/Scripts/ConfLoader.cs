@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using Conf;
+using Conf.Enums;
 using Shadop.Archmage.Sdk;
 
 #pragma warning disable UNT0006
@@ -77,7 +78,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityAddressablesFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
+                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
         if (concurrent)
@@ -113,7 +114,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityResourcesFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
+                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
         try
@@ -143,7 +144,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityResourcesFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
+                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
         if (concurrent)
@@ -179,7 +180,7 @@ public class ConfLoader : MonoBehaviour
             .WithFS(new UnityStreamingAssetsFS())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
+                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
         if (concurrent)
@@ -216,7 +217,7 @@ public class ConfLoader : MonoBehaviour
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithAtlasModifier(atlasJson =>
             {
-                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
+                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
         try
@@ -263,27 +264,36 @@ public class ConfLoader : MonoBehaviour
         // 1. Look up a config entry by ID from a dictionary-based table.
         var cfgId = new HeroCfgId(2);
         atlas.HeroTable.TryLookup(cfgId, out var hero);
-        Debug.Log($"[ConfLoader] HeroTable[2]: StartLevel={hero.StartLevel}");
+        Debug.Log($"[ConfLoader] HeroTable[2]: Level={hero.Level}");
 
         // 2. Do the same, but in a more convenient way.
-        Debug.Log($"[ConfLoader] HeroTable[2]: StartLevel={cfgId.Cfg.StartLevel} (shortcut)");
+        Debug.Log($"[ConfLoader] HeroTable[2]: Level={cfgId.Cfg.Level} (shortcut)");
 
         // 3. Access a cross-table reference via XRef.Ref.
-        var firstChar = atlas.CharacterArray[0];
-        Debug.Log($"[ConfLoader] CharacterArray[0]: ID={firstChar.Id}, Attack={firstChar.Attack}");
-        Debug.Log($"[ConfLoader] CharacterArray[0].Race.CfgId: {firstChar.Race.CfgId}");
-        Debug.Log($"[ConfLoader] CharacterArray[0].Race.Ref.Birthplace: {firstChar.Race.Ref.Birthplace.Text}");
+        Debug.Log($"[ConfLoader] HeroTable[2].Weapon.CfgId: {hero.Weapon.CfgId}");
+        Debug.Log($"[ConfLoader] HeroTable[2].Weapon.Ref.Name: {hero.Weapon.Ref.Name}");
+        Debug.Log($"[ConfLoader] HeroTable[2].Race.Ref.Birthplace: {hero.Race.Ref.Birthplace.Text}");
 
         // 4. Query localized text via L10n.
-        Debug.Log($"[ConfLoader] HeroTable[3].HeroName (en, not translated): {atlas.HeroTable[3].HeroName.Text}");
-        Debug.Log($"[ConfLoader] GameCfg.XL10n (fr, translated): {atlas.GameCfg.XL10n.Text}");
+        Debug.Log($"[ConfLoader] HeroTable[1].Name (en, not translated): {atlas.HeroTable[1].Name.Text}");
+        Debug.Log($"[ConfLoader] GameCfg.Title (fr, translated): {atlas.GameCfg.Title.Text}");
 
-        // 5. Show Unity Built-in vectors.
-        Debug.Log($"[ConfLoader] GameCfg.XVector2 (Vector2Int): {atlas.GameCfg.XVector2}");
-        Debug.Log($"[ConfLoader] GameCfg.XVector3 (Vector3): {atlas.GameCfg.XVector3}");
-        Debug.Log($"[ConfLoader] GameCfg.XVector4 (Vector4): {atlas.GameCfg.XVector4}");
+        // 5. Read enums, including bitflags and localized enum items.
+        Debug.Log($"[ConfLoader] HeroTable[2].Class: {hero.Class}");
+        Debug.Log($"[ConfLoader] HeroTable[2].Elements (bitflags): {hero.Elements}");
+        Debug.Log($"[ConfLoader] HeroClass.Warrior (fr, translated): {new L10n(HeroClass.Warrior.GetL10nKey()).Text}");
 
-        // 6. Convert Rgba to Unity Color.
-        Debug.Log($"[ConfLoader] GameCfg.XRgba (Rgba): {atlas.GameCfg.XRgba.ToColor()}");
+        // 6. Show Unity Built-in vectors.
+        Debug.Log($"[ConfLoader] HeroTable[1].SpawnPos (Vector3Int): {atlas.HeroTable[1].SpawnPos}");
+        Debug.Log($"[ConfLoader] HeroTable[1].Facing (Vector2): {atlas.HeroTable[1].Facing}");
+        Debug.Log($"[ConfLoader] GameCfg.GridSize (Vector2Int): {atlas.GameCfg.GridSize}");
+        Debug.Log($"[ConfLoader] GameCfg.CameraOffset (Vector3): {atlas.GameCfg.CameraOffset}");
+        Debug.Log($"[ConfLoader] GameCfg.Tint (Vector4): {atlas.GameCfg.Tint}");
+
+        // 7. Convert Rgba to Unity Color.
+        Debug.Log($"[ConfLoader] GameCfg.BgColor (Rgba): {atlas.GameCfg.BgColor.ToColor()}");
+
+        // 8. Read a variant item. The atlas modifier above loads "hard" as balance's default variant.
+        Debug.Log($"[ConfLoader] BalanceCfg.HpScale (hard): {atlas.BalanceCfg.HpScale}");
     }
 }
