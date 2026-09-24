@@ -1,0 +1,9 @@
+{
+	"maxLevel": 80,
+	"slotSizes": [
+		10
+	],
+	"tint": {
+		"w": 0.5
+	}
+}

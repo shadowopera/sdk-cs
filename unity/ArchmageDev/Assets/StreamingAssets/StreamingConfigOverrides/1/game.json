@@ -1,0 +1,13 @@
+{
+	"maxLevel": 70,
+	"startHero": 2,
+	"starterItems": [
+		104
+	],
+	"levelRewards": {
+		"30": 105
+	},
+	"cameraOffset": {
+		"y": 20
+	}
+}

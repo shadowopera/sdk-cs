@@ -66,5 +66,21 @@ for config_dir in "${UNITY_CONFIG_DIRS[@]}"; do
     echo "- $config_dir"
 done
 
+# Sync override JSON files to Unity override directories
+OVERRIDE_DIR="$ROOT_DIR/tests/override"
+UNITY_OVERRIDE_DIRS=(
+    "$ROOT_DIR/unity/ArchmageDev/Assets/ConfigOverrides"
+    "$ROOT_DIR/unity/ArchmageDev/Assets/Resources/StaticConfigOverrides"
+    "$ROOT_DIR/unity/ArchmageDev/Assets/StreamingAssets/StreamingConfigOverrides"
+)
+
+echo ""
+echo "Syncing override JSON to Unity override directories..."
+for override_dir in "${UNITY_OVERRIDE_DIRS[@]}"; do
+    mkdir -p "$override_dir"
+    rsync -a --delete --include="*/" --include="*.json" --exclude="*" "$OVERRIDE_DIR/" "$override_dir/"
+    echo "- $override_dir"
+done
+
 echo ""
 "$SCRIPT_DIR/reconcile-unity-meta.sh"
