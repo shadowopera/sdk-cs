@@ -1,55 +1,89 @@
 {
-  "x-int": 1000,
-  "x-int32": 1320,
-  "x-float64": 13.14,
-  "x-string": "hello world",
-  "x-bool": false,
-  "x-duration": [
+  "title": "l10n.xlsx[game.title]",
+  "maxLevel": 80,
+  "startHero": 2,
+  "tickRate": [
     1,
-    3600
+    50
   ],
-  "x-path": "x/y/z.bin",
-  "x-datetime": "0900-01-01T15:30:00+08:00",
-  "x-ref": 1,
-  "x-l10n": "l10n.xlsx[menu.start]",
-  "x-rgba": "#ABC123",
-  "x-array1": null,
-  "x-array2": [
+  "bgColor": "#102030",
+  "launchDate": "2025-01-01T00:00:00+08:00",
+  "bgm": "audio/theme.ogg",
+  "starterItems": [
+    104
+  ],
+  "dailyResets": [
+    [
+      0,
+      14400
+    ],
+    [
+      0,
+      57600
+    ]
+  ],
+  "allowedClasses": [
+    1,
     2,
     3
   ],
-  "x-map": {
-    "8": "foo",
-    "9": "bar"
+  "levelCaps": null,
+  "bannedWords": [],
+  "slotSizes": [
+    10
+  ],
+  "levelRewards": {
+    "10": 103,
+    "20": 101,
+    "30": 105
   },
-  "x-object": {
-    "fieldX": 100,
-    "fieldY": "bar"
+  "tips": {
+    "login": "game.tips.login",
+    "logout": "l10n.xlsx[common.tbd]"
   },
-  "x-tuple": {
-    "item0": 100,
-    "item1": 12.5,
-    "item2": " bar "
+  "classColors": {
+    "1": "#FF0000",
+    "2": "#0000FF"
   },
-  "x-vector2": {
-    "x": 1,
-    "y": 2
+  "features": {
+    "pvp": true,
+    "guild": true,
+    "trade": true
   },
-  "x-vector3": {
-    "x": 1.1,
-    "y": 2.2,
-    "z": 3.3
+  "motd": {
+    "item0": "Welcome to Avalon"
   },
-  "x-vector4": {
-    "x": 1.1,
-    "y": 2.2,
-    "z": 3.3,
-    "w": 9.9
+  "bossSpawn": {
+    "item0": 2,
+    "item1": 2,
+    "item2": [
+      0,
+      90
+    ],
+    "item3": -3,
+    "item4": 1.5,
+    "item5": true,
+    "item6": " boss "
   },
-  "x-vector4x": {
-    "x": 1,
-    "y": 2,
-    "z": 3,
-    "w": 9
+  "cameraOffset": {
+    "x": 0.0,
+    "y": 20.0,
+    "z": -7.0
+  },
+  "gridSize": {
+    "x": 64,
+    "y": 48
+  },
+  "tint": {
+    "x": 1.0,
+    "y": 0.5,
+    "z": 0.25,
+    "w": 0.5
+  },
+  "worldBounds": {
+    "x": -100,
+    "y": -100,
+    "z": 100,
+    "w": 100
   }
 }

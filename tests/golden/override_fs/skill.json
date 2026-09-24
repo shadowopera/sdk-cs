@@ -1,0 +1,155 @@
+{
+  "fireball": {
+    "id": "fireball",
+    "name": "Fireball",
+    "cooldown": [
+      0,
+      3
+    ],
+    "mana": 30,
+    "school": 1,
+    "src": "skill-magic",
+    "damage": {
+      "min": 0,
+      "max": 0
+    },
+    "buffs": null,
+    "radius": 0.0
+  },
+  "heal": {
+    "id": "heal",
+    "name": "Heal",
+    "cooldown": null,
+    "mana": 20,
+    "school": 16,
+    "src": "skill-magic",
+    "damage": {
+      "min": 0,
+      "max": 0
+    },
+    "buffs": null,
+    "radius": 0.0
+  },
+  "blink": {
+    "id": "blink",
+    "name": "Blink",
+    "cooldown": [
+      1,
+      250
+    ],
+    "mana": 15,
+    "school": 0,
+    "src": "skill-magic",
+    "damage": {
+      "min": 0,
+      "max": 0
+    },
+    "buffs": null,
+    "radius": 0.0
+  },
+  "slash": {
+    "id": "slash",
+    "name": "Slash",
+    "cooldown": [
+      0,
+      1
+    ],
+    "mana": 0,
+    "school": 0,
+    "src": "skill-melee",
+    "damage": {
+      "min": 10,
+      "max": 30
+    },
+    "buffs": {
+      "might": {
+        "stacks": 1,
+        "time": [
+          0,
+          10
+        ],
+        "source": 101
+      },
+      "haste": {
+        "stacks": 2,
+        "time": [
+          0,
+          5
+        ],
+        "source": 0
+      }
+    },
+    "radius": 0.0
+  },
+  "rally": {
+    "id": "rally",
+    "name": "Rally",
+    "cooldown": [
+      0,
+      30
+    ],
+    "mana": 0,
+    "school": 0,
+    "src": "skill-melee",
+    "damage": {
+      "min": 0,
+      "max": 0
+    },
+    "buffs": {},
+    "radius": 0.0
+  },
+  "cleave": {
+    "id": "cleave",
+    "name": "Cleave",
+    "cooldown": [
+      3,
+      500
+    ],
+    "mana": 0,
+    "school": 0,
+    "src": "skill-melee",
+    "damage": {
+      "min": 15,
+      "max": 30
+    },
+    "buffs": {
+      "bleed": {
+        "stacks": 3,
+        "time": [
+          0,
+          4
+        ],
+        "source": 102
+      }
+    },
+    "radius": 0.0
+  },
+  "aura": {
+    "id": "aura",
+    "name": "Holy Aura",
+    "cooldown": null,
+    "mana": 0,
+    "school": 0,
+    "src": "skill-passive",
+    "damage": {
+      "min": 0,
+      "max": 0
+    },
+    "buffs": null,
+    "radius": 5.5
+  },
+  "fortitude": {
+    "id": "fortitude",
+    "name": "Fortitude",
+    "cooldown": null,
+    "mana": 0,
+    "school": 0,
+    "src": "skill-passive",
+    "damage": {
+      "min": 0,
+      "max": 0
+    },
+    "buffs": null,
+    "radius": 0.0
+  }
+}

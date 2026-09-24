@@ -77,6 +77,8 @@ namespace Shadop.Archmage.Sdk.Tests
 
         internal static void CheckUpdateGolden(IAtlas atlas, string goldenDir)
         {
+            CheckXRefs(atlas);
+
             var updateGolden = Environment.GetEnvironmentVariable("UPDATE_GOLDEN") == "1";
             if (updateGolden)
             {

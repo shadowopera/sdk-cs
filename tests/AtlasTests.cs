@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Conf;
+using Conf.Enums;
 using Xunit;
 
 namespace Shadop.Archmage.Sdk.Tests
@@ -30,24 +31,28 @@ namespace Shadop.Archmage.Sdk.Tests
             L10n.GetPreferredLanguage = () => cn;
 
             var atlas = new ConfigAtlas();
-            var opts = DefaultOpts().WithBlacklist(new[] { "prop_floats" });
+            var opts = DefaultOpts().WithBlacklist(new[] { "balance" });
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
             CheckUpdateGolden(atlas, "../../../golden/basic");
 
-            atlas.GameCfg.XL10n.GetText(en, out var text);
-            Assert.Equal("it is a good day", text);
-            Assert.Equal("今儿天气真好", atlas.GameCfg.XL10n.Text);
+            Assert.True(CheckXRefs(atlas) > 0);
 
-            Assert.True(atlas.ItemTable.TryGetValue(20, out var itemEntry));
-            Assert.Equal(20, itemEntry.Id);
+            Assert.True(atlas.GameCfg.Title.GetText(en, out var text));
+            Assert.Equal("Legends of Avalon", text);
+            Assert.Equal("阿瓦隆传说", atlas.GameCfg.Title.Text);
+            Assert.Equal("Arthur Pendragon", atlas.HeroTable[1].Name.Text);
+            Assert.Equal("Silverwood", atlas.RaceTable["Elf"].Birthplace.Text);
 
-            Assert.NotNull(atlas.CharacterArray[0]!.Race.Ref);
-            Assert.NotNull(atlas.CharacterArray[1]!.Runes![0].Ref);
-            Assert.NotNull(atlas.GameCfg.XRef.Ref);
-            Assert.NotNull(atlas.RaceTable["Dwarf"].Referrer2.Ref);
-            Assert.NotNull(atlas.RefTable[3].B.Ref);
-            Assert.NotNull(atlas.Matrix2Table["key1"]!["key2"][0][0].Ref);
-            Assert.Equal(16, atlas.VtItemXTable.Count);
+            Assert.Equal("enum::HeroClass.Warrior", HeroClass.Warrior.GetL10nKey());
+            Assert.Equal("", HeroClass.Ranger.GetL10nKey());
+            Assert.Equal("战士", i18n.Text(HeroClass.Warrior.GetL10nKey(), cn));
+
+            Assert.True(atlas.ItemTable.TryGetValue(101, out var itemEntry));
+            Assert.Equal(101, itemEntry.Id);
+
+            ConfigAtlas.Instance = atlas;
+            Assert.Same(itemEntry, new ItemCfgId(101).Cfg);
+            Assert.Same(atlas.RaceTable["Elf"], new RaceCfgId("Elf").Cfg);
 
             Assert.NotNull(atlas.DataVersion);
             Assert.Equal("v1.0.0", atlas.DataVersion!.Semver);
@@ -62,7 +67,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "prop_floats" });
+                .WithBlacklist(new[] { "balance" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas_with_version.json", "../../../testdata", atlas, opts);
@@ -76,9 +81,9 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             Action<AtlasJson> atlasModifier = (atlasJson) =>
             {
-                atlasJson.Variant["prop_floats"]["/"] = atlasJson.Variant["prop_floats"]["x5"];
-                atlasJson.Unique.Remove("character");
-                atlasJson.Unique.Remove("matrix2");
+                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
+                atlasJson.Unique.Remove("chapter");
+                atlasJson.Unique.Remove("route");
                 atlasJson.Variant.Remove("game");
             };
 
@@ -86,7 +91,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var opts = DefaultOpts()
                 .WithLogger(logger)
                 .WithAtlasModifier(atlasModifier)
-                .WithBlacklist(new[] { "character", "matrix2", "game" });
+                .WithBlacklist(new[] { "chapter", "route", "game" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
@@ -99,7 +104,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "Item", "game", "weapon-rune" });
+                .WithWhitelist(new[] { "hero", "item", "Race", "skill" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
@@ -112,12 +117,12 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "Item", "prop_float" });
+                .WithWhitelist(new[] { "item", "balanc" });
 
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(
                 () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> Atlas whitelist: unknown item \"prop_float\"", err.Message);
+            Assert.StartsWith("<archmage> Atlas whitelist: unknown item \"balanc\"", err.Message);
         }
 
         [Fact]
@@ -126,7 +131,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "game", "prop_floats", "character" });
+                .WithBlacklist(new[] { "balance", "game", "chapter" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
@@ -148,21 +153,21 @@ namespace Shadop.Archmage.Sdk.Tests
         }
 
         [Theory]
-        [InlineData("x3")]
-        [InlineData("x5")]
+        [InlineData("easy")]
+        [InlineData("hard")]
         public void TestAtlas_WithVariant(string variant)
         {
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "prop_floats" })
-                .WithVariant("prop_floats", variant);
+                .WithWhitelist(new[] { "balance" })
+                .WithVariant("balance", variant);
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
             CheckUpdateGolden(atlas, "../../../golden/variant_" + variant);
 
-            Assert.Equal(variant, atlas.AtlasItems()["prop_floats"].Variant);
+            Assert.Equal(variant, atlas.AtlasItems()["balance"].Variant);
         }
 
         [Fact]
@@ -171,15 +176,15 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "game", "weapon-rune", "vtSkill", "vtItemX" });
+                .WithWhitelist(new[] { "game", "hero", "item", "Race", "skill" });
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
 
             var items = atlas.AtlasItems();
             Assert.Equal("/", items["game"].Variant);
-            Assert.Equal("", items["weapon-rune"].Variant);
-            Assert.Equal("", items["vtSkill"].Variant);
+            Assert.Equal("", items["hero"].Variant);
+            Assert.Equal("", items["skill"].Variant);
         }
 
         [Fact]
@@ -188,13 +193,13 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "prop_floats" })
-                .WithVariant("prop_floats", "x3")
-                .WithVariant("prop_floats", "x5");
+                .WithWhitelist(new[] { "balance" })
+                .WithVariant("balance", "easy")
+                .WithVariant("balance", "hard");
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
-            CheckUpdateGolden(atlas, "../../../golden/variant_x5");
+            CheckUpdateGolden(atlas, "../../../golden/variant_hard");
         }
 
         [Fact]
@@ -203,13 +208,13 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "prop_floats" })
-                .WithVariant("prop_float", "x5");
+                .WithBlacklist(new[] { "balance" })
+                .WithVariant("balanc", "hard");
 
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(
                 () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> Atlas variant: unknown item \"prop_float\".", err.Message);
+            Assert.StartsWith("<archmage> Atlas variant: unknown item \"balanc\".", err.Message);
         }
 
         [Fact]
@@ -218,21 +223,21 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "prop_floats" })
-                .WithVariant("prop_floats", "");
+                .WithWhitelist(new[] { "balance" })
+                .WithVariant("balance", "");
 
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(
                 () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> Atlas variant: empty variant for item \"prop_floats\".", err.Message);
+            Assert.StartsWith("<archmage> Atlas variant: empty variant for item \"balance\".", err.Message);
         }
 
         [Fact]
         public void TestAtlas_WithVariant_NullArgument()
         {
             var opts = DefaultOpts();
-            Assert.Throws<ArgumentNullException>(() => opts.WithVariant(null!, "x5"));
-            Assert.Throws<ArgumentNullException>(() => opts.WithVariant("prop_floats", null!));
+            Assert.Throws<ArgumentNullException>(() => opts.WithVariant(null!, "hard"));
+            Assert.Throws<ArgumentNullException>(() => opts.WithVariant("balance", null!));
         }
 
         [Fact]
@@ -241,15 +246,15 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "prop_floats" })
-                .WithVariant("prop_floats", "x9");
+                .WithWhitelist(new[] { "balance" })
+                .WithVariant("balance", "medium");
 
             var atlas = new ConfigAtlas();
             var err = Assert.Throws<ArchmageException>(
                 () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> Failed to load atlas item: \"prop_floats\"", err.Message);
+            Assert.StartsWith("<archmage> Failed to load atlas item: \"balance\"", err.Message);
             Assert.NotNull(err.InnerException);
-            Assert.Equal("Could not find $.variant['prop_floats']['x9'] in ../../../testdata/atlas.json.",
+            Assert.Equal("Could not find $.variant['balance']['medium'] in ../../../testdata/atlas.json.",
                 err.InnerException.Message);
         }
 
@@ -259,15 +264,15 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "prop_floats" })
-                .WithVariant("prop_floats", "x9")
-                .WithVariant("hero", "x5");
+                .WithBlacklist(new[] { "balance" })
+                .WithVariant("balance", "medium")
+                .WithVariant("hero", "hard");
 
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts);
 
             var items = atlas.AtlasItems();
-            Assert.False(items["prop_floats"].Ready);
+            Assert.False(items["balance"].Ready);
             Assert.Equal("", items["hero"].Variant);
         }
 
@@ -277,7 +282,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "prop_floats" })
+                .WithBlacklist(new[] { "balance" })
                 .WithOverrideRoot("../../../override/1")
                 .WithOverrideRoot("../../../override/2");
 
@@ -308,7 +313,7 @@ namespace Shadop.Archmage.Sdk.Tests
             {
                 { "testdata/atlas.json", Encoding.UTF8.GetBytes(
                     "{\"version\":{\"branch\":\"test-branch\",\"id\":\"123456\"},\"variant\":{\"game\":{\"/\":\"game.json\"}},\"many\":{},\"unique\":{}}") },
-                { "testdata/game.json", Encoding.UTF8.GetBytes("{\"x-string\":\"hello memory fs\"}") }
+                { "testdata/game.json", Encoding.UTF8.GetBytes("{\"bgm\":\"hello memory fs\"}") }
             };
 
             var logger = new ScavengerLogger();
@@ -320,7 +325,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var atlas = new ConfigAtlas();
             Archmage.LoadAtlas("testdata/atlas.json", "testdata", atlas, opts);
 
-            Assert.Equal("hello memory fs", atlas.GameCfg.XString);
+            Assert.Equal("hello memory fs", atlas.GameCfg.Bgm);
             Assert.Equal("test-branch", atlas.DataVersion!.Branch);
             Assert.Equal("123456", atlas.DataVersion!.ID);
         }
@@ -330,14 +335,14 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             var fsys = new Dictionary<string, byte[]>
             {
-                { "game.json", Encoding.UTF8.GetBytes("{\"x-string\":\"foo bar\",\"x-map\":{\"7\":\"xxx\",\"9\":\"rab\"}}") },
-                { "clutter/magic.json", Encoding.UTF8.GetBytes("{\"200\":{\"name\":\"Power Word: Shield\"}}") }
+                { "game.json", Encoding.UTF8.GetBytes("{\"bgm\":\"audio/night.ogg\",\"levelRewards\":{\"40\":104},\"motd\":{\"item0\":\"Hello\"}}") },
+                { "item.json", Encoding.UTF8.GetBytes("{\"105\":{\"name\":\"Aegis of Camelot\",\"tags\":[\"shield\"]}}") }
             };
 
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithWhitelist(new[] { "game", "Magic", "weapon-rune" })
+                .WithWhitelist(new[] { "game", "hero", "item", "Race", "skill" })
                 .WithOverrideRoot("../../../override/2")
                 .WithOverrideFS(new MemoryFS(fsys));
 
@@ -351,14 +356,14 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             var fsys = new Dictionary<string, byte[]>
             {
-                { "vtbl/weapon-sword.json", Encoding.UTF8.GetBytes("{\"1000\":{\"name\":\"Dragonfang Blade\",\"price\":1200}}") },
-                { "vtbl/weapon-staff.json", Encoding.UTF8.GetBytes("{\"1201\":{\"price\":2050,\"dps\":2}}") }
+                { "vtbl/skill-magic.json", Encoding.UTF8.GetBytes("{\"heal\":{\"mana\":25,\"cooldown\":[0,8]}}") },
+                { "vtbl/skill-passive.json", Encoding.UTF8.GetBytes("{\"aura\":{\"radius\":7}}") }
             };
 
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "prop_floats" })
+                .WithBlacklist(new[] { "balance" })
                 .WithOverrideRoot("../../../override/1")
                 .WithOverrideRoot("../../../override/2")
                 .WithOverrideFS(new MemoryFS(fsys));
@@ -371,14 +376,14 @@ namespace Shadop.Archmage.Sdk.Tests
             CheckUpdateGolden(atlas, "../../../golden/override_root_and_fs");
 
             // Verify events for a specific key to avoid brittle global counts
-            var vtItemXEvents = events.Where(e => e.Key == "vtItemX").ToList();
-            Assert.NotEmpty(vtItemXEvents);
-            Assert.Equal(1, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartProcessing));
-            Assert.Equal(5, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartReading));
-            Assert.Equal(5, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartParsing));
-            Assert.Equal(3, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.StartReadingOverride));
-            Assert.Equal(3, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.ApplyingOverride));
-            Assert.Equal(1, vtItemXEvents.Count(e => e.Stage == AtlasLoadStage.Completed));
+            var skillEvents = events.Where(e => e.Key == "skill").ToList();
+            Assert.NotEmpty(skillEvents);
+            Assert.Equal(1, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartProcessing));
+            Assert.Equal(3, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartReading));
+            Assert.Equal(3, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartParsing));
+            Assert.Equal(4, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartReadingOverride));
+            Assert.Equal(4, skillEvents.Count(e => e.Stage == AtlasLoadStage.ApplyingOverride));
+            Assert.Equal(1, skillEvents.Count(e => e.Stage == AtlasLoadStage.Completed));
         }
 
         [Fact]
@@ -395,7 +400,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "prop_floats" })
+                .WithBlacklist(new[] { "balance" })
                 .WithLoadStrategy(loadStrategy);
 
             var atlas = new ConfigAtlas();
@@ -427,7 +432,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var logger = new ScavengerLogger();
             var opts = DefaultOpts()
                 .WithLogger(logger)
-                .WithBlacklist(new[] { "prop_floats" })
+                .WithBlacklist(new[] { "balance" })
                 .WithAsyncLoadStrategy(asyncLoadStrategy);
 
             var atlas = new ConfigAtlas();
@@ -439,14 +444,14 @@ namespace Shadop.Archmage.Sdk.Tests
             CheckUpdateGolden(atlas, "../../../golden/custom_async_loader");
 
             // Verify events for a specific key to avoid brittle global counts
-            var vtSkillEvents = events.Where(e => e.Key == "vtSkill").ToList();
-            Assert.NotEmpty(vtSkillEvents);
-            Assert.Equal(1, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartProcessing));
-            Assert.Equal(2, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartReading));
-            Assert.Equal(2, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartParsing));
-            Assert.Equal(0, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.StartReadingOverride));
-            Assert.Equal(0, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.ApplyingOverride));
-            Assert.Equal(1, vtSkillEvents.Count(e => e.Stage == AtlasLoadStage.Completed));
+            var skillEvents = events.Where(e => e.Key == "skill").ToList();
+            Assert.NotEmpty(skillEvents);
+            Assert.Equal(1, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartProcessing));
+            Assert.Equal(3, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartReading));
+            Assert.Equal(3, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartParsing));
+            Assert.Equal(0, skillEvents.Count(e => e.Stage == AtlasLoadStage.StartReadingOverride));
+            Assert.Equal(0, skillEvents.Count(e => e.Stage == AtlasLoadStage.ApplyingOverride));
+            Assert.Equal(1, skillEvents.Count(e => e.Stage == AtlasLoadStage.Completed));
         }
 
         [Fact]
@@ -479,10 +484,10 @@ namespace Shadop.Archmage.Sdk.Tests
 
             var err = Assert.Throws<ArchmageException>(
                 () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> Failed to load atlas item: \"prop_floats\"", err.Message);
+            Assert.StartsWith("<archmage> Failed to load atlas item: \"balance\"", err.Message);
             Assert.NotNull(err.InnerException);
             Assert.IsType<Exception>(err.InnerException);
-            Assert.Equal("Could not find $.variant['prop_floats']['/'] in ../../../testdata/atlas.json.",
+            Assert.Equal("Could not find $.variant['balance']['/'] in ../../../testdata/atlas.json.",
                 err.InnerException.Message);
         }
 
@@ -508,13 +513,15 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             Action<AtlasJson> atlasModifier = (atlasJson) =>
             {
-                atlasJson.Unique["Item"] = "clutter/nonexistent_item.json";
+                atlasJson.Unique["item"] = "nonexistent_item.json";
             };
             var atlas = new ConfigAtlas();
-            var opts = DefaultOpts().WithAtlasModifier(atlasModifier);
+            var opts = DefaultOpts()
+                .WithAtlasModifier(atlasModifier)
+                .WithBlacklist(new[] { "balance" });
             var err = Assert.Throws<ArchmageException>(
                 () => Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts));
-            Assert.StartsWith("<archmage> Failed to load atlas item: \"Item\"", err.Message);
+            Assert.StartsWith("<archmage> Failed to load atlas item: \"item\"", err.Message);
             Assert.IsType<FileNotFoundException>(err.InnerException);
         }
 

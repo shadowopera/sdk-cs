@@ -28,20 +28,17 @@ namespace Conf
         /// </summary>
         public VersionInfo? DataVersion { get; private set; }
 
-        public CharacterArray CharacterArray { get; set; }
+        public BalanceCfg BalanceCfg { get; set; }
+        public ChapterArray ChapterArray { get; set; }
+        public DropTable DropTable { get; set; }
         public GameCfg GameCfg { get; set; }
         public HeroTable HeroTable { get; set; }
         public ItemTable ItemTable { get; set; }
-        public MagicTable MagicTable { get; set; }
-        public Matrix2Table Matrix2Table { get; set; }
-        public PropFloatsCfg PropFloatsCfg { get; set; }
+        public MonsterTable MonsterTable { get; set; }
         public RaceTable RaceTable { get; set; }
-        public RefTable RefTable { get; set; }
-        public StringTable StringTable { get; set; }
-        public VtItemXTable VtItemXTable { get; set; }
-        public VtQuestTable VtQuestTable { get; set; }
-        public VtSkillTable VtSkillTable { get; set; }
-        public WeaponRuneTable WeaponRuneTable { get; set; }
+        public RegionTable RegionTable { get; set; }
+        public RouteTable RouteTable { get; set; }
+        public SkillTable SkillTable { get; set; }
 
         Dictionary<string, AtlasItem> _m = null!;
 
@@ -49,20 +46,17 @@ namespace Conf
         {
             PubtypeCheck();
             Extension = new AtlasExtension();
-            CharacterArray = new CharacterArray();
+            BalanceCfg = new BalanceCfg();
+            ChapterArray = new ChapterArray();
+            DropTable = new DropTable();
             GameCfg = new GameCfg();
             HeroTable = new HeroTable();
             ItemTable = new ItemTable();
-            MagicTable = new MagicTable();
-            Matrix2Table = new Matrix2Table();
-            PropFloatsCfg = new PropFloatsCfg();
+            MonsterTable = new MonsterTable();
             RaceTable = new RaceTable();
-            RefTable = new RefTable();
-            StringTable = new StringTable();
-            VtItemXTable = new VtItemXTable();
-            VtQuestTable = new VtQuestTable();
-            VtSkillTable = new VtSkillTable();
-            WeaponRuneTable = new WeaponRuneTable();
+            RegionTable = new RegionTable();
+            RouteTable = new RouteTable();
+            SkillTable = new SkillTable();
             BuildMap();
         }
 
@@ -70,20 +64,17 @@ namespace Conf
         {
             _m = new Dictionary<string, AtlasItem>
             {
-                { "character", new AtlasItem { Cfg = CharacterArray, Mapping = "unique" } },
+                { "balance", new AtlasItem { Cfg = BalanceCfg, Mapping = "variant" } },
+                { "chapter", new AtlasItem { Cfg = ChapterArray, Mapping = "unique" } },
+                { "drop", new AtlasItem { Cfg = DropTable, Mapping = "unique" } },
                 { "game", new AtlasItem { Cfg = GameCfg, Mapping = "variant" } },
                 { "hero", new AtlasItem { Cfg = HeroTable, Mapping = "unique" } },
-                { "Item", new AtlasItem { Cfg = ItemTable, Mapping = "unique" } },
-                { "Magic", new AtlasItem { Cfg = MagicTable, Mapping = "unique" } },
-                { "matrix2", new AtlasItem { Cfg = Matrix2Table, Mapping = "unique" } },
-                { "prop_floats", new AtlasItem { Cfg = PropFloatsCfg, Mapping = "variant" } },
+                { "item", new AtlasItem { Cfg = ItemTable, Mapping = "unique" } },
+                { "monster", new AtlasItem { Cfg = MonsterTable, Mapping = "unique" } },
                 { "Race", new AtlasItem { Cfg = RaceTable, Mapping = "unique" } },
-                { "ref", new AtlasItem { Cfg = RefTable, Mapping = "unique" } },
-                { "string", new AtlasItem { Cfg = StringTable, Mapping = "unique" } },
-                { "vtItemX", new AtlasItem { Cfg = VtItemXTable, Mapping = "many" } },
-                { "vtQuest", new AtlasItem { Cfg = VtQuestTable, Mapping = "many" } },
-                { "vtSkill", new AtlasItem { Cfg = VtSkillTable, Mapping = "many" } },
-                { "weapon-rune", new AtlasItem { Cfg = WeaponRuneTable, Mapping = "unique" } },
+                { "Region", new AtlasItem { Cfg = RegionTable, Mapping = "unique" } },
+                { "route", new AtlasItem { Cfg = RouteTable, Mapping = "unique" } },
+                { "skill", new AtlasItem { Cfg = SkillTable, Mapping = "many" } },
             };
         }
 
@@ -148,8 +139,9 @@ namespace Conf
         static void PubtypeCheck()
         {
             var m = new HashSet<string>();
-            m.Add("Rab"); // string
-            if (m.Count != 1)
+            m.Add("Stats"); // hero
+            m.Add("Price"); // item
+            if (m.Count != 2)
                 throw new Exception("conflicting pubtype detected");
         }
     }
