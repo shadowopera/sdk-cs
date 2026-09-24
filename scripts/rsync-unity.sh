@@ -63,7 +63,7 @@ echo "Syncing testdata JSON to Unity config directories..."
 for config_dir in "${UNITY_CONFIG_DIRS[@]}"; do
     mkdir -p "$config_dir"
     rsync -a --delete --include="*/" --include="*.json" --exclude="*" "$TESTDATA_DIR/" "$config_dir/"
-    echo "  synced -> $config_dir"
+    echo "- $config_dir"
 done
 
 echo ""
