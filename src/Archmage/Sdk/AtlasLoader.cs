@@ -195,6 +195,8 @@ namespace Shadop.Archmage.Sdk
             // Load items
             if (isAsync)
             {
+                await PrepareOverridesAsync(filtered, atlasJson, options, cancellationToken).ConfigureAwait(false);
+
                 async Task ItemLoadAsync(string key, AtlasItem item, CancellationToken ct)
                 {
                     ct.ThrowIfCancellationRequested();
@@ -292,6 +294,78 @@ namespace Shadop.Archmage.Sdk
             return ("", false);
         }
 
+        /// <summary>
+        /// Resolves the files of an item from atlas.json. Returns null for an unsupported mapping.
+        /// </summary>
+        static List<string>? ResolveFiles(string key, AtlasItem item, AtlasJson atlasJson, AtlasOptions options,
+            out string keyPath, out string? variant)
+        {
+            variant = null;
+            switch (item.Mapping)
+            {
+                case AtlasConstants.MappingUnique:
+                    keyPath = $"$.unique['{key}']";
+                    return atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
+                case AtlasConstants.MappingVariant:
+                    variant = options.Variants.TryGetValue(key, out var sv)
+                        ? sv : AtlasConstants.VariantMappingDefaultKey;
+                    keyPath = $"$.variant['{key}']['{variant}']";
+                    var sf = atlasJson.PickFromVariant(key, variant);
+                    return sf is not null ? new List<string> { sf } : new List<string>();
+                case AtlasConstants.MappingMany:
+                    keyPath = $"$.many['{key}']";
+                    return atlasJson.Many.TryGetValue(key, out var mf) ? mf : new List<string>();
+                default:
+                    keyPath = "";
+                    return null;
+            }
+        }
+
+        static string OverridePath(OverrideConfig overrideCfg, string file)
+        {
+            return overrideCfg.RootPath is not null ? Path.Combine(overrideCfg.RootPath, file) : file;
+        }
+
+        /// <summary>
+        /// Calls IFS.PrepareAsync once per override FS with every override path LoadItem will check.
+        /// Items that fail to resolve are skipped here and reported by LoadItem.
+        /// </summary>
+        static async Task PrepareOverridesAsync(List<KeyValuePair<string, AtlasItem>> items, AtlasJson atlasJson,
+            AtlasOptions options, CancellationToken cancellationToken)
+        {
+            if (options.OverrideConfigs.Count == 0)
+                return;
+
+            var groups = new List<(IFS FS, HashSet<string> Paths)>();
+            foreach (var kvp in items)
+            {
+                var files = ResolveFiles(kvp.Key, kvp.Value, atlasJson, options, out _, out _);
+                if (files is null)
+                    continue;
+
+                foreach (var f in files)
+                {
+                    foreach (var overrideCfg in options.OverrideConfigs)
+                    {
+                        var fs = overrideCfg.FS ?? options.FS;
+                        var i = groups.FindIndex(g => ReferenceEquals(g.FS, fs));
+                        if (i < 0)
+                        {
+                            groups.Add((fs, new HashSet<string>()));
+                            i = groups.Count - 1;
+                        }
+                        groups[i].Paths.Add(OverridePath(overrideCfg, f));
+                    }
+                }
+            }
+
+            foreach (var (fs, paths) in groups)
+            {
+                if (paths.Count > 0)
+                    await fs.PrepareAsync(paths, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
         static async Task LoadItem(
             string key,
             AtlasItem item,
@@ -304,30 +378,10 @@ namespace Shadop.Archmage.Sdk
         {
             item.Key = key;
 
-            // Resolve files based on mapping type
-            List<string> files;
-            string keyPath;
-            switch (item.Mapping)
-            {
-                case AtlasConstants.MappingUnique:
-                    files = atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
-                    keyPath = $"$.unique['{key}']";
-                    break;
-                case AtlasConstants.MappingVariant:
-                    var variant = options.Variants.TryGetValue(key, out var sv)
-                        ? sv : AtlasConstants.VariantMappingDefaultKey;
-                    item.Variant = variant;
-                    var sf = atlasJson.PickFromVariant(key, variant);
-                    files = sf is not null ? new List<string> { sf } : new List<string>();
-                    keyPath = $"$.variant['{key}']['{variant}']";
-                    break;
-                case AtlasConstants.MappingMany:
-                    files = atlasJson.Many.TryGetValue(key, out var mf) ? mf : new List<string>();
-                    keyPath = $"$.many['{key}']";
-                    break;
-                default:
-                    throw new Exception($"Unsupported mapping: {item.Mapping}.");
-            }
+            var files = ResolveFiles(key, item, atlasJson, options, out var keyPath, out var variant)
+                ?? throw new Exception($"Unsupported mapping: {item.Mapping}.");
+            if (variant is not null)
+                item.Variant = variant;
 
             if (files.Count == 0)
             {
@@ -363,9 +417,7 @@ namespace Shadop.Archmage.Sdk
                 foreach (var overrideCfg in options.OverrideConfigs)
                 {
                     var fs = overrideCfg.FS ?? options.FS;
-                    var ovrPath = overrideCfg.RootPath is not null
-                        ? Path.Combine(overrideCfg.RootPath, f)
-                        : f;
+                    var ovrPath = OverridePath(overrideCfg, f);
 
                     if (!fs.FileExists(ovrPath))
                         continue;

@@ -1,5 +1,6 @@
 #nullable enable
 
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +34,12 @@ namespace Shadop.Archmage.Sdk
         public bool DirectoryExists(string path)
         {
             return Directory.Exists(path);
+        }
+
+        /// <inheritdoc />
+        public Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
         }
     }
 }

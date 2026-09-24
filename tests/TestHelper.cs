@@ -62,6 +62,53 @@ namespace Shadop.Archmage.Sdk.Tests
                 return data;
             }
         }
+
+        public Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+    }
+
+    /// <summary>
+    /// Wraps an IFS and records the paths passed to PrepareAsync and FileExists.
+    /// </summary>
+    class RecordingFS : IFS
+    {
+        readonly IFS _inner;
+        readonly object _lock = new();
+
+        public RecordingFS(IFS inner)
+        {
+            _inner = inner;
+        }
+
+        public List<HashSet<string>> PrepareCalls { get; } = new();
+        public HashSet<string> FileExistsPaths { get; } = new();
+
+        public byte[] ReadAllBytes(string path) => _inner.ReadAllBytes(path);
+
+        public Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
+            => _inner.ReadAllBytesAsync(path, cancellationToken);
+
+        public bool FileExists(string path)
+        {
+            lock (_lock)
+            {
+                FileExistsPaths.Add(path);
+            }
+            return _inner.FileExists(path);
+        }
+
+        public bool DirectoryExists(string path) => _inner.DirectoryExists(path);
+
+        public Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default)
+        {
+            lock (_lock)
+            {
+                PrepareCalls.Add(new HashSet<string>(paths));
+            }
+            return _inner.PrepareAsync(paths, cancellationToken);
+        }
     }
 
     class SyncProgress<T> : IProgress<T>

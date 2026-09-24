@@ -3,6 +3,7 @@
 #if UNITY_6000_0_OR_NEWER
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,6 +73,14 @@ namespace Shadop.Archmage.Sdk
         {
             var fullPath = ResolvePath(path);
             return IsUri(fullPath) || Directory.Exists(fullPath);
+        }
+
+        /// <summary>
+        /// Does nothing. Where StreamingAssets is a URI, checking existence costs as much as reading.
+        /// </summary>
+        public Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
         }
 
         private static string ResolvePath(string path)

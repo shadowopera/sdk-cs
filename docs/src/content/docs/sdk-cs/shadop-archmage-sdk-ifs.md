@@ -118,3 +118,31 @@ false if the directory is known not to exist; otherwise, true.
 
 Used to validate override roots before loading. May return true when the underlying storage has
  no directory concept or an exact check is expensive. Must not return false for an existing directory.
+
+### **PrepareAsync(IReadOnlyCollection<String>, CancellationToken)**
+
+Prepares for the [IFS.FileExists(String)](../shadop-archmage-sdk-ifs/#fileexistsstring) calls of an asynchronous load.
+
+```csharp
+Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken)
+```
+
+#### Parameters
+
+`paths` [IReadOnlyCollection<String>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1)<br>
+The override file paths, as they will be passed to [IFS.FileExists(String)](../shadop-archmage-sdk-ifs/#fileexistsstring).
+
+`cancellationToken` [CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken)<br>
+The token to monitor for cancellation requests.
+
+#### Returns
+
+[Task](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task)<br>
+A task that represents the asynchronous operation.
+
+**Remarks:**
+
+[Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-iprogressatlasloadevent-cancellationtoken) calls this once per load, before any item is loaded, with every
+ override file path it will pass to [IFS.FileExists(String)](../shadop-archmage-sdk-ifs/#fileexistsstring) on this instance. It is not called by
+ [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent) or when there are no override files. Implementations that check file
+ existence cheaply can return a completed task.

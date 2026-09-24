@@ -426,6 +426,57 @@ namespace Shadop.Archmage.Sdk.Tests
         }
 
         [Fact]
+        public async Task TestAtlas_PrepareAsync()
+        {
+            var fsys = new Dictionary<string, byte[]>
+            {
+                { "vtbl/skill-magic.json", Encoding.UTF8.GetBytes("{\"heal\":{\"mana\":25,\"cooldown\":[0,8]}}") }
+            };
+            var mainFS = new RecordingFS(new DefaultFS());
+            var memFS = new RecordingFS(new MemoryFS(fsys));
+
+            var opts = DefaultOpts()
+                .WithLogger(new ScavengerLogger())
+                .WithFS(mainFS)
+                .WithBlacklist(new[] { "balance" })
+                .WithOverrideRoot("../../../override/1")
+                .WithOverrideRoot("../../../override/2")
+                .WithOverrideFS(memFS);
+
+            await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata",
+                new ConfigAtlas(), opts, cancellationToken: TestContext.Current.CancellationToken);
+
+            // Each FS is prepared once with exactly the paths later passed to its FileExists.
+            Assert.Single(mainFS.PrepareCalls);
+            Assert.Equal(mainFS.FileExistsPaths, mainFS.PrepareCalls[0]);
+            Assert.Contains(Path.Combine("../../../override/1", "game.json"), mainFS.PrepareCalls[0]);
+            Assert.Contains(Path.Combine("../../../override/2", "vtbl/skill-melee.json"), mainFS.PrepareCalls[0]);
+
+            Assert.Single(memFS.PrepareCalls);
+            Assert.Equal(memFS.FileExistsPaths, memFS.PrepareCalls[0]);
+            Assert.Contains("vtbl/skill-magic.json", memFS.PrepareCalls[0]);
+        }
+
+        [Fact]
+        public async Task TestAtlas_PrepareAsync_NotCalled()
+        {
+            // Not called without overrides.
+            var fs = new RecordingFS(new DefaultFS());
+            await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(),
+                DefaultOpts().WithLogger(new ScavengerLogger()).WithFS(fs).WithBlacklist(new[] { "balance" }),
+                cancellationToken: TestContext.Current.CancellationToken);
+            Assert.Empty(fs.PrepareCalls);
+
+            // Not called by synchronous loading.
+            fs = new RecordingFS(new DefaultFS());
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(),
+                DefaultOpts().WithLogger(new ScavengerLogger()).WithFS(fs).WithBlacklist(new[] { "balance" })
+                    .WithOverrideRoot("../../../override/1"));
+            Assert.Empty(fs.PrepareCalls);
+            Assert.NotEmpty(fs.FileExistsPaths);
+        }
+
+        [Fact]
         public void TestAtlas_WithLoadStrategy()
         {
             AtlasLoadStrategy loadStrategy = (all, load) =>

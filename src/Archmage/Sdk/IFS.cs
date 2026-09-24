@@ -1,5 +1,6 @@
 #nullable enable
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -56,5 +57,19 @@ namespace Shadop.Archmage.Sdk
         /// <param name="path">The path to test.</param>
         /// <returns>false if the directory is known not to exist; otherwise, true.</returns>
         bool DirectoryExists(string path);
+
+        /// <summary>
+        /// Prepares for the <see cref="FileExists"/> calls of an asynchronous load.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Archmage.LoadAtlasAsync"/> calls this once per load, before any item is loaded, with every
+        /// override file path it will pass to <see cref="FileExists"/> on this instance. It is not called by
+        /// <see cref="Archmage.LoadAtlas"/> or when there are no override files. Implementations that check file
+        /// existence cheaply can return a completed task.
+        /// </remarks>
+        /// <param name="paths">The override file paths, as they will be passed to <see cref="FileExists"/>.</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default);
     }
 }

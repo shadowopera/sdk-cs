@@ -58,6 +58,35 @@ public class OverrideTests
         AssertOverrides(atlas, progress);
     }
 
+    [Test]
+    public async Task AddressablesPrepareAsync()
+    {
+        var fs = new UnityAddressablesFS();
+        var existing = "Assets/ConfigOverrides/1/game.json";
+        var missing = "Assets/ConfigOverrides/2/hero.json";
+        await fs.PrepareAsync(new[] { existing, missing });
+
+        Assert.IsTrue(fs.FileExists(existing));
+        Assert.IsFalse(fs.FileExists(missing));
+        // Paths that were not prepared are reported as existing.
+        Assert.IsTrue(fs.FileExists("Assets/ConfigOverrides/9/game.json"));
+    }
+
+    [Test]
+    public async Task AddressablesPrepareAsyncTwice()
+    {
+        var fs = new UnityAddressablesFS();
+        await fs.PrepareAsync(new[] { "Assets/ConfigOverrides/1/game.json" });
+        try
+        {
+            await fs.PrepareAsync(new[] { "Assets/ConfigOverrides/1/game.json" });
+            Assert.Fail("Expected InvalidOperationException.");
+        }
+        catch (InvalidOperationException)
+        {
+        }
+    }
+
     static AtlasOptions Options(IFS fs, string overrideRoot)
     {
         return new AtlasOptions()
