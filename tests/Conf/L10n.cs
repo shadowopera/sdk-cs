@@ -32,14 +32,23 @@ namespace Conf
 
         /// <summary>
         /// Returns the translation for the given language. Returns true if the key is found, with
-        /// the translated text in <paramref name="text"/>; otherwise false.
+        /// the translated text in <paramref name="text"/>; otherwise false. An empty key yields an empty string.
         /// </summary>
-        public bool GetText(string lang, [NotNullWhen(true)] out string? text) => GetI18n().GetText(_key ?? string.Empty, lang, out text);
+        public bool GetText(string lang, [NotNullWhen(true)] out string? text)
+        {
+            if (string.IsNullOrEmpty(_key))
+            {
+                text = string.Empty;
+                return true;
+            }
+            return GetI18n().GetText(_key, lang, out text);
+        }
+
         /// <summary>
         /// Returns the translation for the player's preferred language, falling back to the
-        /// default language if the key isn't found.
+        /// default language if the key isn't found. An empty key yields an empty string.
         /// </summary>
-        public string Text => GetI18n().Text(_key ?? string.Empty, GetPreferredLanguage());
+        public string Text => string.IsNullOrEmpty(_key) ? string.Empty : GetI18n().Text(_key, GetPreferredLanguage());
 
         public override string ToString() => _key ?? string.Empty;
     }

@@ -79,7 +79,7 @@ namespace Conf
             }
             if (LevelRewards is not null)
             {
-                foreach (var k1 in LevelRewards.Keys)
+                foreach (var k1 in new List<long>(LevelRewards.Keys))
                 {
                     LevelRewards[k1] = atlas.ItemTable.RefLookup(LevelRewards[k1].CfgId);
                 }

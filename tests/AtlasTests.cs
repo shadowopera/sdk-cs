@@ -42,6 +42,9 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.Equal("阿瓦隆传说", atlas.GameCfg.Title.Text);
             Assert.Equal("Arthur Pendragon", atlas.HeroTable[1].Name.Text);
             Assert.Equal("Silverwood", atlas.RaceTable["Elf"].Birthplace.Text);
+            Assert.True(atlas.HeroTable[4].Name.GetText(cn, out var blank));
+            Assert.Equal("", blank);
+            Assert.Equal("", atlas.HeroTable[4].Name.Text);
 
             Assert.Equal("enum::HeroClass.Warrior", HeroClass.Warrior.GetL10nKey());
             Assert.Equal("", HeroClass.Ranger.GetL10nKey());
