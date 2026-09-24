@@ -433,6 +433,9 @@ namespace Shadop.Archmage.Sdk
         ///   <item>JSON object → recursively merges: only fields present in the input are updated, others remain unchanged</item>
         ///   <item>Any other value → overwrites the field</item>
         /// </list>
+        /// Like the Go SDK, which follows Go's <c>json.Unmarshal</c> exactly, <c>null</c> is a regular value,
+        /// not a deletion marker. A <c>null</c> dictionary entry keeps its key and holds the default value.
+        /// Replacing a whole dictionary or removing individual entries is left to the application layer.
         /// </summary>
         /// <exception cref="ArchmageException">Thrown if JSON is invalid or merge fails.</exception>
         static void MergeJson(object target, string json, JsonSerializerSettings? settings)

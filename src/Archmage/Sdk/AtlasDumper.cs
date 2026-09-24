@@ -80,6 +80,7 @@ namespace Shadop.Archmage.Sdk
             settings.NullValueHandling = NullValueHandling.Include;
             settings.DefaultValueHandling = DefaultValueHandling.Include;
             settings.Converters.Add(new DateTimeOffsetJsonConverter());
+            settings.Converters.Add(new EnumKeyDictionaryJsonConverter());
             return settings;
         }
     }
