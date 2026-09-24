@@ -4,8 +4,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Shadop.Archmage.Sdk;
 using Newtonsoft.Json;
+using Shadop.Archmage.Sdk;
 
 namespace Conf
 {

@@ -14,9 +14,10 @@ namespace Conf
         /// </summary>
         public static VersionInfo CodeVersion
         {
-            get {
-				var str = @"
-{
+            get
+            {
+                var str =
+@"{
     ""semver"": ""v1.0.0"",
     ""workspace"": """",
     ""tags"": [],

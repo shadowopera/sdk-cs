@@ -12,7 +12,7 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             var method = typeof(Archmage).GetMethod("MergeJson", BindingFlags.Static | BindingFlags.NonPublic);
             Assert.NotNull(method);
-            method.Invoke(null, new [] { target, json, settings! });
+            method.Invoke(null, new[] { target, json, settings! });
         }
 
         public class NestedObject
