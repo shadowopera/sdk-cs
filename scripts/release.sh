@@ -115,6 +115,11 @@ while true; do
                 exit 1
             fi
 
+            if ! awk -v h="## [$VERSION]" 'index($0, h) == 1 { found = 1; exit } END { exit !found }' CHANGELOG.md; then
+                printError "Heading \"## [$VERSION]\" is not found in CHANGELOG.md."
+                exit 1
+            fi
+
             printMessage "Syncing CHANGELOG.md to Unity package..."
             if ! rsync -av CHANGELOG.md unity/dev.shadop.archmage/CHANGELOG.md; then
                 printError "Failed to sync CHANGELOG.md to Unity package."
