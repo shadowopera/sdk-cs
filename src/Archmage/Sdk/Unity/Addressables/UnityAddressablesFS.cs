@@ -38,8 +38,11 @@ namespace Shadop.Archmage.Sdk
             var locationsHandle = Addressables.LoadResourceLocationsAsync(address, typeof(TextAsset));
             try
             {
-                var locations = await locationsHandle.Task;
+                // Awaiting Task on a completed handle still resumes a frame later, so skip it.
+                if (!locationsHandle.IsDone)
+                    await locationsHandle.Task;
                 cancellationToken.ThrowIfCancellationRequested();
+                var locations = locationsHandle.Result;
 
                 if (locationsHandle.Status != AsyncOperationStatus.Succeeded)
                     throw new IOException($"Failed to resolve Addressables key: {address}.", locationsHandle.OperationException);
@@ -49,8 +52,10 @@ namespace Shadop.Archmage.Sdk
                 var handle = Addressables.LoadAssetAsync<TextAsset>(locations[0]);
                 try
                 {
-                    var textAsset = await handle.Task;
+                    if (!handle.IsDone)
+                        await handle.Task;
                     cancellationToken.ThrowIfCancellationRequested();
+                    var textAsset = handle.Result;
 
                     if (handle.Status != AsyncOperationStatus.Succeeded || textAsset is null)
                         throw new IOException($"Failed to load Addressables asset: {address}.", handle.OperationException);
