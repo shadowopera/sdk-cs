@@ -25,13 +25,11 @@ namespace Shadop.Archmage.Sdk
 
         public async Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
         {
-            // Combine with StreamingAssets root, normalizing to forward slashes.
-            var normalizedPath = path.Replace('\\', '/');
-            var fullPath = Application.streamingAssetsPath + "/" + normalizedPath;
+            var fullPath = ResolvePath(path);
 
             // On Android, streamingAssetsPath is already a jar:file:// URI.
             // On other platforms it is a plain file system path and requires the file:// scheme.
-            var uri = fullPath.Contains("://") ? fullPath : "file://" + fullPath;
+            var uri = IsUri(fullPath) ? fullPath : "file://" + fullPath;
 
             await Awaitable.MainThreadAsync();
             using var request = UnityWebRequest.Get(uri);
@@ -46,19 +44,55 @@ namespace Shadop.Archmage.Sdk
             cancellationToken.ThrowIfCancellationRequested();
 
             if (request.result != UnityWebRequest.Result.Success)
-                throw new IOException($"Failed to load StreamingAssets file: {uri}. Error: {request.error}");
+            {
+                var msg = $"Failed to load StreamingAssets file: {uri}. Error: {request.error}";
+                if (IsNotFound(request, fullPath))
+                    throw new FileNotFoundException(msg, path);
+                throw new IOException(msg);
+            }
 
             return request.downloadHandler.data;
         }
 
+        /// <summary>
+        /// Checks the file system directly where StreamingAssets is a plain directory.
+        /// Returns true on platforms where it is a URI (Android, WebGL).
+        /// </summary>
         public bool FileExists(string path)
         {
-            return true;
+            var fullPath = ResolvePath(path);
+            return IsUri(fullPath) || File.Exists(fullPath);
         }
 
+        /// <summary>
+        /// Checks the file system directly where StreamingAssets is a plain directory.
+        /// Returns true on platforms where it is a URI (Android, WebGL).
+        /// </summary>
         public bool DirectoryExists(string path)
         {
-            return true;
+            var fullPath = ResolvePath(path);
+            return IsUri(fullPath) || Directory.Exists(fullPath);
+        }
+
+        private static string ResolvePath(string path)
+        {
+            // Combine with StreamingAssets root, normalizing to forward slashes.
+            return Application.streamingAssetsPath + "/" + path.Replace('\\', '/');
+        }
+
+        private static bool IsUri(string fullPath)
+        {
+            return fullPath.Contains("://");
+        }
+
+        private static bool IsNotFound(UnityWebRequest request, string fullPath)
+        {
+            if (!IsUri(fullPath))
+                return !File.Exists(fullPath);
+            if (request.responseCode == 404)
+                return true;
+            // Files inside the APK are local, so a failed read means the entry is missing.
+            return fullPath.StartsWith("jar:", StringComparison.Ordinal);
         }
     }
 }

@@ -11,6 +11,17 @@ public interface IFS
 ```
 
 
+**Remarks:**
+
+Implementations read local data only. Downloading remote content is the caller's
+ responsibility and must be done before loading.
+
+When a file does not exist, [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-ifs/#readallbytesstring) and [IFS.ReadAllBytesAsync(String, CancellationToken)](../shadop-archmage-sdk-ifs/#readallbytesasyncstring-cancellationtoken)
+ throw [FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception). The loader relies on this to skip missing
+ override files.
+
+During asynchronous loading, any method may be called from a thread pool thread.
+
 ## Methods
 
 ### **ReadAllBytes(String)**
@@ -30,6 +41,11 @@ The file path.
 
 [Byte[]](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
 A byte array containing the contents of the file.
+
+#### Exceptions
+
+[FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception)<br>
+The file does not exist.
 
 ### **ReadAllBytesAsync(String, CancellationToken)**
 
@@ -52,6 +68,11 @@ The token to monitor for cancellation requests.
 [Task<Byte[]>](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1)<br>
 A task that represents the asynchronous read operation, wrapping the file contents as a byte array.
 
+#### Exceptions
+
+[FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception)<br>
+The file does not exist.
+
 ### **FileExists(String)**
 
 Determines whether the specified file exists.
@@ -68,11 +89,16 @@ The file to check.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-true if the caller has the required permissions and path contains the name of an existing file; otherwise, false.
+false if the file is known not to exist; otherwise, true.
+
+**Remarks:**
+
+May return true for a missing file when an exact check is expensive; reading that file then
+ throws [FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception). Must not return false for an existing file.
 
 ### **DirectoryExists(String)**
 
-Determines whether the given path refers to an existing directory on disk.
+Determines whether the given path refers to an existing directory.
 
 ```csharp
 bool DirectoryExists(string path)
@@ -86,4 +112,9 @@ The path to test.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-true if path refers to an existing directory; false if the directory does not exist or an error occurs when trying to determine if the specified directory exists.
+false if the directory is known not to exist; otherwise, true.
+
+**Remarks:**
+
+Used to validate override roots before loading. May return true when the underlying storage has
+ no directory concept or an exact check is expensive. Must not return false for an existing directory.

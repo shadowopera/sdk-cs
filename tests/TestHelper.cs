@@ -23,10 +23,13 @@ namespace Shadop.Archmage.Sdk.Tests
     class MemoryFS : IFS
     {
         readonly Dictionary<string, byte[]> _fsys;
+        readonly bool _alwaysExists;
 
-        public MemoryFS(Dictionary<string, byte[]> fsys)
+        /// <param name="alwaysExists">Makes FileExists return true for missing files, as allowed by IFS.</param>
+        public MemoryFS(Dictionary<string, byte[]> fsys, bool alwaysExists = false)
         {
             _fsys = fsys;
+            _alwaysExists = alwaysExists;
         }
 
         public bool DirectoryExists(string path)
@@ -37,7 +40,7 @@ namespace Shadop.Archmage.Sdk.Tests
         public bool FileExists(string path)
         {
             var key = path.Replace('\\', '/');
-            return _fsys.ContainsKey(key);
+            return _alwaysExists || _fsys.ContainsKey(key);
         }
 
         public byte[] ReadAllBytes(string path)

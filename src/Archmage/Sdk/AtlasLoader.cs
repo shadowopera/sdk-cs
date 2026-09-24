@@ -367,14 +367,25 @@ namespace Shadop.Archmage.Sdk
                         ? Path.Combine(overrideCfg.RootPath, f)
                         : f;
 
-                    if (fs.FileExists(ovrPath))
-                    {
-                        // Report: StartReadingOverride
-                        progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, ovrPath, stopwatch.Elapsed));
+                    if (!fs.FileExists(ovrPath))
+                        continue;
 
-                        overrideFiles.Add(ovrPath);
-                        overrides.Add(await readFile(fs, ovrPath).ConfigureAwait(false));
+                    // Report: StartReadingOverride
+                    progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, ovrPath, stopwatch.Elapsed));
+
+                    byte[] ovrData;
+                    try
+                    {
+                        ovrData = await readFile(fs, ovrPath).ConfigureAwait(false);
                     }
+                    catch (FileNotFoundException)
+                    {
+                        // FileExists may report true for a missing file.
+                        continue;
+                    }
+
+                    overrideFiles.Add(ovrPath);
+                    overrides.Add(ovrData);
                 }
 
                 if (i > 0) paths.Append(", ");

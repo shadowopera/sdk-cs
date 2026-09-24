@@ -389,6 +389,42 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.Equal(1, skillEvents.Count(e => e.Stage == AtlasLoadStage.Completed));
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestAtlas_WithOverrideFS_FileExistsFalsePositive(bool isAsync)
+        {
+            var fsys = new Dictionary<string, byte[]>
+            {
+                { "vtbl/skill-magic.json", Encoding.UTF8.GetBytes("{\"heal\":{\"mana\":25,\"cooldown\":[0,8]}}") },
+                { "vtbl/skill-passive.json", Encoding.UTF8.GetBytes("{\"aura\":{\"radius\":7}}") }
+            };
+
+            var logger = new ScavengerLogger();
+            var opts = DefaultOpts()
+                .WithLogger(logger)
+                .WithBlacklist(new[] { "balance" })
+                .WithOverrideRoot("../../../override/1")
+                .WithOverrideRoot("../../../override/2")
+                .WithOverrideFS(new MemoryFS(fsys, alwaysExists: true));
+
+            var atlas = new ConfigAtlas();
+            var events = new System.Collections.Concurrent.ConcurrentBag<AtlasLoadEvent>();
+            var progress = new SyncProgress<AtlasLoadEvent>(events.Add);
+
+            if (isAsync)
+                await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata",
+                    atlas, opts, progress, cancellationToken: TestContext.Current.CancellationToken);
+            else
+                Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
+            CheckUpdateGolden(atlas, "../../../golden/override_root_and_fs");
+
+            // Missing override files are attempted but skipped.
+            var skillEvents = events.Where(e => e.Key == "skill").ToList();
+            Assert.Equal(4, skillEvents.Count(e => e.Stage == AtlasLoadStage.ApplyingOverride));
+            Assert.True(skillEvents.Count(e => e.Stage == AtlasLoadStage.StartReadingOverride) > 4);
+        }
+
         [Fact]
         public void TestAtlas_WithLoadStrategy()
         {

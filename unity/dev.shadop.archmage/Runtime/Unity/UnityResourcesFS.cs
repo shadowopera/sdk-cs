@@ -58,11 +58,18 @@ namespace Shadop.Archmage.Sdk
         }
 #endif
 
+        /// <summary>
+        /// Always returns true. Resources can only check existence by loading the asset,
+        /// so a missing file is reported by the read instead.
+        /// </summary>
         public bool FileExists(string path)
         {
             return true;
         }
 
+        /// <summary>
+        /// Always returns true. Resources has no directory concept.
+        /// </summary>
         public bool DirectoryExists(string path)
         {
             return true;

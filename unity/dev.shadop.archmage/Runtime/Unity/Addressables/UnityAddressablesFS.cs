@@ -8,12 +8,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
     /// Implements the IFS interface to load files via Unity Addressables.
+    /// Only asynchronous loading is supported.
     /// </summary>
+    /// <remarks>
+    /// Content in remote groups must be downloaded before loading.
+    /// </remarks>
     public class UnityAddressablesFS : IFS
     {
         public byte[] ReadAllBytes(string path)
@@ -25,41 +30,68 @@ namespace Shadop.Archmage.Sdk
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Ensure forward slashes are used to match Addressables default Address format.
-            var address = path.Replace('\\', '/');
+            var address = ToAddress(path);
 
-            // Asynchronously load TextAsset via Addressables on the main thread.
+            // Resolve the location first: a missing key yields an empty list instead of
+            // an InvalidKeyException logged by LoadAssetAsync.
             await Awaitable.MainThreadAsync();
-            var handle = Addressables.LoadAssetAsync<TextAsset>(address);
+            var locationsHandle = Addressables.LoadResourceLocationsAsync(address, typeof(TextAsset));
             try
             {
-                var textAsset = await handle.Task;
+                var locations = await locationsHandle.Task;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (textAsset is null)
-                    throw new FileNotFoundException($"Could not find Addressables key: {address}.");
+                if (locationsHandle.Status != AsyncOperationStatus.Succeeded)
+                    throw new IOException($"Failed to resolve Addressables key: {address}.", locationsHandle.OperationException);
+                if (locations.Count == 0)
+                    throw new FileNotFoundException($"Could not find Addressables key: {address}.", path);
 
-                // textAsset.bytes returns the raw bytes of the asset — no encoding conversion,
-                // regardless of file name extension
-                return textAsset.bytes;
+                var handle = Addressables.LoadAssetAsync<TextAsset>(locations[0]);
+                try
+                {
+                    var textAsset = await handle.Task;
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (handle.Status != AsyncOperationStatus.Succeeded || textAsset is null)
+                        throw new IOException($"Failed to load Addressables asset: {address}.", handle.OperationException);
+
+                    // textAsset.bytes returns the raw bytes of the asset — no encoding conversion,
+                    // regardless of file name extension
+                    return textAsset.bytes;
+                }
+                finally
+                {
+                    // Release the asset handle even if loading fails or is canceled.
+                    Addressables.Release(handle);
+                }
             }
             finally
             {
-                // Release the asset handle even if loading fails or is canceled.
-                Addressables.Release(handle);
+                Addressables.Release(locationsHandle);
             }
         }
 
+        /// <summary>
+        /// Always returns true. Catalog lookups must run on the main thread, while the loader may call
+        /// this method from a worker thread, so a missing file is reported by the read instead.
+        /// </summary>
         public bool FileExists(string path)
         {
-            // Synchronous file existence check is complex in Addressables.
-            // We provide a mock implementation returning true for the basic workflow.
             return true;
         }
 
+        /// <summary>
+        /// Always returns true. Addressables has no directory concept.
+        /// </summary>
         public bool DirectoryExists(string path)
         {
             return true;
+        }
+
+        private static string ToAddress(string path)
+        {
+            // Ensure forward slashes are used to match Addressables default Address format.
+            return path.Replace('\\', '/');
         }
     }
 }
