@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0] - 2026-09-24
+
+### Changed
+
+- Tests: Rebuilt the integration tests on the self-contained SDK test data shared with the Go SDK, and check every `XRef` binding after each golden scenario.
+- Unity: `ArchmageDev` now uses the SDK test data, with its scripts moved into the `ArchmageDevCore` assembly.
+
+### Fixed
+
+- SDK: Dumped enum-keyed dictionaries now use numeric keys, matching the exported JSON and the Go SDK, instead of Newtonsoft's enum names.
+
 ## [0.17.0] - 2026-09-09
 
 ### Added
