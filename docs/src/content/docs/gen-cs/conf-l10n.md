@@ -63,7 +63,7 @@ public L10n(string key)
 
 ### **Text**
 
-Returns the translation for the player's preferred language, falling back to the default language if the key isn't found.
+Returns the translation for the player's preferred language, falling back to the default language if the key isn't found. An empty key yields an empty string.
 
 ```csharp
 public string Text { get; }
@@ -77,7 +77,7 @@ public string Text { get; }
 
 ### **GetText(String, String&)**
 
-Returns the translation for the given language. Returns true if the key is found, with the translated text in `text`; otherwise false.
+Returns the translation for the given language. Returns true if the key is found, with the translated text in `text`; otherwise false. An empty key yields an empty string.
 
 ```csharp
 public bool GetText(string lang, String& text)
