@@ -21,9 +21,11 @@ UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj
 scripts/rsync-unity.sh
 
 # Run ArchmageDev PlayMode tests in batch mode (Unity Editor must be closed)
-scripts/unity-test.sh [--no-sync] [--filter <expr>]
+# --packed builds Addressables content and loads it from bundles ("Use Existing Build")
+# Summary: unity/ArchmageDev/Logs/playmode-<assetdb|packed>-summary.txt
+scripts/unity-test.sh [--no-sync] [--packed] [--filter <expr>]
 
-# Run .NET tests, then Unity PlayMode tests (args pass through to unity-test.sh)
+# Run .NET tests, then Unity PlayMode tests in both modes (args pass through to unity-test.sh)
 scripts/run-all-tests.sh
 
 # Bump version

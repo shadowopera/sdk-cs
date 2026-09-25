@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Runs the .NET tests, then the ArchmageDev PlayMode tests.
+# Runs the .NET tests, then the ArchmageDev PlayMode tests twice: against the
+# Asset Database, then against built Addressables bundles (--packed).
 # Arguments are passed through to scripts/unity-test.sh.
 
 [[ "$TRACE" ]] && set -x
@@ -47,8 +48,29 @@ fi
 
 echo
 printImportantMessage "Running Unity PlayMode tests..."
-if ! scripts/unity-test.sh "$@"; then
+assetdb_ok=true
+scripts/unity-test.sh "$@" || assetdb_ok=false
+
+echo
+printImportantMessage "Running Unity PlayMode tests with packed Addressables..."
+packed_ok=true
+scripts/unity-test.sh --no-sync --packed "$@" || packed_ok=false
+
+LOG_DIR="unity/ArchmageDev/Logs"
+if [[ -f "$LOG_DIR/playmode-assetdb-results.xml" && -f "$LOG_DIR/playmode-packed-results.xml" ]]; then
+    echo
+    scripts/unity-test-summary.sh compare "$LOG_DIR/playmode-assetdb-results.xml" "$LOG_DIR/playmode-packed-results.xml"
+fi
+
+if ! $assetdb_ok; then
+    echo
     printError "Unity PlayMode tests failed."
+fi
+if ! $packed_ok; then
+    echo
+    printError "Unity PlayMode tests with packed Addressables failed."
+fi
+if ! $assetdb_ok || ! $packed_ok; then
     exit 1
 fi
 

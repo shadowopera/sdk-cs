@@ -62,28 +62,29 @@ public class AddressablesCostTests
     public async Task MissingOverrides()
     {
         // Warm up Addressables initialization and asset loading.
-        await Measure(false, 0, -1);
+        await Measure(false, 0, "warmup");
+
+        // "Use Asset Database" registers AssetDatabaseProvider; "Use Existing Build" loads bundles instead.
+        var providers = Addressables.ResourceManager.ResourceProviders.OfType<AssetDatabaseProvider>().ToList();
 
         // Stretch frames like a real game, so that each main thread hop costs up to one frame.
         var burner = new GameObject("FrameTimeBurner", typeof(FrameTimeBurner));
         try
         {
+            if (providers.Count == 0)
+            {
+                await MeasureAll("mode=packed");
+                return;
+            }
+
             // A load delay of 0 completes asset loads synchronously; 0.02 s makes them take
             // at least one frame, like loading from asset bundles. The provider treats delays
             // below 0.01 s as 0.
             foreach (var loadDelay in new[] { 0f, 0.02f })
             {
-                foreach (var provider in Addressables.ResourceManager.ResourceProviders)
-                {
-                    if (provider is AssetDatabaseProvider adp)
-                        adp.SetLoadDelay(loadDelay);
-                }
-
-                foreach (var concurrent in new[] { false, true })
-                {
-                    foreach (var roots in new[] { 0, 1, 4 })
-                        await Measure(concurrent, roots, loadDelay);
-                }
+                foreach (var provider in providers)
+                    provider.SetLoadDelay(loadDelay);
+                await MeasureAll($"mode=assetdb loadDelay={loadDelay}");
             }
         }
         finally
@@ -92,7 +93,16 @@ public class AddressablesCostTests
         }
     }
 
-    static async Task Measure(bool concurrent, int missingRoots, float loadDelay)
+    static async Task MeasureAll(string label)
+    {
+        foreach (var concurrent in new[] { false, true })
+        {
+            foreach (var roots in new[] { 0, 1, 4 })
+                await Measure(concurrent, roots, label);
+        }
+    }
+
+    static async Task Measure(bool concurrent, int missingRoots, string label)
     {
         // Let Addressables run deferred completion callbacks, which release the operations
         // of the previous load; otherwise this load hits them in the operation cache.
@@ -116,7 +126,7 @@ public class AddressablesCostTests
         await Archmage.LoadAtlasAsync("Assets/Configs/atlas.json", "Assets/Configs", new ConfigAtlas(), options);
         sw.Stop();
 
-        Debug.Log($"[AddressablesCost] loadDelay={loadDelay} concurrent={concurrent} missingRoots={missingRoots} " +
+        Debug.Log($"[AddressablesCost] {label} concurrent={concurrent} missingRoots={missingRoots} " +
                   $"frames={Time.frameCount - frame} ms={sw.Elapsed.TotalMilliseconds:F1} " +
                   $"reads(main={fs.MainReads}, worker={fs.WorkerReads})");
     }
