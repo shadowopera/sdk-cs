@@ -3,7 +3,6 @@
 #if UNITY_6000_0_OR_NEWER
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace Shadop.Archmage.Sdk
     /// <summary>
     /// Implements the IFS interface to load files from Unity StreamingAssets via UnityWebRequest.
     /// Paths are resolved relative to Application.streamingAssetsPath.
-    /// Only asynchronous loading is supported.
+    /// Only asynchronous loading is supported, and it must be started from the main thread.
     /// </summary>
     public class UnityStreamingAssetsFS : IFS
     {
@@ -32,7 +31,6 @@ namespace Shadop.Archmage.Sdk
             // On other platforms it is a plain file system path and requires the file:// scheme.
             var uri = IsUri(fullPath) ? fullPath : "file://" + fullPath;
 
-            await Awaitable.MainThreadAsync();
             using var request = UnityWebRequest.Get(uri);
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -75,13 +73,6 @@ namespace Shadop.Archmage.Sdk
             return IsUri(fullPath) || Directory.Exists(fullPath);
         }
 
-        /// <summary>
-        /// Does nothing. Where StreamingAssets is a URI, checking existence costs as much as reading.
-        /// </summary>
-        public Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
 
         private static string ResolvePath(string path)
         {

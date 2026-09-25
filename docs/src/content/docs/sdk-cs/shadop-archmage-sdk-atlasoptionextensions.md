@@ -208,19 +208,21 @@ public static AtlasOptions WithOverrideFS(AtlasOptions opts, IFS fs, string root
 [ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception)<br>
 Thrown if fs is null.
 
-### **WithLoadStrategy(AtlasOptions, AtlasLoadStrategy)**
+### **WithMaxConcurrency(AtlasOptions, Int32)**
 
-Sets custom load strategy for parallel/cached/conditional loading (default is sequential).
+Sets the maximum number of items loaded at the same time (default 32). An item counts from the start of
+ reading its files until it is deserialized. This limits open files, memory held by file contents, and
+ deserialization work queued on the thread pool. Use 1 to load items one at a time.
 
 ```csharp
-public static AtlasOptions WithLoadStrategy(AtlasOptions opts, AtlasLoadStrategy strategy)
+public static AtlasOptions WithMaxConcurrency(AtlasOptions opts, int n)
 ```
 
 #### Parameters
 
 `opts` [AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
 
-`strategy` AtlasLoadStrategy<br>
+`n` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
 
 #### Returns
 
@@ -228,31 +230,8 @@ public static AtlasOptions WithLoadStrategy(AtlasOptions opts, AtlasLoadStrategy
 
 #### Exceptions
 
-[ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception)<br>
-Thrown if strategy is null.
-
-### **WithAsyncLoadStrategy(AtlasOptions, AtlasAsyncLoadStrategy)**
-
-Sets custom async load strategy for parallel/cached/conditional loading (default is sequential).
-
-```csharp
-public static AtlasOptions WithAsyncLoadStrategy(AtlasOptions opts, AtlasAsyncLoadStrategy strategy)
-```
-
-#### Parameters
-
-`opts` [AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
-
-`strategy` AtlasAsyncLoadStrategy<br>
-
-#### Returns
-
-[AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
-
-#### Exceptions
-
-[ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception)<br>
-Thrown if strategy is null.
+[ArgumentOutOfRangeException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentoutofrangeexception)<br>
+Thrown if n is less than 1.
 
 ### **WithJsonSettings(AtlasOptions, JsonSerializerSettings)**
 

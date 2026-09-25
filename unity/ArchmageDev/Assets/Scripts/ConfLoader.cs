@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using Conf;
@@ -81,11 +80,8 @@ public class ConfLoader : MonoBehaviour
                 atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
-        if (concurrent)
-            options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
-            {
-                await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
-            });
+        if (!concurrent)
+            options.WithMaxConcurrency(1);
 
         try
         {
@@ -147,11 +143,8 @@ public class ConfLoader : MonoBehaviour
                 atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
-        if (concurrent)
-            options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
-            {
-                await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
-            });
+        if (!concurrent)
+            options.WithMaxConcurrency(1);
 
         try
         {
@@ -183,11 +176,8 @@ public class ConfLoader : MonoBehaviour
                 atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
-        if (concurrent)
-            options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
-            {
-                await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
-            });
+        if (!concurrent)
+            options.WithMaxConcurrency(1);
 
         try
         {

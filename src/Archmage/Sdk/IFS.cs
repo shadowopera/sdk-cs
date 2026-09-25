@@ -1,6 +1,5 @@
 #nullable enable
 
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +14,10 @@ namespace Shadop.Archmage.Sdk
     /// <para>When a file does not exist, <see cref="ReadAllBytes"/> and <see cref="ReadAllBytesAsync"/>
     /// throw <see cref="System.IO.FileNotFoundException"/>. The loader relies on this to skip missing
     /// override files.</para>
-    /// <para>During asynchronous loading, any method may be called from a thread pool thread.</para>
+    /// <para>Methods are called on the thread that calls <see cref="Archmage.LoadAtlas"/>, or on the
+    /// synchronization context that calls <see cref="Archmage.LoadAtlasAsync"/>. In Unity, calling from the
+    /// main thread lets implementations use main-thread-only APIs directly. Several asynchronous reads may be
+    /// in flight at the same time.</para>
     /// </remarks>
     public interface IFS
     {
@@ -57,19 +59,5 @@ namespace Shadop.Archmage.Sdk
         /// <param name="path">The path to test.</param>
         /// <returns>false if the directory is known not to exist; otherwise, true.</returns>
         bool DirectoryExists(string path);
-
-        /// <summary>
-        /// Prepares for the <see cref="FileExists"/> calls of an asynchronous load.
-        /// </summary>
-        /// <remarks>
-        /// <see cref="Archmage.LoadAtlasAsync"/> calls this once per load, before any item is loaded, with every
-        /// override file path it will pass to <see cref="FileExists"/> on this instance. It is not called by
-        /// <see cref="Archmage.LoadAtlas"/> or when there are no override files. Implementations that check file
-        /// existence cheaply can return a completed task.
-        /// </remarks>
-        /// <param name="paths">The override file paths, as they will be passed to <see cref="FileExists"/>.</param>
-        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default);
     }
 }

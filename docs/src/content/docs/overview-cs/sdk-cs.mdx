@@ -33,7 +33,7 @@ generated C# types, resolves cross-table references, and calls post-load hooks.
 - **Variants** — switch an item to an alternative data set at load time via `WithVariant`
 - **Whitelist/Blacklist** — load only a subset of atlas items
 - **Layered overrides** — merge files with matching relative paths from additional override sources (a directory path or a custom file system) into the base configs, field by field, at load time
-- **Synchronous and asynchronous loading** — progress reporting, cancellation, and pluggable strategies for parallel loading
+- **Synchronous and asynchronous loading** — progress reporting, cancellation, and parallel deserialization
 - **Pluggable file system** — load from embedded resources, in-memory data, or any other source via `IFS`
 - **Versioning** — VCS metadata (branch, commit, timestamp, etc.), when present in `atlas.json`, is available on the loaded atlas
 - **Unity support** — built-in adapters for Addressables, Resources, and `StreamingAssets`; Inspector dropdowns for config ID fields, populated from the loaded atlas, for easy selection
@@ -105,6 +105,10 @@ await Archmage.LoadAtlasAsync(
     "Assets/Configs/atlas.json", "Assets/Configs", atlas, options);
 ```
 
+Call `LoadAtlasAsync` from the main thread. Before building the player, build the Addressables content, or
+enable **Build Addressables on Player Build**. Content in remote groups must be downloaded (for example with
+`Addressables.DownloadDependenciesAsync`) before loading.
+
 ### .NET
 
 ```csharp
@@ -152,6 +156,15 @@ Loading proceeds in the following steps:
 4. `BindRefs()` — resolve cross-table references
 5. `OnLoaded()` — post-load initialization
 
+Several items are loaded at the same time. Files are read on the calling thread (with `LoadAtlasAsync`, on the
+caller's synchronization context, such as the Unity main thread). Once all files of an item are read, the item
+is deserialized on the thread pool while reading continues. As a result, `IApplyKeys.ApplyKeys`, the logger and
+the progress callback may be called from thread pool threads. `AtlasModifier`, `BindRefs` and `OnLoaded` run on
+the calling thread.
+
+Do not block on the task returned by `LoadAtlasAsync` (for example with `.Result` or `.Wait()`) on a thread that
+has a synchronization context, such as the Unity main thread; it deadlocks. Use `LoadAtlas` to load synchronously.
+
 ## AtlasOptions
 
 Configure loading via the fluent `AtlasOptions` builder:
@@ -174,6 +187,8 @@ var opts = new AtlasOptions()
     .WithOverrideFS(embeddedFS)
     // mutate atlas.json after parsing
     .WithAtlasModifier(atlasJson => { ... })
+    // load at most 8 items at the same time (default: 32)
+    .WithMaxConcurrency(8)
     // custom Newtonsoft.Json settings
     .WithJsonSettings(customSettings);
 ```
@@ -197,19 +212,10 @@ Field-level merge rules during override processing:
 | JSON object | Recursively merges — only fields present in the override are updated, others remain unchanged |
 | Any other value | Overwrites the field |
 
-**Custom load strategy** — By default, items are loaded one by one in alphabetical order.
-`WithLoadStrategy` and `WithAsyncLoadStrategy` let you take control of that loop —
-for example to load items in parallel:
-
-```csharp
-// Parallel sync
-var opts = new AtlasOptions().WithLoadStrategy((items, load) =>
-    Parallel.ForEach(items, kvp => load(kvp.Key, kvp.Value)));
-
-// Parallel async
-var opts = new AtlasOptions().WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
-    await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct))));
-```
+**Concurrency** — `WithMaxConcurrency` limits how many items are loaded at the same time. An item
+counts from the start of reading its files until it is deserialized, so the limit bounds open files,
+memory held by file contents, and deserialization work queued on the thread pool. Use `WithMaxConcurrency(1)`
+to load items one at a time.
 
 ## Custom File System
 
@@ -229,6 +235,15 @@ class EmbeddedFS : IFS
 
 var opts = new AtlasOptions().WithFS(new EmbeddedFS());
 ```
+
+An `IFS` implementation must follow these rules:
+
+- Methods are called on the thread that calls `LoadAtlas`, or on the synchronization context that calls
+  `LoadAtlasAsync`. Several asynchronous reads may be in flight at the same time.
+- `FileExists` and `DirectoryExists` may return true for a missing file or directory, but must not return
+  false for an existing one.
+- `ReadAllBytes` and `ReadAllBytesAsync` throw `FileNotFoundException` when the file does not exist. Missing
+  override files are skipped this way.
 
 ## Special Types
 

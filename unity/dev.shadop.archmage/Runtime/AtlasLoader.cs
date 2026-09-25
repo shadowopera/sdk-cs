@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,6 +33,9 @@ namespace Shadop.Archmage.Sdk
         /// </list>
         /// <para>If any step fails, an ArchmageException is raised and loading is aborted.
         /// Alternatively, exceptions can be thrown from IAtlas.OnLoaded() to abort loading.</para>
+        /// <para>Files are read on the calling thread. Items are deserialized in parallel on the thread pool,
+        /// so <see cref="IApplyKeys.ApplyKeys"/>, the logger and <paramref name="progress"/> may be called
+        /// from thread pool threads. The atlas modifier, BindRefs and OnLoaded run on the calling thread.</para>
         /// </remarks>
         /// <param name="atlasFile">Path to atlas.json containing mapping definitions.</param>
         /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
@@ -47,8 +51,6 @@ namespace Shadop.Archmage.Sdk
             IProgress<AtlasLoadEvent>? progress = null)
         {
             options ??= new AtlasOptions();
-            if (options.AsyncLoadStrategy is not null)
-                throw new ArchmageException("Cannot use WithAsyncLoadStrategy with synchronous LoadAtlas.");
             LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, progress).GetAwaiter().GetResult();
             atlas.OnLoaded();
         }
@@ -60,6 +62,13 @@ namespace Shadop.Archmage.Sdk
         /// <para>This method performs the same operations as LoadAtlas but asynchronously, providing non-blocking I/O.
         /// Progress events are reported via the IProgress interface to allow UI updates and status tracking.
         /// Loading can be canceled via the CancellationToken.</para>
+        /// <para>All <see cref="IFS"/> calls are made on the caller's synchronization context (the Unity main thread
+        /// when called from it), so file systems can use main-thread-only APIs. Items are deserialized in parallel
+        /// on the thread pool, so <see cref="IApplyKeys.ApplyKeys"/>, the logger and <paramref name="progress"/>
+        /// may be called from thread pool threads (<see cref="Progress{T}"/> posts back to its own context).
+        /// The atlas modifier, BindRefs and OnLoaded run on the caller's context.</para>
+        /// <para>Do not block on the returned task on a thread that has a synchronization context, such as the
+        /// Unity main thread; it deadlocks. Use <see cref="LoadAtlas"/> for synchronous loading.</para>
         /// </remarks>
         /// <param name="atlasFile">Path to atlas.json containing mapping definitions.</param>
         /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
@@ -79,8 +88,6 @@ namespace Shadop.Archmage.Sdk
             CancellationToken cancellationToken = default)
         {
             options ??= new AtlasOptions();
-            if (options.LoadStrategy is not null)
-                throw new ArchmageException("Cannot use WithLoadStrategy with asynchronous LoadAtlasAsync.");
             await LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, progress, cancellationToken);
             // Invoke in the caller's thread.
             atlas.OnLoaded();
@@ -98,9 +105,9 @@ namespace Shadop.Archmage.Sdk
             var stopwatch = Stopwatch.StartNew();
             options.JsonSettings = CreateJsonLoadSettings(options.JsonSettings);
 
-            Func<IFS, string, Task<byte[]>> readFile = isAsync
-                ? (fs, path) => fs.ReadAllBytesAsync(path, cancellationToken)
-                : (fs, path) => Task.FromResult(fs.ReadAllBytes(path));
+            Func<IFS, string, CancellationToken, Task<byte[]>> readFile = isAsync
+                ? (fs, path, ct) => fs.ReadAllBytesAsync(path, ct)
+                : (fs, path, _) => Task.FromResult(fs.ReadAllBytes(path));
 
             // Verify override directories exist
             foreach (var overrideConfig in options.OverrideConfigs)
@@ -120,7 +127,7 @@ namespace Shadop.Archmage.Sdk
             cancellationToken.ThrowIfCancellationRequested();
 
             // Read and parse atlas.json
-            var atlasData = await readFile(options.FS, atlasFile).ConfigureAwait(false);
+            var atlasData = await readFile(options.FS, atlasFile, cancellationToken);
             AtlasJson? atlasJson;
             try
             {
@@ -192,65 +199,79 @@ namespace Shadop.Archmage.Sdk
             cancellationToken.ThrowIfCancellationRequested();
             progress?.Report(new AtlasLoadEvent("", AtlasLoadStage.ItemsQueued, total: filtered.Count));
 
-            // Load items
-            if (isAsync)
+            // Load items. IFS is only called on the caller's thread or context: all reads start here, and
+            // each item is handed to the thread pool for parsing as soon as its files are read.
+            using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
             {
-                await PrepareOverridesAsync(filtered, atlasJson, options, cancellationToken).ConfigureAwait(false);
+                var tasks = new List<Task>(filtered.Count);
+                var running = new List<Task>();
+                Task? firstFailure = null;
 
-                async Task ItemLoadAsync(string key, AtlasItem item, CancellationToken ct)
+                // Removes finished items. On the first failure, cancels the rest from the caller's thread,
+                // so that cancellation callbacks registered by IFS run there too.
+                void Reap()
                 {
-                    ct.ThrowIfCancellationRequested();
-                    try
+                    for (var i = running.Count - 1; i >= 0; i--)
                     {
-                        await LoadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile)
-                            .ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        var msg = $"Failed to load atlas item: \"{key}\". atlasFile: {atlasFile}, cfgRoot: {cfgRoot}";
-                        throw new ArchmageException(msg, ex);
+                        var t = running[i];
+                        if (!t.IsCompleted)
+                            continue;
+                        running.RemoveAt(i);
+                        if (t.IsFaulted && firstFailure is null)
+                        {
+                            firstFailure = t;
+                            cts.Cancel();
+                        }
                     }
                 }
 
-                if (options.AsyncLoadStrategy is not null)
+                async Task WaitAnyAsync()
                 {
-                    await options.AsyncLoadStrategy(filtered, ItemLoadAsync, cancellationToken)
-                        .ConfigureAwait(false);
+                    if (isAsync)
+                        await Task.WhenAny(running);
+                    else
+                        // Must not await: sync mode blocks the caller, which may own a SynchronizationContext
+                        // that the continuation would be posted to, causing a deadlock.
+                        Task.WaitAny(running.ToArray());
+                    Reap();
                 }
-                else
+
+                foreach (var kvp in filtered)
                 {
-                    foreach (var kvp in filtered)
-                    {
-                        await ItemLoadAsync(kvp.Key, kvp.Value, cancellationToken).ConfigureAwait(false);
-                    }
+                    Reap();
+                    if (running.Count >= options.MaxConcurrency)
+                        await WaitAnyAsync();
+                    if (cts.IsCancellationRequested)
+                        break;
+
+                    var task = RunItem(kvp.Key, kvp.Value, cts.Token);
+                    tasks.Add(task);
+                    running.Add(task);
                 }
+
+                // Wait for everything, including items still running after a failure.
+                while (running.Count > 0)
+                    await WaitAnyAsync();
+
+                if (firstFailure is not null)
+                    ExceptionDispatchInfo.Capture(firstFailure.Exception!.InnerException!).Throw();
+                cancellationToken.ThrowIfCancellationRequested();
+                foreach (var t in tasks)
+                    t.GetAwaiter().GetResult();
             }
-            else
-            {
-                void ItemLoad(string key, AtlasItem item)
-                {
-                    try
-                    {
-                        LoadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile)
-                            .GetAwaiter().GetResult();
-                    }
-                    catch (Exception ex)
-                    {
-                        var msg = $"Failed to load atlas item: \"{key}\". atlasFile: {atlasFile}, cfgRoot: {cfgRoot}";
-                        throw new ArchmageException(msg, ex);
-                    }
-                }
 
-                if (options.LoadStrategy is not null)
+            async Task RunItem(string key, AtlasItem item, CancellationToken ct)
+            {
+                try
                 {
-                    options.LoadStrategy(filtered, ItemLoad);
+                    var loading = await ReadItem(key, item, atlasJson, atlasFile, cfgRoot, options, progress, readFile, ct);
+                    // Nothing after parsing touches IFS, so there is no need to resume on the caller's context.
+                    await Task.Run(() => ParseItem(loading, options, progress, ct), ct).ConfigureAwait(false);
                 }
-                else
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
-                    foreach (var kvp in filtered)
-                    {
-                        ItemLoad(kvp.Key, kvp.Value);
-                    }
+                    var msg = $"Failed to load atlas item: \"{key}\". atlasFile: {atlasFile}, cfgRoot: {cfgRoot}";
+                    throw new ArchmageException(msg, ex);
                 }
             }
 
@@ -327,46 +348,31 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Calls IFS.PrepareAsync once per override FS with every override path LoadItem will check.
-        /// Items that fail to resolve are skipped here and reported by LoadItem.
+        /// Files of an item that have been read and are waiting to be parsed.
         /// </summary>
-        static async Task PrepareOverridesAsync(List<KeyValuePair<string, AtlasItem>> items, AtlasJson atlasJson,
-            AtlasOptions options, CancellationToken cancellationToken)
+        sealed class LoadingItem
         {
-            if (options.OverrideConfigs.Count == 0)
-                return;
-
-            var groups = new List<(IFS FS, HashSet<string> Paths)>();
-            foreach (var kvp in items)
+            public LoadingItem(AtlasItem item, List<string> filePaths, byte[][] fileData,
+                List<(string Path, byte[] Data)> overrides, Stopwatch stopwatch)
             {
-                var files = ResolveFiles(kvp.Key, kvp.Value, atlasJson, options, out _, out _);
-                if (files is null)
-                    continue;
-
-                foreach (var f in files)
-                {
-                    foreach (var overrideCfg in options.OverrideConfigs)
-                    {
-                        var fs = overrideCfg.FS ?? options.FS;
-                        var i = groups.FindIndex(g => ReferenceEquals(g.FS, fs));
-                        if (i < 0)
-                        {
-                            groups.Add((fs, new HashSet<string>()));
-                            i = groups.Count - 1;
-                        }
-                        groups[i].Paths.Add(OverridePath(overrideCfg, f));
-                    }
-                }
+                Item = item;
+                FilePaths = filePaths;
+                FileData = fileData;
+                Overrides = overrides;
+                Stopwatch = stopwatch;
             }
 
-            foreach (var (fs, paths) in groups)
-            {
-                if (paths.Count > 0)
-                    await fs.PrepareAsync(paths, cancellationToken).ConfigureAwait(false);
-            }
+            public AtlasItem Item { get; }
+            public List<string> FilePaths { get; }
+            public byte[][] FileData { get; }
+            public List<(string Path, byte[] Data)> Overrides { get; }
+            public Stopwatch Stopwatch { get; }
         }
 
-        static async Task LoadItem(
+        /// <summary>
+        /// Reads the files and override files of an item concurrently. Runs on the caller's thread or context.
+        /// </summary>
+        static async Task<LoadingItem> ReadItem(
             string key,
             AtlasItem item,
             AtlasJson atlasJson,
@@ -374,8 +380,10 @@ namespace Shadop.Archmage.Sdk
             string cfgRoot,
             AtlasOptions options,
             IProgress<AtlasLoadEvent>? progress,
-            Func<IFS, string, Task<byte[]>> readFile)
+            Func<IFS, string, CancellationToken, Task<byte[]>> readFile,
+            CancellationToken ct)
         {
+            ct.ThrowIfCancellationRequested();
             item.Key = key;
 
             var files = ResolveFiles(key, item, atlasJson, options, out var keyPath, out var variant)
@@ -388,32 +396,25 @@ namespace Shadop.Archmage.Sdk
                 throw new Exception($"Could not find {keyPath} in {atlasFile}.");
             }
 
-            var overrideFiles = new List<string>();
-            var overrides = new List<byte[]>();
-            var paths = new StringBuilder();
             var stopwatch = Stopwatch.StartNew();
 
             // Report: StartProcessing
             progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartProcessing, elapsed: stopwatch.Elapsed));
 
-            // Load each file and collect overrides
-            for (var i = 0; i < files.Count; i++)
+            var filePaths = new List<string>(files.Count);
+            var fileReads = new List<Task<byte[]>>(files.Count);
+            var ovrPaths = new List<string>();
+            var ovrReads = new List<Task<byte[]?>>();
+            foreach (var f in files)
             {
-                var f = files[i];
                 var filePath = Path.Combine(cfgRoot, f);
 
                 // Report: StartReading
                 progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReading, filePath, stopwatch.Elapsed));
 
-                var fileData = await readFile(options.FS, filePath).ConfigureAwait(false);
+                filePaths.Add(filePath);
+                fileReads.Add(Read(options.FS, filePath));
 
-                // Report: StartParsing
-                progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartParsing, filePath, stopwatch.Elapsed));
-
-                var json = Encoding.UTF8.GetString(fileData);
-                MergeJson(item.Cfg!, json, options.JsonSettings);
-
-                // Collect overrides for this file
                 foreach (var overrideCfg in options.OverrideConfigs)
                 {
                     var fs = overrideCfg.FS ?? options.FS;
@@ -425,39 +426,79 @@ namespace Shadop.Archmage.Sdk
                     // Report: StartReadingOverride
                     progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartReadingOverride, ovrPath, stopwatch.Elapsed));
 
-                    byte[] ovrData;
-                    try
-                    {
-                        ovrData = await readFile(fs, ovrPath).ConfigureAwait(false);
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        // FileExists may report true for a missing file.
-                        continue;
-                    }
-
-                    overrideFiles.Add(ovrPath);
-                    overrides.Add(ovrData);
+                    ovrPaths.Add(ovrPath);
+                    ovrReads.Add(ReadOptional(fs, ovrPath));
                 }
+            }
 
-                if (i > 0) paths.Append(", ");
-                paths.Append(filePath);
+            // Wait for every read, even after one fails, so that no read outlives the load.
+            await Task.WhenAll(fileReads.Cast<Task>().Concat(ovrReads));
+
+            var overrides = new List<(string Path, byte[] Data)>(ovrReads.Count);
+            for (var i = 0; i < ovrReads.Count; i++)
+            {
+                var data = ovrReads[i].Result;
+                if (data is not null)
+                    overrides.Add((ovrPaths[i], data));
+            }
+
+            return new LoadingItem(item, filePaths, fileReads.Select(t => t.Result).ToArray(), overrides, stopwatch);
+
+            // Turns a synchronous throw from readFile into a faulted task.
+            async Task<byte[]> Read(IFS fs, string path)
+            {
+                return await readFile(fs, path, ct);
+            }
+
+            async Task<byte[]?> ReadOptional(IFS fs, string path)
+            {
+                try
+                {
+                    return await readFile(fs, path, ct);
+                }
+                catch (FileNotFoundException)
+                {
+                    // FileExists may report true for a missing file.
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the files of an item and applies its overrides. Runs on a thread pool thread.
+        /// </summary>
+        static void ParseItem(LoadingItem loading, AtlasOptions options, IProgress<AtlasLoadEvent>? progress,
+            CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var item = loading.Item;
+            var key = item.Key;
+            var stopwatch = loading.Stopwatch;
+
+            for (var i = 0; i < loading.FilePaths.Count; i++)
+            {
+                // Report: StartParsing
+                progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartParsing, loading.FilePaths[i], stopwatch.Elapsed));
+
+                var json = Encoding.UTF8.GetString(loading.FileData[i]);
+                MergeJson(item.Cfg!, json, options.JsonSettings);
             }
 
             // Apply all overrides
-            for (var i = 0; i < overrides.Count; i++)
+            foreach (var (path, data) in loading.Overrides)
             {
                 // Report: ApplyingOverride
-                progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.ApplyingOverride, overrideFiles[i], stopwatch.Elapsed));
+                progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.ApplyingOverride, path, stopwatch.Elapsed));
 
-                var overrideJson = Encoding.UTF8.GetString(overrides[i]);
+                var overrideJson = Encoding.UTF8.GetString(data);
                 try
                 {
                     MergeJson(item.Cfg!, overrideJson, options.JsonSettings);
                 }
                 catch (JsonException ex)
                 {
-                    throw new Exception($"Failed to apply override {overrideFiles[i]}.", ex);
+                    throw new Exception($"Failed to apply override {path}.", ex);
                 }
             }
 
@@ -472,13 +513,14 @@ namespace Shadop.Archmage.Sdk
             }
 
             // Build log supplement
-            var supplement = overrides.Count switch
+            var supplement = loading.Overrides.Count switch
             {
                 0 => "",
                 1 => " with 1 override",
-                _ => $" with {overrides.Count} overrides"
+                _ => $" with {loading.Overrides.Count} overrides"
             };
 
+            var paths = string.Join(", ", loading.FilePaths);
             options.Logger.Info($"<archmage> Loaded ({item.Mapping}) {paths}{supplement} ({stopwatch.ElapsedMilliseconds}ms)");
             item.Ready = true;
         }

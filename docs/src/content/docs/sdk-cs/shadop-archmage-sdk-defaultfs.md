@@ -80,19 +80,3 @@ public bool DirectoryExists(string path)
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-### **PrepareAsync(IReadOnlyCollection<String>, CancellationToken)**
-
-```csharp
-public Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken)
-```
-
-#### Parameters
-
-`paths` [IReadOnlyCollection<String>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1)<br>
-
-`cancellationToken` [CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken)<br>
-
-#### Returns
-
-[Task](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task)<br>

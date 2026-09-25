@@ -102,6 +102,10 @@ This method performs the following steps:
 If any step fails, an ArchmageException is raised and loading is aborted.
  Alternatively, exceptions can be thrown from IAtlas.OnLoaded() to abort loading.
 
+Files are read on the calling thread. Items are deserialized in parallel on the thread pool,
+ so [IApplyKeys.ApplyKeys()](../shadop-archmage-sdk-iapplykeys/#applykeys), the logger and `progress` may be called
+ from thread pool threads. The atlas modifier, BindRefs and OnLoaded run on the calling thread.
+
 ### **LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)**
 
 Loads an Atlas asynchronously with progress reporting and cancellation support.
@@ -148,6 +152,15 @@ Thrown if cancellation is requested.
 This method performs the same operations as LoadAtlas but asynchronously, providing non-blocking I/O.
  Progress events are reported via the IProgress interface to allow UI updates and status tracking.
  Loading can be canceled via the CancellationToken.
+
+All [IFS](../shadop-archmage-sdk-ifs/) calls are made on the caller's synchronization context (the Unity main thread
+ when called from it), so file systems can use main-thread-only APIs. Items are deserialized in parallel
+ on the thread pool, so [IApplyKeys.ApplyKeys()](../shadop-archmage-sdk-iapplykeys/#applykeys), the logger and `progress`
+ may be called from thread pool threads ([Progress<T>](https://docs.microsoft.com/en-us/dotnet/api/system.progress-1) posts back to its own context).
+ The atlas modifier, BindRefs and OnLoaded run on the caller's context.
+
+Do not block on the returned task on a thread that has a synchronization context, such as the
+ Unity main thread; it deadlocks. Use [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent) for synchronous loading.
 
 ### **ShardDuration(Duration)**
 

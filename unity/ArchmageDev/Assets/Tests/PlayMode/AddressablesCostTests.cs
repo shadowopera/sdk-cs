@@ -47,9 +47,6 @@ public class AddressablesCostTests
 
         public bool FileExists(string path) => _inner.FileExists(path);
         public bool DirectoryExists(string path) => _inner.DirectoryExists(path);
-
-        public Task PrepareAsync(System.Collections.Generic.IReadOnlyCollection<string> paths,
-            CancellationToken cancellationToken = default) => _inner.PrepareAsync(paths, cancellationToken);
     }
 
     // Stretches each frame to about 16 ms. Application.targetFrameRate has no effect in batch mode.
@@ -115,11 +112,8 @@ public class AddressablesCostTests
             .WithVariant("balance", "hard");
         for (var i = 0; i < missingRoots; i++)
             options.WithOverrideRoot($"Assets/ConfigOverrides/missing{i}");
-        if (concurrent)
-            options.WithAsyncLoadStrategy(async (items, loadAsync, ct) =>
-            {
-                await Task.WhenAll(items.Select(kvp => loadAsync(kvp.Key, kvp.Value, ct)));
-            });
+        if (!concurrent)
+            options.WithMaxConcurrency(1);
 
         var frame = Time.frameCount;
         var sw = Stopwatch.StartNew();

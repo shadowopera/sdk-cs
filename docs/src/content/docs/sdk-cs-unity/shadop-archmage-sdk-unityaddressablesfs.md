@@ -14,6 +14,12 @@ public class UnityAddressablesFS : IFS
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAddressablesFS](.)<br>
 Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)
 
+:::caution
+Only asynchronous loading is supported. Calling `ReadAllBytes` will throw.
+Use `LoadAtlasAsync` when using this FS implementation, and call it from the Unity main thread.
+Content in remote groups must be downloaded before loading.
+:::
+
 ## Constructors
 
 ### **UnityAddressablesFS()**

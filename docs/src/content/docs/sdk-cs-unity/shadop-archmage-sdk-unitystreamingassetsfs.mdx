@@ -19,7 +19,7 @@ Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)
 
 <Aside type="caution">
   Only asynchronous loading is supported. Calling `ReadAllBytes` will throw.
-  Use `ReadAllBytesAsync` and `LoadAtlasAsync` when using this FS implementation.
+  Use `LoadAtlasAsync` when using this FS implementation, and call it from the Unity main thread.
 </Aside>
 
 ## Constructors

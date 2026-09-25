@@ -2,7 +2,6 @@
 
 #if UNITY_5_3_OR_NEWER
 
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +12,7 @@ namespace Shadop.Archmage.Sdk
     /// <summary>
     /// Implements the IFS interface to load files via Unity Resources.
     /// Paths are resolved relative to any Resources folder; file extensions are stripped automatically.
-    /// Synchronous loading must be called from the main thread.
+    /// Loading must be started from the main thread.
     /// </summary>
     public class UnityResourcesFS : IFS
     {
@@ -36,8 +35,6 @@ namespace Shadop.Archmage.Sdk
             cancellationToken.ThrowIfCancellationRequested();
 
             var resourcePath = StripExtension(path);
-
-            await Awaitable.MainThreadAsync();
 
             var resourceRequest = Resources.LoadAsync<TextAsset>(resourcePath);
             await resourceRequest;
@@ -76,13 +73,6 @@ namespace Shadop.Archmage.Sdk
             return true;
         }
 
-        /// <summary>
-        /// Does nothing. Resources has no cheap existence check to prepare.
-        /// </summary>
-        public Task PrepareAsync(IReadOnlyCollection<string> paths, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
 
         private static string StripExtension(string path)
         {

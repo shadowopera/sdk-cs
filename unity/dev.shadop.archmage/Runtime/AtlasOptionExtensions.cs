@@ -109,22 +109,16 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Sets custom load strategy for parallel/cached/conditional loading (default is sequential).
+        /// Sets the maximum number of items loaded at the same time (default 32). An item counts from the start of
+        /// reading its files until it is deserialized. This limits open files, memory held by file contents, and
+        /// deserialization work queued on the thread pool. Use 1 to load items one at a time.
         /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown if strategy is null.</exception>
-        public static AtlasOptions WithLoadStrategy(this AtlasOptions opts, AtlasLoadStrategy strategy)
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if n is less than 1.</exception>
+        public static AtlasOptions WithMaxConcurrency(this AtlasOptions opts, int n)
         {
-            opts.LoadStrategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
-            return opts;
-        }
-
-        /// <summary>
-        /// Sets custom async load strategy for parallel/cached/conditional loading (default is sequential).
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown if strategy is null.</exception>
-        public static AtlasOptions WithAsyncLoadStrategy(this AtlasOptions opts, AtlasAsyncLoadStrategy strategy)
-        {
-            opts.AsyncLoadStrategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
+            if (n < 1)
+                throw new ArgumentOutOfRangeException(nameof(n), n, "Must be at least 1.");
+            opts.MaxConcurrency = n;
             return opts;
         }
 

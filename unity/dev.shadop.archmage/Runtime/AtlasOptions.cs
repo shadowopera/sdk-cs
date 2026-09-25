@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Shadop.Archmage.Sdk
@@ -24,8 +22,7 @@ namespace Shadop.Archmage.Sdk
         internal List<string>? Whitelist { get; set; }
         internal List<string>? Blacklist { get; set; }
         internal Dictionary<string, string> Variants { get; set; } = new();
-        internal AtlasLoadStrategy? LoadStrategy { get; set; }
-        internal AtlasAsyncLoadStrategy? AsyncLoadStrategy { get; set; }
+        internal int MaxConcurrency { get; set; } = 32;
         internal JsonSerializerSettings? JsonSettings { get; set; }
     }
 
@@ -56,31 +53,4 @@ namespace Shadop.Archmage.Sdk
         /// </summary>
         public IFS? FS { get; }
     }
-
-    /// <summary>
-    /// Delegate for custom loading strategies (parallel, caching, conditional; default is sequential).
-    /// Must call load for each item.
-    /// </summary>
-    public delegate void AtlasLoadStrategy(
-        IEnumerable<KeyValuePair<string, AtlasItem>> items,
-        AtlasItemLoader load);
-
-    /// <summary>
-    /// Callback for loading single item (reads file(s), deserializes JSON, merges overrides).
-    /// </summary>
-    public delegate void AtlasItemLoader(string key, AtlasItem item);
-
-    /// <summary>
-    /// Delegate for custom asynchronous loading strategies (parallel, caching, conditional; default is sequential).
-    /// Must call loadAsync for each item.
-    /// </summary>
-    public delegate Task AtlasAsyncLoadStrategy(
-        IEnumerable<KeyValuePair<string, AtlasItem>> items,
-        AtlasItemAsyncLoader loadAsync,
-        CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Callback for asynchronously loading single item (reads file(s), deserializes JSON, merges overrides).
-    /// </summary>
-    public delegate Task AtlasItemAsyncLoader(string key, AtlasItem item, CancellationToken cancellationToken);
 }
