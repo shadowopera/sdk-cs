@@ -96,7 +96,8 @@ namespace Shadop.Archmage.Sdk.Tests
                 foreach (var (d, state) in ctx._queue.GetConsumingEnumerable())
                     d(state);
                 error = task.Exception?.InnerException;
-            }) { IsBackground = true };
+            })
+            { IsBackground = true };
             thread.Start();
             if (!thread.Join(TimeSpan.FromSeconds(30)))
                 throw new TimeoutException("Deadlocked on the SynchronizationContext thread.");

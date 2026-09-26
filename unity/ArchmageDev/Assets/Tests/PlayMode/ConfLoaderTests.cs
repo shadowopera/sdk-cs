@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
@@ -20,14 +21,14 @@ public class ConfLoaderTests
     [Test]
     public async Task AddressablesAsync()
     {
-        await ConfLoader.AddressablesAsyncDemo(false);
+        await ConfLoader.AddressablesAsyncDemo(false, CancellationToken.None);
         AssertAtlas();
     }
 
     [Test]
     public async Task AddressablesConcurrentAsync()
     {
-        await ConfLoader.AddressablesAsyncDemo(true);
+        await ConfLoader.AddressablesAsyncDemo(true, CancellationToken.None);
         AssertAtlas();
     }
 
@@ -41,28 +42,28 @@ public class ConfLoaderTests
     [Test]
     public async Task ResourcesAsync()
     {
-        await ConfLoader.ResourcesAsyncDemo(false);
+        await ConfLoader.ResourcesAsyncDemo(false, CancellationToken.None);
         AssertAtlas();
     }
 
     [Test]
     public async Task ResourcesConcurrentAsync()
     {
-        await ConfLoader.ResourcesAsyncDemo(true);
+        await ConfLoader.ResourcesAsyncDemo(true, CancellationToken.None);
         AssertAtlas();
     }
 
     [Test]
     public async Task StreamingAssetsAsync()
     {
-        await ConfLoader.StreamingAssetsAsyncDemo(false);
+        await ConfLoader.StreamingAssetsAsyncDemo(false, CancellationToken.None);
         AssertAtlas();
     }
 
     [Test]
     public async Task StreamingAssetsConcurrentAsync()
     {
-        await ConfLoader.StreamingAssetsAsyncDemo(true);
+        await ConfLoader.StreamingAssetsAsyncDemo(true, CancellationToken.None);
         AssertAtlas();
     }
 

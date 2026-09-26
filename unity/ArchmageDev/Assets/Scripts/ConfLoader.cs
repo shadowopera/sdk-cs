@@ -1,9 +1,12 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Conf;
 using Conf.Enums;
 using Shadop.Archmage.Sdk;
+
+// ReSharper disable InconsistentNaming
 
 #pragma warning disable UNT0006
 
@@ -32,7 +35,7 @@ public class ConfLoader : MonoBehaviour
     // See Assets/Editor/ArchmageEditorTools.cs for details.
     public HeroCfgId _heroCfgId = 2;
 
-    public async Task Start()
+    public async Awaitable Start()
     {
         Debug.Log($"[ConfLoader] DemoType = {_demoType}");
 
@@ -40,18 +43,21 @@ public class ConfLoader : MonoBehaviour
         {
             case DemoType.AddressablesAsync:
             case DemoType.AddressablesConcurrentAsync:
-                await AddressablesAsyncDemo(_demoType == DemoType.AddressablesConcurrentAsync);
+                await AddressablesAsyncDemo(_demoType == DemoType.AddressablesConcurrentAsync,
+                    destroyCancellationToken);
                 break;
             case DemoType.Resources:
                 ResourcesDemo();
                 break;
             case DemoType.ResourcesAsync:
             case DemoType.ResourcesConcurrentAsync:
-                await ResourcesAsyncDemo(_demoType == DemoType.ResourcesConcurrentAsync);
+                await ResourcesAsyncDemo(_demoType == DemoType.ResourcesConcurrentAsync,
+                    destroyCancellationToken);
                 break;
             case DemoType.StreamingAssetsAsync:
             case DemoType.StreamingAssetsConcurrentAsync:
-                await StreamingAssetsAsyncDemo(_demoType == DemoType.StreamingAssetsConcurrentAsync);
+                await StreamingAssetsAsyncDemo(_demoType == DemoType.StreamingAssetsConcurrentAsync,
+                    destroyCancellationToken);
                 break;
             case DemoType.DirectAccess:
                 DirectAccessDemo();
@@ -59,7 +65,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    public static async Task AddressablesAsyncDemo(bool concurrent)
+    public static async Task AddressablesAsyncDemo(bool concurrent, CancellationToken cancellationToken)
     {
         // 1. Set the root directory for configuration loading.
         // In Addressables, the default Address is usually the project-relative path of the asset.
@@ -75,18 +81,16 @@ public class ConfLoader : MonoBehaviour
             .WithLogger(new UnityAtlasLogger())
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityAddressablesFS())
+            .WithMaxConcurrency(concurrent ? 32 : 1)
             .WithAtlasModifier(atlasJson =>
             {
                 atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
             });
 
-        if (!concurrent)
-            options.WithMaxConcurrency(1);
-
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, null, cancellationToken);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityAddressablesFS(), cfgRoot);
             ShowAtlasBasicFeatures(atlas);
@@ -127,7 +131,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    public static async Task ResourcesAsyncDemo(bool concurrent)
+    public static async Task ResourcesAsyncDemo(bool concurrent, CancellationToken cancellationToken)
     {
         string cfgRoot = "StaticConfigs";
         string atlasFile = "StaticConfigs/atlas.json";
@@ -149,7 +153,7 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading (Resources)...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, null, cancellationToken);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityResourcesFS(), cfgRoot);
             ShowAtlasBasicFeatures(atlas);
@@ -160,7 +164,7 @@ public class ConfLoader : MonoBehaviour
         }
     }
 
-    public static async Task StreamingAssetsAsyncDemo(bool concurrent)
+    public static async Task StreamingAssetsAsyncDemo(bool concurrent, CancellationToken cancellationToken)
     {
         string cfgRoot = "StreamingConfigs";
         string atlasFile = "StreamingConfigs/atlas.json";
@@ -182,7 +186,7 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading (StreamingAssets)...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, null, cancellationToken);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityStreamingAssetsFS(), cfgRoot);
             ShowAtlasBasicFeatures(atlas);
@@ -254,15 +258,15 @@ public class ConfLoader : MonoBehaviour
         // 1. Look up a config entry by ID from a dictionary-based table.
         var cfgId = new HeroCfgId(2);
         atlas.HeroTable.TryLookup(cfgId, out var hero);
-        Debug.Log($"[ConfLoader] HeroTable[2]: Level={hero.Level}");
+        Debug.Log($"[ConfLoader] HeroTable[2]: Level={hero!.Level}");
 
         // 2. Do the same, but in a more convenient way.
         Debug.Log($"[ConfLoader] HeroTable[2]: Level={cfgId.Cfg.Level} (shortcut)");
 
         // 3. Access a cross-table reference via XRef.Ref.
         Debug.Log($"[ConfLoader] HeroTable[2].Weapon.CfgId: {hero.Weapon.CfgId}");
-        Debug.Log($"[ConfLoader] HeroTable[2].Weapon.Ref.Name: {hero.Weapon.Ref.Name}");
-        Debug.Log($"[ConfLoader] HeroTable[2].Race.Ref.Birthplace: {hero.Race.Ref.Birthplace.Text}");
+        Debug.Log($"[ConfLoader] HeroTable[2].Weapon.Ref.Name: {hero.Weapon.Ref!.Name}");
+        Debug.Log($"[ConfLoader] HeroTable[2].Race.Ref.Birthplace: {hero.Race.Ref!.Birthplace.Text}");
 
         // 4. Query localized text via L10n.
         Debug.Log($"[ConfLoader] HeroTable[1].Name (en, not translated): {atlas.HeroTable[1].Name.Text}");

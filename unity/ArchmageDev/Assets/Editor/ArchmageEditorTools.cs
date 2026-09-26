@@ -42,7 +42,7 @@ namespace Conf.Editor
         static void MonitorRuntimeAtlasInstance()
         {
             var atlas = ConfigAtlas.Instance;
-            if (atlas != null)
+            if (atlas != null!)
             {
                 EditorApplication.update -= MonitorRuntimeAtlasInstance;
                 try
@@ -73,7 +73,7 @@ namespace Conf.Editor
                 ConfLoader.DirectAccessDemo(progress);
 
                 var atlas = ConfigAtlas.Instance;
-                if (atlas == null)
+                if (atlas == null!)
                 {
                     Debug.LogWarning("<archmage> CfgIdDrawerManager.Initialize failed: ConfigAtlas.Instance is null.");
                     return;

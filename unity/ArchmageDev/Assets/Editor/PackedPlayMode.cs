@@ -16,7 +16,7 @@ namespace ArchmageDev.Editor
     public static class PackedPlayMode
     {
         // Temp is wiped when the editor quits, so the saved index lives in Library.
-        const string SavedIndexFile = "Library/ArchmagePlayModeIndex.txt";
+        public const string SavedIndexFile = "Library/ArchmagePlayModeIndex.txt";
 
         // Builds Addressables content and selects the "Use Existing Build" play mode script.
         public static void Enter()

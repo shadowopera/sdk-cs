@@ -1,6 +1,6 @@
 {
     "name": "ArchmageDevCore",
-    "rootNamespace": "",
+    "rootNamespace": "Conf",
     "references": [
         "Shadop.Archmage.Sdk",
         "Shadop.Archmage.Sdk.Unity",
