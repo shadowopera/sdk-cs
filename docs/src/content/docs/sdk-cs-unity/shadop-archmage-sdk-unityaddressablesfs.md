@@ -20,6 +20,25 @@ Use `LoadAtlasAsync` when using this FS implementation, and call it from the Uni
 Content in remote groups must be downloaded before loading.
 :::
 
+:::tip
+Each asset is released as soon as it has been read, so an asset bundle may be unloaded and loaded
+again during a single load. Optionally, holding a handle to an asset in the bundle until loading
+finishes keeps it loaded. An empty placeholder file in the bundle works well for this:
+
+```csharp
+var pin = Addressables.LoadAssetAsync<TextAsset>("Assets/Configs/placeholder.txt");
+await pin.Task;
+try
+{
+    await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options);
+}
+finally
+{
+    Addressables.Release(pin);
+}
+```
+:::
+
 ## Constructors
 
 ### **UnityAddressablesFS()**
