@@ -45,7 +45,7 @@ namespace Shadop.Archmage.Sdk
             if (request.result != UnityWebRequest.Result.Success)
             {
                 var msg = $"Failed to load StreamingAssets file: {uri}. Error: {request.error}";
-                if (IsNotFound(request, fullPath))
+                if (IsFileNotFound(request, fullPath))
                     throw new FileNotFoundException(msg, path);
                 throw new IOException(msg);
             }
@@ -73,7 +73,6 @@ namespace Shadop.Archmage.Sdk
             return IsUri(fullPath) || Directory.Exists(fullPath);
         }
 
-
         private static string ResolvePath(string path)
         {
             // Combine with StreamingAssets root, normalizing to forward slashes.
@@ -85,7 +84,7 @@ namespace Shadop.Archmage.Sdk
             return fullPath.Contains("://");
         }
 
-        private static bool IsNotFound(UnityWebRequest request, string fullPath)
+        private static bool IsFileNotFound(UnityWebRequest request, string fullPath)
         {
             if (!IsUri(fullPath))
                 return !File.Exists(fullPath);

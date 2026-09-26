@@ -23,7 +23,7 @@ generated C# types, resolves cross-table references, and calls post-load hooks.
 - **Duration** — nanosecond precision; formats as human-readable strings such as `1s200ms`
 - **MinMax** — random value selection within a range
 - **WeightedPool** — weighted random selection with probability proportional to item weight
-- **Variants** — switch an item to an alternative data set at load time via `WithVariant`
+- **Variants** — switch an atlas item to use an alternative data set at load time via `WithVariant`
 - **Whitelist/Blacklist** — load only a subset of atlas items
 - **Layered overrides** — merge files with matching relative paths from additional override sources (a directory path or a custom file system) into the base configs, field by field, at load time
 - **Synchronous and asynchronous loading** — progress reporting, cancellation, and parallel deserialization
@@ -97,10 +97,6 @@ await Archmage.LoadAtlasAsync(
     "Assets/Configs/atlas.json", "Assets/Configs", atlas, options);
 ```
 
-Call `LoadAtlasAsync` from the main thread. Before building the player, build the Addressables content, or
-enable **Build Addressables on Player Build**. Content in remote groups must be downloaded (for example with
-`Addressables.DownloadDependenciesAsync`) before loading.
-
 ### .NET
 
 ```csharp
@@ -144,15 +140,9 @@ Loading proceeds in the following steps:
 
 1. Parse `atlas.json`
 2. Apply `AtlasModifier` (if set)
-3. For each item: read files → deserialize → apply overrides
+3. For each atlas item: read files → deserialize → apply overrides
 4. `BindRefs()` — resolve cross-table references
 5. `OnLoaded()` — post-load initialization
-
-Several items are loaded at the same time. Files are read on the calling thread (with `LoadAtlasAsync`, on the
-caller's synchronization context, such as the Unity main thread). Once all files of an item are read, the item
-is deserialized on the thread pool while reading continues. As a result, `IApplyKeys.ApplyKeys`, the logger and
-the progress callback may be called from thread pool threads. `AtlasModifier`, `BindRefs` and `OnLoaded` run on
-the calling thread.
 
 Do not block on the task returned by `LoadAtlasAsync` (for example with `.Result` or `.Wait()`) on a thread that
 has a synchronization context, such as the Unity main thread; it deadlocks. Use `LoadAtlas` to load synchronously.
@@ -179,20 +169,20 @@ var opts = new AtlasOptions()
     .WithOverrideFS(embeddedFS)
     // mutate atlas.json after parsing
     .WithAtlasModifier(atlasJson => { ... })
-    // load at most 8 items at the same time (default: 32)
+    // load at most 8 atlas items at the same time (default: 32)
     .WithMaxConcurrency(8)
     // custom Newtonsoft.Json settings
     .WithJsonSettings(customSettings);
 ```
 
-**Whitelist / Blacklist** — If a non-empty whitelist is set, only listed keys are loaded (blacklist
+**Whitelist and blacklist** — If a non-empty whitelist is set, only listed keys are loaded (blacklist
 is ignored). All keys must exist in the atlas or an exception is thrown.
 
 **Variant selection** — A variant-mapped key loads its `"/"` variant unless `WithVariant`
 selects another one. The variant in use is recorded in `AtlasItem.Variant`.
 
 **Override layers** — Each `WithOverrideRoot` / `WithOverrideFS` call adds another
-override source. When loading an item, each override source is checked in the order they
+override source. When loading an atlas item, each override source is checked in the order they
 were added; any matching file is deserialized and its fields applied on top of the base
 data. This is useful for environment-specific patches.
 
@@ -204,10 +194,7 @@ Field-level merge rules during override processing:
 | JSON object | Recursively merges — only fields present in the override are updated, others remain unchanged |
 | Any other value | Overwrites the field |
 
-**Concurrency** — `WithMaxConcurrency` limits how many items are loaded at the same time. An item
-counts from the start of reading its files until it is deserialized, so the limit bounds open files,
-memory held by file contents, and deserialization work queued on the thread pool. Use `WithMaxConcurrency(1)`
-to load items one at a time.
+**Concurrency limit** — `WithMaxConcurrency` limits how many atlas items are loaded at the same time.
 
 ## Custom File System
 
@@ -228,14 +215,15 @@ class EmbeddedFS : IFS
 var opts = new AtlasOptions().WithFS(new EmbeddedFS());
 ```
 
-An `IFS` implementation must follow these rules:
+Notes for IFS implementations:
 
-- Methods are called on the thread that calls `LoadAtlas`, or on the synchronization context that calls
-  `LoadAtlasAsync`. Several asynchronous reads may be in flight at the same time.
-- `FileExists` and `DirectoryExists` may return true for a missing file or directory, but must not return
-  false for an existing one.
-- `ReadAllBytes` and `ReadAllBytesAsync` throw `FileNotFoundException` when the file does not exist. Missing
-  override files are skipped this way.
+- `LoadAtlas` and `LoadAtlasAsync` call the methods on the calling thread. If that thread has no
+  synchronization context, `LoadAtlasAsync` may call them on thread pool threads instead.
+- `FileExists` and `DirectoryExists` may return true without checking when an exact check is expensive.
+- `ReadAllBytes` and `ReadAllBytesAsync` must throw `FileNotFoundException` when the file does not exist.
+  Missing override files are skipped this way.
+- Each implementation decides whether it must be called from a specific thread. The Unity file systems, for
+  example, must be called from the main thread, so loading must start there.
 
 ## Special Types
 

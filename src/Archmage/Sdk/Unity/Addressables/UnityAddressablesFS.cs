@@ -17,10 +17,10 @@ namespace Shadop.Archmage.Sdk
     /// Only asynchronous loading is supported, and it must be started from the main thread.
     /// </summary>
     /// <remarks>
-    /// <para>Content in remote groups must be downloaded before loading.</para>
-    /// <para>Each asset is released as soon as it has been read, so an asset bundle may be unloaded and
-    /// loaded again during a single load. Optionally, holding a handle to an asset in the bundle until
-    /// loading finishes keeps it loaded. An empty placeholder file in the bundle works well for this:</para>
+    /// <para>Each asset is released as soon as it is read, so an asset bundle may be unloaded and
+    /// reloaded during a single load. Optionally, holding a handle to an asset in the bundle until
+    /// loading finishes keeps the bundle from being unloaded. An empty placeholder file in the
+    /// bundle works well for this purpose:</para>
     /// <code>
     /// var pin = Addressables.LoadAssetAsync&lt;TextAsset&gt;("Assets/Configs/placeholder.txt");
     /// await pin.Task;
@@ -47,12 +47,12 @@ namespace Shadop.Archmage.Sdk
 
             var address = ToAddress(path);
 
-            // Resolve the location first: a missing key yields an empty list instead of
-            // an InvalidKeyException logged by LoadAssetAsync.
+            // LoadAssetAsync prints an error to the console when the key does not exist.
             var locationsHandle = Addressables.LoadResourceLocationsAsync(address, typeof(TextAsset));
             try
             {
-                // Awaiting Task on a completed handle still resumes a frame later, so skip it.
+                // Even if the handle is already completed, awaiting its Task still resumes on the next frame,
+                // so skip the await.
                 if (!locationsHandle.IsDone)
                     await locationsHandle.Task;
                 cancellationToken.ThrowIfCancellationRequested();
@@ -61,7 +61,7 @@ namespace Shadop.Archmage.Sdk
                 if (locationsHandle.Status != AsyncOperationStatus.Succeeded)
                     throw new IOException($"Failed to resolve Addressables key: {address}.", locationsHandle.OperationException);
                 if (locations.Count == 0)
-                    throw new FileNotFoundException($"Could not find Addressables key: {address}.", path);
+                    throw new FileNotFoundException($"Addressables key not found: {address}.", path);
 
                 var handle = Addressables.LoadAssetAsync<TextAsset>(locations[0]);
                 try

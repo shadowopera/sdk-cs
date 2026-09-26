@@ -2,10 +2,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using NUnit.Framework;
-using UnityEngine;
 using Conf;
+using NUnit.Framework;
 using Shadop.Archmage.Sdk;
+using UnityEngine;
 
 // Loads the atlas with two override roots through each Unity FS.
 // Root 2 lacks some files that root 1 has, so every FS must skip missing override files,

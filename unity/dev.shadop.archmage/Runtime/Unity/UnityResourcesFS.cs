@@ -73,7 +73,6 @@ namespace Shadop.Archmage.Sdk
             return true;
         }
 
-
         private static string StripExtension(string path)
         {
             return Path.ChangeExtension(path, null).Replace('\\', '/');

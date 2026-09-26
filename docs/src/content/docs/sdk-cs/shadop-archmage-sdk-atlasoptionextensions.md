@@ -210,9 +210,9 @@ Thrown if fs is null.
 
 ### **WithMaxConcurrency(AtlasOptions, Int32)**
 
-Sets the maximum number of items loaded at the same time (default 32). An item counts from the start of
- reading its files until it is deserialized. This limits open files, memory held by file contents, and
- deserialization work queued on the thread pool. Use 1 to load items one at a time.
+Sets the maximum number of atlas items that can be loaded concurrently (default: 32). This limits
+ the number of open files, the memory held by file contents, and the amount of deserialization
+ work queued on the thread pool.
 
 ```csharp
 public static AtlasOptions WithMaxConcurrency(AtlasOptions opts, int n)

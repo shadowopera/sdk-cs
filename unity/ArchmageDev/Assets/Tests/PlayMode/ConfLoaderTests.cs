@@ -1,10 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
-using UnityEngine;
 using Conf;
 using Conf.Enums;
+using NUnit.Framework;
 using Shadop.Archmage.Sdk;
+using UnityEngine;
 
 // Runs every ConfLoader demo in Play Mode and checks the features ShowAtlasBasicFeatures showcases.
 // A demo that fails logs an error instead of throwing, which the Test Framework reports as a failure.

@@ -21,7 +21,7 @@
 //   - Duration — nanosecond precision; formats as human-readable strings such as `1s200ms`
 //   - MinMax — random value selection within a range
 //   - WeightedPool — weighted random selection with probability proportional to item weight
-//   - Variants — switch an item to an alternative data set at load time via `WithVariant`
+//   - Variants — switch an atlas item to use an alternative data set at load time via `WithVariant`
 //   - Whitelist/Blacklist — load only a subset of atlas items
 //   - Layered overrides — merge files with matching relative paths from
 //     additional override sources (a directory path or a custom file system)

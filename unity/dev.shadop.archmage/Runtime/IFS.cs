@@ -9,15 +9,11 @@ namespace Shadop.Archmage.Sdk
     /// File system abstraction for Archmage configuration loading.
     /// </summary>
     /// <remarks>
-    /// <para>Implementations read local data only. Downloading remote content is the caller's
-    /// responsibility and must be done before loading.</para>
     /// <para>When a file does not exist, <see cref="ReadAllBytes"/> and <see cref="ReadAllBytesAsync"/>
-    /// throw <see cref="System.IO.FileNotFoundException"/>. The loader relies on this to skip missing
-    /// override files.</para>
-    /// <para>Methods are called on the thread that calls <see cref="Archmage.LoadAtlas"/>, or on the
-    /// synchronization context that calls <see cref="Archmage.LoadAtlasAsync"/>. In Unity, calling from the
-    /// main thread lets implementations use main-thread-only APIs directly. Several asynchronous reads may be
-    /// in flight at the same time.</para>
+    /// must throw <see cref="System.IO.FileNotFoundException"/>. <see cref="Archmage.LoadAtlas"/> and
+    /// <see cref="Archmage.LoadAtlasAsync"/> rely on this to skip missing override files.</para>
+    /// <para>LoadAtlas and LoadAtlasAsync call these methods on the calling thread. If that thread has no
+    /// <see cref="SynchronizationContext"/>, LoadAtlasAsync may call them on thread pool threads instead.</para>
     /// </remarks>
     public interface IFS
     {
@@ -42,22 +38,21 @@ namespace Shadop.Archmage.Sdk
         /// Determines whether the specified file exists.
         /// </summary>
         /// <remarks>
-        /// May return true for a missing file when an exact check is expensive; reading that file then
-        /// throws <see cref="System.IO.FileNotFoundException"/>. Must not return false for an existing file.
+        /// If checking is expensive, an implementation may skip the check and return true.
         /// </remarks>
         /// <param name="path">The file to check.</param>
-        /// <returns>false if the file is known not to exist; otherwise, true.</returns>
+        /// <returns>true if the file exists or the check was skipped; otherwise, false.</returns>
         bool FileExists(string path);
 
         /// <summary>
-        /// Determines whether the given path refers to an existing directory.
+        /// Determines whether the specified directory exists.
         /// </summary>
         /// <remarks>
-        /// Used to validate override roots before loading. May return true when the underlying storage has
-        /// no directory concept or an exact check is expensive. Must not return false for an existing directory.
+        /// If the storage has no directories, or checking is expensive, an implementation may skip the check
+        /// and return true.
         /// </remarks>
-        /// <param name="path">The path to test.</param>
-        /// <returns>false if the directory is known not to exist; otherwise, true.</returns>
+        /// <param name="path">The directory to check.</param>
+        /// <returns>true if the directory exists or the check was skipped; otherwise, false.</returns>
         bool DirectoryExists(string path);
     }
 }

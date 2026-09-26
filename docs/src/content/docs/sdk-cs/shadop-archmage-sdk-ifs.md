@@ -13,17 +13,12 @@ public interface IFS
 
 **Remarks:**
 
-Implementations read local data only. Downloading remote content is the caller's
- responsibility and must be done before loading.
-
 When a file does not exist, [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-ifs/#readallbytesstring) and [IFS.ReadAllBytesAsync(String, CancellationToken)](../shadop-archmage-sdk-ifs/#readallbytesasyncstring-cancellationtoken)
- throw [FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception). The loader relies on this to skip missing
- override files.
+ must throw [FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception). [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent) and
+ [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-iprogressatlasloadevent-cancellationtoken) rely on this to skip missing override files.
 
-Methods are called on the thread that calls [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent), or on the
- synchronization context that calls [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-iprogressatlasloadevent-cancellationtoken). In Unity, calling from the
- main thread lets implementations use main-thread-only APIs directly. Several asynchronous reads may be
- in flight at the same time.
+LoadAtlas and LoadAtlasAsync call these methods on the calling thread. If that thread has no
+ [SynchronizationContext](https://docs.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext), LoadAtlasAsync may call them on thread pool threads instead.
 
 ## Methods
 
@@ -92,16 +87,15 @@ The file to check.
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-false if the file is known not to exist; otherwise, true.
+true if the file exists or the check was skipped; otherwise, false.
 
 **Remarks:**
 
-May return true for a missing file when an exact check is expensive; reading that file then
- throws [FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception). Must not return false for an existing file.
+If checking is expensive, an implementation may skip the check and return true.
 
 ### **DirectoryExists(String)**
 
-Determines whether the given path refers to an existing directory.
+Determines whether the specified directory exists.
 
 ```csharp
 bool DirectoryExists(string path)
@@ -110,14 +104,14 @@ bool DirectoryExists(string path)
 #### Parameters
 
 `path` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The path to test.
+The directory to check.
 
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-false if the directory is known not to exist; otherwise, true.
+true if the directory exists or the check was skipped; otherwise, false.
 
 **Remarks:**
 
-Used to validate override roots before loading. May return true when the underlying storage has
- no directory concept or an exact check is expensive. Must not return false for an existing directory.
+If the storage has no directories, or checking is expensive, an implementation may skip the check
+ and return true.

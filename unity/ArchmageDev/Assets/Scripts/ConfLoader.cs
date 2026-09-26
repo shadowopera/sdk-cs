@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
 using Conf;
 using Conf.Enums;
 using Shadop.Archmage.Sdk;
+using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 
@@ -82,10 +82,7 @@ public class ConfLoader : MonoBehaviour
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityAddressablesFS())
             .WithMaxConcurrency(concurrent ? 32 : 1)
-            .WithAtlasModifier(atlasJson =>
-            {
-                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
-            });
+            .WithVariant("balance", "hard");
 
         try
         {
@@ -112,10 +109,7 @@ public class ConfLoader : MonoBehaviour
             .WithLogger(new UnityAtlasLogger())
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityResourcesFS())
-            .WithAtlasModifier(atlasJson =>
-            {
-                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
-            });
+            .WithVariant("balance", "hard");
 
         try
         {
@@ -142,10 +136,7 @@ public class ConfLoader : MonoBehaviour
             .WithLogger(new UnityAtlasLogger())
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityResourcesFS())
-            .WithAtlasModifier(atlasJson =>
-            {
-                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
-            });
+            .WithVariant("balance", "hard");
 
         if (!concurrent)
             options.WithMaxConcurrency(1);
@@ -175,10 +166,7 @@ public class ConfLoader : MonoBehaviour
             .WithLogger(new UnityAtlasLogger())
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
             .WithFS(new UnityStreamingAssetsFS())
-            .WithAtlasModifier(atlasJson =>
-            {
-                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
-            });
+            .WithVariant("balance", "hard");
 
         if (!concurrent)
             options.WithMaxConcurrency(1);
@@ -209,10 +197,7 @@ public class ConfLoader : MonoBehaviour
         var options = new AtlasOptions()
             .WithLogger(new UnityAtlasLogger())
             .WithJsonSettings(UnityJsonSettingsFactory.Create())
-            .WithAtlasModifier(atlasJson =>
-            {
-                atlasJson.Variant["balance"]["/"] = atlasJson.Variant["balance"]["hard"];
-            });
+            .WithVariant("balance", "hard");
 
         try
         {
@@ -287,7 +272,7 @@ public class ConfLoader : MonoBehaviour
         // 7. Convert Rgba to Unity Color.
         Debug.Log($"[ConfLoader] GameCfg.BgColor (Rgba): {atlas.GameCfg.BgColor.ToColor()}");
 
-        // 8. Read a variant item. The atlas modifier above loads "hard" as balance's default variant.
+        // 8. Read a variant item. WithVariant above selects the "hard" variant of balance.
         Debug.Log($"[ConfLoader] BalanceCfg.HpScale (hard): {atlas.BalanceCfg.HpScale}");
     }
 }

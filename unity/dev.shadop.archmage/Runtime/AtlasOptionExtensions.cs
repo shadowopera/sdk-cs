@@ -109,9 +109,9 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Sets the maximum number of items loaded at the same time (default 32). An item counts from the start of
-        /// reading its files until it is deserialized. This limits open files, memory held by file contents, and
-        /// deserialization work queued on the thread pool. Use 1 to load items one at a time.
+        /// Sets the maximum number of atlas items that can be loaded concurrently (default: 32). This limits
+        /// the number of open files, the memory held by file contents, and the amount of deserialization
+        /// work queued on the thread pool.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if n is less than 1.</exception>
         public static AtlasOptions WithMaxConcurrency(this AtlasOptions opts, int n)

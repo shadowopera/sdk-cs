@@ -17,13 +17,13 @@ Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)
 :::caution
 Only asynchronous loading is supported. Calling `ReadAllBytes` will throw.
 Use `LoadAtlasAsync` when using this FS implementation, and call it from the Unity main thread.
-Content in remote groups must be downloaded before loading.
 :::
 
 :::tip
-Each asset is released as soon as it has been read, so an asset bundle may be unloaded and loaded
-again during a single load. Optionally, holding a handle to an asset in the bundle until loading
-finishes keeps it loaded. An empty placeholder file in the bundle works well for this:
+Each asset is released as soon as it is read, so an asset bundle may be unloaded and
+reloaded during a single load. Optionally, holding a handle to an asset in the bundle until
+loading finishes keeps the bundle from being unloaded. An empty placeholder file in the
+bundle works well for this purpose:
 
 ```csharp
 var pin = Addressables.LoadAssetAsync<TextAsset>("Assets/Configs/placeholder.txt");
