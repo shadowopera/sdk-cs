@@ -67,6 +67,9 @@ public class PlatformProbe : MonoBehaviour
                 case "async-addressables":
                     await ProbeAsync(new UnityAddressablesFS(), "Assets/Configs");
                     break;
+                case "async-addressables-greedy":
+                    await ProbeAsync(new UnityAddressablesGreedyFS(), "Assets/Configs");
+                    break;
                 case "streaming-read":
                     await ProbeStreamingRead();
                     break;
@@ -281,9 +284,10 @@ public class PlatformProbe : MonoBehaviour
         return total + (await Task.WhenAll(running)).Sum(bytes => bytes.Length);
     }
 
-    // Loads the bundle that holds the files through Addressables, then reads the files from the AssetBundle
-    // directly: with a synchronous LoadAsset per file (bundle-sync), or with one LoadAssetAsync per file, all
-    // started at once (bundle-async). All files must be in one bundle.
+    // Loads the bundle of the first file through Addressables, then loads the files from the bundle with the
+    // AssetBundle API instead of Addressables. bundle-sync calls LoadAsset for each file. bundle-async starts
+    // LoadAssetAsync for all files in one go and logs the frame in which each one completes. All files must
+    // be in that bundle.
     static async Task<int> ReadFromBundle(string[] paths, string variant)
     {
         var rm = Addressables.ResourceManager;

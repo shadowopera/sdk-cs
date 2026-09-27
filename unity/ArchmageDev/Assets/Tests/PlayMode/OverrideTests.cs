@@ -58,6 +58,16 @@ public class OverrideTests
         AssertOverrides(atlas, progress);
     }
 
+    [Test]
+    public async Task AddressablesGreedyAsync()
+    {
+        var atlas = new ConfigAtlas();
+        var progress = new EventCollector();
+        await Archmage.LoadAtlasAsync("Assets/Configs/atlas.json", "Assets/Configs", atlas,
+            Options(new UnityAddressablesGreedyFS(), "Assets/ConfigOverrides"), progress);
+        AssertOverrides(atlas, progress);
+    }
+
     static AtlasOptions Options(IFS fs, string overrideRoot)
     {
         return new AtlasOptions()
