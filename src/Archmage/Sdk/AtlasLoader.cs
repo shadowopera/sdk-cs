@@ -200,6 +200,9 @@ namespace Shadop.Archmage.Sdk
 
             // Load atlas items. All reads start here, and each item is handed to the thread pool for parsing,
             // or parsed where its read completes when InlineParse is set.
+            // Why no ConfigureAwait(false) on the awaits before a read? IFS implementations may need the caller's
+            // context: the Unity file systems work only on the main thread. Leaving the context would make each of
+            // their reads switch back to the main thread, which costs about one frame per file.
             using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
             {
                 var tasks = new List<Task>(filtered.Count);
@@ -227,6 +230,8 @@ namespace Shadop.Archmage.Sdk
                     }
                 }
 
+                // Do not replace this window with SemaphoreSlim.WaitAsync. On Unity WebGL, a waiter that starts
+                // waiting after the semaphore is exhausted is never woken.
                 async Task WaitAnyAsync()
                 {
                     if (isAsync)

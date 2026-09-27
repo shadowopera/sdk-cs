@@ -95,7 +95,8 @@ namespace Shadop.Archmage.Sdk
                 return !File.Exists(fullPath);
             if (request.responseCode == 404)
                 return true;
-            // Files inside the APK are local, so a failed read means the entry is missing.
+            // Unity returns 404 for a missing entry inside the APK in tests, but does not document it.
+            // Files inside the APK are local, so treat any failed read as a missing entry.
             return fullPath.StartsWith("jar:", StringComparison.Ordinal);
         }
     }

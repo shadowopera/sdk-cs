@@ -28,6 +28,13 @@ scripts/unity-test.sh [--no-sync] [--packed] [--filter <expr>]
 # Run .NET tests, then Unity PlayMode tests in both modes (args pass through to unity-test.sh)
 scripts/run-all-tests.sh
 
+# Run PlatformProbe cases on a real platform (Unity Editor must be closed; cases: unity/ArchmageDev/Assets/PlatformProbe/PlatformProbe.cs)
+scripts/webgl-probe.sh [--no-build] [<case>...]                                  # headless Chrome
+scripts/android-probe.sh [--no-build] [--format apk|aab|aab-split] [<case>...]   # adb + logcat
+
+# Start the Android emulator used by android-probe.sh (AVD archmage-probe: API 35, arm64-v8a)
+~/Library/Android/sdk/emulator/emulator -avd archmage-probe -no-window -no-audio &
+
 # Bump version
 scripts/bump-version.sh [--yes] <version>  # e.g. 0.2.0
 
