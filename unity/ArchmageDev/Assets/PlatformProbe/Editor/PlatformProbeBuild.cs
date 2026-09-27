@@ -1,9 +1,7 @@
 #nullable enable
 
 using System;
-using System.IO;
 using UnityEditor;
-using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Build.Reporting;
@@ -50,7 +48,6 @@ namespace ArchmageDev.Editor
             var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
             new GameObject("PlatformProbe").AddComponent<PlatformProbe>();
             EditorSceneManager.SaveScene(scene, ScenePath);
-            AddBulkFiles();
 
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult content);
             if (!string.IsNullOrEmpty(content.Error))
@@ -66,46 +63,6 @@ namespace ArchmageDev.Editor
             if (report.summary.result != BuildResult.Succeeded)
                 throw new InvalidOperationException($"{target} build failed: {report.summary.result}");
             Debug.Log($"[PlatformProbeBuild] Built {location}");
-        }
-
-        // Adds PlatformProbe.BulkCount small config files to the default Addressables group, and as many
-        // files of about 50KB to a new group, each set as one folder entry.
-        static void AddBulkFiles()
-        {
-            var random = new System.Random(1);
-            WriteBulkFiles(PlatformProbe.BulkDir, 10, random);
-            WriteBulkFiles(PlatformProbe.LargeDir, 500, random);
-            AssetDatabase.Refresh();
-
-            var settings = AddressableAssetSettingsDefaultObject.Settings;
-            AddFolderEntry(settings, PlatformProbe.BulkDir, settings.DefaultGroup);
-            var largeGroup = settings.CreateGroup("Probe Large", false, false, true, new System.Collections.Generic.List<AddressableAssetGroupSchema>(settings.DefaultGroup.Schemas));
-            AddFolderEntry(settings, PlatformProbe.LargeDir, largeGroup);
-            AssetDatabase.SaveAssets();
-        }
-
-        static void WriteBulkFiles(string dir, int rowsPerFile, System.Random random)
-        {
-            Directory.CreateDirectory(dir);
-            for (var i = 0; i < PlatformProbe.BulkCount; i++)
-            {
-                var rows = new System.Text.StringBuilder("{");
-                for (var j = 0; j < rowsPerFile; j++)
-                {
-                    if (j > 0)
-                        rows.Append(',');
-                    var id = i * rowsPerFile + j;
-                    rows.Append($"\"{id}\":{{\"id\":{id},\"name\":\"row {random.Next():x8}\",\"hp\":{random.Next(1000)}," +
-                        $"\"atk\":{random.Next(100)},\"desc\":\"{random.Next():x8}{random.Next():x8}{random.Next():x8}\"}}");
-                }
-                File.WriteAllText(PlatformProbe.BulkFile(dir, i), rows.Append('}').ToString());
-            }
-        }
-
-        static void AddFolderEntry(AddressableAssetSettings settings, string dir, AddressableAssetGroup group)
-        {
-            var entry = settings.CreateOrMoveEntry(AssetDatabase.AssetPathToGUID(dir), group);
-            entry.address = dir;
         }
     }
 }

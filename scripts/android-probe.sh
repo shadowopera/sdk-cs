@@ -18,7 +18,7 @@ cd "$(dirname "$0")/.."
 source scripts/platform-probe-lib.sh
 
 ALL_CASES=(taskrun sync-resources async-resources async-streaming async-addressables async-addressables-greedy
-    streaming-read streaming-override streaming-override-missing $ADDR_READ_CASES)
+    streaming-override-missing)
 PACKAGE=com.UnityTechnologies.com.unity.template.urpblank
 TIMEOUT=60
 
