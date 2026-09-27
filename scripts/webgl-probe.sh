@@ -14,7 +14,8 @@ set -o pipefail
 cd "$(dirname "$0")/.."
 source scripts/platform-probe-lib.sh
 
-ALL_CASES=(taskrun taskrun-wait sync-resources async-resources async-streaming async-addressables)
+ALL_CASES=(taskrun taskrun-wait sync-resources async-resources async-streaming async-addressables
+    $ADDR_READ_CASES)
 
 build=true
 cases=()

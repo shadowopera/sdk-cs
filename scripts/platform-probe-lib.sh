@@ -3,9 +3,14 @@
 PROJECT_DIR="$(pwd)/unity/ArchmageDev"
 BUILD_DIR="$PROJECT_DIR/Builds/PlatformProbe"
 # Files the player build modifies (URP shader prefiltering, per-target settings, Addressables
-# content state); they are restored after the build.
-BUILD_SIDE_EFFECTS=(Assets/Settings ProjectSettings/ProjectSettings.asset ProjectSettings/UnityConnectSettings.asset)
-BUILD_GENERATED=(Assets/PlatformProbe/PlatformProbe.unity Assets/PlatformProbe/PlatformProbe.unity.meta)
+# content state and groups); they are restored after the build.
+BUILD_SIDE_EFFECTS=(Assets/Settings ProjectSettings/ProjectSettings.asset ProjectSettings/UnityConnectSettings.asset
+    Assets/AddressableAssetsData/AssetGroups Assets/AddressableAssetsData/AddressableAssetSettings.asset)
+BUILD_GENERATED=(Assets/PlatformProbe/PlatformProbe.unity Assets/PlatformProbe/PlatformProbe.unity.meta
+    Assets/PlatformProbe/Bulk Assets/PlatformProbe/Bulk.meta Assets/PlatformProbe/Large Assets/PlatformProbe/Large.meta)
+
+# Addressables read cases: addr-<variant>-<file count>
+ADDR_READ_CASES=$(for n in 13 100 large; do for v in each bundle-sync bundle-async; do echo -n "addr-$v-$n "; done; done)
 
 if [[ -z "${UNITY_EDITOR:-}" ]]; then
     UNITY_EDITOR="/Applications/Unity/Hub/Editor/$(sed -n 's/^m_EditorVersion: //p' \
@@ -35,9 +40,10 @@ function buildProbe() {
         -executeMethod "ArchmageDev.Editor.PlatformProbeBuild.$method" -logFile "$(pwd)/$log_file" || failed=true
 
     git -C "$PROJECT_DIR" checkout -- "${BUILD_SIDE_EFFECTS[@]}"
+    git -C "$PROJECT_DIR" clean -fdq -- Assets/AddressableAssetsData/AssetGroups
     local f
     for f in "${BUILD_GENERATED[@]}"; do
-        rm -f "$PROJECT_DIR/$f"
+        rm -rf "$PROJECT_DIR/$f"
     done
     rm -rf "$PROJECT_DIR/Assets/AddressableAssetsData/$target" "$PROJECT_DIR/Assets/AddressableAssetsData/$target.meta"
 
