@@ -42,8 +42,20 @@ namespace Shadop.Archmage.Sdk
             // Wire cancellation to abort the in-flight request.
             // The registration is disposed asynchronously to avoid blocking the main thread
             // and holding a reference to the request after it has been released.
-            await using var registration = cancellationToken.Register(request.Abort);
-            await request.SendWebRequest();
+            // Cancel() runs the callback on the thread that calls it, but Unity allows Abort only on the main thread,
+            // so the callback posts Abort there. A post that runs after the request finishes does nothing.
+            var mainThread = SynchronizationContext.Current;
+            var finished = false;
+            await using var registration = cancellationToken.Register(() =>
+                mainThread.Post(_ => { if (!finished) request.Abort(); }, null));
+            try
+            {
+                await request.SendWebRequest();
+            }
+            finally
+            {
+                finished = true;
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 

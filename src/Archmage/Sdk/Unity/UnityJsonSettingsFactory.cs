@@ -3,6 +3,7 @@
 #if UNITY_5_3_OR_NEWER
 
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -30,6 +31,10 @@ namespace Shadop.Archmage.Sdk
                     if (prop.CanWrite)
                         prop.SetValue(settings, prop.GetValue(baseSettings));
                 }
+
+                // The loop copies the reference to the caller's list; copy the list so that adding converters
+                // leaves the caller's settings unchanged.
+                settings.Converters = new List<JsonConverter>(baseSettings.Converters);
             }
 
             settings.Converters.Add(new UnityVector2JsonConverter());

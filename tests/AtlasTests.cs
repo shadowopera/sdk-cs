@@ -80,6 +80,21 @@ namespace Shadop.Archmage.Sdk.Tests
         }
 
         [Fact]
+        public void TestAtlas_KeepsCallerJsonSettings()
+        {
+            var settings = Archmage.CreateJsonDumpSettings();
+            var converterCount = settings.Converters.Count;
+            var opts = new AtlasOptions()
+                .WithJsonSettings(settings)
+                .WithBlacklist(new[] { "balance" });
+
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(), opts);
+            Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(), opts);
+
+            Assert.Equal(converterCount, settings.Converters.Count);
+        }
+
+        [Fact]
         public void TestAtlas_WithAtlasModifier()
         {
             Action<AtlasJson> atlasModifier = (atlasJson) =>

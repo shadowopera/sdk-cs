@@ -102,7 +102,7 @@ namespace Shadop.Archmage.Sdk
             CancellationToken cancellationToken = default)
         {
             var stopwatch = Stopwatch.StartNew();
-            options.JsonSettings = CreateJsonLoadSettings(options.JsonSettings);
+            var jsonSettings = CreateJsonLoadSettings(options.JsonSettings);
 
             Func<IFS, string, CancellationToken, Task<byte[]>> readFile = isAsync
                 ? (fs, path, ct) => fs.ReadAllBytesAsync(path, ct)
@@ -130,7 +130,7 @@ namespace Shadop.Archmage.Sdk
             AtlasJson? atlasJson;
             try
             {
-                atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasData), options.JsonSettings);
+                atlasJson = JsonConvert.DeserializeObject<AtlasJson>(Encoding.UTF8.GetString(atlasData), jsonSettings);
             }
             catch (JsonException ex)
             {
@@ -210,9 +210,9 @@ namespace Shadop.Archmage.Sdk
                 Task? firstFailure = null;
 
                 // Removes finished items and, on the first failure, cancels the rest.
-                // Why cancel here, not in the failing item's catch? That catch runs on a thread pool thread, and
-                // Cancel() runs the token's callbacks on the thread that calls it. UnityStreamingAssetsFS registers
-                // one to abort its request, which Unity allows only on the main thread.
+                // Why cancel here, not in the failing item's catch? That catch runs on a thread pool thread.
+                // Cancel() runs the token's callbacks on the thread that calls it, and an IFS implementation may
+                // register one that must run on the main thread.
                 void Reap()
                 {
                     for (var i = running.Count - 1; i >= 0; i--)
@@ -273,10 +273,10 @@ namespace Shadop.Archmage.Sdk
                 {
                     var loadingItem = await ReadItemAsync(key, atlasItem, atlasJson, atlasFile, cfgRoot, options, readFile, progress, ct);
                     if (options.InlineParse)
-                        UnmarshalItem(loadingItem, options, progress, ct);
+                        UnmarshalItem(loadingItem, options, jsonSettings, progress, ct);
                     else
                         // Nothing after this point touches IFS, so there is no need to resume on the caller's context.
-                        await Task.Run(() => UnmarshalItem(loadingItem, options, progress, ct), ct).ConfigureAwait(false);
+                        await Task.Run(() => UnmarshalItem(loadingItem, options, jsonSettings, progress, ct), ct).ConfigureAwait(false);
                 }
                 // An OperationCanceledException that ct did not cause, such as an IFS timeout, is a failure.
                 catch (Exception ex) when (!ct.IsCancellationRequested)
@@ -302,6 +302,10 @@ namespace Shadop.Archmage.Sdk
                     if (prop.CanWrite)
                         prop.SetValue(settings, prop.GetValue(original));
                 }
+
+                // The loop copies the reference to the caller's list; copy the list so that adding converters
+                // leaves the caller's settings unchanged.
+                settings.Converters = new List<JsonConverter>(original.Converters);
             }
 
             return settings;
@@ -480,7 +484,7 @@ namespace Shadop.Archmage.Sdk
         /// Deserializes the files of an atlas item and applies its overrides. Runs on a thread pool thread, or where
         /// the item's read completes when InlineParse is set.
         /// </summary>
-        static void UnmarshalItem(LoadingItem loadingItem, AtlasOptions options, IProgress<AtlasLoadEvent>? progress, CancellationToken ct)
+        static void UnmarshalItem(LoadingItem loadingItem, AtlasOptions options, JsonSerializerSettings jsonSettings, IProgress<AtlasLoadEvent>? progress, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -494,7 +498,7 @@ namespace Shadop.Archmage.Sdk
                 progress?.Report(new AtlasLoadEvent(key, AtlasLoadStage.StartParsing, loadingItem.FilePaths[i], stopwatch.Elapsed));
 
                 var json = Encoding.UTF8.GetString(loadingItem.FileBlobs[i]);
-                MergeJson(atlasItem.Cfg!, json, options.JsonSettings);
+                MergeJson(atlasItem.Cfg!, json, jsonSettings);
             }
 
             // Apply all overrides
@@ -506,7 +510,7 @@ namespace Shadop.Archmage.Sdk
                 var overrideJson = Encoding.UTF8.GetString(data);
                 try
                 {
-                    MergeJson(atlasItem.Cfg!, overrideJson, options.JsonSettings);
+                    MergeJson(atlasItem.Cfg!, overrideJson, jsonSettings);
                 }
                 catch (JsonException ex)
                 {
