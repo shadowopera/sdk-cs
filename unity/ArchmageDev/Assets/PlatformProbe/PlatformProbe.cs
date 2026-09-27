@@ -153,7 +153,8 @@ public class PlatformProbe : MonoBehaviour
     async Task ProbeAsync(IFS fs, string cfgRoot, string overrideRoot = null)
     {
         var atlas = new ConfigAtlas();
-        var options = NewOptions(fs);
+        var timingFS = new TimingFS(fs);
+        var options = NewOptions(timingFS);
         if (overrideRoot != null)
             options.WithOverrideRoot(overrideRoot + "/1").WithOverrideRoot(overrideRoot + "/2");
         var startFrame = Time.frameCount;
@@ -168,6 +169,37 @@ public class PlatformProbe : MonoBehaviour
         }
         await task;
         Log($"RESULT LoadAtlasAsync completed after {Time.frameCount - startFrame} frames, heroes={atlas.HeroTable.Count}");
+        foreach (var r in timingFS.Reads)
+            Log($"read {r.Path}: start={r.Start - startFrame} end={r.End - startFrame}");
+    }
+
+    // Records the frame at which each read starts and the frame at which it completes.
+    class TimingFS : IFS
+    {
+        readonly IFS _inner;
+
+        public TimingFS(IFS inner) => _inner = inner;
+
+        public System.Collections.Generic.List<(string Path, int Start, int End)> Reads { get; } = new();
+
+        public byte[] ReadAllBytes(string path) => _inner.ReadAllBytes(path);
+
+        public async Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
+        {
+            var start = Time.frameCount;
+            try
+            {
+                return await _inner.ReadAllBytesAsync(path, cancellationToken);
+            }
+            finally
+            {
+                Reads.Add((path, start, Time.frameCount));
+            }
+        }
+
+        public bool FileExists(string path) => _inner.FileExists(path);
+
+        public bool DirectoryExists(string path) => _inner.DirectoryExists(path);
     }
 
     static AtlasOptions NewOptions(IFS fs)

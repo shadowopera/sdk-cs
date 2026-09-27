@@ -88,7 +88,7 @@ ws.onmessage = ev => {
         return;
     }
     if (msg.method === 'Runtime.consoleAPICalled') {
-        const text = msg.params.args.map(a => a.value ?? a.description ?? '').join(' ');
+        const text = msg.params.args.map(a => a.value ?? a.description ?? '').join(' ').trimEnd();
         if (text.includes('[Probe]') || msg.params.type === 'error')
             console.log(text);
         if (/\[Probe\].* DONE$/.test(text.trim())) {
