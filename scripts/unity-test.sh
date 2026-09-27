@@ -9,7 +9,7 @@
 #   --filter <expr>  passed to Unity's -testFilter (e.g. ConfLoaderTests.Resources)
 #
 # Logs, results and a readable summary go to unity/ArchmageDev/Logs/playmode-<mode>.*
-# (mode: assetdb or packed).
+# (mode: assetdb or packed). A log with a native crash is also copied to unity/ArchmageDev/Logs/crash/.
 #
 # Set UNITY_EDITOR to the Unity executable to override the Unity Hub lookup.
 
@@ -59,6 +59,7 @@ PROJECT_DIR="$(pwd)/unity/ArchmageDev"
 LOG_DIR="unity/ArchmageDev/Logs"
 ENTER_LOG_FILE="$LOG_DIR/packed-enter.log"
 EXIT_LOG_FILE="$LOG_DIR/packed-exit.log"
+CRASH_DIR="$LOG_DIR/crash"
 # Written by PackedPlayMode.Enter and removed by PackedPlayMode.Exit; it holds the developer's
 # play mode script while a packed run is in progress.
 SAVED_INDEX_FILE="$PROJECT_DIR/Library/ArchmagePlayModeIndex.txt"
@@ -163,7 +164,8 @@ fi
 
 # 5) Run tests
 
-args=(-batchmode -nographics -projectPath "$PROJECT_DIR"
+# No test uses Burst, and its background compiler has crashed the editor during a test run.
+args=(-batchmode -nographics -projectPath "$PROJECT_DIR" --burst-disable-compilation
     -runTests -testPlatform PlayMode
     -testResults "$(pwd)/$RESULTS_FILE" -logFile "$(pwd)/$LOG_FILE")
 if [[ -n "$filter" ]]; then
@@ -173,6 +175,14 @@ fi
 printImportantMessage "Running PlayMode tests (log: $LOG_FILE)..."
 status=0
 "$UNITY_EDITOR" "${args[@]}" || status=$?
+
+# The next run overwrites the log; keep a copy of any log with a native crash.
+if grep -q "Native Crash Reporting" "$LOG_FILE" 2>/dev/null; then
+    mkdir -p "$CRASH_DIR"
+    crash_log="$CRASH_DIR/playmode-$mode-$(date +%Y%m%d-%H%M%S).log"
+    cp "$LOG_FILE" "$crash_log"
+    printError "Unity crashed. Log kept at $crash_log."
+fi
 
 if [[ ! -f "$RESULTS_FILE" ]]; then
     printError "Unity exited with $status and produced no test results. See $LOG_FILE."
