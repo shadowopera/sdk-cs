@@ -16,6 +16,10 @@ namespace Shadop.Archmage.Sdk
     /// Paths are resolved relative to Application.streamingAssetsPath.
     /// Only asynchronous loading is supported, and it must be started from the main thread.
     /// </summary>
+    /// <remarks>
+    /// On WebGL, files are downloaded over HTTP. A 404 response is treated as a missing file.
+    /// Any other error, such as a 403 response or a network failure, makes the load fail.
+    /// </remarks>
     public class UnityStreamingAssetsFS : IFS
     {
         public byte[] ReadAllBytes(string path)
