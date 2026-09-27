@@ -1,14 +1,17 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Conf;
 using Shadop.Archmage.Sdk;
 using UnityEngine;
+using UnityEngine.Networking;
 
 // Probes how Task.Run and the loader behave on the current player platform.
-// The case to run is taken from the page URL: index.html?case=<name>.
+// The case to run comes from the page URL on WebGL (index.html?case=<name>) and from the launch
+// intent's "case" extra on Android (am start ... -e case <name>).
 // Every line starts with [Probe]; the last line is "[Probe] DONE".
-public class WebGLProbe : MonoBehaviour
+public class PlatformProbe : MonoBehaviour
 {
     const int MaxFrames = 600;
 
@@ -45,6 +48,15 @@ public class WebGLProbe : MonoBehaviour
                 case "async-addressables":
                     await ProbeAsync(new UnityAddressablesFS(), "Assets/Configs");
                     break;
+                case "streaming-read":
+                    await ProbeStreamingRead();
+                    break;
+                case "streaming-override":
+                    await ProbeAsync(new UnityStreamingAssetsFS(), "StreamingConfigs", "StreamingConfigOverrides");
+                    break;
+                case "streaming-override-missing":
+                    await ProbeAsync(new UnityStreamingAssetsFS(), "StreamingConfigs", "NoSuchOverrides");
+                    break;
                 default:
                     Log($"RESULT unknown case: {name}");
                     break;
@@ -61,15 +73,11 @@ public class WebGLProbe : MonoBehaviour
     // Does the delegate run inline, later on the main thread, on another thread, or never?
     async Awaitable ProbeTaskRun()
     {
+        // Time.frameCount may be read only on the main thread, so the delegate records just its thread.
         var startFrame = Time.frameCount;
-        var ranFrame = -1;
         var ranThread = -1;
-        var task = Task.Run(() =>
-        {
-            ranFrame = Time.frameCount;
-            ranThread = Environment.CurrentManagedThreadId;
-        });
-        Log($"after Task.Run: ran={ranFrame >= 0} status={task.Status}");
+        var task = Task.Run(() => Volatile.Write(ref ranThread, Environment.CurrentManagedThreadId));
+        Log($"after Task.Run: ran={Volatile.Read(ref ranThread) >= 0} status={task.Status}");
 
         while (!task.IsCompleted && Time.frameCount - startFrame < MaxFrames)
             await Awaitable.NextFrameAsync();
@@ -79,7 +87,7 @@ public class WebGLProbe : MonoBehaviour
             Log($"RESULT never ran within {MaxFrames} frames, status={task.Status}");
             return;
         }
-        Log($"RESULT ran after {ranFrame - startFrame} frames on thread {ranThread} (main={ranThread == _mainThread}), " +
+        Log($"RESULT ran on thread {ranThread} (main={ranThread == _mainThread}), " +
             $"completed after {Time.frameCount - startFrame} frames, status={task.Status}");
 
         // Does an await on a Task.Run task resume?
@@ -114,11 +122,42 @@ public class WebGLProbe : MonoBehaviour
         Log($"RESULT LoadAtlas returned, heroes={atlas.HeroTable.Count}");
     }
 
-    async Task ProbeAsync(IFS fs, string cfgRoot)
+    // How does a StreamingAssets read fail for an existing file, a missing file and a missing directory?
+    async Task ProbeStreamingRead()
+    {
+        Log($"streamingAssetsPath={Application.streamingAssetsPath}");
+        foreach (var path in new[] { "StreamingConfigs/hero.json", "StreamingConfigs/nope.json", "NoSuchDir/nope.json" })
+        {
+            var uri = Application.streamingAssetsPath + "/" + path;
+            if (!uri.Contains("://"))
+                uri = "file://" + uri;
+            using (var request = UnityWebRequest.Get(uri))
+            {
+                await request.SendWebRequest();
+                Log($"RESULT raw {path}: result={request.result} responseCode={request.responseCode} " +
+                    $"error={request.error} bytes={request.downloadHandler.data?.Length ?? -1}");
+            }
+
+            try
+            {
+                var bytes = await new UnityStreamingAssetsFS().ReadAllBytesAsync(path);
+                Log($"RESULT fs {path}: {bytes.Length} bytes");
+            }
+            catch (Exception ex)
+            {
+                Log($"RESULT fs {path}: {ex.GetType().Name}: {ex.Message}");
+            }
+        }
+    }
+
+    async Task ProbeAsync(IFS fs, string cfgRoot, string overrideRoot = null)
     {
         var atlas = new ConfigAtlas();
+        var options = NewOptions(fs);
+        if (overrideRoot != null)
+            options.WithOverrideRoot(overrideRoot + "/1").WithOverrideRoot(overrideRoot + "/2");
         var startFrame = Time.frameCount;
-        var task = Archmage.LoadAtlasAsync($"{cfgRoot}/atlas.json", cfgRoot, atlas, NewOptions(fs));
+        var task = Archmage.LoadAtlasAsync($"{cfgRoot}/atlas.json", cfgRoot, atlas, options);
         while (!task.IsCompleted && Time.frameCount - startFrame < MaxFrames)
             await Awaitable.NextFrameAsync();
 
@@ -142,6 +181,12 @@ public class WebGLProbe : MonoBehaviour
 
     static string GetCase()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        using (var player = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        using (var activity = player.GetStatic<AndroidJavaObject>("currentActivity"))
+        using (var intent = activity.Call<AndroidJavaObject>("getIntent"))
+            return intent.Call<string>("getStringExtra", "case") ?? "taskrun";
+#else
         var url = Application.absoluteURL;
         var i = url.IndexOf("case=", StringComparison.Ordinal);
         if (i < 0)
@@ -149,6 +194,7 @@ public class WebGLProbe : MonoBehaviour
         var s = url.Substring(i + "case=".Length);
         var end = s.IndexOfAny(new[] { '&', '#' });
         return end < 0 ? s : s.Substring(0, end);
+#endif
     }
 
     void Log(string msg)
