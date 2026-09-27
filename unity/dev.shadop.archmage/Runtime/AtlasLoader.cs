@@ -273,7 +273,8 @@ namespace Shadop.Archmage.Sdk
                         // Nothing after this point touches IFS, so there is no need to resume on the caller's context.
                         await Task.Run(() => UnmarshalItem(loadingItem, options, progress, ct), ct).ConfigureAwait(false);
                 }
-                catch (Exception ex) when (ex is not OperationCanceledException)
+                // An OperationCanceledException that ct did not cause, such as an IFS timeout, is a failure.
+                catch (Exception ex) when (!ct.IsCancellationRequested)
                 {
                     var msg = $"Failed to load atlas item: \"{key}\". atlasFile: {atlasFile}, cfgRoot: {cfgRoot}";
                     throw new ArchmageException(msg, ex);

@@ -17,13 +17,16 @@ namespace Shadop.Archmage.Sdk.Tests
     {
         readonly IFS _inner = new DefaultFS();
         readonly string? _failPath;
+        readonly Func<string, Exception> _failure;
         int _inFlight;
         int _maxInFlight;
 
-        /// <param name="failPath">Reading a path ending with this throws IOException.</param>
-        public ProbeFS(string? failPath = null)
+        /// <param name="failPath">Reading a path ending with this throws the exception made by failure.</param>
+        /// <param name="failure">Makes the exception from the path. Defaults to IOException.</param>
+        public ProbeFS(string? failPath = null, Func<string, Exception>? failure = null)
         {
             _failPath = failPath;
+            _failure = failure ?? (path => new IOException($"Injected failure: {path}"));
         }
 
         public ConcurrentBag<int> ThreadIds { get; } = new();
@@ -47,7 +50,7 @@ namespace Shadop.Archmage.Sdk.Tests
             {
                 await Task.Delay(5, cancellationToken);
                 if (_failPath is not null && path.Replace('\\', '/').EndsWith(_failPath))
-                    throw new IOException($"Injected failure: {path}");
+                    throw _failure(path);
                 return await _inner.ReadAllBytesAsync(path, cancellationToken);
             }
             finally
@@ -246,6 +249,24 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.IsType<IOException>(err.InnerException);
 
             // No read outlives the load.
+            Assert.Equal(0, fs.InFlight);
+        }
+
+        [Fact]
+        public async Task TestAtlas_LoadAtlasAsync_IFSCanceledIsFailure()
+        {
+            // The caller did not cancel, so a TaskCanceledException from IFS (e.g. a timeout) fails the item.
+            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json", failure: _ => new TaskCanceledException("Timeout"));
+            var opts = DefaultOpts()
+                .WithLogger(new ScavengerLogger())
+                .WithFS(fs)
+                .WithBlacklist(new[] { "balance" });
+
+            var err = await Assert.ThrowsAsync<ArchmageException>(() => Archmage.LoadAtlasAsync(
+                "../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(), opts,
+                cancellationToken: TestContext.Current.CancellationToken));
+            Assert.StartsWith("<archmage> Failed to load atlas item: \"skill\"", err.Message);
+            Assert.IsType<TaskCanceledException>(err.InnerException);
             Assert.Equal(0, fs.InFlight);
         }
     }

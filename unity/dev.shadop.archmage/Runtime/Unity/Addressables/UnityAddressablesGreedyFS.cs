@@ -35,7 +35,7 @@ namespace Shadop.Archmage.Sdk
         private readonly UnityAddressablesFS _fallback = new UnityAddressablesFS();
 
         // Asset path -> bytes of files read from bundles and not requested yet.
-        // Case-insensitive because AssetBundle.GetAllAssetNames() returns lowercase paths.
+        // Case-insensitive only as a safeguard.
         private readonly Dictionary<string, byte[]> _cache = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 
         // Bundle internal ID -> the task that caches the bundle's files; its result is false when GetAssetBundle()
