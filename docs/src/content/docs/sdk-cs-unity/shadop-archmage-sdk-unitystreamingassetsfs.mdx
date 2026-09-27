@@ -10,8 +10,9 @@ Namespace: Shadop.Archmage.Sdk
 Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to load files from Unity `StreamingAssets` via `UnityWebRequest`.
 Paths are resolved relative to `Application.streamingAssetsPath`.
 
-On WebGL, files are downloaded over HTTP. A 404 response is treated as a missing file.
-Any other error, such as a 403 response or a network failure, makes the load fail.
+On WebGL, StreamingAssets is deployed to the web server along with the build, so files are downloaded
+over HTTP. A 404 response is treated as a missing file. Any other error, such as a 403 response or a
+network failure, makes the load fail.
 
 ```csharp
 public class UnityStreamingAssetsFS : IFS

@@ -197,6 +197,39 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.All(ovrFS.ThreadIds, id => Assert.Equal(threadId, id));
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void TestAtlas_WithInlineParse(bool isAsync)
+        {
+            // Parsing must stay on the caller's thread: StartParsing is reported from the parse step.
+            var atlas = new ConfigAtlas();
+            var parseThreadIds = new ConcurrentBag<int>();
+            var progress = new SyncProgress<AtlasLoadEvent>(e =>
+            {
+                if (e.Stage == AtlasLoadStage.StartParsing)
+                    parseThreadIds.Add(Environment.CurrentManagedThreadId);
+            });
+            var opts = DefaultOpts()
+                .WithLogger(new ScavengerLogger())
+                .WithFS(new ProbeFS())
+                .WithBlacklist(new[] { "balance" })
+                .WithInlineParse();
+
+            var threadId = SingleThreadContext.Run(() =>
+            {
+                if (isAsync)
+                    return Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata",
+                        atlas, opts, progress);
+                Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
+                return Task.CompletedTask;
+            });
+            CheckUpdateGolden(atlas, "../../../golden/max_concurrency");
+
+            Assert.NotEmpty(parseThreadIds);
+            Assert.All(parseThreadIds, id => Assert.Equal(threadId, id));
+        }
+
         [Fact]
         public async Task TestAtlas_LoadAtlasAsync_FailureWaitsForInFlight()
         {

@@ -123,6 +123,16 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
+        /// Deserializes items without queuing work to the thread pool. Use this where the thread pool is not
+        /// available. Unity WebGL builds always deserialize this way.
+        /// </summary>
+        public static AtlasOptions WithInlineParse(this AtlasOptions opts)
+        {
+            opts.InlineParse = true;
+            return opts;
+        }
+
+        /// <summary>
         /// Sets custom JSON settings.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown if settings is null.</exception>

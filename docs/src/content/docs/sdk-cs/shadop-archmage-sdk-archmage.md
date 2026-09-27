@@ -102,8 +102,8 @@ This method performs the following steps:
 If any step fails, an ArchmageException is raised and loading is aborted.
  Exceptions can be thrown from IAtlas.OnLoaded() to abort loading.
 
-Files are read on the calling thread. Items are deserialized in parallel on the thread pool,
- so [IApplyKeys.ApplyKeys()](../shadop-archmage-sdk-iapplykeys/#applykeys), the logger and `progress` may be called
+Files are read on the calling thread. Items are deserialized in parallel on the thread pool
+ unless [AtlasOptionExtensions.WithInlineParse(AtlasOptions)](../shadop-archmage-sdk-atlasoptionextensions/#withinlineparseatlasoptions) is set, so [IApplyKeys.ApplyKeys()](../shadop-archmage-sdk-iapplykeys/#applykeys), the logger and `progress` may be called
  from thread pool threads. The atlas modifier, BindRefs and OnLoaded run on the calling thread.
 
 ### **LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)**
@@ -154,7 +154,8 @@ This method performs the same steps as [Archmage.LoadAtlas(String, String, IAtla
 
 [IFS](../shadop-archmage-sdk-ifs/) methods, the atlas modifier, BindRefs and OnLoaded are called on the calling
  thread. If that thread has no [SynchronizationContext](https://docs.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext), they may be called on thread pool
- threads instead. Items are deserialized in parallel on the thread pool.
+ threads instead. Items are deserialized in parallel on the thread pool unless
+ [AtlasOptionExtensions.WithInlineParse(AtlasOptions)](../shadop-archmage-sdk-atlasoptionextensions/#withinlineparseatlasoptions) is set.
 
 Do not block on the returned task on a thread that has a synchronization context, such as a UI
  thread or the main thread of a game engine; it deadlocks. Use [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent) for synchronous

@@ -233,6 +233,23 @@ public static AtlasOptions WithMaxConcurrency(AtlasOptions opts, int n)
 [ArgumentOutOfRangeException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentoutofrangeexception)<br>
 Thrown if n is less than 1.
 
+### **WithInlineParse(AtlasOptions)**
+
+Deserializes items without queuing work to the thread pool. Use this where the thread pool is not
+ available. Unity WebGL builds always deserialize this way.
+
+```csharp
+public static AtlasOptions WithInlineParse(AtlasOptions opts)
+```
+
+#### Parameters
+
+`opts` [AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
+
+#### Returns
+
+[AtlasOptions](../shadop-archmage-sdk-atlasoptions/)<br>
+
 ### **WithJsonSettings(AtlasOptions, JsonSerializerSettings)**
 
 Sets custom JSON settings.

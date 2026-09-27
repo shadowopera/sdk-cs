@@ -33,8 +33,8 @@ namespace Shadop.Archmage.Sdk
         /// </list>
         /// <para>If any step fails, an ArchmageException is raised and loading is aborted.
         /// Exceptions can be thrown from IAtlas.OnLoaded() to abort loading.</para>
-        /// <para>Files are read on the calling thread. Items are deserialized in parallel on the thread pool,
-        /// so <see cref="IApplyKeys.ApplyKeys"/>, the logger and <paramref name="progress"/> may be called
+        /// <para>Files are read on the calling thread. Items are deserialized in parallel on the thread pool
+        /// unless <see cref="AtlasOptionExtensions.WithInlineParse"/> is set, so <see cref="IApplyKeys.ApplyKeys"/>, the logger and <paramref name="progress"/> may be called
         /// from thread pool threads. The atlas modifier, BindRefs and OnLoaded run on the calling thread.</para>
         /// </remarks>
         /// <param name="atlasFile">Path to atlas.json containing mapping definitions.</param>
@@ -63,7 +63,8 @@ namespace Shadop.Archmage.Sdk
         /// <see cref="IFS.ReadAllBytesAsync"/>.</para>
         /// <para><see cref="IFS"/> methods, the atlas modifier, BindRefs and OnLoaded are called on the calling
         /// thread. If that thread has no <see cref="SynchronizationContext"/>, they may be called on thread pool
-        /// threads instead. Items are deserialized in parallel on the thread pool.</para>
+        /// threads instead. Items are deserialized in parallel on the thread pool unless
+        /// <see cref="AtlasOptionExtensions.WithInlineParse"/> is set.</para>
         /// <para>Do not block on the returned task on a thread that has a synchronization context, such as a UI
         /// thread or the main thread of a game engine; it deadlocks. Use <see cref="LoadAtlas"/> for synchronous
         /// loading.</para>
@@ -197,7 +198,8 @@ namespace Shadop.Archmage.Sdk
             cancellationToken.ThrowIfCancellationRequested();
             progress?.Report(new AtlasLoadEvent("", AtlasLoadStage.ItemsQueued, total: filtered.Count));
 
-            // Load atlas items. All reads start here, and each item is handed to the thread pool for parsing.
+            // Load atlas items. All reads start here, and each item is handed to the thread pool for parsing,
+            // or parsed where its read completes when InlineParse is set.
             using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
             {
                 var tasks = new List<Task>(filtered.Count);
@@ -264,8 +266,11 @@ namespace Shadop.Archmage.Sdk
                 try
                 {
                     var loadingItem = await ReadItemAsync(key, atlasItem, atlasJson, atlasFile, cfgRoot, options, readFile, progress, ct);
-                    // Nothing after this point touches IFS, so there is no need to resume on the caller's context.
-                    await Task.Run(() => UnmarshalItem(loadingItem, options, progress, ct), ct).ConfigureAwait(false);
+                    if (options.InlineParse)
+                        UnmarshalItem(loadingItem, options, progress, ct);
+                    else
+                        // Nothing after this point touches IFS, so there is no need to resume on the caller's context.
+                        await Task.Run(() => UnmarshalItem(loadingItem, options, progress, ct), ct).ConfigureAwait(false);
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
@@ -465,7 +470,8 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Deserializes the files of an atlas item and applies its overrides. Runs on a thread pool thread.
+        /// Deserializes the files of an atlas item and applies its overrides. Runs on a thread pool thread, or where
+        /// the item's read completes when InlineParse is set.
         /// </summary>
         static void UnmarshalItem(LoadingItem loadingItem, AtlasOptions options, IProgress<AtlasLoadEvent>? progress, CancellationToken ct)
         {

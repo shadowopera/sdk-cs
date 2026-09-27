@@ -17,8 +17,9 @@ namespace Shadop.Archmage.Sdk
     /// Only asynchronous loading is supported, and it must be started from the main thread.
     /// </summary>
     /// <remarks>
-    /// On WebGL, files are downloaded over HTTP. A 404 response is treated as a missing file.
-    /// Any other error, such as a 403 response or a network failure, makes the load fail.
+    /// On WebGL, StreamingAssets is deployed to the web server along with the build, so files are downloaded
+    /// over HTTP. A 404 response is treated as a missing file. Any other error, such as a 403 response or a
+    /// network failure, makes the load fail.
     /// </remarks>
     public class UnityStreamingAssetsFS : IFS
     {
