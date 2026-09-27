@@ -221,6 +221,7 @@ namespace Shadop.Archmage.Sdk
                         if (t.IsFaulted && firstFailure is null)
                         {
                             firstFailure = t;
+                            // ReSharper disable once AccessToDisposedClosure
                             cts.Cancel();
                         }
                     }
@@ -332,7 +333,7 @@ namespace Shadop.Archmage.Sdk
                     keyPath = $"$.unique['{key}']";
                     return atlasJson.Unique.TryGetValue(key, out var uf) ? new List<string> { uf } : new List<string>();
                 case AtlasConstants.MappingVariant:
-                    variant = options.Variants.TryGetValue(key, out var sv) ? sv : AtlasConstants.VariantMappingDefaultKey;
+                    variant = options.Variants.GetValueOrDefault(key, AtlasConstants.VariantMappingDefaultKey);
                     keyPath = $"$.variant['{key}']['{variant}']";
                     var sf = atlasJson.PickFromVariant(key, variant);
                     return sf is not null ? new List<string> { sf } : new List<string>();

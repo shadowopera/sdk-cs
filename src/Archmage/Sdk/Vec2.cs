@@ -24,6 +24,7 @@ namespace Shadop.Archmage.Sdk
             return X.Equals(other.X) && Y.Equals(other.Y);
         }
 
+        // ReSharper disable once Unity.BurstLoadingManagedType
         public override bool Equals(object? obj)
         {
             return obj is Vec2<T> other && Equals(other);

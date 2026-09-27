@@ -25,6 +25,7 @@ namespace Shadop.Archmage.Sdk
             return Min.Equals(other.Min) && Max.Equals(other.Max);
         }
 
+        // ReSharper disable once Unity.BurstLoadingManagedType
         public override bool Equals(object? obj)
         {
             return obj is MinMax<T> other && Equals(other);

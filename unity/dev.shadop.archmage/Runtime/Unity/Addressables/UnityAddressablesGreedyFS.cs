@@ -122,11 +122,8 @@ namespace Shadop.Archmage.Sdk
 
         private bool TakeCached(string assetPath, out byte[] bytes)
         {
-            if (!_cache.TryGetValue(assetPath, out bytes!))
-                return false;
             // Drop the entry to free the memory. A later read of the same file goes to _fallback.
-            _cache.Remove(assetPath);
-            return true;
+            return _cache.Remove(assetPath, out bytes!);
         }
 
         // BundledAssetProvider reads an asset from the first asset bundle among the location's dependencies.

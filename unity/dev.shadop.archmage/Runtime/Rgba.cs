@@ -129,6 +129,7 @@ namespace Shadop.Archmage.Sdk
         }
 
         public bool Equals(Rgba other) => R == other.R && G == other.G && B == other.B && A == other.A;
+        // ReSharper disable once Unity.BurstLoadingManagedType
         public override bool Equals(object? obj) => obj is Rgba other && Equals(other);
         public override int GetHashCode() => HashCode.Combine(R, G, B, A);
         public static bool operator ==(Rgba left, Rgba right) => left.Equals(right);

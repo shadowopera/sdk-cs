@@ -191,6 +191,7 @@ namespace Shadop.Archmage.Sdk
 
         public bool Equals(Duration other) => _nanoseconds == other._nanoseconds;
 
+        // ReSharper disable once Unity.BurstLoadingManagedType
         public override bool Equals(object? obj) => obj is Duration other && Equals(other);
 
         public override int GetHashCode() => _nanoseconds.GetHashCode();
