@@ -116,4 +116,4 @@ Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` 
 - **`scripts/release.sh`** — step-driven release automation; progress tracked in `release.json` by the `relstep` CLI (`go install github.com/shadowopera/archmage/tools/relstep@latest`); steps are declared in `STEP_LIST`
 - **`CHANGELOG.md`** — updated only by the release workflow (`scripts/release.sh`); do not edit it during development
 - **`scripts/reconcile-unity-meta.sh`** — checks Unity `.meta` file consistency
-- **`.github/workflows/publish-nuget.yml`** — publishes to NuGet on `v*` tag push; verifies tag version matches `Archmage.csproj`, runs tests, packs, and pushes with `NUGET_API_KEY` secret
+- **`.github/workflows/publish-nuget-github.yml`** — runs on `v*` tag push; verifies the tag version matches `Archmage.csproj` and `unity/.../package.json`, requires a `CHANGELOG.md` entry for the version, runs tests, pushes the NuGet package with the `NUGET_API_KEY` secret, and creates a GitHub release with the `.nupkg` and the Unity package `.tgz`
