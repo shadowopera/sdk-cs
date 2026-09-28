@@ -1,48 +1,51 @@
 ---
 title: 'UnityWeightedPoolExtensions'
-description: 'Extension methods for drawing a random item from a WeightedPool<T> using Unity''s global Random.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
-Extension methods for [WeightedPool&lt;T&gt;](../../sdk-cs/shadop-archmage-sdk-weightedpool-1/).
+Provides parameterless `Sample` and `SampleIndex` extension methods that draw an
+ item from a [WeightedPool<T>](../../sdk-cs/shadop-archmage-sdk-weightedpool-1/) at random with probability proportional to its
+ weight, using Unity's global `UnityEngine.Random`.
 
 ```csharp
 public static class UnityWeightedPoolExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityWeightedPoolExtensions](.)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityWeightedPoolExtensions](../shadop-archmage-sdk-unityweightedpoolextensions/)<br>
 
 ## Methods
 
-### **Sample&lt;T&gt;(WeightedPool&lt;T&gt;)**
+### **Sample<T>(WeightedPool<T>)**
 
-Returns a randomly selected item, with each item's probability proportional to its weight. Uses Unity's global `UnityEngine.Random`.
-
-Throws if the pool is empty or the total weight is zero.
+Returns a randomly selected item, weighted by the pool's weights.
+ Throws if the pool is empty or the total weight is zero.
 
 ```csharp
-public static T Sample<T>(this WeightedPool<T> wp)
+public static T Sample<T>(WeightedPool<T> wp)
 ```
+
+#### Parameters
+
+`wp` WeightedPool<T><br>
 
 #### Returns
 
-`T`<br>
-The randomly selected item.
+T<br>
 
----
+### **SampleIndex<T>(WeightedPool<T>)**
 
-### **SampleIndex&lt;T&gt;(WeightedPool&lt;T&gt;)**
-
-Returns the index of a randomly selected item, with each item's probability proportional to its weight. Uses Unity's global `UnityEngine.Random`.
-
-Throws if the pool is empty or the total weight is zero.
+Returns the index of a randomly selected item, weighted by the pool's weights.
+ Throws if the pool is empty or the total weight is zero.
 
 ```csharp
-public static int SampleIndex<T>(this WeightedPool<T> wp)
+public static int SampleIndex<T>(WeightedPool<T> wp)
 ```
+
+#### Parameters
+
+`wp` WeightedPool<T><br>
 
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-The zero-based index of the randomly selected item.

@@ -10,6 +10,7 @@ if [[ -t 1 ]] && [[ -n "${TERM:-}" ]]; then
 fi
 
 function __EXIT() {
+    [[ -n "${api_tmp:-}" ]] && rm -rf "$api_tmp"
     popd > /dev/null
 }
 
@@ -67,9 +68,52 @@ if ! bash scripts/starlight-changelog.sh CHANGELOG.md docs/src/content/docs/over
     exit 1
 fi
 
+# Locate the Unity Editor of ArchmageDev, whose UnityEngine assemblies the Unity API docs build references
+unity_project_dir=unity/ArchmageDev
+if [[ -z "${UNITY_EDITOR:-}" ]]; then
+    unity_version="$(sed -n 's/^m_EditorVersion: //p' "$unity_project_dir/ProjectSettings/ProjectVersion.txt")"
+    for candidate in \
+        "/Applications/Unity/Hub/Editor/$unity_version/Unity.app/Contents/MacOS/Unity" \
+        "$HOME/Unity/Hub/Editor/$unity_version/Editor/Unity"; do
+        if [[ -x "$candidate" ]]; then
+            UNITY_EDITOR="$candidate"
+            break
+        fi
+    done
+    if [[ -z "${UNITY_EDITOR:-}" ]]; then
+        printError "Unity $unity_version not found in Unity Hub. Set UNITY_EDITOR to override."
+        exit 1
+    fi
+fi
+unity_engine_dir=""
+for candidate in \
+    "$(dirname "$UNITY_EDITOR")/../Resources/Scripting/Managed/UnityEngine" \
+    "$(dirname "$UNITY_EDITOR")/Data/Managed/UnityEngine"; do
+    if [[ -f "$candidate/UnityEngine.CoreModule.dll" ]]; then
+        unity_engine_dir="$candidate"
+        break
+    fi
+done
+if [[ -z "$unity_engine_dir" ]]; then
+    printError "UnityEngine assemblies not found next to $UNITY_EDITOR"
+    exit 1
+fi
+script_assemblies_dir="$PWD/$unity_project_dir/Library/ScriptAssemblies"
+if [[ ! -f "$script_assemblies_dir/Unity.Addressables.dll" ]]; then
+    printError "$script_assemblies_dir/Unity.Addressables.dll not found. Open $unity_project_dir in the Unity Editor once."
+    exit 1
+fi
+
+godot_sharp_version="$(sed -n 's/.*<PackageReference Include="GodotSharp" Version="\([^"]*\)".*/\1/p' \
+    src/Archmage/Sdk/Godot/Archmage.Godot.csproj)"
+if [[ -z "$godot_sharp_version" ]]; then
+    printError "GodotSharp version not found in Archmage.Godot.csproj"
+    exit 1
+fi
+
 # Clean previous generated API docs
-printMessage "Cleaning docs/src/content/docs/sdk-cs/ ..."
-rm -rf docs/src/content/docs/sdk-cs/
+printMessage "Cleaning generated API docs ..."
+rm -rf docs/src/content/docs/sdk-cs/ docs/src/content/docs/sdk-cs-unity/ docs/src/content/docs/sdk-cs-godot/
 
 # Build the library
 printMessage "Building Archmage ..."
@@ -87,6 +131,41 @@ fi
 
 # Remove the generated index.md (conflicts with Starlight's own index)
 rm -f docs/src/content/docs/sdk-cs/index.md
+
+# Generate the Unity and Godot pages. Each docs project compiles the core sources too, so that doc comments can link
+# to core types; only the pages that the core docs lack are kept.
+api_tmp="$(mktemp -d)"
+
+function generatePlatformDocs() {
+    local name="$1" csproj="$2" out_dir="$3"
+    shift 3
+    printMessage "Building the $name API docs assembly ..."
+    if ! dotnet build "$csproj" -o "$api_tmp/$name-bin" "$@"; then
+        printError "dotnet build $csproj failed"
+        exit 1
+    fi
+    printMessage "Generating $name API docs with xmldoc2md ..."
+    if ! xmldoc2md "$api_tmp/$name-bin/$(basename "$csproj" .csproj).dll" -o "$api_tmp/$name-md"; then
+        printError "xmldoc2md failed for $name"
+        exit 1
+    fi
+    mkdir -p "$out_dir"
+    local page
+    for page in "$api_tmp/$name-md"/*.md; do
+        [[ "$(basename "$page")" == index.md ]] && continue
+        [[ -e "docs/src/content/docs/sdk-cs/$(basename "$page")" ]] && continue
+        cp "$page" "$out_dir/"
+    done
+}
+
+generatePlatformDocs unity docs/utils/api-unity/ArchmageUnityDocs.csproj docs/src/content/docs/sdk-cs-unity \
+    -p:UnityEngineDir="$unity_engine_dir" -p:ScriptAssembliesDir="$script_assemblies_dir"
+generatePlatformDocs godot docs/utils/api-godot/ArchmageGodotDocs.csproj docs/src/content/docs/sdk-cs-godot \
+    -p:GodotSharpVersion="$godot_sharp_version"
+
+# Drop the JSON converter and type converter pages, which are noise for readers
+find docs/src/content/docs/sdk-cs docs/src/content/docs/sdk-cs-unity docs/src/content/docs/sdk-cs-godot \
+    \( -name '*jsonconverter*.md' -o -name '*typeconverter*.md' \) -delete
 
 # Post-process the generated docs
 printMessage "Post-processing API docs ..."

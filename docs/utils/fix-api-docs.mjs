@@ -8,15 +8,24 @@ import { decodeHTML } from 'entities';
  * Adds the required 'title' Frontmatter for Starlight compatibility.
  */
 
-// 1. Locate all generated Markdown files
-const files = globSync('src/content/docs/sdk-cs/**/*.md');
+// 1. Locate all generated Markdown files.
+// Pages in sdk-cs-unity and sdk-cs-godot link to core types, whose pages are in sdk-cs.
+const dirs = ['sdk-cs', 'sdk-cs-unity', 'sdk-cs-godot'];
+const files = dirs.flatMap((dir) => globSync(`src/content/docs/${dir}/*.md`));
 
 if (files.length === 0) {
   console.log('⚠️ No files found. Ensure xmldoc2md has run correctly.');
   process.exit(0);
 }
 
+// Page slug (file name with dots replaced by dashes) -> directory of the page
+const pageDirs = new Map(files.map((file) => [
+  path.basename(file, '.md').replace(/\./g, '-'),
+  path.basename(path.dirname(file)),
+]));
+
 files.forEach((file) => {
+  const fileDir = path.basename(path.dirname(file));
   const originalRawContent = fs.readFileSync(file, 'utf-8');
 
   // 1. Decode HTML entities (e.g., &lt; -> <)
@@ -31,12 +40,17 @@ files.forEach((file) => {
   // 1.3 Remove "Attributes" lines (compiler attributes like NullableContextAttribute are noise for readers)
   content = content.replace(/^Attributes .*(\r?\n)?/gm, '');
 
-  // 1.4 Rewrite relative .md links: (./foo.bar.md) -> (../foo-bar/)
-  content = content.replace(/\(\.\/([^.)]+(?:\.[^.)]+)*)\.md([)#])/g,
-    (_, p1, p2) => `(../${p1.replace(/\./g, '-')}/${p2}`);
-
-  // 1.5 Strip links for AtlasLoadStrategy and AtlasAsyncLoadStrategy, keep text only
-  content = content.replace(/\[(Atlas(?:Async)?LoadStrategy)\]\([^)]*\)/g, '$1');
+  // 1.4 Rewrite relative .md links: [Foo](./foo.bar.md) -> [Foo](../foo-bar/), or [Foo](../../sdk-cs/foo-bar/)
+  // when the page is in another directory. Links to pages that were not generated keep the text only.
+  // A ref parameter links to its type: (./foo.bar&.md) -> (../foo-bar/)
+  content = content.replace(/\[((?:[^[\]]|\[[^\]]*\])*)\]\(\.\/([^)#]+?)&?\.md(#[^)]*)?\)/g,
+    (_, text, target, anchor = '') => {
+      const slug = target.replace(/\./g, '-');
+      const dir = pageDirs.get(slug);
+      if (!dir) return text;
+      const base = dir === fileDir ? '..' : `../../${dir}`;
+      return `[${text}](${base}/${slug}/${anchor})`;
+    });
 
   // 1.6 Clean up .NET reflection-style generic type names
   // e.g. Newtonsoft.Json.JsonConverter`1[[Shadop.Archmage.Sdk.Rgba, Archmage, ...]] -> JsonConverter<Rgba>

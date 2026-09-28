@@ -13,8 +13,8 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Implements the IFS interface to load files via Unity Addressables.
-    /// Only asynchronous loading is supported, and it must be started from the main thread.
+    /// Implements the <see cref="IFS"/> interface to load files via Unity Addressables.
+    /// Only <c>LoadAtlasAsync</c> is supported, and it must be called from the main thread.
     /// </summary>
     /// <remarks>
     /// <para>Each asset is released as soon as it is read, so an asset bundle may be unloaded and

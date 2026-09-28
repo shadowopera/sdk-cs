@@ -128,7 +128,7 @@ bool TryParse(string s, Rgba& result)
 
 `s` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-`result` [Rgba&](../shadop-archmage-sdk-rgba&/)<br>
+`result` [Rgba&](../shadop-archmage-sdk-rgba/)<br>
 
 #### Returns
 

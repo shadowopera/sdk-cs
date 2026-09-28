@@ -9,7 +9,7 @@ namespace Shadop.Archmage.Sdk
     /// <summary>
     /// Provides parameterless <c>Sample</c> and <c>SampleIndex</c> extension methods that draw an
     /// item from a <see cref="WeightedPool{T}"/> at random with probability proportional to its
-    /// weight, using Unity's global <see cref="UnityEngine.Random"/>.
+    /// weight, using Unity's global <c>UnityEngine.Random</c>.
     /// </summary>
     public static class UnityWeightedPoolExtensions
     {

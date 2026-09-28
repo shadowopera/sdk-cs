@@ -1,23 +1,19 @@
 ---
-title: 'GodotFileAccessFS'
+title: 'UnityResourcesFS'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
-Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to read files with Godot's `FileAccess`. Paths can be `res://` paths,
- `user://` paths or operating system paths, and files in mounted resource packs can be read too.
+Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to load files via Unity Resources.
+ Paths are resolved relative to any Resources folder; file extensions are stripped automatically.
+ Loading must be started from the main thread.
 
 ```csharp
-public class GodotFileAccessFS : IFS
+public class UnityResourcesFS : IFS
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [GodotFileAccessFS](../shadop-archmage-sdk-godotfileaccessfs/)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityResourcesFS](../shadop-archmage-sdk-unityresourcesfs/)<br>
 Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)<br>
-
-**Remarks:**
-
-The methods can be called on any thread. Call `ProjectSettings.LoadResourcePack` before loading starts:
- mounting a resource pack while files are being read is not supported.
 
 ## Properties
 
@@ -33,10 +29,10 @@ public bool MainThreadOnly { get; }
 
 ## Constructors
 
-### **GodotFileAccessFS()**
+### **UnityResourcesFS()**
 
 ```csharp
-public GodotFileAccessFS()
+public UnityResourcesFS()
 ```
 
 ## Methods
@@ -71,12 +67,10 @@ public Task<Byte[]> ReadAllBytesAsync(string path, CancellationToken cancellatio
 
 [Task<Byte[]>](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1)<br>
 
-**Remarks:**
-
-Godot has no asynchronous file read, so this method calls [GodotFileAccessFS.ReadAllBytes(String)](../shadop-archmage-sdk-godotfileaccessfs/#readallbytesstring) on a thread pool
- thread.
-
 ### **FileExists(String)**
+
+Always returns true. Resources can only check existence by loading the asset,
+ so a missing file is reported by the read instead.
 
 ```csharp
 public bool FileExists(string path)
@@ -92,6 +86,8 @@ public bool FileExists(string path)
 
 ### **DirectoryExists(String)**
 
+Always returns true. Resources has no directory concept.
+
 ```csharp
 public bool DirectoryExists(string path)
 ```
@@ -103,8 +99,3 @@ public bool DirectoryExists(string path)
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-**Remarks:**
-
-Always returns true for `res://` paths, because `DirAccess` does not report them reliably after
- the project is exported or a resource pack is mounted.

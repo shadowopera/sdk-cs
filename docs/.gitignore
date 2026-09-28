@@ -19,3 +19,7 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# .NET build output of the API docs projects
+[Bb]in/
+[Oo]bj/

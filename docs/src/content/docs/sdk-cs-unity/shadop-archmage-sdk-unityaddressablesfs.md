@@ -1,29 +1,25 @@
 ---
 title: 'UnityAddressablesFS'
-description: 'IFS implementation that loads files via Unity Addressables.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
 Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to load files via Unity Addressables.
+ Only `LoadAtlasAsync` is supported, and it must be called from the main thread.
 
 ```csharp
 public class UnityAddressablesFS : IFS
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAddressablesFS](.)<br>
-Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAddressablesFS](../shadop-archmage-sdk-unityaddressablesfs/)<br>
+Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)<br>
 
-:::caution
-Only asynchronous loading is supported. Calling `ReadAllBytes` will throw.
-Use `LoadAtlasAsync` when using this FS implementation, and call it from the Unity main thread.
-:::
+**Remarks:**
 
-:::tip
 Each asset is released as soon as it is read, so an asset bundle may be unloaded and
-reloaded during a single load. Optionally, holding a handle to an asset in the bundle until
-loading finishes keeps the bundle from being unloaded. An empty placeholder file in the
-bundle works well for this purpose:
+ reloaded during a single load. Optionally, holding a handle to an asset in the bundle until
+ loading finishes keeps the bundle from being unloaded. An empty placeholder file in the
+ bundle works well for this purpose:
 
 ```csharp
 var pin = Addressables.LoadAssetAsync<TextAsset>("Assets/Configs/placeholder.txt");
@@ -37,13 +33,10 @@ finally
     Addressables.Release(pin);
 }
 ```
-:::
 
 ## Properties
 
 ### **MainThreadOnly**
-
-Always `true`.
 
 ```csharp
 public bool MainThreadOnly { get; }
@@ -95,6 +88,8 @@ public Task<Byte[]> ReadAllBytesAsync(string path, CancellationToken cancellatio
 
 ### **FileExists(String)**
 
+Always returns true. A missing file is reported by the read instead.
+
 ```csharp
 public bool FileExists(string path)
 ```
@@ -108,6 +103,8 @@ public bool FileExists(string path)
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
 ### **DirectoryExists(String)**
+
+Always returns true. Addressables has no directory concept.
 
 ```csharp
 public bool DirectoryExists(string path)

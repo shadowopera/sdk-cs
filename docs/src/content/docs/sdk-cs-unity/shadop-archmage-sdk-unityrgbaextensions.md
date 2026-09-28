@@ -1,27 +1,24 @@
 ---
 title: 'UnityRgbaExtensions'
-description: 'Extension methods for converting Rgba to UnityEngine.Color.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
-
-Extension methods for [Rgba](../../sdk-cs/shadop-archmage-sdk-rgba/).
 
 ```csharp
 public static class UnityRgbaExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityRgbaExtensions](.)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityRgbaExtensions](../shadop-archmage-sdk-unityrgbaextensions/)<br>
 
 ## Methods
 
 ### **ToColor(Rgba)**
 
 Converts an [Rgba](../../sdk-cs/shadop-archmage-sdk-rgba/) value to a `UnityEngine.Color`.
-Each channel is mapped from [0, 255] to [0, 1].
+ Each channel is mapped from [0, 255] to [0, 1].
 
 ```csharp
-public static Color ToColor(this Rgba rgba)
+public static Color ToColor(Rgba rgba)
 ```
 
 #### Parameters
@@ -30,4 +27,4 @@ public static Color ToColor(this Rgba rgba)
 
 #### Returns
 
-[Color](https://docs.unity3d.com/ScriptReference/Color.html)<br>
+Color<br>

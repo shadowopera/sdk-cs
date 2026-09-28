@@ -38,6 +38,9 @@ scripts/android-probe.sh [--no-build] [--format apk|aab|aab-split] [<case>...]  
 # Start the Android emulator used by android-probe.sh (AVD archmage-probe: API 35, arm64-v8a)
 ~/Library/Android/sdk/emulator/emulator -avd archmage-probe -no-window -no-audio &
 
+# Regenerate the API docs (sdk-cs, sdk-cs-unity, sdk-cs-godot) and sync them to ../docs (see "API Docs")
+docs/update.sh
+
 # Bump version
 scripts/bump-version.sh [--yes] <version>  # e.g. 0.2.0
 
@@ -64,6 +67,13 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 ### Godot Package
 
 The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. It targets `net8.0`, references `GodotSharp` 4.6.0, and references `Archmage.csproj`, which becomes a dependency on `Shadop.Archmage` of the same version when packed. The sources (`GodotFileAccessFS`, `GodotAtlasLogger`, and the Vec, Rgba, MinMax and WeightedPool extensions) use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-unity.sh` does not sync it to Unity.
+
+### API Docs
+
+`docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Godot pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj` and `docs/utils/api-godot/ArchmageGodotDocs.csproj`. Each of them compiles the core sources together with the platform sources.
+
+- Unity: the script uses the Unity Editor whose version is in `unity/ArchmageDev/ProjectSettings/ProjectVersion.txt` (set `UNITY_EDITOR` to override), and the Addressables assemblies in `unity/ArchmageDev/Library/ScriptAssemblies/`. After upgrading Unity, open ArchmageDev in the new Editor; nothing else needs to change. When the Unity sources start to use another UnityEngine module or `UNITY_*` symbol, add it to `ArchmageUnityDocs.csproj`.
+- Godot: the script does not use the local Godot installation. It builds against the `GodotSharp` version in `Archmage.Godot.csproj`, so upgrading Godot locally needs no change.
 
 ### Entry Point
 

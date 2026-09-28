@@ -1,0 +1,30 @@
+<!--
+  Compiles the core and Godot sources into one assembly for xmldoc2md, so that doc comments on Godot types can link
+  to core types. docs/update.sh passes GodotSharpVersion, read from Archmage.Godot.csproj.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <!-- xmldoc2md loads the assembly with reflection, so the referenced assemblies must be in the output directory. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SdkDir>$(MSBuildThisFileDirectory)../../../src/Archmage/Sdk/</SdkDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(SdkDir)*.cs" />
+    <Compile Include="$(SdkDir)Godot/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="GodotSharp" Version="$(GodotSharpVersion)" />
+  </ItemGroup>
+
+</Project>

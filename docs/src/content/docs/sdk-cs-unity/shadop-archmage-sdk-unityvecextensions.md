@@ -1,95 +1,321 @@
 ---
 title: 'UnityVecExtensions'
-description: 'Extension methods for converting Vec2, Vec3, and Vec4 to Unity Vector types.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
-
-Extension methods for [Vec2](../../sdk-cs/shadop-archmage-sdk-vec2-1/), [Vec3](../../sdk-cs/shadop-archmage-sdk-vec3-1/), and [Vec4](../../sdk-cs/shadop-archmage-sdk-vec4-1/).
 
 ```csharp
 public static class UnityVecExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityVecExtensions](.)
-
-## Supported Types
-
-To maximize performance and avoid garbage collection (GC) allocations in Unity, these extensions provide explicit, hardcoded overloads for standard numeric types.
-
-The underlying generic type `T` can be one of the following:
-
-- **Integer Types**: `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`
-- **Floating-point Types**: `float`, `double`
-
-*Note: The documentation below uses a generic syntax `<T>` for brevity, but the actual implementation uses explicit overloads for the types listed above.*
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityVecExtensions](../shadop-archmage-sdk-unityvecextensions/)<br>
 
 ## Methods
 
-### **ToVector2(Vec2&lt;T&gt;)**
-
-Converts a floating-point [Vec2](../../sdk-cs/shadop-archmage-sdk-vec2-1/) to a `UnityEngine.Vector2`. Supported for `float` and `double`.
+### **ToVector2Int(Vec2<Byte>)**
 
 ```csharp
-public static Vector2 ToVector2(this Vec2<T> vec)
+public static Vector2Int ToVector2Int(Vec2<byte> vec)
 ```
+
+#### Parameters
+
+`vec` [Vec2<Byte>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
 
 #### Returns
 
-[Vector2](https://docs.unity3d.com/ScriptReference/Vector2.html)<br>
+Vector2Int<br>
 
----
-
-### **ToVector2Int(Vec2&lt;T&gt;)**
-
-Converts an integer [Vec2](../../sdk-cs/shadop-archmage-sdk-vec2-1/) to a `UnityEngine.Vector2Int`. Supported for `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, and `ulong`.
+### **ToVector2Int(Vec2<SByte>)**
 
 ```csharp
-public static Vector2Int ToVector2Int(this Vec2<T> vec)
+public static Vector2Int ToVector2Int(Vec2<sbyte> vec)
 ```
+
+#### Parameters
+
+`vec` [Vec2<SByte>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
 
 #### Returns
 
-[Vector2Int](https://docs.unity3d.com/ScriptReference/Vector2Int.html)<br>
+Vector2Int<br>
 
----
-
-### **ToVector3(Vec3&lt;T&gt;)**
-
-Converts a floating-point [Vec3](../../sdk-cs/shadop-archmage-sdk-vec3-1/) to a `UnityEngine.Vector3`. Supported for `float` and `double`.
+### **ToVector2Int(Vec2<Int16>)**
 
 ```csharp
-public static Vector3 ToVector3(this Vec3<T> vec)
+public static Vector2Int ToVector2Int(Vec2<short> vec)
 ```
+
+#### Parameters
+
+`vec` [Vec2<Int16>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
 
 #### Returns
 
-[Vector3](https://docs.unity3d.com/ScriptReference/Vector3.html)<br>
+Vector2Int<br>
 
----
-
-### **ToVector3Int(Vec3&lt;T&gt;)**
-
-Converts an integer [Vec3](../../sdk-cs/shadop-archmage-sdk-vec3-1/) to a `UnityEngine.Vector3Int`. Supported for `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, and `ulong`.
+### **ToVector2Int(Vec2<UInt16>)**
 
 ```csharp
-public static Vector3Int ToVector3Int(this Vec3<T> vec)
+public static Vector2Int ToVector2Int(Vec2<ushort> vec)
 ```
+
+#### Parameters
+
+`vec` [Vec2<UInt16>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
 
 #### Returns
 
-[Vector3Int](https://docs.unity3d.com/ScriptReference/Vector3Int.html)<br>
+Vector2Int<br>
 
----
-
-### **ToVector4(Vec4&lt;T&gt;)**
-
-Converts a [Vec4](../../sdk-cs/shadop-archmage-sdk-vec4-1/) to a `UnityEngine.Vector4`. Because Unity does not have a standard `Vector4Int` type, this method is supported for **all** numeric types (both integer and floating-point).
+### **ToVector2Int(Vec2<Int32>)**
 
 ```csharp
-public static Vector4 ToVector4(this Vec4<T> vec)
+public static Vector2Int ToVector2Int(Vec2<int> vec)
 ```
+
+#### Parameters
+
+`vec` [Vec2<Int32>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
 
 #### Returns
 
-[Vector4](https://docs.unity3d.com/ScriptReference/Vector4.html)<br>
+Vector2Int<br>
+
+### **ToVector2Int(Vec2<UInt32>)**
+
+```csharp
+public static Vector2Int ToVector2Int(Vec2<uint> vec)
+```
+
+#### Parameters
+
+`vec` [Vec2<UInt32>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
+
+#### Returns
+
+Vector2Int<br>
+
+### **ToVector2Int(Vec2<Int64>)**
+
+```csharp
+public static Vector2Int ToVector2Int(Vec2<long> vec)
+```
+
+#### Parameters
+
+`vec` [Vec2<Int64>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
+
+#### Returns
+
+Vector2Int<br>
+
+### **ToVector2Int(Vec2<UInt64>)**
+
+```csharp
+public static Vector2Int ToVector2Int(Vec2<ulong> vec)
+```
+
+#### Parameters
+
+`vec` [Vec2<UInt64>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
+
+#### Returns
+
+Vector2Int<br>
+
+### **ToVector2(Vec2<Single>)**
+
+```csharp
+public static Vector2 ToVector2(Vec2<float> vec)
+```
+
+#### Parameters
+
+`vec` [Vec2<Single>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
+
+#### Returns
+
+Vector2<br>
+
+### **ToVector2(Vec2<Double>)**
+
+```csharp
+public static Vector2 ToVector2(Vec2<double> vec)
+```
+
+#### Parameters
+
+`vec` [Vec2<Double>](../../sdk-cs/shadop-archmage-sdk-vec2-1/)<br>
+
+#### Returns
+
+Vector2<br>
+
+### **ToVector3Int(Vec3<Byte>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<byte> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<Byte>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3Int(Vec3<SByte>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<sbyte> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<SByte>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3Int(Vec3<Int16>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<short> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<Int16>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3Int(Vec3<UInt16>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<ushort> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<UInt16>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3Int(Vec3<Int32>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<int> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<Int32>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3Int(Vec3<UInt32>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<uint> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<UInt32>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3Int(Vec3<Int64>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<long> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<Int64>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3Int(Vec3<UInt64>)**
+
+```csharp
+public static Vector3Int ToVector3Int(Vec3<ulong> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<UInt64>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3Int<br>
+
+### **ToVector3(Vec3<Single>)**
+
+```csharp
+public static Vector3 ToVector3(Vec3<float> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<Single>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3<br>
+
+### **ToVector3(Vec3<Double>)**
+
+```csharp
+public static Vector3 ToVector3(Vec3<double> vec)
+```
+
+#### Parameters
+
+`vec` [Vec3<Double>](../../sdk-cs/shadop-archmage-sdk-vec3-1/)<br>
+
+#### Returns
+
+Vector3<br>
+
+### **ToVector4(Vec4<Single>)**
+
+```csharp
+public static Vector4 ToVector4(Vec4<float> vec)
+```
+
+#### Parameters
+
+`vec` [Vec4<Single>](../../sdk-cs/shadop-archmage-sdk-vec4-1/)<br>
+
+#### Returns
+
+Vector4<br>
+
+### **ToVector4(Vec4<Double>)**
+
+```csharp
+public static Vector4 ToVector4(Vec4<double> vec)
+```
+
+#### Parameters
+
+`vec` [Vec4<Double>](../../sdk-cs/shadop-archmage-sdk-vec4-1/)<br>
+
+#### Returns
+
+Vector4<br>

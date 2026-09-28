@@ -12,9 +12,9 @@ using UnityEngine.Networking;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Implements the IFS interface to load files from Unity StreamingAssets via UnityWebRequest.
+    /// Implements the <see cref="IFS"/> interface to load files from Unity StreamingAssets via UnityWebRequest.
     /// Paths are resolved relative to Application.streamingAssetsPath.
-    /// Only asynchronous loading is supported, and it must be started from the main thread.
+    /// Only <c>LoadAtlasAsync</c> is supported, and it must be called from the main thread.
     /// </summary>
     /// <remarks>
     /// On WebGL, StreamingAssets is deployed to the web server along with the build, so files are downloaded

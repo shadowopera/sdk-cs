@@ -1,48 +1,51 @@
 ---
 title: 'GodotWeightedPoolExtensions'
-description: 'Extension methods for drawing a random item from a WeightedPool<T> using Godot''s global random number generator.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
-Extension methods for [WeightedPool&lt;T&gt;](../../sdk-cs/shadop-archmage-sdk-weightedpool-1/).
+Provides parameterless `Sample` and `SampleIndex` extension methods that draw an
+ item from a [WeightedPool<T>](../../sdk-cs/shadop-archmage-sdk-weightedpool-1/) at random with probability proportional to its
+ weight, using Godot's global random number generator, which `GD.Seed` affects.
 
 ```csharp
 public static class GodotWeightedPoolExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [GodotWeightedPoolExtensions](.)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [GodotWeightedPoolExtensions](../shadop-archmage-sdk-godotweightedpoolextensions/)<br>
 
 ## Methods
 
-### **Sample&lt;T&gt;(WeightedPool&lt;T&gt;)**
+### **Sample<T>(WeightedPool<T>)**
 
-Returns a randomly selected item, with each item's probability proportional to its weight. Uses Godot's global random number generator, which `GD.Seed` affects.
-
-Throws if the pool is empty or the total weight is zero.
+Returns a randomly selected item, weighted by the pool's weights.
+ Throws if the pool is empty or the total weight is zero.
 
 ```csharp
-public static T Sample<T>(this WeightedPool<T> wp)
+public static T Sample<T>(WeightedPool<T> wp)
 ```
+
+#### Parameters
+
+`wp` WeightedPool<T><br>
 
 #### Returns
 
-`T`<br>
-The randomly selected item.
+T<br>
 
----
+### **SampleIndex<T>(WeightedPool<T>)**
 
-### **SampleIndex&lt;T&gt;(WeightedPool&lt;T&gt;)**
-
-Returns the index of a randomly selected item, with each item's probability proportional to its weight. Uses Godot's global random number generator, which `GD.Seed` affects.
-
-Throws if the pool is empty or the total weight is zero.
+Returns the index of a randomly selected item, weighted by the pool's weights.
+ Throws if the pool is empty or the total weight is zero.
 
 ```csharp
-public static int SampleIndex<T>(this WeightedPool<T> wp)
+public static int SampleIndex<T>(WeightedPool<T> wp)
 ```
+
+#### Parameters
+
+`wp` WeightedPool<T><br>
 
 #### Returns
 
 [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-The zero-based index of the randomly selected item.

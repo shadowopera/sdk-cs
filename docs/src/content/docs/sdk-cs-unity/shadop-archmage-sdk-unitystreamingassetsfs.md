@@ -1,23 +1,25 @@
 ---
-title: 'GodotFileAccessFS'
+title: 'UnityStreamingAssetsFS'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
-Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to read files with Godot's `FileAccess`. Paths can be `res://` paths,
- `user://` paths or operating system paths, and files in mounted resource packs can be read too.
+Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to load files from Unity StreamingAssets via UnityWebRequest.
+ Paths are resolved relative to Application.streamingAssetsPath.
+ Only `LoadAtlasAsync` is supported, and it must be called from the main thread.
 
 ```csharp
-public class GodotFileAccessFS : IFS
+public class UnityStreamingAssetsFS : IFS
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [GodotFileAccessFS](../shadop-archmage-sdk-godotfileaccessfs/)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityStreamingAssetsFS](../shadop-archmage-sdk-unitystreamingassetsfs/)<br>
 Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)<br>
 
 **Remarks:**
 
-The methods can be called on any thread. Call `ProjectSettings.LoadResourcePack` before loading starts:
- mounting a resource pack while files are being read is not supported.
+On WebGL, StreamingAssets is deployed to the web server along with the build, so files are downloaded
+ over HTTP. A 404 response is treated as a missing file. Any other error, such as a 403 response or a
+ network failure, makes the load fail.
 
 ## Properties
 
@@ -33,10 +35,10 @@ public bool MainThreadOnly { get; }
 
 ## Constructors
 
-### **GodotFileAccessFS()**
+### **UnityStreamingAssetsFS()**
 
 ```csharp
-public GodotFileAccessFS()
+public UnityStreamingAssetsFS()
 ```
 
 ## Methods
@@ -71,12 +73,10 @@ public Task<Byte[]> ReadAllBytesAsync(string path, CancellationToken cancellatio
 
 [Task<Byte[]>](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task-1)<br>
 
-**Remarks:**
-
-Godot has no asynchronous file read, so this method calls [GodotFileAccessFS.ReadAllBytes(String)](../shadop-archmage-sdk-godotfileaccessfs/#readallbytesstring) on a thread pool
- thread.
-
 ### **FileExists(String)**
+
+Checks the file system directly where StreamingAssets is a plain directory.
+ Returns true on platforms where it is a URI (Android, WebGL).
 
 ```csharp
 public bool FileExists(string path)
@@ -92,6 +92,9 @@ public bool FileExists(string path)
 
 ### **DirectoryExists(String)**
 
+Checks the file system directly where StreamingAssets is a plain directory.
+ Returns true on platforms where it is a URI (Android, WebGL).
+
 ```csharp
 public bool DirectoryExists(string path)
 ```
@@ -103,8 +106,3 @@ public bool DirectoryExists(string path)
 #### Returns
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-
-**Remarks:**
-
-Always returns true for `res://` paths, because `DirAccess` does not report them reliably after
- the project is exported or a resource pack is mounted.

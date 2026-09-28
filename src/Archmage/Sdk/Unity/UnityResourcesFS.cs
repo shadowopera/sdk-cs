@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Implements the IFS interface to load files via Unity Resources.
+    /// Implements the <see cref="IFS"/> interface to load files via Unity Resources.
     /// Paths are resolved relative to any Resources folder; file extensions are stripped automatically.
     /// Loading must be started from the main thread.
     /// </summary>

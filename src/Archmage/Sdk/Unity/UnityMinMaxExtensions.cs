@@ -8,7 +8,7 @@ namespace Shadop.Archmage.Sdk
 {
     /// <summary>
     /// Provides parameterless <c>Sample</c> extension methods that draw a uniform random value
-    /// from a <see cref="MinMax{T}"/> range using Unity's global <see cref="UnityEngine.Random"/>.
+    /// from a <see cref="MinMax{T}"/> range using Unity's global <c>UnityEngine.Random</c>.
     /// The returned value lies in <c>[Min, Max]</c> (both ends included).
     /// </summary>
     public static class UnityMinMaxExtensions

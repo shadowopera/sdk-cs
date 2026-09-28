@@ -16,9 +16,9 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Implements the IFS interface to load files via Unity Addressables, reading all files in each encountered
-    /// asset bundle in one go.
-    /// Only asynchronous loading is supported, and it must be started from the main thread.
+    /// Implements the <see cref="IFS"/> interface to load files via Unity Addressables, reading all files in each
+    /// encountered asset bundle in one go.
+    /// Only <c>LoadAtlasAsync</c> is supported, and it must be called from the main thread.
     /// </summary>
     /// <remarks>
     /// <para>On WebGL, <see cref="UnityAddressablesFS"/> takes about one frame per file, because Unity completes

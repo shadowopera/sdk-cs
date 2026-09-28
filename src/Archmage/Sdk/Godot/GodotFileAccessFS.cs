@@ -10,7 +10,7 @@ using FileAccess = Godot.FileAccess;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Implements the IFS interface to read files with Godot's <c>FileAccess</c>. Paths can be <c>res://</c> paths,
+    /// Implements the <see cref="IFS"/> interface to read files with Godot's <c>FileAccess</c>. Paths can be <c>res://</c> paths,
     /// <c>user://</c> paths or operating system paths, and files in mounted resource packs can be read too.
     /// </summary>
     /// <remarks>

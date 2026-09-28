@@ -1,0 +1,36 @@
+<!--
+  Compiles the core and Unity sources into one assembly for xmldoc2md, so that doc comments on Unity types can link
+  to core types. docs/update.sh passes UnityEngineDir (the UnityEngine module assemblies of the Unity Editor) and
+  ScriptAssembliesDir (the Addressables assemblies that Unity compiled for ArchmageDev).
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <DefineConstants>$(DefineConstants);UNITY_5_3_OR_NEWER;UNITY_6000_0_OR_NEWER;UNITY_ADDRESSABLES</DefineConstants>
+    <!-- xmldoc2md loads the assembly with reflection, so the referenced assemblies must be in the output directory. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SdkDir>$(MSBuildThisFileDirectory)../../../src/Archmage/Sdk/</SdkDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(SdkDir)*.cs" />
+    <Compile Include="$(SdkDir)Unity/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Reference Include="$(UnityEngineDir)/UnityEngine.CoreModule.dll" />
+    <Reference Include="$(UnityEngineDir)/UnityEngine.AssetBundleModule.dll" />
+    <Reference Include="$(UnityEngineDir)/UnityEngine.UnityWebRequestModule.dll" />
+    <Reference Include="$(ScriptAssembliesDir)/Unity.Addressables.dll" />
+    <Reference Include="$(ScriptAssembliesDir)/Unity.ResourceManager.dll" />
+  </ItemGroup>
+
+</Project>

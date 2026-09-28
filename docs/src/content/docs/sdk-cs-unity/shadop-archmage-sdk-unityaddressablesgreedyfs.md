@@ -1,41 +1,34 @@
 ---
 title: 'UnityAddressablesGreedyFS'
-description: 'IFS implementation that loads files via Unity Addressables, reading all files in each encountered asset bundle in one go.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
-Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to load files via Unity Addressables,
-reading all files in each encountered asset bundle in one go.
+Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to load files via Unity Addressables, reading all files in each
+ encountered asset bundle in one go.
+ Only `LoadAtlasAsync` is supported, and it must be called from the main thread.
 
 ```csharp
 public class UnityAddressablesGreedyFS : IFS
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAddressablesGreedyFS](.)<br>
-Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityAddressablesGreedyFS](../shadop-archmage-sdk-unityaddressablesgreedyfs/)<br>
+Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)<br>
 
-:::caution
-Only asynchronous loading is supported. Calling `ReadAllBytes` will throw.
-Use `LoadAtlasAsync` when using this FS implementation, and call it from the Unity main thread.
-:::
+**Remarks:**
 
-On WebGL, [UnityAddressablesFS](../shadop-archmage-sdk-unityaddressablesfs/) takes about one frame per file,
-because Unity completes at most one asynchronous asset load per frame. This class instead reads every file in an
-asset bundle synchronously the first time a file in that bundle is requested, and keeps the other files in memory
-until they are requested.
+On WebGL, [UnityAddressablesFS](../shadop-archmage-sdk-unityaddressablesfs/) takes about one frame per file, because Unity completes
+ at most one asynchronous asset load per frame. This class instead reads every file in an asset bundle
+ synchronously the first time a file in that bundle is requested, and keeps the other files in memory until
+ they are requested.
 
-:::tip
-This class reads every file in the bundle, so a bundle that also holds other files costs extra time and memory.
-Keep configs in asset bundles of their own. Files that are never requested stay in memory until the instance is
-garbage collected.
-:::
+This class reads every file in the bundle, so a bundle that also holds other files costs extra time
+ and memory. Keep configs in asset bundles of their own. Files that are never requested stay in memory
+ until the instance is garbage collected.
 
 ## Properties
 
 ### **MainThreadOnly**
-
-Always `true`.
 
 ```csharp
 public bool MainThreadOnly { get; }
@@ -87,7 +80,7 @@ public Task<Byte[]> ReadAllBytesAsync(string path, CancellationToken cancellatio
 
 ### **FileExists(String)**
 
-Always returns true. For a missing file, `ReadAllBytesAsync` throws `FileNotFoundException`.
+Always returns true. For a missing file, ReadAllBytesAsync throws FileNotFoundException.
 
 ```csharp
 public bool FileExists(string path)

@@ -1,43 +1,171 @@
 ---
 title: 'UnityMinMaxExtensions'
-description: 'Extension methods for sampling a uniform random value from a MinMax<T> range using Unity''s global Random.'
 ---
 
 Namespace: Shadop.Archmage.Sdk
 
-Extension methods for [MinMax](../../sdk-cs/shadop-archmage-sdk-minmax-1/).
+Provides parameterless `Sample` extension methods that draw a uniform random value
+ from a [MinMax<T>](../../sdk-cs/shadop-archmage-sdk-minmax-1/) range using Unity's global `UnityEngine.Random`.
+ The returned value lies in `[Min, Max]` (both ends included).
 
 ```csharp
 public static class UnityMinMaxExtensions
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityMinMaxExtensions](.)
-
-## Supported Types
-
-To maximize performance and avoid garbage collection (GC) allocations in Unity, these extensions provide explicit, hardcoded overloads for standard numeric types.
-
-The underlying generic type `T` can be one of the following:
-
-- **Integer Types**: `sbyte`, `short`, `int`, `long`, `byte`, `ushort`, `uint`, `ulong`
-- **Floating-point Types**: `float`, `double`
-- **Duration**: [Duration](../../sdk-cs/shadop-archmage-sdk-duration/)
-
-*Note: The documentation below uses a generic syntax `<T>` for brevity, but the actual implementation uses explicit overloads for the types listed above.*
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [UnityMinMaxExtensions](../shadop-archmage-sdk-unityminmaxextensions/)<br>
 
 ## Methods
 
-### **Sample(MinMax&lt;T&gt;)**
-
-Draws a uniform random value from the [MinMax](../../sdk-cs/shadop-archmage-sdk-minmax-1/) range using Unity's global `UnityEngine.Random`. The returned value lies in `[Min, Max]` (both ends included).
-
-For integer types, this maps to `Random.Range(0, span + 1)` shifted by `Min`. For floating-point types, this uses `Random.value * (Max - Min)` shifted by `Min`. For `Duration`, the draw has millisecond precision.
+### **Sample(MinMax<SByte>)**
 
 ```csharp
-public static T Sample(this MinMax<T> mm)
+public static sbyte Sample(MinMax<sbyte> mm)
 ```
+
+#### Parameters
+
+`mm` [MinMax<SByte>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
 
 #### Returns
 
-`T`<br>
-A random value in the range `[mm.Min, mm.Max]`.
+[SByte](https://docs.microsoft.com/en-us/dotnet/api/system.sbyte)<br>
+
+### **Sample(MinMax<Int16>)**
+
+```csharp
+public static short Sample(MinMax<short> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<Int16>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[Int16](https://docs.microsoft.com/en-us/dotnet/api/system.int16)<br>
+
+### **Sample(MinMax<Int32>)**
+
+```csharp
+public static int Sample(MinMax<int> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<Int32>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+
+### **Sample(MinMax<Int64>)**
+
+```csharp
+public static long Sample(MinMax<long> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<Int64>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[Int64](https://docs.microsoft.com/en-us/dotnet/api/system.int64)<br>
+
+### **Sample(MinMax<Byte>)**
+
+```csharp
+public static byte Sample(MinMax<byte> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<Byte>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[Byte](https://docs.microsoft.com/en-us/dotnet/api/system.byte)<br>
+
+### **Sample(MinMax<UInt16>)**
+
+```csharp
+public static ushort Sample(MinMax<ushort> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<UInt16>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[UInt16](https://docs.microsoft.com/en-us/dotnet/api/system.uint16)<br>
+
+### **Sample(MinMax<UInt32>)**
+
+```csharp
+public static uint Sample(MinMax<uint> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<UInt32>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[UInt32](https://docs.microsoft.com/en-us/dotnet/api/system.uint32)<br>
+
+### **Sample(MinMax<UInt64>)**
+
+```csharp
+public static ulong Sample(MinMax<ulong> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<UInt64>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[UInt64](https://docs.microsoft.com/en-us/dotnet/api/system.uint64)<br>
+
+### **Sample(MinMax<Single>)**
+
+```csharp
+public static float Sample(MinMax<float> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<Single>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[Single](https://docs.microsoft.com/en-us/dotnet/api/system.single)<br>
+
+### **Sample(MinMax<Double>)**
+
+```csharp
+public static double Sample(MinMax<double> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<Double>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[Double](https://docs.microsoft.com/en-us/dotnet/api/system.double)<br>
+
+### **Sample(MinMax<Duration>)**
+
+```csharp
+public static Duration Sample(MinMax<Duration> mm)
+```
+
+#### Parameters
+
+`mm` [MinMax<Duration>](../../sdk-cs/shadop-archmage-sdk-minmax-1/)<br>
+
+#### Returns
+
+[Duration](../../sdk-cs/shadop-archmage-sdk-duration/)<br>
