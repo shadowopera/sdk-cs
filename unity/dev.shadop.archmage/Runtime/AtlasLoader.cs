@@ -477,6 +477,10 @@ namespace Shadop.Archmage.Sdk
                     // FileExists may report true for a missing file.
                     return null;
                 }
+                catch (DirectoryNotFoundException)
+                {
+                    return null;
+                }
             }
         }
 
