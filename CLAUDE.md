@@ -8,6 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Build the library
 dotnet build src/Archmage/Archmage.csproj
 
+# Build the Godot package (compile check only; the Godot code needs the engine to run)
+dotnet build src/Archmage/Sdk/Godot/Archmage.Godot.csproj
+
 # Run all tests
 dotnet test tests/Archmage.Tests.csproj
 
@@ -44,7 +47,7 @@ scripts/release.sh [<version>]
 
 ## Architecture
 
-**Archmage** is a C# configuration management SDK (namespace `Shadop.Archmage.Sdk`) for loading JSON-based game configs, targeting both .NET (`net8.0`, `netstandard2.1`) and Unity. The core library lives in `src/Archmage/`; the `unity/dev.shadop.archmage/Runtime/` directory is a mirror synced via `scripts/rsync-unity.sh`.
+**Archmage** is a C# configuration management SDK (namespace `Shadop.Archmage.Sdk`) for loading JSON-based game configs, targeting .NET (`net8.0`, `netstandard2.1`), Unity, and Godot 4.6 or later (.NET). The core library lives in `src/Archmage/`; the `unity/dev.shadop.archmage/Runtime/` directory is a mirror synced via `scripts/rsync-unity.sh`.
 
 ### Unity Package Structure
 
@@ -57,6 +60,10 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 | `Shadop.Archmage.Sdk.Unity.Addressables` | `Runtime/Unity/Addressables/Shadop.Archmage.Sdk.Unity.Addressables.asmdef` | `src/Archmage/Sdk/Unity/Addressables/*.cs` | Addressables adapter; only compiled when `com.unity.addressables` is installed (`defineConstraints: ["UNITY_ADDRESSABLES"]`) |
 
 `Shadop.Archmage.Sdk.Unity` and `Shadop.Archmage.Sdk.Unity.Addressables` both reference `Shadop.Archmage.Sdk`. The asmdef files are not synced by rsync — they live directly in the Unity package directory.
+
+### Godot Package
+
+The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. It targets `net8.0`, references `GodotSharp` 4.6.0, and references `Archmage.csproj`, which becomes a dependency on `Shadop.Archmage` of the same version when packed. The sources (`GodotFileAccessFS`, `GodotAtlasLogger`, and the Vec, Rgba, MinMax and WeightedPool extensions) use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-unity.sh` does not sync it to Unity.
 
 ### Entry Point
 
@@ -78,9 +85,9 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 | Interface/Class | Role |
 |---|---|
 | `IAtlas` | Config collection with lifecycle hooks; implemented by generated code in `tests/Conf/` |
-| `IFS` | File system abstraction; `DefaultFS` wraps `System.IO` |
+| `IFS` | File system abstraction; `DefaultFS` wraps `System.IO`. `MainThreadOnly` chooses between Mode C and Mode W (see "Loading Flow") |
 | `IAtlasLogger` | Logging; `DefaultLogger` writes to console |
-| `AtlasOptions` | Builder for loader configuration (FS, logger, filters, overrides, strategies) |
+| `AtlasOptions` | Builder for loader configuration (FS, logger, filters, overrides, concurrency, `MainThreadParsing`) |
 | `IApplyKeys` | Optional interface on config objects; called after deserialization/overrides, before marking `Ready` |
 | `IRefBinder` | Implemented by generated table classes; called during `BindRefs()` to resolve `XRef` fields |
 
@@ -95,9 +102,9 @@ The `Archmage` static class is split across two `partial class` files: `AtlasLoa
 | `UnityStreamingAssetsFS` | Unity | Not supported; throws `NotSupportedException` | `UnityWebRequest`; the result is delivered on the main thread | Main thread only |
 | `UnityAddressablesFS` | Unity | Not supported; throws `NotSupportedException` | Addressables handles; the result is delivered on the main thread. Completes synchronously when the handles are already done | Main thread only |
 | `UnityAddressablesGreedyFS` | Unity | Not supported; throws `NotSupportedException` | The first read of a file in a bundle caches the files of the whole bundle in memory. A later read of a file in the same bundle takes it from the cache and completes synchronously when the location handle is already done | Main thread only |
-| `GodotFileAccessFS` (planned, not implemented yet) | Godot | `FileAccess.GetFileAsBytes` | Godot has no async file read API. The implementation runs the synchronous read with `Task.Run` | Any thread. The static `FileAccess` methods can be called from any thread: each call opens a new `FileAccess` object with its own native file handle. Never share one `FileAccess` object across threads. Do not mount a resource pack while files are being read, because the pack table is not locked |
+| `GodotFileAccessFS` | Godot | `FileAccess.GetFileAsBytes` | Godot has no async file read API. The implementation runs the synchronous read with `Task.Run` | Any thread. The static `FileAccess` methods can be called from any thread: each call opens a new `FileAccess` object with its own native file handle. Never share one `FileAccess` object across threads. Do not mount a resource pack while files are being read, because the pack table is not locked |
 
-### Planned Loading Flow (not implemented yet)
+### Loading Flow
 
 ```
 LoadAtlas / LoadAtlasAsync
@@ -170,8 +177,8 @@ Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` 
 
 ### Release & CI
 
-- **`scripts/bump-version.sh`** — bumps `<Version>` in `Archmage.csproj` and `unity/.../package.json`, commits, and creates an annotated git tag; use `--yes` to skip interactive prompts
+- **`scripts/bump-version.sh`** — bumps `<Version>` in `Archmage.csproj`, `Archmage.Godot.csproj` and `unity/.../package.json`, commits, and creates an annotated git tag; use `--yes` to skip interactive prompts
 - **`scripts/release.sh`** — step-driven release automation; progress tracked in `release.json` by the `relstep` CLI (`go install github.com/shadowopera/archmage/tools/relstep@latest`); steps are declared in `STEP_LIST`
 - **`CHANGELOG.md`** — updated only by the release workflow (`scripts/release.sh`); do not edit it during development
 - **`scripts/reconcile-unity-meta.sh`** — checks Unity `.meta` file consistency
-- **`.github/workflows/publish-nuget-github.yml`** — runs on `v*` tag push; verifies the tag version matches `Archmage.csproj` and `unity/.../package.json`, requires a `CHANGELOG.md` entry for the version, runs tests, pushes the NuGet package with the `NUGET_API_KEY` secret, and creates a GitHub release with the `.nupkg` and the Unity package `.tgz`
+- **`.github/workflows/publish-nuget-github.yml`** — runs on `v*` tag push; verifies the tag version matches `Archmage.csproj`, `Archmage.Godot.csproj` and `unity/.../package.json`, requires a `CHANGELOG.md` entry for the version, runs tests, pushes the `Shadop.Archmage` and `Shadop.Archmage.Godot` NuGet packages with the `NUGET_API_KEY` secret, and creates a GitHub release with both `.nupkg` files and the Unity package `.tgz`

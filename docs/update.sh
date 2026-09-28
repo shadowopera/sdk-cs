@@ -134,6 +134,12 @@ if ! rsync -av --delete docs/src/content/docs/sdk-cs-unity-editor/ ../docs/archm
     exit 1
 fi
 
+printMessage "Syncing sdk-cs-godot ..."
+if ! rsync -av --delete docs/src/content/docs/sdk-cs-godot/ ../docs/archmage/src/content/docs/sdk-cs-godot/; then
+    printError "rsync sdk-cs-godot failed"
+    exit 1
+fi
+
 # Stage all changes
 printMessage "Staging changes in docs site ..."
 cd ../docs

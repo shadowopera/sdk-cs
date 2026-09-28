@@ -31,6 +31,11 @@ export default defineConfig({
           collapsed: true,
         },
         {
+          label: 'C# SDK (Godot)',
+          items: [{ autogenerate: { directory: 'sdk-cs-godot' } }],
+          collapsed: true,
+        },
+        {
           label: 'C# Generated Code',
           items: [{ autogenerate: { directory: 'gen-cs' } }],
           collapsed: true,
