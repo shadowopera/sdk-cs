@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Shadop.Archmage.Sdk.Tests
@@ -198,6 +199,35 @@ namespace Shadop.Archmage.Sdk.Tests
             {
                 Assert.Throws<FileNotFoundException>(() => new I18n("en").MergeL10nFile("../../../testdata/nonexistent_l10n.json", lang));
             }
+        }
+
+        [Fact]
+        public void TestI18n_MergeL10nFileAsync()
+        {
+            var expected = new I18n("en");
+            expected.MergeL10nFile("../../../testdata/l10n.json", "en");
+
+            var i18n = new I18n("en");
+            var resumedThreadId = 0;
+            var threadId = SingleThreadContext.Run(async () =>
+            {
+                await i18n.MergeL10nFileAsync("../../../testdata/l10n.json", "en");
+                resumedThreadId = Environment.CurrentManagedThreadId;
+            });
+
+            // The await returns on the caller's context, with the merge complete.
+            Assert.Equal(threadId, resumedThreadId);
+            Assert.NotEmpty(i18n.AllTexts()["en"]);
+            Assert.Equivalent(expected.AllTexts(), i18n.AllTexts());
+        }
+
+        [Fact]
+        public async Task TestI18n_MergeL10nFileAsync_InvalidJson()
+        {
+            var fs = new MemoryFS(new Dictionary<string, byte[]> { { "l10n.json", Encoding.UTF8.GetBytes("{") } });
+            var err = await Assert.ThrowsAsync<ArchmageException>(() => new I18n("en").MergeL10nFileAsync(
+                "l10n.json", "en", fs, TestContext.Current.CancellationToken));
+            Assert.StartsWith("<archmage> Failed to merge l10n file \"l10n.json\"", err.Message);
         }
 
         class GetTextTrial

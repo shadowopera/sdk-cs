@@ -11,7 +11,8 @@ using Xunit;
 namespace Shadop.Archmage.Sdk.Tests
 {
     /// <summary>
-    /// Wraps DefaultFS, records the threads IFS is called on and tracks reads in flight.
+    /// Wraps DefaultFS, records the threads IFS is called on and tracks reads in flight. Each read takes at least
+    /// 5 ms, so that concurrent reads overlap.
     /// </summary>
     class ProbeFS : IFS
     {
@@ -31,33 +32,57 @@ namespace Shadop.Archmage.Sdk.Tests
 
         public bool MainThreadOnly { get; init; }
         public ConcurrentBag<int> ThreadIds { get; } = new();
+        public ConcurrentBag<(string Path, int ThreadId)> SyncReads { get; } = new();
+        public ConcurrentBag<string> AsyncReads { get; } = new();
         public int InFlight => Volatile.Read(ref _inFlight);
         public int MaxInFlight => Volatile.Read(ref _maxInFlight);
 
         public byte[] ReadAllBytes(string path)
         {
             ThreadIds.Add(Environment.CurrentManagedThreadId);
-            return _inner.ReadAllBytes(path);
+            SyncReads.Add((path, Environment.CurrentManagedThreadId));
+            EnterRead();
+            try
+            {
+                Thread.Sleep(5);
+                ThrowIfFailPath(path);
+                return _inner.ReadAllBytes(path);
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _inFlight);
+            }
         }
 
         public async Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
         {
             ThreadIds.Add(Environment.CurrentManagedThreadId);
-            var n = Interlocked.Increment(ref _inFlight);
-            int max;
-            while (n > (max = Volatile.Read(ref _maxInFlight)))
-                Interlocked.CompareExchange(ref _maxInFlight, n, max);
+            AsyncReads.Add(path);
+            EnterRead();
             try
             {
                 await Task.Delay(5, cancellationToken);
-                if (_failPath is not null && path.Replace('\\', '/').EndsWith(_failPath))
-                    throw _failure(path);
+                ThrowIfFailPath(path);
                 return await _inner.ReadAllBytesAsync(path, cancellationToken);
             }
             finally
             {
                 Interlocked.Decrement(ref _inFlight);
             }
+        }
+
+        void EnterRead()
+        {
+            var n = Interlocked.Increment(ref _inFlight);
+            int max;
+            while (n > (max = Volatile.Read(ref _maxInFlight)))
+                Interlocked.CompareExchange(ref _maxInFlight, n, max);
+        }
+
+        void ThrowIfFailPath(string path)
+        {
+            if (_failPath is not null && path.Replace('\\', '/').EndsWith(_failPath))
+                throw _failure(path);
         }
 
         public bool FileExists(string path)
@@ -111,8 +136,35 @@ namespace Shadop.Archmage.Sdk.Tests
         }
     }
 
+    /// <summary>
+    /// Wraps ConfigAtlas and records the threads BindRefs and OnLoaded are called on.
+    /// </summary>
+    sealed class ThreadProbeAtlas : IAtlas
+    {
+        public ConfigAtlas Inner { get; } = new();
+        public int BindRefsThreadId { get; private set; }
+        public int OnLoadedThreadId { get; private set; }
+
+        public void SetDataVersion(VersionInfo? v) => Inner.SetDataVersion(v);
+
+        public Dictionary<string, AtlasItem> AtlasItems() => Inner.AtlasItems();
+
+        public void BindRefs()
+        {
+            BindRefsThreadId = Environment.CurrentManagedThreadId;
+            Inner.BindRefs();
+        }
+
+        public void OnLoaded()
+        {
+            OnLoadedThreadId = Environment.CurrentManagedThreadId;
+            Inner.OnLoaded();
+        }
+    }
+
     public partial class AtlasTests
     {
+        const string AtlasFile = "../../../testdata/atlas.json";
         [Theory]
         [InlineData(false, 1)]
         [InlineData(false, 32)]
@@ -157,11 +209,13 @@ namespace Shadop.Archmage.Sdk.Tests
         }
 
         [Theory]
-        [InlineData(1)]
-        [InlineData(32)]
-        public void TestAtlas_LoadAtlasAsync_IFSOnCallerContext(int n)
+        [InlineData(1, true)]
+        [InlineData(32, true)]
+        [InlineData(32, false)]
+        public void TestAtlas_LoadAtlasAsync_IFSOnCallerContext(int n, bool mainFSMainThreadOnly)
         {
-            var fs = new ProbeFS { MainThreadOnly = true };
+            // One IFS that works only on the main thread keeps every IFS on the caller's context.
+            var fs = new ProbeFS { MainThreadOnly = mainFSMainThreadOnly };
             var ovrFS = new ProbeFS { MainThreadOnly = true };
             var threadId = SingleThreadContext.Run(() => Archmage.LoadAtlasAsync(
                 "../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(),
@@ -176,6 +230,43 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.All(fs.ThreadIds, id => Assert.Equal(threadId, id));
             Assert.NotEmpty(ovrFS.ThreadIds);
             Assert.All(ovrFS.ThreadIds, id => Assert.Equal(threadId, id));
+            Assert.Empty(fs.SyncReads);
+            Assert.Empty(ovrFS.SyncReads);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void TestAtlas_IFSOnAnyThread_ReadsItemsOnThreadPool(bool isAsync)
+        {
+            var fs = new ProbeFS();
+            var ovrFS = new ProbeFS();
+            var atlas = new ConfigAtlas();
+            var opts = DefaultOpts()
+                .WithLogger(new ScavengerLogger())
+                .WithFS(fs)
+                .WithBlacklist(new[] { "balance" })
+                .WithOverrideFS(ovrFS, "../../../override/1")
+                .WithOverrideFS(ovrFS, "../../../override/2");
+
+            var threadId = SingleThreadContext.Run(() =>
+            {
+                if (isAsync)
+                    return Archmage.LoadAtlasAsync(AtlasFile, "../../../testdata", atlas, opts);
+                Archmage.LoadAtlas(AtlasFile, "../../../testdata", atlas, opts);
+                return Task.CompletedTask;
+            });
+            CheckUpdateGolden(atlas, "../../../golden/override_root");
+
+            // Items are read with ReadAllBytes on thread pool threads, several at a time.
+            var itemReads = fs.SyncReads.Where(r => r.Path != AtlasFile).Concat(ovrFS.SyncReads).ToList();
+            Assert.NotEmpty(itemReads);
+            Assert.All(itemReads, r => Assert.NotEqual(threadId, r.ThreadId));
+            Assert.InRange(fs.MaxInFlight, 2, int.MaxValue);
+
+            // LoadAtlasAsync reads only atlas.json with ReadAllBytesAsync, on the caller's context.
+            Assert.Equal(isAsync ? new[] { AtlasFile } : Array.Empty<string>(), fs.AsyncReads);
+            Assert.Empty(ovrFS.AsyncReads);
         }
 
         [Fact]
@@ -202,11 +293,14 @@ namespace Shadop.Archmage.Sdk.Tests
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void TestAtlas_WithMainThreadParsing(bool isAsync)
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void TestAtlas_WithMainThreadParsing(bool isAsync, bool mainThreadOnly)
         {
-            // Parsing must stay on the caller's thread: StartParsing is reported from the parse step.
+            // Reading and parsing must stay on the caller's thread: StartParsing is reported from the parse step.
+            var fs = new ProbeFS { MainThreadOnly = mainThreadOnly };
             var atlas = new ConfigAtlas();
             var parseThreadIds = new ConcurrentBag<int>();
             var progress = new SyncProgress<AtlasLoadEvent>(e =>
@@ -216,7 +310,7 @@ namespace Shadop.Archmage.Sdk.Tests
             });
             var opts = DefaultOpts()
                 .WithLogger(new ScavengerLogger())
-                .WithFS(new ProbeFS())
+                .WithFS(fs)
                 .WithBlacklist(new[] { "balance" })
                 .WithMainThreadParsing();
 
@@ -232,20 +326,34 @@ namespace Shadop.Archmage.Sdk.Tests
 
             Assert.NotEmpty(parseThreadIds);
             Assert.All(parseThreadIds, id => Assert.Equal(threadId, id));
+            Assert.All(fs.ThreadIds, id => Assert.Equal(threadId, id));
+
+            // An IFS that can be called on any thread may implement ReadAllBytesAsync with the thread pool.
+            if (!mainThreadOnly)
+                Assert.Empty(fs.AsyncReads);
         }
 
-        [Fact]
-        public async Task TestAtlas_LoadAtlasAsync_FailureWaitsForInFlight()
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public async Task TestAtlas_FailureWaitsForInFlight(bool isAsync, bool mainThreadOnly)
         {
-            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json") { MainThreadOnly = true };
+            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json") { MainThreadOnly = mainThreadOnly };
             var opts = DefaultOpts()
                 .WithLogger(new ScavengerLogger())
                 .WithFS(fs)
                 .WithBlacklist(new[] { "balance" });
 
-            var err = await Assert.ThrowsAsync<ArchmageException>(() => Archmage.LoadAtlasAsync(
-                "../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(), opts,
-                cancellationToken: TestContext.Current.CancellationToken));
+            var err = await Assert.ThrowsAsync<ArchmageException>(async () =>
+            {
+                if (isAsync)
+                    await Archmage.LoadAtlasAsync(AtlasFile, "../../../testdata", new ConfigAtlas(), opts,
+                        cancellationToken: TestContext.Current.CancellationToken);
+                else
+                    Archmage.LoadAtlas(AtlasFile, "../../../testdata", new ConfigAtlas(), opts);
+            });
             Assert.StartsWith("<archmage> Failed to load atlas item: \"skill\"", err.Message);
             Assert.IsType<IOException>(err.InnerException);
 
@@ -253,11 +361,16 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.Equal(0, fs.InFlight);
         }
 
-        [Fact]
-        public async Task TestAtlas_LoadAtlasAsync_IFSCanceledIsFailure()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestAtlas_LoadAtlasAsync_IFSCanceledIsFailure(bool mainThreadOnly)
         {
             // The caller did not cancel, so a TaskCanceledException from IFS (e.g. a timeout) fails the item.
-            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json", failure: _ => new TaskCanceledException("Timeout")) { MainThreadOnly = true };
+            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json", failure: _ => new TaskCanceledException("Timeout"))
+            {
+                MainThreadOnly = mainThreadOnly
+            };
             var opts = DefaultOpts()
                 .WithLogger(new ScavengerLogger())
                 .WithFS(fs)
@@ -269,6 +382,63 @@ namespace Shadop.Archmage.Sdk.Tests
             Assert.StartsWith("<archmage> Failed to load atlas item: \"skill\"", err.Message);
             Assert.IsType<TaskCanceledException>(err.InnerException);
             Assert.Equal(0, fs.InFlight);
+        }
+
+        [Fact]
+        public void TestAtlas_WorkerThreadLoading()
+        {
+            var fs = new ProbeFS();
+            var ovrFS = new ProbeFS();
+            var atlas = new ThreadProbeAtlas();
+            var progressThreadIds = new ConcurrentBag<int>();
+            var progress = new SyncProgress<AtlasLoadEvent>(_ => progressThreadIds.Add(Environment.CurrentManagedThreadId));
+            var opts = DefaultOpts()
+                .WithLogger(new ScavengerLogger())
+                .WithFS(fs)
+                .WithBlacklist(new[] { "balance" })
+                .WithOverrideFS(ovrFS, "../../../override/1")
+                .WithOverrideFS(ovrFS, "../../../override/2");
+
+            var threadId = SingleThreadContext.Run(() => Archmage.LoadAtlasAsync(
+                AtlasFile, "../../../testdata", atlas, opts, workerThreadLoading: true, progress: progress));
+            CheckUpdateGolden(atlas.Inner, "../../../golden/override_root");
+
+            // Only OnLoaded runs on the caller's context.
+            Assert.Equal(threadId, atlas.OnLoadedThreadId);
+            Assert.NotEqual(threadId, atlas.BindRefsThreadId);
+            Assert.NotEmpty(fs.ThreadIds);
+            Assert.All(fs.ThreadIds.Concat(ovrFS.ThreadIds), id => Assert.NotEqual(threadId, id));
+            Assert.NotEmpty(progressThreadIds);
+            Assert.All(progressThreadIds, id => Assert.NotEqual(threadId, id));
+
+            // atlas.json is read with ReadAllBytes too.
+            Assert.Empty(fs.AsyncReads);
+            Assert.Empty(ovrFS.AsyncReads);
+        }
+
+        [Theory]
+        [InlineData("main IFS")]
+        [InlineData("override IFS")]
+        [InlineData("MainThreadParsing")]
+        public async Task TestAtlas_WorkerThreadLoading_Rejected(string cause)
+        {
+            var fs = new ProbeFS { MainThreadOnly = cause == "main IFS" };
+            var ovrFS = new ProbeFS { MainThreadOnly = cause == "override IFS" };
+            var opts = DefaultOpts()
+                .WithLogger(new ScavengerLogger())
+                .WithFS(fs)
+                .WithOverrideFS(ovrFS, "../../../override/1");
+            if (cause == "MainThreadParsing")
+                opts.WithMainThreadParsing();
+
+            var err = await Assert.ThrowsAsync<ArchmageException>(() => Archmage.LoadAtlasAsync(
+                AtlasFile, "../../../testdata", new ConfigAtlas(), opts, workerThreadLoading: true,
+                cancellationToken: TestContext.Current.CancellationToken));
+            Assert.StartsWith("<archmage> workerThreadLoading cannot be used", err.Message);
+
+            // Rejected before any IFS call.
+            Assert.Empty(fs.ThreadIds);
+            Assert.Empty(ovrFS.ThreadIds);
         }
     }
 }
