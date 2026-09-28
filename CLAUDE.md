@@ -95,7 +95,47 @@ The `Archmage` static class is split across two `partial class` files: `AtlasLoa
 | `UnityStreamingAssetsFS` | Unity | Not supported; throws `NotSupportedException` | `UnityWebRequest`; the result is delivered on the main thread | Main thread only |
 | `UnityAddressablesFS` | Unity | Not supported; throws `NotSupportedException` | Addressables handles; the result is delivered on the main thread. Completes synchronously when the handles are already done | Main thread only |
 | `UnityAddressablesGreedyFS` | Unity | Not supported; throws `NotSupportedException` | The first read of a file in a bundle caches the files of the whole bundle in memory. A later read of a file in the same bundle takes it from the cache and completes synchronously when the location handle is already done | Main thread only |
-| `GodotFileAccessFS` (planned, not implemented yet) | Godot | `FileAccess.GetFileAsBytes` | Godot has no async file read API. The implementation either reads synchronously and returns a completed task, or runs the synchronous read with `Task.Run` | Any thread. The static `FileAccess` methods can be called from any thread: each call opens a new `FileAccess` object with its own native file handle. Never share one `FileAccess` object across threads. Do not mount a resource pack while files are being read, because the pack table is not locked |
+| `GodotFileAccessFS` (planned, not implemented yet) | Godot | `FileAccess.GetFileAsBytes` | Godot has no async file read API. The implementation runs the synchronous read with `Task.Run` | Any thread. The static `FileAccess` methods can be called from any thread: each call opens a new `FileAccess` object with its own native file handle. Never share one `FileAccess` object across threads. Do not mount a resource pack while files are being read, because the pack table is not locked |
+
+### Planned Loading Flow (not implemented yet)
+
+```
+LoadAtlas / LoadAtlasAsync
+│
+├─ Check that the override directories exist                       [*]
+├─ Read and parse atlas.json, run the modifier, filter items       [*]
+│
+├─ Choose how items are processed:
+│    Is the main IFS or any override IFS MainThreadOnly?
+│      Yes → Mode C (Caller: read at [*])
+│      No  → Mode W (Worker: read and parse on a worker thread)
+│
+├─ Scheduling loop                                                 [*]
+│  │  Starts the items one by one in the chosen mode.
+│  │  When MaxConcurrency items are in flight, waits for one to finish.
+│  │  When an item fails, cancels the other items and starts no new ones.
+│  │
+│  │  Mode C: read the item's main files and override files        [*]
+│  │          LoadAtlas uses ReadAllBytes; LoadAtlasAsync uses ReadAllBytesAsync
+│  │    ├─ MainThreadParsing off: Task.Run
+│  │    │    └─ Parse, merge the overrides, ApplyKeys
+│  │    └─ MainThreadParsing on
+│  │         └─ Parse, merge the overrides, ApplyKeys              [*]
+│  │
+│  │  Mode W: Task.Run
+│  │    ├─ Read the item's main files and override files with ReadAllBytes
+│  │    └─ Parse, merge the overrides, ApplyKeys
+│  │
+│  └─ Wait for all in-flight items; if any item failed, throw the first failure
+│
+├─ BindRefs                                                        [*]
+└─ OnLoaded                                                        [*]
+```
+
+`[*]` means:
+
+- `LoadAtlas`: on the calling thread.
+- `LoadAtlasAsync`, when the caller has a `SynchronizationContext`: on that context, such as the Unity or Godot main thread. Otherwise, on the calling thread until the first asynchronous wait, then on thread pool threads; each later asynchronous wait may switch to another thread.
 
 ### Special Types
 
