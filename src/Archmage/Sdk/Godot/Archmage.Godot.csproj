@@ -1,26 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;netstandard2.1</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>9.0</LangVersion>
 
     <!-- NuGet Metadata -->
-    <PackageId>Shadop.Archmage</PackageId>
+    <PackageId>Shadop.Archmage.Godot</PackageId>
     <Version>0.18.0</Version>
-    <Title>Archmage</Title>
+    <Title>Archmage for Godot</Title>
     <Authors>Shadop</Authors>
-    <Description>This is the runtime library for the Archmage game configuration system, which loads and manages configurations from JSON files with support for i18n, cross-table references, durations, and data types ranging from primitives to recursive structures.</Description>
+    <Description>Godot .NET adapters for the Archmage game configuration system: a file system based on FileAccess, a logger that writes to the Godot output, and conversions to Godot types.</Description>
     <PackageProjectUrl>https://archmage.shadop.dev/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/shadowopera/sdk-cs</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageTags>archmage;atlas;cfg;config;configuration;excel;table;override;json</PackageTags>
+    <PackageTags>archmage;atlas;cfg;config;configuration;excel;table;override;json;godot</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <!-- Build Options -->
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <IncludeSymbols>true</IncludeSymbols>
@@ -34,17 +33,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Sdk\Unity\**" />
-    <Compile Remove="Sdk\Godot\**" />
+    <ProjectReference Include="../../Archmage.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="GodotSharp" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../unity/dev.shadop.archmage/README.md" Pack="true" PackagePath="\" />
-    <None Include="../../LICENSE" Pack="true" PackagePath="\" />
+    <None Include="../../../../unity/dev.shadop.archmage/README.md" Pack="true" PackagePath="\" />
+    <None Include="../../../../LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

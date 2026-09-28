@@ -47,7 +47,7 @@ done
 CONF_DIR="$ROOT_DIR/unity/ArchmageDev/Assets/Scripts/Conf"
 mkdir -p "$CONF_DIR"
 
-rsync -a --delete --exclude="obj/" --exclude="bin/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR1/" "$DST_DIR1/"
+rsync -a --delete --exclude="obj/" --exclude="bin/" --exclude="Godot/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR1/" "$DST_DIR1/"
 rsync -a --delete --exclude="obj/" --exclude="bin/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR2/" "$DST_DIR2/"
 
 # Sync testdata JSON files to Unity config directories (independent of above counters)
