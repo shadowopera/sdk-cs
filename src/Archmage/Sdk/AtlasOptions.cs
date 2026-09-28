@@ -23,14 +23,14 @@ namespace Shadop.Archmage.Sdk
         internal List<string>? Blacklist { get; set; }
         internal Dictionary<string, string> Variants { get; set; } = new();
         internal int MaxConcurrency { get; set; } = 32;
-        internal bool InlineParse { get; set; } = DefaultInlineParse;
+        internal bool MainThreadParsing { get; set; } = DefaultMainThreadParsing;
         internal JsonSerializerSettings? JsonSettings { get; set; }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         // Unity WebGL has no thread pool: work queued with Task.Run never runs.
-        const bool DefaultInlineParse = true;
+        const bool DefaultMainThreadParsing = true;
 #else
-        const bool DefaultInlineParse = false;
+        const bool DefaultMainThreadParsing = false;
 #endif
     }
 

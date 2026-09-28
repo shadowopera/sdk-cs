@@ -123,12 +123,12 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Deserializes items without queuing work to the thread pool. Use this where the thread pool is not
-        /// available. Unity WebGL builds always deserialize this way.
+        /// Parses items on the main thread and does not use the thread pool. Use this where the thread pool is
+        /// not available. Unity WebGL builds always parse this way.
         /// </summary>
-        public static AtlasOptions WithInlineParse(this AtlasOptions opts)
+        public static AtlasOptions WithMainThreadParsing(this AtlasOptions opts)
         {
-            opts.InlineParse = true;
+            opts.MainThreadParsing = true;
             return opts;
         }
 

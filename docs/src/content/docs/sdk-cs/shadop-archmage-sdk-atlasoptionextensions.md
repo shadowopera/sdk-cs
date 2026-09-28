@@ -233,13 +233,13 @@ public static AtlasOptions WithMaxConcurrency(AtlasOptions opts, int n)
 [ArgumentOutOfRangeException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentoutofrangeexception)<br>
 Thrown if n is less than 1.
 
-### **WithInlineParse(AtlasOptions)**
+### **WithMainThreadParsing(AtlasOptions)**
 
-Deserializes items without queuing work to the thread pool. Use this where the thread pool is not
- available. Unity WebGL builds always deserialize this way.
+Parses items on the main thread and does not use the thread pool. Use this where the thread pool is
+ not available. Unity WebGL builds always parse this way.
 
 ```csharp
-public static AtlasOptions WithInlineParse(AtlasOptions opts)
+public static AtlasOptions WithMainThreadParsing(AtlasOptions opts)
 ```
 
 #### Parameters

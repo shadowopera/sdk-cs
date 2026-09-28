@@ -204,7 +204,7 @@ namespace Shadop.Archmage.Sdk.Tests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void TestAtlas_WithInlineParse(bool isAsync)
+        public void TestAtlas_WithMainThreadParsing(bool isAsync)
         {
             // Parsing must stay on the caller's thread: StartParsing is reported from the parse step.
             var atlas = new ConfigAtlas();
@@ -218,7 +218,7 @@ namespace Shadop.Archmage.Sdk.Tests
                 .WithLogger(new ScavengerLogger())
                 .WithFS(new ProbeFS())
                 .WithBlacklist(new[] { "balance" })
-                .WithInlineParse();
+                .WithMainThreadParsing();
 
             var threadId = SingleThreadContext.Run(() =>
             {
