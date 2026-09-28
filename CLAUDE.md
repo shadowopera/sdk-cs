@@ -106,7 +106,7 @@ Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` 
 
 ### Dependencies
 
-- `Newtonsoft.Json 13.0.4` — JSON serialization with custom converters (`XRefJsonConverter`, `DurationJsonConverter`)
+- `Newtonsoft.Json 13.0.3` — JSON serialization with custom converters (`XRefJsonConverter`, `DurationJsonConverter`)
 - `xunit.v3 2.0.3` — Test framework
 - C# 9.0, nullable enabled, implicit usings disabled
 
