@@ -86,6 +86,17 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 
 The `Archmage` static class is split across two `partial class` files: `AtlasLoader.cs` (loading logic) and `AtlasDumper.cs` (`DumpAtlas` utility for exporting ready items to JSON files, used for golden file tests).
 
+### IFS Implementations: Read Support
+
+| IFS | Environment | `ReadAllBytes` | `ReadAllBytesAsync` | Calling thread |
+|---|---|---|---|---|
+| `DefaultFS` | .NET, Unity, Godot; only Windows, macOS and Linux, reading unpacked files, mainly for development | `File.ReadAllBytes` | `File.ReadAllBytesAsync`; returns an incomplete task and does not block the calling thread | Any thread |
+| `UnityResourcesFS` | Unity | `Resources.Load` | `Resources.LoadAsync`, which needs Unity 6 or later; the package requires 6000.3, so it is always available. The result is delivered on the main thread | Main thread only |
+| `UnityStreamingAssetsFS` | Unity | Not supported; throws `NotSupportedException` | `UnityWebRequest`; the result is delivered on the main thread | Main thread only |
+| `UnityAddressablesFS` | Unity | Not supported; throws `NotSupportedException` | Addressables handles; the result is delivered on the main thread. Completes synchronously when the handles are already done | Main thread only |
+| `UnityAddressablesGreedyFS` | Unity | Not supported; throws `NotSupportedException` | The first read of a file in a bundle caches the files of the whole bundle in memory. A later read of a file in the same bundle takes it from the cache and completes synchronously when the location handle is already done | Main thread only |
+| `GodotFileAccessFS` (planned, not implemented yet) | Godot | `FileAccess.GetFileAsBytes` | Godot has no async file read API. The implementation either reads synchronously and returns a completed task, or runs the synchronous read with `Task.Run` | Any thread. The static `FileAccess` methods can be called from any thread: each call opens a new `FileAccess` object with its own native file handle. Never share one `FileAccess` object across threads. Do not mount a resource pack while files are being read, because the pack table is not locked |
+
 ### Special Types
 
 - **`XRef<V, T>`** — Cross-table reference; config ID stored, resolved in bind phase via `IRefBinder`
