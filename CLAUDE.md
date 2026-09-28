@@ -103,12 +103,15 @@ The `Archmage` static class is split across two `partial class` files: `AtlasLoa
 LoadAtlas / LoadAtlasAsync
 │
 ├─ Check that the override directories exist                       [*]
-├─ Read and parse atlas.json, run the modifier, filter items       [*]
 │
 ├─ Choose how items are processed:
 │    Is the main IFS or any override IFS MainThreadOnly?
 │      Yes → Mode C (Caller: read at [*])
 │      No  → Mode W (Worker: read and parse on a worker thread)
+│
+├─ Read and parse atlas.json, run the modifier, filter items       [*]
+│    LoadAtlas uses ReadAllBytes. LoadAtlasAsync uses ReadAllBytes in Mode W
+│    when workerThreadLoading or MainThreadParsing is on, and ReadAllBytesAsync otherwise.
 │
 ├─ Scheduling loop                                                 [*]
 │  │  Starts the items one by one in the chosen mode.
@@ -122,9 +125,13 @@ LoadAtlas / LoadAtlasAsync
 │  │    └─ MainThreadParsing on
 │  │         └─ Parse, merge the overrides, ApplyKeys              [*]
 │  │
-│  │  Mode W: Task.Run
-│  │    ├─ Read the item's main files and override files with ReadAllBytes
-│  │    └─ Parse, merge the overrides, ApplyKeys
+│  │  Mode W:
+│  │    ├─ MainThreadParsing off: Task.Run
+│  │    │    ├─ Read the item's main files and override files
+│  │    │    └─ Parse, merge the overrides, ApplyKeys
+│  │    └─ MainThreadParsing on
+│  │         ├─ Read the item's main files and override files      [*]
+│  │         └─ Parse, merge the overrides, ApplyKeys              [*]
 │  │
 │  └─ Wait for all in-flight items; if any item failed, throw the first failure
 │
