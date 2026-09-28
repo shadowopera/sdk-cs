@@ -162,6 +162,11 @@ Token to cancel the operation.
 [ArchmageException](../shadop-archmage-sdk-archmageexception/)<br>
 Thrown if reading the file or parsing JSON fails.
 
+**Remarks:**
+
+Parses on a thread pool thread. Where the thread pool is not available, such as Unity WebGL builds, use
+ [I18n.MergeL10nFile(String, String, IFS)](../shadop-archmage-sdk-i18n/#mergel10nfilestring-string-ifs).
+
 ### **GetText(String, String, String&)**
 
 Attempts to retrieve text with fallback.

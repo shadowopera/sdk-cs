@@ -109,6 +109,10 @@ namespace Shadop.Archmage.Sdk
         /// <summary>
         /// Asynchronously loads a localization JSON file and merges translations for the specified language.
         /// </summary>
+        /// <remarks>
+        /// Parses on a thread pool thread. Where the thread pool is not available, such as Unity WebGL builds, use
+        /// <see cref="MergeL10nFile"/>.
+        /// </remarks>
         /// <param name="filePath">Path to the JSON file (flat object with string keys/values).</param>
         /// <param name="language">The language code to merge into.</param>
         /// <param name="fs">Optional file system abstraction; defaults to <see cref="File.ReadAllBytesAsync"/> if null.</param>
@@ -120,7 +124,7 @@ namespace Shadop.Archmage.Sdk
             var data = await fs.ReadAllBytesAsync(filePath, cancellationToken);
             try
             {
-                MergeL10nData(data, language);
+                await Task.Run(() => MergeL10nData(data, language));
             }
             catch (Exception ex)
             {
