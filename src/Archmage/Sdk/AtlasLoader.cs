@@ -33,9 +33,11 @@ namespace Shadop.Archmage.Sdk
         /// </list>
         /// <para>If any step fails, an ArchmageException is raised and loading is aborted.
         /// Exceptions can be thrown from IAtlas.OnLoaded() to abort loading.</para>
-        /// <para>Files are read on the calling thread. Items are deserialized in parallel on the thread pool
-        /// unless <see cref="AtlasOptionExtensions.WithMainThreadParsing"/> is set, so <see cref="IApplyKeys.ApplyKeys"/>, the logger and <paramref name="progress"/> may be called
-        /// from thread pool threads. The atlas modifier, BindRefs and OnLoaded run on the calling thread.</para>
+        /// <para>Items are read and parsed on thread pool threads, several at a time. If <see cref="IFS.MainThreadOnly"/>
+        /// is true for the main IFS or for any override IFS, files are read on the calling thread instead. With
+        /// <see cref="AtlasOptionExtensions.WithMainThreadParsing"/>, items are read and parsed on the calling thread.
+        /// So <see cref="IApplyKeys.ApplyKeys"/>, the logger and <paramref name="progress"/> may be called on thread
+        /// pool threads. The atlas modifier, BindRefs and OnLoaded run on the calling thread.</para>
         /// </remarks>
         /// <param name="atlasFile">Path to atlas.json containing mapping definitions.</param>
         /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
@@ -59,12 +61,11 @@ namespace Shadop.Archmage.Sdk
         /// Loads an Atlas asynchronously with progress reporting and cancellation support.
         /// </summary>
         /// <remarks>
-        /// <para>This method performs the same steps as <see cref="LoadAtlas"/>, but reads files with
-        /// <see cref="IFS.ReadAllBytesAsync"/>.</para>
-        /// <para><see cref="IFS"/> methods, the atlas modifier, BindRefs and OnLoaded are called on the calling
-        /// thread. If that thread has no <see cref="SynchronizationContext"/>, they may be called on thread pool
-        /// threads instead. Items are deserialized in parallel on the thread pool unless
-        /// <see cref="AtlasOptionExtensions.WithMainThreadParsing"/> is set.</para>
+        /// <para>This method performs the same steps as <see cref="LoadAtlas"/>.</para>
+        /// <para>Items are read and parsed on the same threads as in <see cref="LoadAtlas"/>, and the atlas modifier,
+        /// BindRefs and OnLoaded are called on the calling thread. If the calling thread has no
+        /// <see cref="SynchronizationContext"/>, the work that LoadAtlas does on the calling thread may run on thread
+        /// pool threads instead.</para>
         /// <para>Do not block on the returned task on a thread that has a synchronization context, such as a UI
         /// thread or the main thread of a game engine; it deadlocks. Use <see cref="LoadAtlas"/> for synchronous
         /// loading.</para>
@@ -104,10 +105,6 @@ namespace Shadop.Archmage.Sdk
             var stopwatch = Stopwatch.StartNew();
             var jsonSettings = CreateJsonLoadSettings(options.JsonSettings);
 
-            Func<IFS, string, CancellationToken, Task<byte[]>> readFile = isAsync
-                ? (fs, path, ct) => fs.ReadAllBytesAsync(path, ct)
-                : (fs, path, ct) => Task.FromResult(fs.ReadAllBytes(path));
-
             // Verify override directories exist
             foreach (var overrideConfig in options.OverrideConfigs)
             {
@@ -123,10 +120,28 @@ namespace Shadop.Archmage.Sdk
                 }
             }
 
+            // Mode C when an IFS works only on the main thread: items are read on the caller's thread or context.
+            // Mode W otherwise: items are read with ReadAllBytes, even when loading asynchronously, and are read and
+            // parsed on thread pool threads unless MainThreadParsing is set.
+            var modeC = AnyMainThreadOnly(options);
+            Func<IFS, string, CancellationToken, Task<byte[]>> readFile = isAsync && modeC
+                ? (fs, path, ct) => fs.ReadAllBytesAsync(path, ct)
+                : (fs, path, ct) =>
+                {
+                    ct.ThrowIfCancellationRequested();
+                    return Task.FromResult(fs.ReadAllBytes(path));
+                };
+
             cancellationToken.ThrowIfCancellationRequested();
 
             // Read and parse atlas.json
-            var atlasData = await readFile(options.FS, atlasFile, cancellationToken);
+            // Why ReadAllBytes in Mode W when MainThreadParsing is set, even when loading asynchronously? An IFS that
+            // can be called on any thread may implement ReadAllBytesAsync with the thread pool.
+            byte[] atlasData;
+            if (!isAsync || (!modeC && options.MainThreadParsing))
+                atlasData = options.FS.ReadAllBytes(atlasFile);
+            else
+                atlasData = await options.FS.ReadAllBytesAsync(atlasFile, cancellationToken);
             AtlasJson? atlasJson;
             try
             {
@@ -198,9 +213,10 @@ namespace Shadop.Archmage.Sdk
             cancellationToken.ThrowIfCancellationRequested();
             progress?.Report(new AtlasLoadEvent("", AtlasLoadStage.ItemsQueued, total: filtered.Count));
 
-            // Load atlas items. All reads start here, and each item is handed to the thread pool for parsing,
-            // or parsed where its read completes when MainThreadParsing is set.
-            // Why no ConfigureAwait(false) on the awaits before a read? IFS implementations may need the caller's
+            // Load atlas items. In Mode C, all reads start here, and each item is handed to the thread pool for
+            // parsing, or parsed where its read completes when MainThreadParsing is set. In Mode W, each item is
+            // handed to the thread pool for reading and parsing, or read and parsed here when MainThreadParsing is set.
+            // Why no ConfigureAwait(false) on the awaits before a read? In Mode C, IFS implementations need the caller's
             // context: the Unity file systems work only on the main thread. Leaving the context would make each of
             // their reads switch back to the main thread, which costs about one frame per file.
             using (var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
@@ -271,12 +287,24 @@ namespace Shadop.Archmage.Sdk
             {
                 try
                 {
-                    var loadingItem = await ReadItemAsync(key, atlasItem, atlasJson, atlasFile, cfgRoot, options, readFile, progress, ct);
-                    if (options.MainThreadParsing)
-                        UnmarshalItem(loadingItem, options, jsonSettings, progress, ct);
+                    if (!modeC && !options.MainThreadParsing)
+                    {
+                        await Task.Run(async () =>
+                        {
+                            // readFile is synchronous in Mode W, so this await completes without waiting.
+                            var loadingItem = await ReadItemAsync(key, atlasItem, atlasJson, atlasFile, cfgRoot, options, readFile, progress, ct);
+                            UnmarshalItem(loadingItem, options, jsonSettings, progress, ct);
+                        }, ct).ConfigureAwait(false);
+                    }
                     else
-                        // Nothing after this point touches IFS, so there is no need to resume on the caller's context.
-                        await Task.Run(() => UnmarshalItem(loadingItem, options, jsonSettings, progress, ct), ct).ConfigureAwait(false);
+                    {
+                        var loadingItem = await ReadItemAsync(key, atlasItem, atlasJson, atlasFile, cfgRoot, options, readFile, progress, ct);
+                        if (options.MainThreadParsing)
+                            UnmarshalItem(loadingItem, options, jsonSettings, progress, ct);
+                        else
+                            // Nothing after this point touches IFS, so there is no need to resume on the caller's context.
+                            await Task.Run(() => UnmarshalItem(loadingItem, options, jsonSettings, progress, ct), ct).ConfigureAwait(false);
+                    }
                 }
                 // An OperationCanceledException that ct did not cause, such as an IFS timeout, is a failure.
                 catch (Exception ex) when (!ct.IsCancellationRequested)
@@ -317,6 +345,11 @@ namespace Shadop.Archmage.Sdk
             settings.DateParseHandling = DateParseHandling.None;
             settings.Converters.Add(new DateTimeOffsetJsonConverter());
             return settings;
+        }
+
+        static bool AnyMainThreadOnly(AtlasOptions options)
+        {
+            return options.FS.MainThreadOnly || options.OverrideConfigs.Any(c => c.FS is not null && c.FS.MainThreadOnly);
         }
 
         static (string cause, bool skip) ShouldSkip(string key, AtlasOptions options)
@@ -384,7 +417,9 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Reads the primary files and override files of an atlas item concurrently. Runs on the caller's thread or context.
+        /// Reads the primary files and override files of an atlas item, concurrently when readFile is asynchronous.
+        /// Runs on a thread pool thread in Mode W unless MainThreadParsing is set, and on the caller's thread or
+        /// context otherwise.
         /// </summary>
         static async Task<LoadingItem> ReadItemAsync(
             string key,

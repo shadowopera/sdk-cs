@@ -161,8 +161,8 @@ namespace Shadop.Archmage.Sdk.Tests
         [InlineData(32)]
         public void TestAtlas_LoadAtlasAsync_IFSOnCallerContext(int n)
         {
-            var fs = new ProbeFS();
-            var ovrFS = new ProbeFS();
+            var fs = new ProbeFS { MainThreadOnly = true };
+            var ovrFS = new ProbeFS { MainThreadOnly = true };
             var threadId = SingleThreadContext.Run(() => Archmage.LoadAtlasAsync(
                 "../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(),
                 DefaultOpts()
@@ -183,8 +183,8 @@ namespace Shadop.Archmage.Sdk.Tests
         {
             // Sync loading blocks a thread that owns a SynchronizationContext, like the Unity main thread.
             // It must neither deadlock nor call IFS on another thread.
-            var fs = new ProbeFS();
-            var ovrFS = new ProbeFS();
+            var fs = new ProbeFS { MainThreadOnly = true };
+            var ovrFS = new ProbeFS { MainThreadOnly = true };
             var threadId = SingleThreadContext.Run(() =>
             {
                 Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", new ConfigAtlas(),
@@ -237,7 +237,7 @@ namespace Shadop.Archmage.Sdk.Tests
         [Fact]
         public async Task TestAtlas_LoadAtlasAsync_FailureWaitsForInFlight()
         {
-            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json");
+            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json") { MainThreadOnly = true };
             var opts = DefaultOpts()
                 .WithLogger(new ScavengerLogger())
                 .WithFS(fs)
@@ -257,7 +257,7 @@ namespace Shadop.Archmage.Sdk.Tests
         public async Task TestAtlas_LoadAtlasAsync_IFSCanceledIsFailure()
         {
             // The caller did not cancel, so a TaskCanceledException from IFS (e.g. a timeout) fails the item.
-            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json", failure: _ => new TaskCanceledException("Timeout"));
+            var fs = new ProbeFS(failPath: "vtbl/skill-magic.json", failure: _ => new TaskCanceledException("Timeout")) { MainThreadOnly = true };
             var opts = DefaultOpts()
                 .WithLogger(new ScavengerLogger())
                 .WithFS(fs)

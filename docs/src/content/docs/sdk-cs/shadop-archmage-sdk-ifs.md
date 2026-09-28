@@ -17,8 +17,13 @@ When a file does not exist, [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-if
  must throw [FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception). [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent) and
  [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-iprogressatlasloadevent-cancellationtoken) rely on this to skip missing override files.
 
-LoadAtlas and LoadAtlasAsync call these methods on the calling thread. If that thread has no
+If [IFS.MainThreadOnly](../shadop-archmage-sdk-ifs/#mainthreadonly) is true for the main IFS or for any override IFS, LoadAtlas and
+ LoadAtlasAsync call these methods on the calling thread. If that thread has no
  [SynchronizationContext](https://docs.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext), LoadAtlasAsync may call them on thread pool threads instead.
+
+Otherwise, LoadAtlas and LoadAtlasAsync read the files of items with [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-ifs/#readallbytesstring), and may
+ call these methods on thread pool threads. An IFS whose MainThreadOnly is false must therefore support
+ ReadAllBytes, even when only LoadAtlasAsync is used.
 
 ## Properties
 

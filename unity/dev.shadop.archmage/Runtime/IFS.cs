@@ -12,8 +12,12 @@ namespace Shadop.Archmage.Sdk
     /// <para>When a file does not exist, <see cref="ReadAllBytes"/> and <see cref="ReadAllBytesAsync"/>
     /// must throw <see cref="System.IO.FileNotFoundException"/>. <see cref="Archmage.LoadAtlas"/> and
     /// <see cref="Archmage.LoadAtlasAsync"/> rely on this to skip missing override files.</para>
-    /// <para>LoadAtlas and LoadAtlasAsync call these methods on the calling thread. If that thread has no
+    /// <para>If <see cref="MainThreadOnly"/> is true for the main IFS or for any override IFS, LoadAtlas and
+    /// LoadAtlasAsync call these methods on the calling thread. If that thread has no
     /// <see cref="SynchronizationContext"/>, LoadAtlasAsync may call them on thread pool threads instead.</para>
+    /// <para>Otherwise, LoadAtlas and LoadAtlasAsync read the files of items with <see cref="ReadAllBytes"/>, and may
+    /// call these methods on thread pool threads. An IFS whose MainThreadOnly is false must therefore support
+    /// ReadAllBytes, even when only LoadAtlasAsync is used.</para>
     /// </remarks>
     public interface IFS
     {
