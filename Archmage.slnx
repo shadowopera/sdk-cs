@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="src/Archmage/Archmage.csproj" />
+  <Project Path="src/Archmage/Sdk/Godot/Archmage.Godot.csproj" />
   <Project Path="tests/Archmage.Tests.csproj" />
   <Project Path="tests/Conf/Conf.csproj" />
 </Solution>

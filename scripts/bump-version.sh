@@ -74,17 +74,19 @@ if ! $AUTO_YES; then
 fi
 
 # 5) Update files
-CSPROJ="src/Archmage/Archmage.csproj"
+CSPROJS=("src/Archmage/Archmage.csproj" "src/Archmage/Sdk/Godot/Archmage.Godot.csproj")
 PKG_JSON="unity/dev.shadop.archmage/package.json"
 
-printImportantMessage "Updating $CSPROJ..."
-sed -i '' "s|<Version>.*</Version>|<Version>$NEW_VERSION</Version>|" "$CSPROJ"
+for CSPROJ in "${CSPROJS[@]}"; do
+    printImportantMessage "Updating $CSPROJ..."
+    sed -i '' "s|<Version>.*</Version>|<Version>$NEW_VERSION</Version>|" "$CSPROJ"
 
-# Verify csproj update
-if ! grep -q "<Version>$NEW_VERSION</Version>" "$CSPROJ"; then
-    printError "Failed to update version in $CSPROJ"
-    exit 1
-fi
+    # Verify csproj update
+    if ! grep -q "<Version>$NEW_VERSION</Version>" "$CSPROJ"; then
+        printError "Failed to update version in $CSPROJ"
+        exit 1
+    fi
+done
 
 printImportantMessage "Updating $PKG_JSON..."
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" "$PKG_JSON"
@@ -96,7 +98,7 @@ if ! grep -q "\"version\": \"$NEW_VERSION\"" "$PKG_JSON"; then
 fi
 
 # 6) Commit changes (skip if nothing to commit)
-git add "$CSPROJ" "$PKG_JSON"
+git add "${CSPROJS[@]}" "$PKG_JSON"
 if ! git diff --cached --quiet; then
     printImportantMessage "Committing changes..."
     git commit -m "chore: bump version to $NEW_VERSION"
