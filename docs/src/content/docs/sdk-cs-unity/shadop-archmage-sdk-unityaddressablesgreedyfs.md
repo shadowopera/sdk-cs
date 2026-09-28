@@ -31,6 +31,20 @@ Keep configs in asset bundles of their own. Files that are never requested stay 
 garbage collected.
 :::
 
+## Properties
+
+### **MainThreadOnly**
+
+Always `true`.
+
+```csharp
+public bool MainThreadOnly { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ## Constructors
 
 ### **UnityAddressablesGreedyFS()**

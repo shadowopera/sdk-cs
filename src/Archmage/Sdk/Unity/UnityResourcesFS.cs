@@ -16,6 +16,8 @@ namespace Shadop.Archmage.Sdk
     /// </summary>
     public class UnityResourcesFS : IFS
     {
+        public bool MainThreadOnly => true;
+
         public byte[] ReadAllBytes(string path)
         {
             var resourcePath = StripExtension(path);

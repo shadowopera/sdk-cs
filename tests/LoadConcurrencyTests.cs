@@ -29,6 +29,7 @@ namespace Shadop.Archmage.Sdk.Tests
             _failure = failure ?? (path => new IOException($"Injected failure: {path}"));
         }
 
+        public bool MainThreadOnly { get; init; }
         public ConcurrentBag<int> ThreadIds { get; } = new();
         public int InFlight => Volatile.Read(ref _inFlight);
         public int MaxInFlight => Volatile.Read(ref _maxInFlight);

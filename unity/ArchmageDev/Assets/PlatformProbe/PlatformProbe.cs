@@ -137,6 +137,8 @@ public class PlatformProbe : MonoBehaviour
 
         public System.Collections.Generic.List<(string Path, int Start, int End)> Reads { get; } = new();
 
+        public bool MainThreadOnly => _inner.MainThreadOnly;
+
         public byte[] ReadAllBytes(string path) => _inner.ReadAllBytes(path);
 
         public async Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)

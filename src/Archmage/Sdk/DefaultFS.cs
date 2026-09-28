@@ -12,6 +12,9 @@ namespace Shadop.Archmage.Sdk
     public class DefaultFS : IFS
     {
         /// <inheritdoc />
+        public bool MainThreadOnly => false;
+
+        /// <inheritdoc />
         public byte[] ReadAllBytes(string path)
         {
             return File.ReadAllBytes(path);

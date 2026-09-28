@@ -18,6 +18,15 @@ namespace Shadop.Archmage.Sdk
     public interface IFS
     {
         /// <summary>
+        /// Gets whether the methods of this file system can be called only on the main thread.
+        /// </summary>
+        /// <remarks>
+        /// Return true if the methods work only on the main thread, such as those that call Unity APIs. Return
+        /// false if they can be called on any thread, including by several threads at the same time.
+        /// </remarks>
+        bool MainThreadOnly { get; }
+
+        /// <summary>
         /// Reads all bytes from the specified file.
         /// </summary>
         /// <param name="path">The file path.</param>

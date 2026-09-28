@@ -44,6 +44,8 @@ namespace Shadop.Archmage.Sdk
         // pointless.
         private readonly Dictionary<string, Task<bool>> _cacheTasks = new Dictionary<string, Task<bool>>();
 
+        public bool MainThreadOnly => true;
+
         public byte[] ReadAllBytes(string path)
         {
             throw new NotSupportedException("UnityAddressablesGreedyFS only supports async loading. Please use ReadAllBytesAsync.");

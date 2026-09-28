@@ -20,6 +20,25 @@ When a file does not exist, [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-if
 LoadAtlas and LoadAtlasAsync call these methods on the calling thread. If that thread has no
  [SynchronizationContext](https://docs.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext), LoadAtlasAsync may call them on thread pool threads instead.
 
+## Properties
+
+### **MainThreadOnly**
+
+Gets whether the methods of this file system can be called only on the main thread.
+
+```csharp
+public abstract bool MainThreadOnly { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
+**Remarks:**
+
+Return true if the methods work only on the main thread, such as those that call Unity APIs. Return
+ false if they can be called on any thread, including by several threads at the same time.
+
 ## Methods
 
 ### **ReadAllBytes(String)**

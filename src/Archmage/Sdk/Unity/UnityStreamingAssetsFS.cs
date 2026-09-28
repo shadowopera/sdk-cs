@@ -23,6 +23,8 @@ namespace Shadop.Archmage.Sdk
     /// </remarks>
     public class UnityStreamingAssetsFS : IFS
     {
+        public bool MainThreadOnly => true;
+
         public byte[] ReadAllBytes(string path)
         {
             throw new NotSupportedException("UnityStreamingAssetsFS only supports async loading. Please use ReadAllBytesAsync.");

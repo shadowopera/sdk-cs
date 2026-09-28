@@ -36,6 +36,8 @@ namespace Shadop.Archmage.Sdk
     /// </remarks>
     public class UnityAddressablesFS : IFS
     {
+        public bool MainThreadOnly => true;
+
         public byte[] ReadAllBytes(string path)
         {
             throw new NotSupportedException("UnityAddressablesFS only supports async loading. Please use ReadAllBytesAsync.");

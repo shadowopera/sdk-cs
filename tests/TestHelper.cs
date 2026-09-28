@@ -32,6 +32,8 @@ namespace Shadop.Archmage.Sdk.Tests
             _alwaysExists = alwaysExists;
         }
 
+        public bool MainThreadOnly => false;
+
         public bool DirectoryExists(string path)
         {
             return true;

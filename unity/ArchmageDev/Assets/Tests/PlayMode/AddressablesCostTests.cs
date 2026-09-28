@@ -34,6 +34,8 @@ public class AddressablesCostTests
         public int MainReads => _mainReads;
         public int WorkerReads => _workerReads;
 
+        public bool MainThreadOnly => _inner.MainThreadOnly;
+
         public byte[] ReadAllBytes(string path) => _inner.ReadAllBytes(path);
 
         public Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)

@@ -13,6 +13,18 @@ public class DefaultFS : IFS
 Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [DefaultFS](../shadop-archmage-sdk-defaultfs/)<br>
 Implements [IFS](../shadop-archmage-sdk-ifs/)<br>
 
+## Properties
+
+### **MainThreadOnly**
+
+```csharp
+public bool MainThreadOnly { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ## Constructors
 
 ### **DefaultFS()**

@@ -39,6 +39,20 @@ finally
 ```
 :::
 
+## Properties
+
+### **MainThreadOnly**
+
+Always `true`.
+
+```csharp
+public bool MainThreadOnly { get; }
+```
+
+#### Property Value
+
+[Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
+
 ## Constructors
 
 ### **UnityAddressablesFS()**
