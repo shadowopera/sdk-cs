@@ -429,7 +429,7 @@ namespace Shadop.Archmage.Sdk.Tests
 
             if (isAsync)
                 await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata",
-                    atlas, opts, progress, cancellationToken: TestContext.Current.CancellationToken);
+                    atlas, opts, progress: progress, cancellationToken: TestContext.Current.CancellationToken);
             else
                 Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
             CheckUpdateGolden(atlas, "../../../golden/override_root_and_fs");
@@ -499,7 +499,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var atlas = new ConfigAtlas();
             await Assert.ThrowsAnyAsync<OperationCanceledException>(
                 () => Archmage.LoadAtlasAsync(
-                    "../../../testdata/atlas.json", "../../../testdata", atlas, DefaultOpts(), null, cts.Token));
+                    "../../../testdata/atlas.json", "../../../testdata", atlas, DefaultOpts(), cancellationToken: cts.Token));
         }
     }
 }

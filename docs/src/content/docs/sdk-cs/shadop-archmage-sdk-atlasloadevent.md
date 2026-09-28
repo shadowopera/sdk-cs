@@ -15,7 +15,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 **Remarks:**
 
 AtlasLoadEvent instances are reported to an [IProgress<T>](https://docs.microsoft.com/en-us/dotnet/api/system.iprogress-1)
- implementation passed to [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-iprogressatlasloadevent-cancellationtoken).
+ implementation passed to [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, Boolean, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-boolean-iprogressatlasloadevent-cancellationtoken).
  This allows consumers to track loading progress and provide feedback to the user.
 
 The Elapsed property can be used to implement timeouts or progress visualization.

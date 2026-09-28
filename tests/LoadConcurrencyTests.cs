@@ -134,7 +134,7 @@ namespace Shadop.Archmage.Sdk.Tests
 
             if (isAsync)
                 await Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata",
-                    atlas, opts, progress, cancellationToken: TestContext.Current.CancellationToken);
+                    atlas, opts, progress: progress, cancellationToken: TestContext.Current.CancellationToken);
             else
                 Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
             CheckUpdateGolden(atlas, "../../../golden/max_concurrency");
@@ -224,7 +224,7 @@ namespace Shadop.Archmage.Sdk.Tests
             {
                 if (isAsync)
                     return Archmage.LoadAtlasAsync("../../../testdata/atlas.json", "../../../testdata",
-                        atlas, opts, progress);
+                        atlas, opts, progress: progress);
                 Archmage.LoadAtlas("../../../testdata/atlas.json", "../../../testdata", atlas, opts, progress);
                 return Task.CompletedTask;
             });

@@ -87,7 +87,7 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, null, cancellationToken);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, cancellationToken: cancellationToken);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityAddressablesFS(), cfgRoot);
             ShowAtlasBasicFeatures(atlas);
@@ -144,7 +144,7 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading (Resources)...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, null, cancellationToken);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, cancellationToken: cancellationToken);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityResourcesFS(), cfgRoot);
             ShowAtlasBasicFeatures(atlas);
@@ -174,7 +174,7 @@ public class ConfLoader : MonoBehaviour
         try
         {
             Debug.Log("[ConfLoader] Starting async config loading (StreamingAssets)...");
-            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, null, cancellationToken);
+            await Archmage.LoadAtlasAsync(atlasFile, cfgRoot, atlas, options, cancellationToken: cancellationToken);
             Debug.Log("[ConfLoader] ConfigAtlas loaded successfully!");
             await InitI18nAsync(new UnityStreamingAssetsFS(), cfgRoot);
             ShowAtlasBasicFeatures(atlas);

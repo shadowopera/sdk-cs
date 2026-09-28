@@ -236,7 +236,9 @@ Thrown if n is less than 1.
 ### **WithMainThreadParsing(AtlasOptions)**
 
 Parses items on the main thread and does not use the thread pool. Use this where the thread pool is
- not available. Unity WebGL builds always parse this way.
+ not available. Unity WebGL builds always parse this way. With this option,
+ [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, Boolean, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-boolean-iprogressatlasloadevent-cancellationtoken) throws [ArchmageException](../shadop-archmage-sdk-archmageexception/) when workerThreadLoading is
+ true.
 
 ```csharp
 public static AtlasOptions WithMainThreadParsing(AtlasOptions opts)

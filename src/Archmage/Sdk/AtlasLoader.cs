@@ -53,7 +53,7 @@ namespace Shadop.Archmage.Sdk
             IProgress<AtlasLoadEvent>? progress = null)
         {
             options ??= new AtlasOptions();
-            LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, progress).GetAwaiter().GetResult();
+            LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, false, false, progress).GetAwaiter().GetResult();
             atlas.OnLoaded();
         }
 
@@ -62,10 +62,10 @@ namespace Shadop.Archmage.Sdk
         /// </summary>
         /// <remarks>
         /// <para>This method performs the same steps as <see cref="LoadAtlas"/>.</para>
-        /// <para>Items are read and parsed on the same threads as in <see cref="LoadAtlas"/>, and the atlas modifier,
-        /// BindRefs and OnLoaded are called on the calling thread. If the calling thread has no
-        /// <see cref="SynchronizationContext"/>, the work that LoadAtlas does on the calling thread may run on thread
-        /// pool threads instead.</para>
+        /// <para>Unless <paramref name="workerThreadLoading"/> is true, items are read and parsed on the same threads
+        /// as in <see cref="LoadAtlas"/>, and the atlas modifier, BindRefs and OnLoaded are called on the calling
+        /// thread. If the calling thread has no <see cref="SynchronizationContext"/>, the work that LoadAtlas does on
+        /// the calling thread may run on thread pool threads instead.</para>
         /// <para>Do not block on the returned task on a thread that has a synchronization context, such as a UI
         /// thread or the main thread of a game engine; it deadlocks. Use <see cref="LoadAtlas"/> for synchronous
         /// loading.</para>
@@ -74,6 +74,13 @@ namespace Shadop.Archmage.Sdk
         /// <param name="cfgRoot">Root directory where configuration JSON files are located.</param>
         /// <param name="atlas">The Atlas implementation to populate with loaded items.</param>
         /// <param name="options">Optional loading configuration. If null, default options are used.</param>
+        /// <param name="workerThreadLoading">True to run the whole load on thread pool threads, so the calling thread does
+        /// no loading work. Only <see cref="IAtlas.OnLoaded"/> runs on the caller's context. <see cref="IAtlas.BindRefs"/>,
+        /// the logger, and <see cref="IProgress{T}.Report"/> are then called on thread pool threads, so they must not
+        /// call APIs that work only on the main thread, such as the Godot scene tree. A <see cref="Progress{T}"/>
+        /// created on the main thread still runs its handler there. Throws <see cref="ArchmageException"/> when
+        /// <see cref="IFS.MainThreadOnly"/> is true for the main IFS or for any override IFS, or when
+        /// <see cref="AtlasOptionExtensions.WithMainThreadParsing"/> is in effect.</param>
         /// <param name="progress">Optional callback for receiving progress reports.</param>
         /// <param name="cancellationToken">Token to request cancellation of the loading operation.</param>
         /// <returns>A Task representing the asynchronous loading operation.</returns>
@@ -84,11 +91,25 @@ namespace Shadop.Archmage.Sdk
             string cfgRoot,
             IAtlas atlas,
             AtlasOptions? options = null,
+            bool workerThreadLoading = false,
             IProgress<AtlasLoadEvent>? progress = null,
             CancellationToken cancellationToken = default)
         {
             options ??= new AtlasOptions();
-            await LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, progress, cancellationToken);
+            if (workerThreadLoading)
+            {
+                if (AnyMainThreadOnly(options))
+                    throw new ArchmageException("workerThreadLoading cannot be used when MainThreadOnly is true for an IFS.");
+                if (options.MainThreadParsing)
+                    throw new ArchmageException("workerThreadLoading cannot be used with MainThreadParsing.");
+                await Task.Run(() => LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, true, progress, cancellationToken),
+                    cancellationToken);
+            }
+            else
+            {
+                await LoadAtlasImpl(atlasFile, cfgRoot, atlas, options, true, false, progress, cancellationToken);
+            }
+
             // Runs on the caller's synchronization context, if any.
             atlas.OnLoaded();
         }
@@ -99,6 +120,7 @@ namespace Shadop.Archmage.Sdk
             IAtlas atlas,
             AtlasOptions options,
             bool isAsync,
+            bool workerThreadLoading,
             IProgress<AtlasLoadEvent>? progress = null,
             CancellationToken cancellationToken = default)
         {
@@ -135,10 +157,11 @@ namespace Shadop.Archmage.Sdk
             cancellationToken.ThrowIfCancellationRequested();
 
             // Read and parse atlas.json
-            // Why ReadAllBytes in Mode W when MainThreadParsing is set, even when loading asynchronously? An IFS that
-            // can be called on any thread may implement ReadAllBytesAsync with the thread pool.
+            // Why ReadAllBytes in Mode W when MainThreadParsing or workerThreadLoading is set, even when loading
+            // asynchronously? An IFS that can be called on any thread may implement ReadAllBytesAsync with the thread
+            // pool, which MainThreadParsing must not use and workerThreadLoading already runs on.
             byte[] atlasData;
-            if (!isAsync || (!modeC && options.MainThreadParsing))
+            if (!isAsync || (!modeC && (options.MainThreadParsing || workerThreadLoading)))
                 atlasData = options.FS.ReadAllBytes(atlasFile);
             else
                 atlasData = await options.FS.ReadAllBytesAsync(atlasFile, cancellationToken);

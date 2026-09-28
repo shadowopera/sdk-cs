@@ -124,7 +124,9 @@ namespace Shadop.Archmage.Sdk
 
         /// <summary>
         /// Parses items on the main thread and does not use the thread pool. Use this where the thread pool is
-        /// not available. Unity WebGL builds always parse this way.
+        /// not available. Unity WebGL builds always parse this way. With this option,
+        /// <see cref="Archmage.LoadAtlasAsync"/> throws <see cref="ArchmageException"/> when workerThreadLoading is
+        /// true.
         /// </summary>
         public static AtlasOptions WithMainThreadParsing(this AtlasOptions opts)
         {

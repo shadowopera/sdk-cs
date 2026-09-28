@@ -24,7 +24,7 @@ public class OverrideTests
         var atlas = new ConfigAtlas();
         var progress = new EventCollector();
         Archmage.LoadAtlas("StaticConfigs/atlas.json", "StaticConfigs", atlas,
-            Options(new UnityResourcesFS(), "StaticConfigOverrides"), progress);
+            Options(new UnityResourcesFS(), "StaticConfigOverrides"), progress: progress);
         AssertOverrides(atlas, progress);
     }
 
@@ -34,7 +34,7 @@ public class OverrideTests
         var atlas = new ConfigAtlas();
         var progress = new EventCollector();
         await Archmage.LoadAtlasAsync("StaticConfigs/atlas.json", "StaticConfigs", atlas,
-            Options(new UnityResourcesFS(), "StaticConfigOverrides"), progress);
+            Options(new UnityResourcesFS(), "StaticConfigOverrides"), progress: progress);
         AssertOverrides(atlas, progress);
     }
 
@@ -44,7 +44,7 @@ public class OverrideTests
         var atlas = new ConfigAtlas();
         var progress = new EventCollector();
         await Archmage.LoadAtlasAsync("StreamingConfigs/atlas.json", "StreamingConfigs", atlas,
-            Options(new UnityStreamingAssetsFS(), "StreamingConfigOverrides"), progress);
+            Options(new UnityStreamingAssetsFS(), "StreamingConfigOverrides"), progress: progress);
         AssertOverrides(atlas, progress);
     }
 
@@ -54,7 +54,7 @@ public class OverrideTests
         var atlas = new ConfigAtlas();
         var progress = new EventCollector();
         await Archmage.LoadAtlasAsync("Assets/Configs/atlas.json", "Assets/Configs", atlas,
-            Options(new UnityAddressablesFS(), "Assets/ConfigOverrides"), progress);
+            Options(new UnityAddressablesFS(), "Assets/ConfigOverrides"), progress: progress);
         AssertOverrides(atlas, progress);
     }
 
@@ -64,7 +64,7 @@ public class OverrideTests
         var atlas = new ConfigAtlas();
         var progress = new EventCollector();
         await Archmage.LoadAtlasAsync("Assets/Configs/atlas.json", "Assets/Configs", atlas,
-            Options(new UnityAddressablesGreedyFS(), "Assets/ConfigOverrides"), progress);
+            Options(new UnityAddressablesGreedyFS(), "Assets/ConfigOverrides"), progress: progress);
         AssertOverrides(atlas, progress);
     }
 
