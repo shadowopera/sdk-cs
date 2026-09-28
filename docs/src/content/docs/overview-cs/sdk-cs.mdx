@@ -137,6 +137,7 @@ using Shadop.Archmage.Sdk;
 var atlas = new ConfigAtlas();
 var options = new AtlasOptions()
     .WithLogger(new GodotAtlasLogger())
+    .WithJsonSettings(GodotJsonSettingsFactory.Create())
     .WithFS(new GodotFileAccessFS());
 
 // On the main thread, for example in _Ready:

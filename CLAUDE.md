@@ -66,7 +66,7 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 
 ### Godot Package
 
-The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. It targets `net8.0`, references `GodotSharp` 4.6.0, and references `Archmage.csproj`, which becomes a dependency on `Shadop.Archmage` of the same version when packed. The sources (`GodotFileAccessFS`, `GodotAtlasLogger`, and the Vec, Rgba, MinMax and WeightedPool extensions) use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-unity.sh` does not sync it to Unity.
+The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. It targets `net8.0`, references `GodotSharp` 4.6.0, and references `Archmage.csproj`, which becomes a dependency on `Shadop.Archmage` of the same version when packed. The sources (`GodotFileAccessFS`, `GodotAtlasLogger`, `GodotJsonSettingsFactory`, and the Vec, Rgba, MinMax and WeightedPool extensions) use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-unity.sh` does not sync it to Unity.
 
 ### API Docs
 
