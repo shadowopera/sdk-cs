@@ -19,6 +19,10 @@ run/main_scene.archmage_tests="res://tests/test_runner.tscn"
 
 project/assembly_name="ArchmageDev"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/archmage/plugin.cfg")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
