@@ -1,0 +1,31 @@
+{
+	"version": {
+		"semver": "v1.0.0"
+	},
+	"unique": {
+		"chapter": "chapter.json",
+		"drop": "drop.json",
+		"hero": "hero.json",
+		"item": "item.json",
+		"monster": "monster.json",
+		"Race": "race.json",
+		"Region": "region.json",
+		"route": "route.json"
+	},
+	"variant": {
+		"balance": {
+			"easy": "balance.easy.json",
+			"hard": "balance.hard.json"
+		},
+		"game": {
+			"/": "game.json"
+		}
+	},
+	"many": {
+		"skill": [
+			"vtbl/skill-magic.json",
+			"vtbl/skill-melee.json",
+			"vtbl/skill-passive.json"
+		]
+	}
+}

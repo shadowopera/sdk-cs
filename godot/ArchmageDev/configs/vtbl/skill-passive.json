@@ -1,0 +1,14 @@
+{
+	"aura": {
+		"name": "Holy Aura",
+		"cooldown": null,
+		"radius": 5.5,
+		"src": "skill-passive"
+	},
+	"fortitude": {
+		"name": "Fortitude",
+		"cooldown": null,
+		"radius": 0,
+		"src": "skill-passive"
+	}
+}

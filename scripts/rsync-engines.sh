@@ -50,33 +50,35 @@ mkdir -p "$CONF_DIR"
 rsync -a --delete --exclude="obj/" --exclude="bin/" --exclude="Godot/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR1/" "$DST_DIR1/"
 rsync -a --delete --exclude="obj/" --exclude="bin/" --include="*/" --include="*.cs" --exclude="*" "$SRC_DIR2/" "$DST_DIR2/"
 
-# Sync testdata JSON files to Unity config directories (independent of above counters)
+# Sync testdata JSON files to Unity and Godot config directories (independent of above counters)
 TESTDATA_DIR="$ROOT_DIR/tests/testdata"
-UNITY_CONFIG_DIRS=(
+CONFIG_DIRS=(
     "$ROOT_DIR/unity/ArchmageDev/Assets/Configs"
     "$ROOT_DIR/unity/ArchmageDev/Assets/Resources/StaticConfigs"
     "$ROOT_DIR/unity/ArchmageDev/Assets/StreamingAssets/StreamingConfigs"
+    "$ROOT_DIR/godot/ArchmageDev/configs"
 )
 
 echo ""
-echo "Syncing testdata JSON to Unity config directories..."
-for config_dir in "${UNITY_CONFIG_DIRS[@]}"; do
+echo "Syncing testdata JSON to Unity and Godot config directories..."
+for config_dir in "${CONFIG_DIRS[@]}"; do
     mkdir -p "$config_dir"
     rsync -a --delete --include="*/" --include="*.json" --exclude="*" "$TESTDATA_DIR/" "$config_dir/"
     echo "- $config_dir"
 done
 
-# Sync override JSON files to Unity override directories
+# Sync override JSON files to Unity and Godot override directories
 OVERRIDE_DIR="$ROOT_DIR/tests/override"
-UNITY_OVERRIDE_DIRS=(
+OVERRIDE_DIRS=(
     "$ROOT_DIR/unity/ArchmageDev/Assets/ConfigOverrides"
     "$ROOT_DIR/unity/ArchmageDev/Assets/Resources/StaticConfigOverrides"
     "$ROOT_DIR/unity/ArchmageDev/Assets/StreamingAssets/StreamingConfigOverrides"
+    "$ROOT_DIR/godot/ArchmageDev/config_overrides"
 )
 
 echo ""
-echo "Syncing override JSON to Unity override directories..."
-for override_dir in "${UNITY_OVERRIDE_DIRS[@]}"; do
+echo "Syncing override JSON to Unity and Godot override directories..."
+for override_dir in "${OVERRIDE_DIRS[@]}"; do
     mkdir -p "$override_dir"
     rsync -a --delete --include="*/" --include="*.json" --exclude="*" "$OVERRIDE_DIR/" "$override_dir/"
     echo "- $override_dir"

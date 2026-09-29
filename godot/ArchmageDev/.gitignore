@@ -1,0 +1,5 @@
+.godot/
+builds/*
+!builds/.gdignore
+logs/*
+!logs/.gdignore
