@@ -17,13 +17,11 @@ When a file does not exist, [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-if
  must throw [FileNotFoundException](https://docs.microsoft.com/en-us/dotnet/api/system.io.filenotfoundexception). [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent) and
  [Archmage.LoadAtlasAsync(String, String, IAtlas, AtlasOptions, Boolean, IProgress<AtlasLoadEvent>, CancellationToken)](../shadop-archmage-sdk-archmage/#loadatlasasyncstring-string-iatlas-atlasoptions-boolean-iprogressatlasloadevent-cancellationtoken) rely on this to skip missing override files.
 
-If [IFS.MainThreadOnly](../shadop-archmage-sdk-ifs/#mainthreadonly) is true for the main IFS or for any override IFS, LoadAtlas and
- LoadAtlasAsync call these methods on the calling thread. If that thread has no
- [SynchronizationContext](https://docs.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext), LoadAtlasAsync may call them on thread pool threads instead.
+If [IFS.MainThreadOnly](../shadop-archmage-sdk-ifs/#mainthreadonly) is true for the main IFS or for any override IFS, loading must start on
+ the main thread. LoadAtlas and LoadAtlasAsync then call the methods of every IFS on the calling thread.
 
-Otherwise, LoadAtlas and LoadAtlasAsync read the files of items with [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-ifs/#readallbytesstring), and may
- call these methods on thread pool threads. An IFS whose MainThreadOnly is false must therefore support
- ReadAllBytes, even when only LoadAtlasAsync is used.
+Otherwise, if MainThreadOnly is false for every IFS, LoadAtlas and LoadAtlasAsync read the files of atlas
+ items with [IFS.ReadAllBytes(String)](../shadop-archmage-sdk-ifs/#readallbytesstring), and may call the methods on thread pool threads.
 
 ## Properties
 
@@ -42,7 +40,7 @@ public abstract bool MainThreadOnly { get; }
 **Remarks:**
 
 Return true if the methods work only on the main thread, such as those that call Unity APIs. Return
- false if they can be called on any thread, including by several threads at the same time.
+ false if they can be called on any thread.
 
 ## Methods
 

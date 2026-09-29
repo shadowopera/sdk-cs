@@ -4,8 +4,7 @@ title: 'GodotAtlasLogger'
 
 Namespace: Shadop.Archmage.Sdk
 
-Simple logger adapter to pipe Archmage internal output to the Godot output with `GD.Print`, which can be
- called on any thread.
+Simple logger adapter to pipe Archmage internal output to the Godot output with `GD.Print`.
 
 ```csharp
 public class GodotAtlasLogger : IAtlasLogger

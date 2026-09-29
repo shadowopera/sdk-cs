@@ -4,8 +4,9 @@ title: 'GodotFileAccessFS'
 
 Namespace: Shadop.Archmage.Sdk
 
-Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to read files with Godot's `FileAccess`. Paths can be `res://` paths,
- `user://` paths or operating system paths, and files in mounted resource packs can be read too.
+Implements the [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/) interface to read files with Godot's `FileAccess`. Paths can
+ be `res://` paths, `user://` paths or operating system paths, and files in mounted resource packs
+ can be read too.
 
 ```csharp
 public class GodotFileAccessFS : IFS
@@ -16,8 +17,7 @@ Implements [IFS](../../sdk-cs/shadop-archmage-sdk-ifs/)<br>
 
 **Remarks:**
 
-The methods can be called on any thread. Call `ProjectSettings.LoadResourcePack` before loading starts:
- mounting a resource pack while files are being read is not supported.
+If you mount resource packs with `ProjectSettings.LoadResourcePack`, mount them before loading starts.
 
 ## Properties
 
@@ -73,8 +73,8 @@ public Task<Byte[]> ReadAllBytesAsync(string path, CancellationToken cancellatio
 
 **Remarks:**
 
-Godot has no asynchronous file read, so this method calls [GodotFileAccessFS.ReadAllBytes(String)](../shadop-archmage-sdk-godotfileaccessfs/#readallbytesstring) on a thread pool
- thread.
+Godot has no asynchronous file read, so this method calls [GodotFileAccessFS.ReadAllBytes(String)](../shadop-archmage-sdk-godotfileaccessfs/#readallbytesstring) on a
+ thread pool thread.
 
 ### **FileExists(String)**
 

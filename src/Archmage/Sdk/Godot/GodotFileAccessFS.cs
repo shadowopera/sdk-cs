@@ -10,12 +10,12 @@ using FileAccess = Godot.FileAccess;
 namespace Shadop.Archmage.Sdk
 {
     /// <summary>
-    /// Implements the <see cref="IFS"/> interface to read files with Godot's <c>FileAccess</c>. Paths can be <c>res://</c> paths,
-    /// <c>user://</c> paths or operating system paths, and files in mounted resource packs can be read too.
+    /// Implements the <see cref="IFS"/> interface to read files with Godot's <c>FileAccess</c>. Paths can
+    /// be <c>res://</c> paths, <c>user://</c> paths or operating system paths, and files in mounted resource packs
+    /// can be read too.
     /// </summary>
     /// <remarks>
-    /// The methods can be called on any thread. Call <c>ProjectSettings.LoadResourcePack</c> before loading starts:
-    /// mounting a resource pack while files are being read is not supported.
+    /// If you mount resource packs with <c>ProjectSettings.LoadResourcePack</c>, mount them before loading starts.
     /// </remarks>
     public class GodotFileAccessFS : IFS
     {
@@ -27,20 +27,20 @@ namespace Shadop.Archmage.Sdk
         {
             path = NormalizePath(path);
             var data = FileAccess.GetFileAsBytes(path);
-            var error = FileAccess.GetOpenError();
-            if (error == Error.Ok)
+            var openErr = FileAccess.GetOpenError();
+            if (openErr == Error.Ok)
                 return data;
 
             // Why not check for ERR_FILE_NOT_FOUND? On Android, a missing file in the APK gives ERR_CANT_OPEN.
             if (!FileAccess.FileExists(path))
                 throw new FileNotFoundException($"Could not find file: {path}.", path);
-            throw new IOException($"Failed to read file: {path}. Error: {error}");
+            throw new IOException($"Failed to read file: {path}. Error: {openErr}");
         }
 
         /// <inheritdoc />
         /// <remarks>
-        /// Godot has no asynchronous file read, so this method calls <see cref="ReadAllBytes"/> on a thread pool
-        /// thread.
+        /// Godot has no asynchronous file read, so this method calls <see cref="ReadAllBytes"/> on a
+        /// thread pool thread.
         /// </remarks>
         public Task<byte[]> ReadAllBytesAsync(string path, CancellationToken cancellationToken = default)
         {

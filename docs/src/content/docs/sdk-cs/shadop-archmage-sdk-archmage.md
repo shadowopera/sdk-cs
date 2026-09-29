@@ -102,11 +102,10 @@ This method performs the following steps:
 If any step fails, an ArchmageException is raised and loading is aborted.
  Exceptions can be thrown from IAtlas.OnLoaded() to abort loading.
 
-Items are read and parsed on thread pool threads, several at a time. If [IFS.MainThreadOnly](../shadop-archmage-sdk-ifs/#mainthreadonly)
- is true for the main IFS or for any override IFS, files are read on the calling thread instead. With
- [AtlasOptionExtensions.WithMainThreadParsing(AtlasOptions)](../shadop-archmage-sdk-atlasoptionextensions/#withmainthreadparsingatlasoptions), items are read and parsed on the calling thread.
- So [IApplyKeys.ApplyKeys()](../shadop-archmage-sdk-iapplykeys/#applykeys), the logger and `progress` may be called on thread
- pool threads. The atlas modifier, BindRefs and OnLoaded run on the calling thread.
+Atlas items are parsed on thread pool threads, unless
+ [AtlasOptionExtensions.WithMainThreadParsing(AtlasOptions)](../shadop-archmage-sdk-atlasoptionextensions/#withmainthreadparsingatlasoptions) is set. So [IApplyKeys.ApplyKeys()](../shadop-archmage-sdk-iapplykeys/#applykeys),
+ the logger and `progress` may be called on thread pool threads. The atlas modifier,
+ BindRefs and OnLoaded run on the calling thread.
 
 ### **LoadAtlasAsync(String, String, IAtlas, AtlasOptions, Boolean, IProgress<AtlasLoadEvent>, CancellationToken)**
 
@@ -131,13 +130,10 @@ The Atlas implementation to populate with loaded items.
 Optional loading configuration. If null, default options are used.
 
 `workerThreadLoading` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-True to run the whole load on thread pool threads, so the calling thread does
- no loading work. Only [IAtlas.OnLoaded()](../shadop-archmage-sdk-iatlas/#onloaded) runs on the caller's context. [IAtlas.BindRefs()](../shadop-archmage-sdk-iatlas/#bindrefs),
- the logger, and [IProgress<T>.Report(T)](https://docs.microsoft.com/en-us/dotnet/api/system.iprogress-1.report) are then called on thread pool threads, so they must not
- call APIs that work only on the main thread, such as the Godot scene tree. A [Progress<T>](https://docs.microsoft.com/en-us/dotnet/api/system.progress-1)
- created on the main thread still runs its handler there. Throws [ArchmageException](../shadop-archmage-sdk-archmageexception/) when
- [IFS.MainThreadOnly](../shadop-archmage-sdk-ifs/#mainthreadonly) is true for the main IFS or for any override IFS, or when
- [AtlasOptionExtensions.WithMainThreadParsing(AtlasOptions)](../shadop-archmage-sdk-atlasoptionextensions/#withmainthreadparsingatlasoptions) is in effect.
+True to run the whole load except [IAtlas.OnLoaded()](../shadop-archmage-sdk-iatlas/#onloaded) on thread
+ pool threads. The atlas modifier, [IAtlas.BindRefs()](../shadop-archmage-sdk-iatlas/#bindrefs), the logger and
+ [IProgress<T>.Report(T)](https://docs.microsoft.com/en-us/dotnet/api/system.iprogress-1.report) must then not call APIs that work only on the main thread, such as the
+ Godot scene tree. A [Progress<T>](https://docs.microsoft.com/en-us/dotnet/api/system.progress-1) created on the main thread still runs its handler there.
 
 `progress` [IProgress<AtlasLoadEvent>](https://docs.microsoft.com/en-us/dotnet/api/system.iprogress-1)<br>
 Optional callback for receiving progress reports.
@@ -162,10 +158,9 @@ Thrown if cancellation is requested.
 
 This method performs the same steps as [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent).
 
-Unless `workerThreadLoading` is true, items are read and parsed on the same threads
- as in [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent), and the atlas modifier, BindRefs and OnLoaded are called on the calling
- thread. If the calling thread has no [SynchronizationContext](https://docs.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext), the work that LoadAtlas does on
- the calling thread may run on thread pool threads instead.
+Unless `workerThreadLoading` is true, everything runs on the same threads as in
+ [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent). If the calling thread has no [SynchronizationContext](https://docs.microsoft.com/en-us/dotnet/api/system.threading.synchronizationcontext), the work that
+ LoadAtlas does on the calling thread may run on thread pool threads instead.
 
 Do not block on the returned task on a thread that has a synchronization context, such as a UI
  thread or the main thread of a game engine; it deadlocks. Use [Archmage.LoadAtlas(String, String, IAtlas, AtlasOptions, IProgress<AtlasLoadEvent>)](../shadop-archmage-sdk-archmage/#loadatlasstring-string-iatlas-atlasoptions-iprogressatlasloadevent) for synchronous
