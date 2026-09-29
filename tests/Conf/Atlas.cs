@@ -43,24 +43,6 @@ namespace Conf
 
         Dictionary<string, AtlasItem> _m = null!;
 
-        public ConfigAtlas()
-        {
-            PubtypeCheck();
-            Extension = new AtlasExtension();
-            BalanceCfg = new BalanceCfg();
-            ChapterArray = new ChapterArray();
-            DropTable = new DropTable();
-            GameCfg = new GameCfg();
-            HeroTable = new HeroTable();
-            ItemTable = new ItemTable();
-            MonsterTable = new MonsterTable();
-            RaceTable = new RaceTable();
-            RegionTable = new RegionTable();
-            RouteTable = new RouteTable();
-            SkillTable = new SkillTable();
-            BuildMap();
-        }
-
         void BuildMap()
         {
             _m = new Dictionary<string, AtlasItem>
@@ -147,8 +129,44 @@ namespace Conf
         }
     }
 
+    #region Trifles
+
+    public partial class ConfigAtlas
+    {
+        static ConfigAtlas()
+        {
+            new DropCfgIdTypeConverter().Register();
+            new HeroCfgIdTypeConverter().Register();
+            new ItemCfgIdTypeConverter().Register();
+            new MonsterCfgIdTypeConverter().Register();
+            new RaceCfgIdTypeConverter().Register();
+            new RegionCfgIdTypeConverter().Register();
+            new SkillCfgIdTypeConverter().Register();
+        }
+
+        public ConfigAtlas()
+        {
+            PubtypeCheck();
+            Extension = new AtlasExtension();
+            BalanceCfg = new BalanceCfg();
+            ChapterArray = new ChapterArray();
+            DropTable = new DropTable();
+            GameCfg = new GameCfg();
+            HeroTable = new HeroTable();
+            ItemTable = new ItemTable();
+            MonsterTable = new MonsterTable();
+            RaceTable = new RaceTable();
+            RegionTable = new RegionTable();
+            RouteTable = new RouteTable();
+            SkillTable = new SkillTable();
+            BuildMap();
+        }
+    }
+
     interface IRefBinder
     {
         void BindRefs(ConfigAtlas atlas);
     }
+
+    #endregion
 }
