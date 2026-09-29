@@ -383,13 +383,15 @@ sdk-cs/
 ├── unity/
 │   ├── ArchmageDev/                # Unity demo & development project
 │   └── dev.shadop.archmage/        # Unity package (OpenUPM)
+├── godot/
+│   └── ArchmageDev/                # Godot demo & integration test project
 ├── tests/                          # xunit.v3 tests
 │   ├── Conf/                       # Generated config code
 │   ├── testdata/                   # atlas.json and config JSON
 │   ├── override/                   # Override-layer JSON
 │   └── golden/                     # Expected DumpAtlas output
-├── scripts/                        # Unity sync, version bump, release
-│   └── rsync-engines.sh            # src/ → unity/dev.shadop.archmage/ sync
+├── scripts/                        # Engine sync, tests, version bump, release
+│   └── rsync-engines.sh            # src/ → Unity package; test data → Unity and Godot projects
 └── docs/                           # Documentation site (Starlight)
 ```
 

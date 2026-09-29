@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # Runs the .NET tests, then the ArchmageDev PlayMode tests twice: against the
-# Asset Database, then against built Addressables bundles (--packed).
-# Arguments are passed through to scripts/unity-test.sh.
+# Asset Database, then against built Addressables bundles (--packed). Then runs the
+# Godot ArchmageDev tests twice: from the project directory, then from an exported program (--exported).
+# Arguments are passed through to scripts/unity-test.sh only.
 
 [[ "$TRACE" ]] && set -x
 pushd "$(dirname "$0")" > /dev/null
@@ -62,6 +63,16 @@ if [[ -f "$LOG_DIR/playmode-assetdb-results.xml" && -f "$LOG_DIR/playmode-packed
     scripts/unity-test-summary.sh compare "$LOG_DIR/playmode-assetdb-results.xml" "$LOG_DIR/playmode-packed-results.xml"
 fi
 
+echo
+printImportantMessage "Running Godot tests from the project directory..."
+godot_path_ok=true
+scripts/godot-test.sh --no-sync || godot_path_ok=false
+
+echo
+printImportantMessage "Running Godot tests in an exported program..."
+godot_exported_ok=true
+scripts/godot-test.sh --no-sync --exported || godot_exported_ok=false
+
 if ! $assetdb_ok; then
     echo
     printError "Unity PlayMode tests failed."
@@ -70,7 +81,15 @@ if ! $packed_ok; then
     echo
     printError "Unity PlayMode tests with packed Addressables failed."
 fi
-if ! $assetdb_ok || ! $packed_ok; then
+if ! $godot_path_ok; then
+    echo
+    printError "Godot tests from the project directory failed."
+fi
+if ! $godot_exported_ok; then
+    echo
+    printError "Godot tests in an exported program failed."
+fi
+if ! $assetdb_ok || ! $packed_ok || ! $godot_path_ok || ! $godot_exported_ok; then
     exit 1
 fi
 

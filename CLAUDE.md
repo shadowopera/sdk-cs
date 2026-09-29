@@ -20,7 +20,7 @@ dotnet test tests/Archmage.Tests.csproj --filter "FullyQualifiedName~TestName"
 # Regenerate golden files after intentional output changes
 UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj
 
-# Sync source to Unity package
+# Sync source to the Unity package, and test data to the Unity and Godot projects
 scripts/rsync-engines.sh
 
 # Run ArchmageDev PlayMode tests in batch mode (Unity Editor must be closed)
@@ -28,7 +28,12 @@ scripts/rsync-engines.sh
 # Summary: unity/ArchmageDev/Logs/playmode-<assetdb|packed>-summary.txt
 scripts/unity-test.sh [--no-sync] [--packed] [--filter <expr>]
 
-# Run .NET tests, then Unity PlayMode tests in both modes (args pass through to unity-test.sh)
+# Run the Godot ArchmageDev tests; --exported runs them in a macOS program exported with the release template,
+# which needs the Godot export templates
+# Summary: godot/ArchmageDev/logs/godot-<path|exported>-summary.txt
+scripts/godot-test.sh [--no-sync] [--exported] [--filter <regex>]
+
+# Run .NET tests, then Unity PlayMode tests and Godot tests in both modes (args pass through to unity-test.sh only)
 scripts/run-all-tests.sh
 
 # Run PlatformProbe cases on a real platform (Unity Editor must be closed; cases: unity/ArchmageDev/Assets/PlatformProbe/PlatformProbe.cs)
@@ -67,6 +72,16 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 ### Godot Package
 
 The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. It targets `net8.0`, references `GodotSharp` 4.6.0, and references `Archmage.csproj`, which becomes a dependency on `Shadop.Archmage` of the same version when packed. The sources (`GodotFileAccessFS`, `GodotAtlasLogger`, `GodotJsonSettingsFactory`, and the Vec, Rgba, MinMax and WeightedPool extensions) use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-engines.sh` does not sync it to Unity.
+
+### Godot ArchmageDev Project
+
+`godot/ArchmageDev/` is a Godot .NET project with the SDK integration tests and a demo (`scripts/ConfLoader.cs`, on the main scene `scenes/demo.tscn`).
+
+- `ArchmageDev.csproj` references `Archmage.Godot.csproj` with `ProjectReference`, so changes in `src/` need no sync.
+- `scripts/rsync-engines.sh` syncs `tests/testdata` to `configs/` and `tests/override` to `config_overrides/`. The `sdk-cs` recipe of `../whisper/JUSTFILE` generates `scripts/conf/`. `scripts/conf/AtlasExtension.cs` is not generated; keep it the same as `tests/Conf/AtlasExtension.cs`. The synced data and the generated code are committed.
+- `tests/TestRunner.cs` awaits each `[GodotTest]` method in turn on the Godot main thread. `scripts/godot-test.sh` builds the project before `--import`, because an import before the build reports the C# scripts as not compiling.
+- From the project directory, the script passes `res://tests/test_runner.tscn` as the scene to run, so the demo does not start. The release template does not accept a scene path, so `--exported` exports the preset `macOS (tests)`, whose feature `archmage_tests` selects `run/main_scene.archmage_tests`, the runner.
+- The export needs `ArchmageDev.sln`, `include_filter="*.json"` in the preset (Godot does not export JSON files by default) and `import_etc2_astc=true` in `project.godot` (required for arm64 and universal macOS builds). Godot exits with 0 when the .NET part of an export fails, so the script checks the export log for `ERROR`.
 
 ### API Docs
 
