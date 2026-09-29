@@ -26,9 +26,11 @@ namespace ArchmageDev.Tests
     /// Runs every [GodotTest] method one by one on the Godot main thread, writes a summary and quits.
     /// </summary>
     /// <remarks>
-    /// Start it as the scene of the run: <c>godot --path godot/ArchmageDev res://tests/test_runner.tscn -- [--filter
-    /// &lt;regex&gt;] [--summary &lt;file&gt;]</c>. The filter is matched against <c>Class.Method</c>. The exit code is
-    /// 0 when all tests pass, and 1 otherwise.
+    /// From the project directory, pass it as the scene to run: <c>godot --path godot/ArchmageDev
+    /// res://tests/test_runner.tscn -- [--filter &lt;regex&gt;] [--summary &lt;file&gt;]</c>. The release template does
+    /// not accept a scene path, so the export preset "macOS (tests)" makes it the main scene; pass only the arguments
+    /// after <c>--</c>. The filter is matched against <c>Class.Method</c>. The exit code is 0 when all tests pass, and
+    /// 1 otherwise.
     /// </remarks>
     public partial class TestRunner : Node
     {

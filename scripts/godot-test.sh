@@ -2,12 +2,14 @@
 
 # Runs the Godot ArchmageDev tests on the Godot main thread.
 #
-# Usage: scripts/godot-test.sh [--no-sync] [--filter <regex>]
+# Usage: scripts/godot-test.sh [--no-sync] [--exported] [--filter <regex>]
 #   --no-sync         skip scripts/rsync-engines.sh
+#   --exported        export the "macOS (tests)" preset with the release template and run the exported program,
+#                     which reads res:// from its .pck; without it, the tests run from the project directory
 #   --filter <regex>  run only the tests whose Class.Method matches (e.g. OverrideTests)
 #
-# The log and a summary go to godot/ArchmageDev/logs/godot-path.log and godot-path-summary.txt.
-# The exit code is the exit code of Godot: 0 when all tests pass.
+# The log and a summary go to godot/ArchmageDev/logs/godot-<mode>.log and godot-<mode>-summary.txt
+# (mode: path or exported). The exit code is the exit code of Godot: 0 when all tests pass.
 #
 # Set GODOT to the Godot .NET executable to override /Applications/Godot_mono.app.
 
@@ -51,11 +53,16 @@ LOG_DIR="$PROJECT_DIR/logs"
 
 # 1) Parse arguments
 sync=true
+exported=false
 filter=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --no-sync)
             sync=false
+            shift
+            ;;
+        --exported)
+            exported=true
             shift
             ;;
         --filter)
@@ -64,13 +71,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             printError "Unknown argument: $1"
-            echo "Usage: ./scripts/godot-test.sh [--no-sync] [--filter <regex>]"
+            echo "Usage: ./scripts/godot-test.sh [--no-sync] [--exported] [--filter <regex>]"
             exit 1
             ;;
     esac
 done
 
 mode=path
+$exported && mode=exported
 LOG_FILE="$LOG_DIR/godot-$mode.log"
 SUMMARY_FILE="$LOG_DIR/godot-$mode-summary.txt"
 
@@ -79,6 +87,16 @@ GODOT="${GODOT:-/Applications/Godot_mono.app/Contents/MacOS/godot}"
 if [[ ! -x "$GODOT" ]]; then
     printError "Godot not found at $GODOT. Set GODOT to the Godot .NET executable."
     exit 1
+fi
+
+if $exported; then
+    godot_version="$("$GODOT" --version | sed -E 's/\.[^.]+\.[^.]+$//')"
+    templates_dir="$HOME/Library/Application Support/Godot/export_templates/$godot_version"
+    if [[ ! -f "$templates_dir/macos.zip" ]]; then
+        printError "Export templates $godot_version not found in $templates_dir."
+        printError "Install them in the Godot editor: Editor > Manage Export Templates > Download and Install."
+        exit 1
+    fi
 fi
 
 # 3) Sync test data
@@ -103,18 +121,38 @@ if ! "$GODOT" --headless --path "$PROJECT_DIR" --import > /dev/null 2>&1; then
     exit 1
 fi
 
-# 5) Run tests. The runner scene is passed as the scene to run, so the main scene (the demo) does not start.
 mkdir -p "$LOG_DIR"
 rm -f "$SUMMARY_FILE"
 
+# 5) Export. The "macOS (tests)" preset has the feature archmage_tests, which makes the runner the main scene.
+#    Godot exits with 0 even when the .NET part of the export fails, so the log is checked too.
+if $exported; then
+    APP="$PROJECT_DIR/builds/ArchmageDevTests.app"
+    EXPORT_LOG_FILE="$LOG_DIR/godot-export.log"
+    rm -rf "$APP"
+    printImportantMessage "Exporting the macOS (tests) preset (log: $EXPORT_LOG_FILE)..."
+    if ! "$GODOT" --headless --path "$PROJECT_DIR" --export-release "macOS (tests)" "$APP" > "$EXPORT_LOG_FILE" 2>&1 \
+        || grep -q "ERROR" "$EXPORT_LOG_FILE" || [[ ! -x "$APP/Contents/MacOS/ArchmageDev" ]]; then
+        printError "Export failed. See $EXPORT_LOG_FILE."
+        exit 1
+    fi
+fi
+
+# 6) Run tests. In --path mode, the runner scene is passed as the scene to run, so the main scene (the demo) does
+#    not start. The exported program does not accept a scene path, and starts the runner as its main scene.
 user_args=(--summary "$SUMMARY_FILE")
 if [[ -n "$filter" ]]; then
     user_args+=(--filter "$filter")
 fi
 
 printImportantMessage "Running tests (log: $LOG_FILE)..."
-"$GODOT" --headless --path "$PROJECT_DIR" res://tests/test_runner.tscn -- "${user_args[@]}" 2>&1 | tee "$LOG_FILE"
-status=${PIPESTATUS[0]}
+if $exported; then
+    "$APP/Contents/MacOS/ArchmageDev" --headless -- "${user_args[@]}" 2>&1 | tee "$LOG_FILE"
+    status=${PIPESTATUS[0]}
+else
+    "$GODOT" --headless --path "$PROJECT_DIR" res://tests/test_runner.tscn -- "${user_args[@]}" 2>&1 | tee "$LOG_FILE"
+    status=${PIPESTATUS[0]}
+fi
 
 if [[ ! -f "$SUMMARY_FILE" ]]; then
     printError "Godot exited with $status and wrote no summary. See $LOG_FILE."
