@@ -389,7 +389,7 @@ sdk-cs/
 │   ├── override/                   # Override-layer JSON
 │   └── golden/                     # Expected DumpAtlas output
 ├── scripts/                        # Unity sync, version bump, release
-│   └── rsync-unity.sh              # src/ → unity/dev.shadop.archmage/ sync
+│   └── rsync-engines.sh            # src/ → unity/dev.shadop.archmage/ sync
 └── docs/                           # Documentation site (Starlight)
 ```
 

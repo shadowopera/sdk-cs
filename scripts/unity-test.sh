@@ -3,7 +3,7 @@
 # Runs the ArchmageDev PlayMode tests in batch mode.
 #
 # Usage: scripts/unity-test.sh [--no-sync] [--packed] [--filter <expr>]
-#   --no-sync        skip scripts/rsync-unity.sh
+#   --no-sync        skip scripts/rsync-engines.sh
 #   --packed         build Addressables content and load it from bundles ("Use Existing Build");
 #                    the developer's play mode script is restored afterwards
 #   --filter <expr>  passed to Unity's -testFilter (e.g. ConfLoaderTests.Resources)
@@ -121,8 +121,8 @@ fi
 
 # 3) Sync sources and test data
 if $sync; then
-    if ! scripts/rsync-unity.sh; then
-        printError "rsync-unity.sh failed."
+    if ! scripts/rsync-engines.sh; then
+        printError "rsync-engines.sh failed."
         exit 1
     fi
     echo

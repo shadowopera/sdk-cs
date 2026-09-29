@@ -26,7 +26,7 @@ function buildProbe() {
         echo "ERROR: Commit or discard the changes in ${BUILD_SIDE_EFFECTS[*]}; the build overwrites them." >&2
         return 1
     fi
-    scripts/rsync-unity.sh > /dev/null || return 1
+    scripts/rsync-engines.sh > /dev/null || return 1
     mkdir -p "$(dirname "$log_file")"
     echo "Building $method (log: $log_file)..." >&2
 
