@@ -109,12 +109,15 @@ if $sync; then
 fi
 
 # 4) Build, then import. Importing before the build reports the C# scripts as not compiling.
+echo
 printImportantMessage "Building ArchmageDev..."
+echo
 if ! dotnet build "$PROJECT_DIR/ArchmageDev.csproj"; then
     printError "dotnet build failed."
     exit 1
 fi
 
+echo
 printImportantMessage "Importing resources..."
 if ! "$GODOT" --headless --path "$PROJECT_DIR" --import > /dev/null 2>&1; then
     printError "Godot failed to import the project. Run: $GODOT --headless --path $PROJECT_DIR --import"
@@ -146,6 +149,7 @@ if [[ -n "$filter" ]]; then
 fi
 
 printImportantMessage "Running tests (log: $LOG_FILE)..."
+echo
 if $exported; then
     "$APP/Contents/MacOS/ArchmageDev" --headless -- "${user_args[@]}" 2>&1 | tee "$LOG_FILE"
     status=${PIPESTATUS[0]}

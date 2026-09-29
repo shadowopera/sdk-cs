@@ -20,6 +20,10 @@ namespace ArchmageDev.Tests
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class GodotTestAttribute : Attribute
     {
+        /// <summary>
+        /// When true, the test runs only when --filter matches it; without --filter, it is skipped.
+        /// </summary>
+        public bool Explicit { get; set; }
     }
 
     /// <summary>
@@ -41,7 +45,14 @@ namespace ArchmageDev.Tests
         /// </summary>
         public static int MainThreadId { get; private set; }
 
-        record Result(string Name, bool Passed, TimeSpan Duration, string? Message);
+        enum Outcome
+        {
+            Passed,
+            Failed,
+            Skipped,
+        }
+
+        record Result(string Name, Outcome Outcome, TimeSpan Duration, string? Message);
 
         public override async void _Ready()
         {
@@ -88,8 +99,13 @@ namespace ArchmageDev.Tests
                 .ToList();
 
             var results = new List<Result>();
-            foreach (var (name, method) in tests)
+            foreach (var (name, method, isExplicit) in tests)
             {
+                if (isExplicit && filter is null)
+                {
+                    results.Add(new Result(name, Outcome.Skipped, TimeSpan.Zero, null));
+                    continue;
+                }
                 GD.Print($"[TestRunner] {name}");
                 results.Add(await RunTest(name, method));
             }
@@ -99,15 +115,17 @@ namespace ArchmageDev.Tests
             if (summaryFile is not null)
                 File.WriteAllText(summaryFile, summary);
 
-            return results.Count > 0 && results.All(r => r.Passed) ? 0 : 1;
+            var run = results.Where(r => r.Outcome != Outcome.Skipped).ToList();
+            return run.Count > 0 && run.All(r => r.Outcome == Outcome.Passed) ? 0 : 1;
         }
 
-        static IEnumerable<(string Name, MethodInfo Method)> Discover()
+        static IEnumerable<(string Name, MethodInfo Method, bool Explicit)> Discover()
         {
             return typeof(TestRunner).Assembly.GetTypes()
                 .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
-                .Where(m => m.GetCustomAttribute<GodotTestAttribute>() is not null)
-                .Select(m => ($"{m.DeclaringType!.Name}.{m.Name}", m))
+                .Select(m => (Method: m, Attr: m.GetCustomAttribute<GodotTestAttribute>()))
+                .Where(t => t.Attr is not null)
+                .Select(t => ($"{t.Method.DeclaringType!.Name}.{t.Method.Name}", t.Method, t.Attr!.Explicit))
                 .OrderBy(t => t.Item1, StringComparer.Ordinal);
         }
 
@@ -122,16 +140,16 @@ namespace ArchmageDev.Tests
             {
                 var task = (Task)method.Invoke(null, null)!;
                 if (await Task.WhenAny(task, Task.Delay(Timeout)) != task)
-                    return new Result(name, false, stopwatch.Elapsed, $"Timed out after {Timeout.TotalSeconds}s.");
+                    return new Result(name, Outcome.Failed, stopwatch.Elapsed, $"Timed out after {Timeout.TotalSeconds}s.");
                 await task;
-                return new Result(name, true, stopwatch.Elapsed, null);
+                return new Result(name, Outcome.Passed, stopwatch.Elapsed, null);
             }
             catch (Exception ex)
             {
                 if (ex is TargetInvocationException { InnerException: { } inner })
                     ex = inner;
                 var message = ex is AssertionException ? ex.Message : ex.ToString();
-                return new Result(name, false, stopwatch.Elapsed, message);
+                return new Result(name, Outcome.Failed, stopwatch.Elapsed, message);
             }
         }
 
@@ -139,24 +157,24 @@ namespace ArchmageDev.Tests
         static string Summarize(List<Result> results)
         {
             var mode = OS.HasFeature("template") ? "Exported (.pck)" : "Project directory (--path)";
-            var passed = results.Count(r => r.Passed);
+            var passed = results.Count(r => r.Outcome == Outcome.Passed);
+            var failed = results.Count(r => r.Outcome == Outcome.Failed);
+            var skipped = results.Count(r => r.Outcome == Outcome.Skipped);
 
             var sb = new StringBuilder();
             sb.AppendLine($"Mode:  {mode}");
-            sb.AppendLine($"Tests: total={results.Count} passed={passed} failed={results.Count - passed} skipped=0");
+            sb.AppendLine($"Tests: total={results.Count} passed={passed} failed={failed} skipped={skipped}");
             sb.AppendLine();
 
-            sb.AppendLine("Test results (duration is the wall time of each test)");
+            sb.AppendLine("Test results (duration is the wall time of each test, not a cost measurement)");
             var rows = new List<string[]> { new[] { "TEST", "RESULT", "DURATION" } };
             rows.AddRange(results.Select(r => new[]
             {
-                r.Name, r.Passed ? "Passed" : "Failed", $"{r.Duration.TotalSeconds:0.00}s"
+                r.Name, r.Outcome.ToString(), $"{r.Duration.TotalSeconds:0.00}s"
             }));
-            var widths = Enumerable.Range(0, 3).Select(i => rows.Max(row => row[i].Length)).ToArray();
-            foreach (var row in rows)
-                sb.AppendLine($"  {row[0].PadRight(widths[0])}  {row[1].PadRight(widths[1])}  {row[2]}");
+            AppendTable(sb, rows);
 
-            var failures = results.Where(r => !r.Passed).ToList();
+            var failures = results.Where(r => r.Outcome == Outcome.Failed).ToList();
             if (failures.Count > 0)
             {
                 sb.AppendLine();
@@ -168,7 +186,34 @@ namespace ArchmageDev.Tests
                         sb.AppendLine($"      {line.TrimEnd('\r')}");
                 }
             }
+
+            sb.AppendLine();
+            sb.AppendLine("FileAccess load cost (from FileAccessCostTests, frames stretched to ~16 ms)");
+            if (FileAccessCostTests.Measurements.Count == 0)
+            {
+                sb.AppendLine("  not measured (run with --filter FileAccessCostTests)");
+            }
+            else
+            {
+                var costRows = new List<string[]> { new[] { "LOADING", "FRAMES", "TIME" } };
+                costRows.AddRange(FileAccessCostTests.Measurements.Select(m => new[]
+                {
+                    m.Loading, m.Frames.ToString(), $"{m.Elapsed.TotalMilliseconds:0.0}ms"
+                }));
+                AppendTable(sb, costRows);
+            }
             return sb.ToString();
+        }
+
+        static void AppendTable(StringBuilder sb, List<string[]> rows)
+        {
+            var columns = rows[0].Length;
+            var widths = Enumerable.Range(0, columns).Select(i => rows.Max(row => row[i].Length)).ToArray();
+            foreach (var row in rows)
+            {
+                var cells = row.Select((cell, i) => i < columns - 1 ? cell.PadRight(widths[i]) : cell);
+                sb.AppendLine($"  {string.Join("  ", cells)}");
+            }
         }
     }
 }
