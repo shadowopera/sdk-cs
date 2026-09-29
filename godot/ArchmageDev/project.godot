@@ -12,8 +12,8 @@ config_version=5
 
 config/name="ArchmageDev"
 run/main_scene="res://scenes/demo.tscn"
-run/main_scene.archmage_tests="res://tests/test_runner.tscn"
 config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
+run/main_scene.archmage_tests="res://tests/test_runner.tscn"
 
 [dotnet]
 
