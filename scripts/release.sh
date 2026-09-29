@@ -154,9 +154,9 @@ while true; do
                 printError "rsync-engines.sh failed."
                 exit 1
             fi
-            git add unity/dev.shadop.archmage/
+            git add unity/ godot/ArchmageDev/
             if ! git diff --cached --quiet; then
-                git commit -m "chore: sync changes to the unity directory"
+                git commit -m "chore: sync changes to the unity and godot directories"
             fi
             ensureCleanWorktree
             markStepDone "syncUnity"

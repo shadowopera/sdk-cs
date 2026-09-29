@@ -3,6 +3,7 @@
 # Runs the .NET tests, then the ArchmageDev PlayMode tests twice: against the
 # Asset Database, then against built Addressables bundles (--packed). Then runs the
 # Godot ArchmageDev tests twice: from the project directory, then from an exported program (--exported).
+# Syncs with scripts/rsync-engines.sh before the Unity and Godot tests unless --no-sync is given.
 # Arguments are passed through to scripts/unity-test.sh only.
 
 [[ "$TRACE" ]] && set -x
@@ -47,10 +48,18 @@ if ! dotnet test tests/Archmage.Tests.csproj; then
     exit 1
 fi
 
+if [[ " $* " != *" --no-sync "* ]]; then
+    echo
+    if ! scripts/rsync-engines.sh; then
+        printError "rsync-engines.sh failed."
+        exit 1
+    fi
+fi
+
 echo
 printImportantMessage "Running Unity PlayMode tests..."
 assetdb_ok=true
-scripts/unity-test.sh "$@" || assetdb_ok=false
+scripts/unity-test.sh --no-sync "$@" || assetdb_ok=false
 
 echo
 printImportantMessage "Running Unity PlayMode tests with packed Addressables..."
