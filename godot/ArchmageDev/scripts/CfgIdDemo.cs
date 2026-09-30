@@ -4,8 +4,15 @@ using Godot;
 // its table. Use long[] or string[] for a list, because Godot drops the hint string of a Godot.Collections.Array<T>.
 public partial class CfgIdDemo : Node
 {
-    [Export(PropertyHint.None, "HeroCfgId")] public long Hero { get; set; }
-    [Export(PropertyHint.None, "RaceCfgId")] public string Race { get; set; } = string.Empty;
-    [Export(PropertyHint.TypeString, "2/0:HeroCfgId")] public long[] Heroes { get; set; } = System.Array.Empty<long>();
-    [Export(PropertyHint.TypeString, "4/0:RaceCfgId")] public string[] Races { get; set; } = System.Array.Empty<string>();
+    [Export(PropertyHint.None, "HeroCfgId")]
+    public long Hero { get; set; }
+
+    [Export(PropertyHint.None, "RaceCfgId")]
+    public string Race { get; set; } = string.Empty;
+
+    [Export(PropertyHint.TypeString, "2/0:HeroCfgId")]
+    public long[] Heroes { get; set; } = System.Array.Empty<long>();
+
+    [Export(PropertyHint.TypeString, "4/0:RaceCfgId")]
+    public string[] Races { get; set; } = System.Array.Empty<string>();
 }

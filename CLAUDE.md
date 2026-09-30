@@ -84,6 +84,17 @@ The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/
 - From the project directory, the script passes `res://tests/test_runner.tscn` as the scene to run, so the demo does not start. The release template does not accept a scene path, so `--exported` exports the preset `macOS (tests)`, whose feature `archmage_tests` selects `run/main_scene.archmage_tests`, the runner.
 - The export needs `ArchmageDev.sln`, `include_filter="*.json"` in the preset (Godot does not export JSON files by default) and `import_etc2_astc=true` in `project.godot` (required for arm64 and universal macOS builds). Godot exits with 0 when the .NET part of an export fails, so the script checks the export log for `ERROR`.
 
+### Godot Editor Plugin
+
+The code in `godot/ArchmageDev/addons/archmage/` runs in the Godot editor process.
+
+- Put editor code in `#if TOOLS`. Exported programs do not contain `GodotSharpEditor`.
+- The editor loads new C# code only after a build: the Build button, Play, or a `dotnet build` followed by switching to the editor window. Saving a `.cs` file does not build.
+- After a build, the editor unloads the collectible `AssemblyLoadContext` of the game assembly and loads the new build. The reload clears static fields and does not call `_EnterTree` again, so the plugin loads the configs lazily from `CfgIdInspectorPlugin._CanHandle`.
+- The unload fails ("Failed to unload assemblies"; the editor then runs the old code until it restarts) while a static cache outside the game assembly holds its types. `TypeDescriptor` is such a cache, and Newtonsoft.Json fills it during deserialization. Call `TypeDescriptorCleanup.Install()` before editor code deserializes configs. Games do not unload assemblies and are not affected.
+- The Inspector shows only exported Variant types, so a config ID property is a `long` or `string` whose hint string names the CfgId type: `[Export(PropertyHint.None, "HeroCfgId")]`. For a list, use `long[]` with `[Export(PropertyHint.TypeString, "2/0:HeroCfgId")]`, or `string[]` with `"4/0:RaceCfgId"`. `Godot.Collections.Array<T>` drops the hint string.
+- No automated test covers the plugin. To drive the editor from code, add a temporary file with a `[ModuleInitializer]` that uses `SceneTree` timers and `EditorInterface` (open a scene, `InspectObject`, find the `CfgIdEditorProperty` nodes, emit `OptionButton.ItemSelected`), and run `godot --headless --editor --path godot/ArchmageDev`. Change one dropdown per frame: when a probe changed two elements of one array in the same frame, only the last change was kept. A reload needs the GUI editor: start it, run `dotnet build`, then bring its window to the front, for example with `osascript`.
+
 ### API Docs
 
 `docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Godot pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj` and `docs/utils/api-godot/ArchmageGodotDocs.csproj`. Each of them compiles the core sources together with the platform sources.
