@@ -7,6 +7,22 @@ using Shadop.Archmage.Sdk;
 
 public partial class ConfLoader : Node
 {
+    // The Archmage editor plugin shows each of these properties in the Inspector as a dropdown of the IDs in its
+    // table. See addons/archmage/ArchmageEditorPlugin.cs for details. Use long[] or string[] for a list, because
+    // Godot drops the hint string of a Godot.Collections.Array<T>.
+    [ExportCategory("Easy Config ID Selection")]
+    [Export(PropertyHint.None, "HeroCfgId")]
+    public long Hero { get; set; } = 2;
+
+    [Export(PropertyHint.None, "RaceCfgId")]
+    public string Race { get; set; } = "Elf";
+
+    [Export(PropertyHint.TypeString, "2/0:HeroCfgId")]
+    public long[] Heroes { get; set; } = Array.Empty<long>();
+
+    [Export(PropertyHint.TypeString, "4/0:RaceCfgId")]
+    public string[] Races { get; set; } = new[] { "Human" };
+
     public override async void _Ready()
     {
         // 1. Set the root directory for configuration loading.
