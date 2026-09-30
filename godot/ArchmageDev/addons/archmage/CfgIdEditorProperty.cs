@@ -5,6 +5,8 @@
 
 #nullable enable
 
+using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace Conf.Editor
@@ -12,16 +14,41 @@ namespace Conf.Editor
     [Tool]
     public partial class CfgIdEditorProperty : EditorProperty
     {
-        readonly OptionButton _button = new();
+        readonly Button _button = new();
+        readonly PopupPanel _popup = new();
+        readonly LineEdit _search = new();
+        readonly ItemList _list = new();
+        // The index into the choices of each row of _list.
+        readonly List<int> _rows = new();
         string _key = string.Empty;
+        CfgIdChoices? _choices;
 
         // Godot needs a parameterless constructor to recreate the object after the C# assembly is reloaded.
         public CfgIdEditorProperty()
         {
+            _button.Alignment = HorizontalAlignment.Left;
+            _button.IconAlignment = HorizontalAlignment.Right;
+            _button.TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis;
             _button.ClipText = true;
-            _button.ItemSelected += OnItemSelected;
+            _button.Pressed += ShowPopup;
             AddChild(_button);
             AddFocusable(_button);
+
+            _search.PlaceholderText = "Search";
+            _search.ClearButtonEnabled = true;
+            _search.TextChanged += OnSearchTextChanged;
+            _search.TextSubmitted += OnSearchTextSubmitted;
+            _search.GuiInput += OnSearchGuiInput;
+
+            _list.SizeFlagsVertical = SizeFlags.ExpandFill;
+            _list.ItemClicked += OnListItemClicked;
+            _list.ItemActivated += Choose;
+
+            var box = new VBoxContainer();
+            box.AddChild(_search);
+            box.AddChild(_list);
+            _popup.AddChild(box);
+            AddChild(_popup);
         }
 
         public CfgIdEditorProperty(string key) : this()
@@ -29,34 +56,127 @@ namespace Conf.Editor
             _key = key;
         }
 
+        public override void _Notification(int what)
+        {
+            if (what == NotificationThemeChanged)
+            {
+                _button.Icon = GetThemeIcon("arrow", "OptionButton");
+                _search.RightIcon = GetThemeIcon("Search", "EditorIcons");
+            }
+        }
+
         public override void _UpdateProperty()
         {
-            _button.Clear();
+            _button.Text = string.Empty;
             if (!CfgIdChoices.TryGet(_key, out var choices))
                 return;
 
             var value = GetEditedObject().Get(GetEditedProperty());
-            var selected = -1;
-            for (var i = 0; i < choices.Names.Length; i++)
-            {
-                _button.AddItem(choices.Names[i], i);
-                if (Equals(choices.Values[i].Obj, value.Obj))
-                    selected = i;
-            }
-            if (selected < 0)
-            {
-                // The value is not in the table; show it so that it is not silently replaced.
-                selected = _button.ItemCount;
-                _button.AddItem($"{value} (Missing)", selected);
-            }
-            _button.Select(selected);
+            var i = IndexOf(choices, value);
+            _button.Text = i >= 0 ? choices.Names[i] : $"{value} (Missing)";
         }
 
-        void OnItemSelected(long index)
+        void ShowPopup()
         {
-            if (!CfgIdChoices.TryGet(_key, out var choices) || index >= choices.Values.Length)
+            if (!CfgIdChoices.TryGet(_key, out _choices))
                 return;
-            EmitChanged(GetEditedProperty(), choices.Values[index]);
+
+            _search.Text = string.Empty;
+            Filter();
+            // With an empty search, each row shows the choice of the same index.
+            var current = IndexOf(_choices, GetEditedObject().Get(GetEditedProperty()));
+            if (current >= 0)
+                _list.Select(current);
+
+            var scale = EditorInterface.Singleton.GetEditorScale();
+            var position = _button.GetScreenPosition() + new Vector2(0, _button.Size.Y);
+            var size = new Vector2(Math.Max(_button.Size.X, 300 * scale), 400 * scale);
+            _popup.Popup(new Rect2I((Vector2I)position, (Vector2I)size));
+            _search.GrabFocus();
+            // The list has its final size only after the next layout.
+            Callable.From(_list.EnsureCurrentIsVisible).CallDeferred();
+        }
+
+        // Shows the choices whose names contain every space-separated word of the search, ignoring case.
+        void Filter()
+        {
+            _list.Clear();
+            _rows.Clear();
+            if (_choices == null)
+                return;
+
+            var words = _search.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            for (var i = 0; i < _choices.Names.Length; i++)
+            {
+                var name = _choices.Names[i];
+                if (Array.TrueForAll(words, w => name.Contains(w, StringComparison.OrdinalIgnoreCase)))
+                {
+                    _list.AddItem(name);
+                    _rows.Add(i);
+                }
+            }
+            if (_rows.Count > 0)
+            {
+                _list.Select(0);
+                _list.EnsureCurrentIsVisible();
+            }
+        }
+
+        void OnSearchTextChanged(string text) => Filter();
+
+        void OnSearchTextSubmitted(string text)
+        {
+            var selected = _list.GetSelectedItems();
+            if (selected.Length > 0)
+                Choose(selected[0]);
+        }
+
+        // Moves the selection in the list while the focus stays in the search box.
+        void OnSearchGuiInput(InputEvent @event)
+        {
+            if (@event is not InputEventKey { Pressed: true } key || _list.ItemCount == 0)
+                return;
+
+            var step = key.Keycode switch
+            {
+                Key.Up => -1,
+                Key.Down => 1,
+                Key.Pageup => -10,
+                Key.Pagedown => 10,
+                _ => 0,
+            };
+            if (step == 0)
+                return;
+
+            var selected = _list.GetSelectedItems();
+            var row = selected.Length > 0 ? selected[0] + step : 0;
+            _list.Select(Math.Clamp(row, 0, _list.ItemCount - 1));
+            _list.EnsureCurrentIsVisible();
+            _search.AcceptEvent();
+        }
+
+        void OnListItemClicked(long index, Vector2 atPosition, long mouseButtonIndex)
+        {
+            if (mouseButtonIndex == (long)MouseButton.Left)
+                Choose(index);
+        }
+
+        void Choose(long row)
+        {
+            _popup.Hide();
+            if (_choices == null || row >= _rows.Count)
+                return;
+            EmitChanged(GetEditedProperty(), _choices.Values[_rows[(int)row]]);
+        }
+
+        static int IndexOf(CfgIdChoices choices, Variant value)
+        {
+            for (var i = 0; i < choices.Values.Length; i++)
+            {
+                if (Equals(choices.Values[i].Obj, value.Obj))
+                    return i;
+            }
+            return -1;
         }
     }
 }
