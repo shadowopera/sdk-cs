@@ -93,7 +93,10 @@ namespace Conf.Editor
 
         static void InitializeCfgIdChoices(ConfigAtlas atlas)
         {
-            // Initialize XxxCfgIdChoices on demand
+            // Each dropdown shows only the IDs of its table.
+            RegisterDefaultCfgIdChoices(atlas);
+
+            // To show more than just the ID, register XxxCfgIdChoices with a display formatter.
             HeroCfgIdChoices.Register(atlas.HeroTable, v => $"{v} ({new HeroCfgId(v).Cfg.Name.Text})");
             RaceCfgIdChoices.Register(atlas.RaceTable, v => $"{v} ({new RaceCfgId { Value = v }.Cfg.Birthplace.Text})");
         }

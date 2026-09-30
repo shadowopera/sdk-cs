@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Conf;
@@ -33,7 +34,10 @@ public class ConfLoader : MonoBehaviour
     // In the Inspector, Archmage displays all Config IDs from the configuration table in
     // an intuitive dropdown, making selection easy.
     // See Assets/Editor/ArchmageEditorTools.cs for details.
-    public HeroCfgId _heroCfgId = 2;
+    public HeroCfgId _hero = 2;
+    public RaceCfgId _race = "Elf";
+    public HeroCfgId[] _heroes;
+    public List<RaceCfgId> _races = new() { "Human" };
 
     public async Awaitable Start()
     {

@@ -103,8 +103,12 @@ namespace Conf.Editor
 
         static void InitializeCfgIdDrawers(ConfigAtlas atlas)
         {
-            // Initialize XxxCfgIdDrawer on demand
+            // Each dropdown shows only the IDs of its table.
+            RegisterDefaultCfgIdDrawers(atlas);
+
+            // To show more than just the ID, initialize XxxCfgIdDrawer with a display formatter.
             HeroCfgIdDrawer.Initialize(atlas.HeroTable, v => $"{v} ({new HeroCfgId(v).Cfg.Name.Text})");
+            RaceCfgIdDrawer.Initialize(atlas.RaceTable, v => $"{v} ({new RaceCfgId { Value = v }.Cfg.Birthplace.Text})");
         }
     }
 }
