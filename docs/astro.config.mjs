@@ -37,7 +37,10 @@ export default defineConfig({
         },
         {
           label: 'C# Generated Code',
-          items: [{ autogenerate: { directory: 'gen-cs' } }],
+          items: [
+            { autogenerate: { directory: 'gen-cs-editor' } },
+            { autogenerate: { directory: 'gen-cs' } },
+          ],
           collapsed: true,
         },
       ],

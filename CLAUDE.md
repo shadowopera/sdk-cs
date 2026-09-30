@@ -97,7 +97,7 @@ The code in `godot/ArchmageDev/addons/archmage/` runs in the Godot editor proces
 
 ### API Docs
 
-`docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Godot pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj` and `docs/utils/api-godot/ArchmageGodotDocs.csproj`. Each of them compiles the core sources together with the platform sources.
+`docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Godot pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj` and `docs/utils/api-godot/ArchmageGodotDocs.csproj`. Each of them compiles the core sources together with the platform sources. The pages in `gen-cs-editor/` explain how to use the code that the `unity-editor` and `godot-editor` templates generate; they are written by hand.
 
 - Unity: the script uses the Unity Editor whose version is in `unity/ArchmageDev/ProjectSettings/ProjectVersion.txt` (set `UNITY_EDITOR` to override), and the Addressables assemblies in `unity/ArchmageDev/Library/ScriptAssemblies/`. After upgrading Unity, open ArchmageDev in the new Editor; nothing else needs to change. When the Unity sources start to use another UnityEngine module or `UNITY_*` symbol, add it to `ArchmageUnityDocs.csproj`.
 - Godot: the script does not use the local Godot installation. It builds against the `GodotSharp` version in `Archmage.Godot.csproj`, so upgrading Godot locally needs no change.

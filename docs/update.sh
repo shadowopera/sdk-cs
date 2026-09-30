@@ -195,6 +195,12 @@ if ! rsync -av --delete docs/src/content/docs/gen-cs/ ../docs/archmage/src/conte
     exit 1
 fi
 
+printMessage "Syncing gen-cs-editor ..."
+if ! rsync -av --delete docs/src/content/docs/gen-cs-editor/ ../docs/archmage/src/content/docs/gen-cs-editor/; then
+    printError "rsync gen-cs-editor failed"
+    exit 1
+fi
+
 printMessage "Syncing sdk-cs ..."
 if ! rsync -av --delete docs/src/content/docs/sdk-cs/ ../docs/archmage/src/content/docs/sdk-cs/; then
     printError "rsync sdk-cs failed"
