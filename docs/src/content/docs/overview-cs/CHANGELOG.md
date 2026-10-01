@@ -10,6 +10,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.0] - 2026-10-01
+
+### Added
+
+- Godot: Added the `Shadop.Archmage.Godot` package with `GodotFileAccessFS`, `GodotAtlasLogger`, `GodotJsonSettingsFactory`, and conversions to Godot types.
+- Godot: Added the `ArchmageDev` project with integration tests, a `ConfLoader` demo, and demos of config ID dropdowns in the Inspector.
+- SDK: Added `UnityAddressablesGreedyFS`, which caches all files of a bundle on the first read to avoid one frame per file on WebGL.
+- SDK: Added `AtlasOptions.WithMainThreadParsing`. When enabled, each atlas item is parsed on the main thread after its read completes, rather than on a thread pool thread. Unity WebGL builds always parse this way.
+- SDK: Added `workerThreadLoading` to `LoadAtlasAsync`, which runs the whole load on the thread pool and only `OnLoaded` on the caller's context.
+- SDK: Added `IFS.MainThreadOnly`, which indicates whether a file system is restricted to the main thread and therefore cannot run on worker threads.
+- SDK: Added `ValueWrapperTypeConverter.Register`, which the generated `ConfigAtlas` calls so that `CfgId` dictionary keys can be read in Godot.
+
+### Changed
+
+- SDK: The loader calls `IFS` on the caller's context, without `ConfigureAwait(false)`, so Unity file systems use main-thread-only APIs directly.
+- SDK: Atlas items load concurrently: the files of an item are read together, then the item is deserialized on the thread pool while reading continues. `WithMaxConcurrency` (default 32) limits the items in flight.
+- SDK: `IFS.FileExists` and `IFS.DirectoryExists` may return true for a missing path; the loader skips override files that turn out to be missing. `ReadAllBytes` and `ReadAllBytesAsync` must throw `FileNotFoundException` for a missing file.
+- SDK: `MergeL10nFileAsync` parses l10n files on the thread pool.
+- Unity: `UnityAddressablesFS` resolves the location before loading, so a missing override file no longer logs an `InvalidKeyException`, and `UnityAddressablesFS` reads the result directly from a completed handle instead of resuming a frame later.
+- Unity: `UnityStreamingAssetsFS` treats a 404 response as a missing file, and any other failure as a load failure.
+
+### Removed
+
+- SDK: Removed `WithLoadStrategy` and `WithAsyncLoadStrategy`.
+
+### Fixed
+
+- SDK: Loading no longer mutates the caller's `JsonSerializerSettings` or `AtlasOptions`.
+- SDK: On Unity WebGL, `LoadAtlas` no longer hangs and `LoadAtlasAsync` completes.
+
 ## [0.18.0] - 2026-09-24
 
 ### Changed
