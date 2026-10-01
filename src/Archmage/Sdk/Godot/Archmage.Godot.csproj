@@ -8,7 +8,7 @@
 
     <!-- NuGet Metadata -->
     <PackageId>Shadop.Archmage.Godot</PackageId>
-    <Version>0.18.0</Version>
+    <Version>0.19.0</Version>
     <Title>Archmage for Godot</Title>
     <Authors>Shadop</Authors>
     <Description>Godot .NET adapters for the Archmage game configuration system: a file system based on FileAccess, a logger that writes to the Godot output, and conversions to Godot types.</Description>
