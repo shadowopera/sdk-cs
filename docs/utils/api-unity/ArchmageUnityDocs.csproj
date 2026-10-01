@@ -1,7 +1,8 @@
 <!--
-  Compiles the core and Unity sources into one assembly for xmldoc2md, so that doc comments on Unity types can link
-  to core types. docs/update.sh passes UnityEngineDir (the UnityEngine module assemblies of the Unity Editor) and
-  ScriptAssembliesDir (the Addressables assemblies that Unity compiled for ArchmageDev).
+  Compiles the core, Unity and Unity Editor sources into one assembly for xmldoc2md, so that doc comments on Unity
+  types can link to core types. docs/update.sh passes UnityEngineDir (the UnityEngine and UnityEditor module
+  assemblies of the Unity Editor) and ScriptAssembliesDir (the Addressables assemblies that Unity compiled for
+  ArchmageDev).
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -17,11 +18,13 @@
     <!-- xmldoc2md loads the assembly with reflection, so the referenced assemblies must be in the output directory. -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <SdkDir>$(MSBuildThisFileDirectory)../../../src/Archmage/Sdk/</SdkDir>
+    <EditorDir>$(MSBuildThisFileDirectory)../../../src/Archmage/Editor/</EditorDir>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="$(SdkDir)*.cs" />
     <Compile Include="$(SdkDir)Unity/**/*.cs" />
+    <Compile Include="$(EditorDir)Unity/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +32,8 @@
     <Reference Include="$(UnityEngineDir)/UnityEngine.CoreModule.dll" />
     <Reference Include="$(UnityEngineDir)/UnityEngine.AssetBundleModule.dll" />
     <Reference Include="$(UnityEngineDir)/UnityEngine.UnityWebRequestModule.dll" />
+    <Reference Include="$(UnityEngineDir)/UnityEngine.IMGUIModule.dll" />
+    <Reference Include="$(UnityEngineDir)/UnityEditor.CoreModule.dll" />
     <Reference Include="$(ScriptAssembliesDir)/Unity.Addressables.dll" />
     <Reference Include="$(ScriptAssembliesDir)/Unity.ResourceManager.dll" />
   </ItemGroup>

@@ -18,8 +18,19 @@ namespace Shadop.Archmage.Sdk.Editor
     public abstract class CfgIdDrawer<TValue> : PropertyDrawer
         where TValue : IComparable<TValue>
     {
+        /// <summary>
+        /// Returns the header text displayed at the top of the dropdown window.
+        /// </summary>
         protected abstract string GetHeader();
+
+        /// <summary>
+        /// Returns the config ID values shown in the dropdown.
+        /// </summary>
         protected abstract TValue[] GetIdValues();
+
+        /// <summary>
+        /// Returns the display strings, one for each ID value.
+        /// </summary>
         protected abstract string[] GetDisplayNames();
 
         /// <summary>
@@ -50,9 +61,9 @@ namespace Shadop.Archmage.Sdk.Editor
     }
 
     /// <summary>
-    /// Generic base for config ID property drawers. <typeparamref name="TId"/> is the config ID struct type;
-    /// <typeparamref name="TValue"/> is the unmanaged numeric type of its underlying raw value.
-    /// Manages the static ID-value and display-name arrays; subclasses populate them by calling <see cref="Initialize"/>.
+    /// Generic base for config ID property drawers. <c>TId</c> is the config ID struct type;
+    /// <c>TValue</c> is the unmanaged numeric type of its underlying raw value.
+    /// Manages the static ID-value and display-name arrays; subclasses populate them by calling <c>Initialize</c>.
     /// </summary>
     /// <typeparam name="TId">The config ID struct type (e.g. <c>HeroCfgId</c>).</typeparam>
     /// <typeparam name="TValue">The underlying unmanaged value type (e.g. <c>long</c>).</typeparam>
@@ -70,7 +81,7 @@ namespace Shadop.Archmage.Sdk.Editor
 
         /// <summary>
         /// Populates the static ID-value and display-name arrays from a table's ID collection.
-        /// Index 0 is reserved for a "0 (Default)" entry; remaining entries are sorted ascending.
+        /// Index 0 is reserved for a <c>0 (Default)</c> entry; remaining entries are sorted ascending.
         /// </summary>
         /// <param name="header">The header text displayed at the top of the dropdown window.</param>
         /// <param name="ids">The ID collection of the config table.</param>
@@ -91,9 +102,9 @@ namespace Shadop.Archmage.Sdk.Editor
     }
 
     /// <summary>
-    /// Generic base for config ID property drawers. <typeparamref name="TId"/> is the config ID struct type
+    /// Generic base for config ID property drawers. <c>TId</c> is the config ID struct type
     /// whose underlying raw value is a <see cref="string"/>.
-    /// Manages the static ID-value and display-name arrays; subclasses populate them by calling <see cref="Initialize"/>.
+    /// Manages the static ID-value and display-name arrays; subclasses populate them by calling <c>Initialize</c>.
     /// </summary>
     /// <typeparam name="TId">The config ID struct type (e.g. <c>RaceCfgId</c>).</typeparam>
     public abstract class StrCfgIdDrawer<TId> : CfgIdDrawer<string>
@@ -109,7 +120,7 @@ namespace Shadop.Archmage.Sdk.Editor
 
         /// <summary>
         /// Populates the static ID-value and display-name arrays from a table's ID collection.
-        /// Index 0 is reserved for a "\"\" (Default)" entry; remaining entries are sorted ascending.
+        /// Index 0 is reserved for a <c>"" (Default)</c> entry; remaining entries are sorted ascending.
         /// </summary>
         /// <param name="header">The header text displayed at the top of the dropdown window.</param>
         /// <param name="ids">The ID collection of the config table.</param>

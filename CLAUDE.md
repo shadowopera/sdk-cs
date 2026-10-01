@@ -43,7 +43,7 @@ scripts/android-probe.sh [--no-build] [--format apk|aab|aab-split] [<case>...]  
 # Start the Android emulator used by android-probe.sh (AVD archmage-probe: API 35, arm64-v8a)
 ~/Library/Android/sdk/emulator/emulator -avd archmage-probe -no-window -no-audio &
 
-# Regenerate the API docs (sdk-cs, sdk-cs-unity, sdk-cs-godot) and sync them to ../docs (see "API Docs")
+# Regenerate the API docs (sdk-cs, sdk-cs-unity, sdk-cs-unity-editor, sdk-cs-godot) and sync them to ../docs (see "API Docs")
 docs/update.sh
 
 # Bump version
@@ -97,9 +97,10 @@ The code in `godot/ArchmageDev/addons/archmage/` runs in the Godot editor proces
 
 ### API Docs
 
-`docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Godot pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj` and `docs/utils/api-godot/ArchmageGodotDocs.csproj`. The pages in `gen-cs-editor/` explain how to use the code that the `unity-editor` and `godot-editor` templates generate; they are written by hand.
+`docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/`, `sdk-cs-unity-editor/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Unity Editor pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj`, and the Godot pages from `docs/utils/api-godot/ArchmageGodotDocs.csproj`. The pages in `gen-cs-editor/` explain how to use the code that the `unity-editor` and `godot-editor` templates generate; they are written by hand.
 
-- Unity: the script uses the Unity Editor whose version is in `unity/ArchmageDev/ProjectSettings/ProjectVersion.txt` (set `UNITY_EDITOR` to override), and the Addressables assemblies in `unity/ArchmageDev/Library/ScriptAssemblies/`. After upgrading Unity, open ArchmageDev in the new Editor; nothing else needs to change. When the Unity sources start to use another UnityEngine module or `UNITY_*` symbol, add it to `ArchmageUnityDocs.csproj`.
+- Unity: the script uses the Unity Editor whose version is in `unity/ArchmageDev/ProjectSettings/ProjectVersion.txt` (set `UNITY_EDITOR` to override), and the Addressables assemblies in `unity/ArchmageDev/Library/ScriptAssemblies/`. After upgrading Unity, open ArchmageDev in the new Editor; nothing else needs to change. When the Unity or Unity Editor sources start to use another UnityEngine or UnityEditor module or `UNITY_*` symbol, add it to `ArchmageUnityDocs.csproj`.
+- xmldoc2md writes nothing for `<typeparamref>` and for some `<see cref>` to methods, which leaves a gap in the sentence. Write the name in `<c>` instead, such as `<c>TId</c>`.
 - Godot: the script does not use the local Godot installation. It builds against the `GodotSharp` version in `Archmage.Godot.csproj`, so upgrading Godot locally needs no change.
 
 ### atlas.json

@@ -113,7 +113,8 @@ fi
 
 # Clean previous generated API docs
 printMessage "Cleaning generated API docs ..."
-rm -rf docs/src/content/docs/sdk-cs/ docs/src/content/docs/sdk-cs-unity/ docs/src/content/docs/sdk-cs-godot/
+rm -rf docs/src/content/docs/sdk-cs/ docs/src/content/docs/sdk-cs-unity/ docs/src/content/docs/sdk-cs-unity-editor/ \
+    docs/src/content/docs/sdk-cs-godot/
 
 # Build the library
 printMessage "Building Archmage ..."
@@ -160,11 +161,18 @@ function generatePlatformDocs() {
 
 generatePlatformDocs unity docs/utils/api-unity/ArchmageUnityDocs.csproj docs/src/content/docs/sdk-cs-unity \
     -p:UnityEngineDir="$unity_engine_dir" -p:ScriptAssembliesDir="$script_assemblies_dir"
+# The Unity docs assembly also contains the Unity Editor types, whose pages go to sdk-cs-unity-editor.
+mkdir -p docs/src/content/docs/sdk-cs-unity-editor
+if ! mv docs/src/content/docs/sdk-cs-unity/shadop.archmage.sdk.editor.*.md docs/src/content/docs/sdk-cs-unity-editor/; then
+    printError "moving the Unity Editor pages failed"
+    exit 1
+fi
 generatePlatformDocs godot docs/utils/api-godot/ArchmageGodotDocs.csproj docs/src/content/docs/sdk-cs-godot \
     -p:GodotSharpVersion="$godot_sharp_version"
 
 # Drop the JSON converter and type converter pages, which are noise for readers
-find docs/src/content/docs/sdk-cs docs/src/content/docs/sdk-cs-unity docs/src/content/docs/sdk-cs-godot \
+find docs/src/content/docs/sdk-cs docs/src/content/docs/sdk-cs-unity docs/src/content/docs/sdk-cs-unity-editor \
+    docs/src/content/docs/sdk-cs-godot \
     \( -name '*jsonconverter*.md' -o -name '*typeconverter*.md' \) -delete
 
 # Post-process the generated docs

@@ -22,7 +22,7 @@ namespace Shadop.Archmage.Sdk.Editor
         /// <param name="header">The header text displayed at the top of the dropdown window.</param>
         /// <param name="values">The array of configuration ID values.</param>
         /// <param name="displayNames">Optional: custom display strings. Length must match values if provided.</param>
-        /// <param name="minWindowSize">Optional: minimum size for dropdown window.</param>
+        /// <param name="minWindowSize">Optional: minimum size for dropdown window. Defaults to <c>(180, 260)</c>.</param>
         public static void DrawEasyDropdown<TValue>(
             Rect position, SerializedProperty property, GUIContent label,
             string header,

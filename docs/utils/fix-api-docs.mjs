@@ -9,8 +9,8 @@ import { decodeHTML } from 'entities';
  */
 
 // 1. Locate all generated Markdown files.
-// Pages in sdk-cs-unity and sdk-cs-godot link to core types, whose pages are in sdk-cs.
-const dirs = ['sdk-cs', 'sdk-cs-unity', 'sdk-cs-godot'];
+// Pages in sdk-cs-unity, sdk-cs-unity-editor and sdk-cs-godot link to core types, whose pages are in sdk-cs.
+const dirs = ['sdk-cs', 'sdk-cs-unity', 'sdk-cs-unity-editor', 'sdk-cs-godot'];
 const files = dirs.flatMap((dir) => globSync(`src/content/docs/${dir}/*.md`));
 
 if (files.length === 0) {
@@ -68,6 +68,16 @@ files.forEach((file) => {
   content = content.replace(
     /^(\s*(?:(?:public|sealed|abstract|static|partial)\s+)*(?:class|struct|interface|record)\b[^\n]*?)\s*:\s*$/gm,
     '$1'
+  );
+
+  // 1.8 xmldoc2md writes a generic base class in a type declaration as Foo`1. Take its type arguments from the
+  // Inheritance line, e.g. "class StrCfgIdDrawer<TId> : CfgIdDrawer`1" -> "class StrCfgIdDrawer<TId> : CfgIdDrawer<String>"
+  content = content.replace(
+    /^(\s*(?:(?:public|sealed|abstract|static|partial)\s+)*(?:class|struct|interface|record)\b[^\n]*?:\s*)(\w+)`\d+/gm,
+    (match, head, name) => {
+      const base = content.match(new RegExp(`^Inheritance .*?\\b(${name}<[^>]*>)`, 'm'));
+      return base ? head + base[1] : match;
+    }
   );
 
   let finalContent = '';
