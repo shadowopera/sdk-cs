@@ -64,14 +64,14 @@ The Unity package (`unity/dev.shadop.archmage/`) uses three assemblies:
 | Assembly | asmdef | Source | Notes |
 |---|---|---|---|
 | `Shadop.Archmage.Sdk` | `Runtime/Shadop.Archmage.Sdk.asmdef` | `src/Archmage/Sdk/*.cs` | Pure C#, `noEngineReferences: true` |
-| `Shadop.Archmage.Sdk.Unity` | `Runtime/Unity/Shadop.Archmage.Sdk.Unity.asmdef` | `src/Archmage/Sdk/Unity/*.cs` | Unity engine adapters (`UnityResourcesFS`, `UnityStreamingAssetsFS`, `UnityAtlasLogger`) |
+| `Shadop.Archmage.Sdk.Unity` | `Runtime/Unity/Shadop.Archmage.Sdk.Unity.asmdef` | `src/Archmage/Sdk/Unity/*.cs` | Unity engine adapters |
 | `Shadop.Archmage.Sdk.Unity.Addressables` | `Runtime/Unity/Addressables/Shadop.Archmage.Sdk.Unity.Addressables.asmdef` | `src/Archmage/Sdk/Unity/Addressables/*.cs` | Addressables adapter; only compiled when `com.unity.addressables` is installed (`defineConstraints: ["UNITY_ADDRESSABLES"]`) |
 
-`Shadop.Archmage.Sdk.Unity` and `Shadop.Archmage.Sdk.Unity.Addressables` both reference `Shadop.Archmage.Sdk`. The asmdef files are not synced by rsync — they live directly in the Unity package directory.
+The asmdef files are not synced by rsync — they live directly in the Unity package directory.
 
 ### Godot Package
 
-The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. It targets `net8.0`, references `GodotSharp` 4.6.0, and references `Archmage.csproj`, which becomes a dependency on `Shadop.Archmage` of the same version when packed. The sources (`GodotFileAccessFS`, `GodotAtlasLogger`, `GodotJsonSettingsFactory`, and the Vec, Rgba, MinMax and WeightedPool extensions) use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-engines.sh` does not sync it to Unity.
+The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. The sources use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-engines.sh` does not sync it to Unity.
 
 ### Godot ArchmageDev Project
 
@@ -79,7 +79,7 @@ The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/
 
 - `ArchmageDev.csproj` references `Archmage.Godot.csproj` with `ProjectReference`, so changes in `src/` need no sync.
 - `scripts/rsync-engines.sh` syncs `tests/testdata` to `configs/` and `tests/override` to `config_overrides/`. The `sdk-cs` recipe of `../whisper/JUSTFILE` generates `scripts/conf/`. `scripts/conf/AtlasExtension.cs` is not generated; keep it the same as `tests/Conf/AtlasExtension.cs`. The synced data and the generated code are committed.
-- `addons/archmage/` is an editor plugin that loads the configs in the editor and shows config ID properties as dropdowns in the Inspector; the root node of `scenes/demo.tscn` shows them. The same recipe generates it with the `godot-editor` template. It writes `ArchmageEditorPlugin.cs` and `plugin.cfg` only when they do not exist, so edit those two here. To change the other files, edit `../whisper/archmage/structs/tpls/godot-editor.tpl`. A dropdown shows only the IDs of its table, unless `InitializeCfgIdChoices` in `ArchmageEditorPlugin.cs` registers a format for that table.
+- `addons/archmage/` is an editor plugin that loads the configs in the editor and shows config ID properties as dropdowns in the Inspector; the root node of `scenes/demo.tscn` shows them. The same recipe generates it with the `godot-editor` template. It writes `ArchmageEditorPlugin.cs` and `plugin.cfg` only when they do not exist, so edit those two here. To change the other files, edit `../whisper/archmage/structs/tpls/godot-editor.tpl`.
 - `tests/TestRunner.cs` awaits each `[GodotTest]` method in turn on the Godot main thread. `scripts/godot-test.sh` builds the project before `--import`, because an import before the build reports the C# scripts as not compiling.
 - From the project directory, the script passes `res://tests/test_runner.tscn` as the scene to run, so the demo does not start. The release template does not accept a scene path, so `--exported` exports the preset `macOS (tests)`, whose feature `archmage_tests` selects `run/main_scene.archmage_tests`, the runner.
 - The export needs `ArchmageDev.sln`, `include_filter="*.json"` in the preset (Godot does not export JSON files by default) and `import_etc2_astc=true` in `project.godot` (required for arm64 and universal macOS builds). Godot exits with 0 when the .NET part of an export fails, so the script checks the export log for `ERROR`.
@@ -92,43 +92,23 @@ The code in `godot/ArchmageDev/addons/archmage/` runs in the Godot editor proces
 - The editor loads new C# code only after a build: the Build button, Play, or a `dotnet build` followed by switching to the editor window. Saving a `.cs` file does not build.
 - After a build, the editor unloads the collectible `AssemblyLoadContext` of the game assembly and loads the new build. The reload clears static fields and does not call `_EnterTree` again, so the plugin loads the configs lazily from `CfgIdInspectorPlugin._CanHandle`.
 - The unload fails ("Failed to unload assemblies"; the editor then runs the old code until it restarts) while a static cache outside the game assembly holds its types. `TypeDescriptor` is such a cache, and Newtonsoft.Json fills it during deserialization. Call `TypeDescriptorCleanup.Install()` before editor code deserializes configs. Games do not unload assemblies and are not affected.
-- The Inspector shows only exported Variant types, so a config ID property is a `long` or `string` whose hint string names the CfgId type: `[Export(PropertyHint.None, "HeroCfgId")]`. For a list, use `long[]` with `[Export(PropertyHint.TypeString, "2/0:HeroCfgId")]`, or `string[]` with `"4/0:RaceCfgId"`. `Godot.Collections.Array<T>` drops the hint string.
+- Godot cannot export a CfgId type, so a config ID is exported as its `Value` type, and the plugin recognizes it by the hint string. Game code uses the constants of `CfgIdPropHint` and `CfgIdPropType`, so `DefaultCfgIdChoices.cs` defines them outside `#if TOOLS`.
 - No automated test covers the plugin. To drive the editor from code, add a temporary file with a `[ModuleInitializer]` that uses `SceneTree` timers and `EditorInterface` (open a scene, `InspectObject`, find the `CfgIdEditorProperty` nodes, emit `OptionButton.ItemSelected`), and run `godot --headless --editor --path godot/ArchmageDev`. Change one dropdown per frame: when a probe changed two elements of one array in the same frame, only the last change was kept. A reload needs the GUI editor: start it, run `dotnet build`, then bring its window to the front, for example with `osascript`.
 
 ### API Docs
 
-`docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Godot pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj` and `docs/utils/api-godot/ArchmageGodotDocs.csproj`. Each of them compiles the core sources together with the platform sources. The pages in `gen-cs-editor/` explain how to use the code that the `unity-editor` and `godot-editor` templates generate; they are written by hand.
+`docs/update.sh` generates the pages in `sdk-cs/`, `sdk-cs-unity/` and `sdk-cs-godot/` from the doc comments, so edit the doc comments, not the pages. The Unity and Godot pages are built from `docs/utils/api-unity/ArchmageUnityDocs.csproj` and `docs/utils/api-godot/ArchmageGodotDocs.csproj`. The pages in `gen-cs-editor/` explain how to use the code that the `unity-editor` and `godot-editor` templates generate; they are written by hand.
 
 - Unity: the script uses the Unity Editor whose version is in `unity/ArchmageDev/ProjectSettings/ProjectVersion.txt` (set `UNITY_EDITOR` to override), and the Addressables assemblies in `unity/ArchmageDev/Library/ScriptAssemblies/`. After upgrading Unity, open ArchmageDev in the new Editor; nothing else needs to change. When the Unity sources start to use another UnityEngine module or `UNITY_*` symbol, add it to `ArchmageUnityDocs.csproj`.
 - Godot: the script does not use the local Godot installation. It builds against the `GodotSharp` version in `Archmage.Godot.csproj`, so upgrading Godot locally needs no change.
 
-### Entry Point
+### atlas.json
 
-`Archmage` (static class) exposes `LoadAtlas()` / `LoadAtlasAsync()`, both configured via `AtlasOptions` (fluent builder using extension methods in `AtlasOptionExtensions.cs`).
+`atlas.json` maps each config key in one of three ways:
 
-### Atlas Loading Flow
-
-1. Read and parse `atlas.json` — defines three mapping strategies:
-   - **`unique`**: key → file path (one-to-one)
-   - **`variant`**: key → `{case → file path}` (variants; use `"/"` as default case)
-   - **`many`**: key → `[file paths]` (list; files merged in order)
-2. Apply any registered `AtlasModifier` callbacks to the parsed atlas data
-3. For each config item: read files via `IFS`, deserialize, merge JSON, then apply overrides
-4. Call `IAtlas.BindRefs()` to resolve cross-table references
-5. Call `IAtlas.OnLoaded()` for post-load initialization
-
-### Key Abstractions
-
-| Interface/Class | Role |
-|---|---|
-| `IAtlas` | Config collection with lifecycle hooks; implemented by generated code in `tests/Conf/` |
-| `IFS` | File system abstraction; `DefaultFS` wraps `System.IO`. `MainThreadOnly` chooses between Mode C and Mode W (see "Loading Flow") |
-| `IAtlasLogger` | Logging; `DefaultLogger` writes to console |
-| `AtlasOptions` | Builder for loader configuration (FS, logger, filters, overrides, concurrency, `MainThreadParsing`) |
-| `IApplyKeys` | Optional interface on config objects; called after deserialization/overrides, before marking `Ready` |
-| `IRefBinder` | Implemented by generated table classes; called during `BindRefs()` to resolve `XRef` fields |
-
-The `Archmage` static class is split across two `partial class` files: `AtlasLoader.cs` (loading logic) and `AtlasDumper.cs` (`DumpAtlas` utility for exporting ready items to JSON files, used for golden file tests).
+- **`unique`**: key → file path
+- **`variant`**: key → `{case → file path}`; `"/"` is the default case
+- **`many`**: key → `[file paths]`; the files are merged in order
 
 ### IFS Implementations: Read Support
 
@@ -188,29 +168,13 @@ LoadAtlas / LoadAtlasAsync
 - `LoadAtlas`: on the calling thread.
 - `LoadAtlasAsync`, when the caller has a `SynchronizationContext`: on that context, such as the Unity or Godot main thread. Otherwise, on the calling thread until the first asynchronous wait, then on thread pool threads; each later asynchronous wait may switch to another thread.
 
-### Special Types
+### Generated Config Code
 
-- **`XRef<V, T>`** — Cross-table reference; config ID stored, resolved in bind phase via `IRefBinder`
-- **`Duration`** — Nanosecond-precision duration with compact shard encoding; custom JSON converter
-- **`I18n`** — Multi-language text with fallback; loaded from locale JSON files
-- **`Vec2/3/4<T>`**, **`Tup1–7`** — Typed vectors and tuples for structured config fields
+`tests/Conf/` is a sample of the config code that users generate with archmage; the `sdk-cs` recipe of `../whisper/JUSTFILE` generates it with the `json-cs` template. To change a file marked "DO NOT EDIT", edit `../whisper/archmage/structs/tpls/json-cs.tpl`. Files marked "Safe to edit", such as `AtlasExtension.cs`, are not regenerated.
 
-### Generated Config Pattern
+### Language
 
-`tests/Conf/` shows the expected shape of user-generated code (files are marked "DO NOT EDIT" — they represent output of the archmage code-generation tool):
-
-- Table classes implement `IRefBinder` and populate themselves via JSON deserialization
-- `AtlasExtension.cs` wires all tables to `IAtlas.BindRefs()`
-- `L10n.cs` wraps `I18n` for localization lookup
-- `Atlas.cs` is the `ConfigAtlas : IAtlas` root; its `BuildMap()` registers each table with its key and mapping type
-
-Tests use golden files under `tests/golden/`. Run `UPDATE_GOLDEN=1 dotnet test` to regenerate them when output changes are intentional.
-
-### Dependencies
-
-- `Newtonsoft.Json 13.0.3` — JSON serialization with custom converters (`XRefJsonConverter`, `DurationJsonConverter`)
-- `xunit.v3 2.0.3` — Test framework
-- C# 9.0, nullable enabled, implicit usings disabled
+C# 9.0, nullable enabled, implicit usings disabled.
 
 ### Release & CI
 

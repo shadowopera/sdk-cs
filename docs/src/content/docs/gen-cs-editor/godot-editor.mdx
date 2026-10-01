@@ -5,7 +5,7 @@ sidebar:
   order: 2
 ---
 
-Archmage can display config ID properties in the Inspector as dropdowns. This is useful when you set the value of a config ID property in the Inspector. Without dropdowns, you must look up each ID in a config table and enter it manually. A mistyped ID can go unnoticed until the game runs. With a dropdown, you select the ID from a searchable list of the table's IDs, and the list can show a name next to each ID.
+Archmage can display config ID properties in the Inspector as dropdowns. Without dropdowns, you must look up each ID in a config table and enter it manually. A mistyped ID can go unnoticed until the game runs. With a dropdown, you select the ID from a searchable list of the table's IDs, and the list can show a name next to each ID.
 
 ![A config ID dropdown in the Godot Inspector](../../../assets/archmage/godot-dropdown.jpg)
 
@@ -47,26 +47,37 @@ ConfigAtlas.Instance = atlas;
 
 The configs are loaded when the Inspector first displays an object. After each build, they are reloaded the next time the Inspector displays an object. To load changed config files manually, choose **Project > Tools > Reload Game Configs for Editor**. The editor only uses updated C# code after a build. Saving a `.cs` file does not trigger a build.
 
-## Define Config ID Properties
+## Export Config IDs to the Inspector
 
-A property shows as a dropdown when its hint string is the name of a config ID type, such as `HeroCfgId`, and its type is `long` for an integer ID or `string` for a string ID:
+To show a field or C# property in the Inspector as a dropdown of `HeroCfgId` values, pass `CfgIdPropHint.Hero` and `CfgIdPropType.Hero` to `[Export]`. For an array of `HeroCfgId` values, pass `CfgIdPropHint.HeroArray` and `CfgIdPropType.HeroArray`. Each element of the array shows as a dropdown.
+
+Because Godot cannot export a config ID type such as `HeroCfgId`, the field or property must have the type of `HeroCfgId.Value`.
+
+For an array, the type is not always the type of `Value` followed by `[]`, because Godot does not export `sbyte[]`, `short[]`, `ushort[]`, `uint[]` or `ulong[]`. A single config ID does not have this problem. Use this table to find the array type:
+
+| Type of `Value` | Array type |
+|---|---|
+| `string` | `string[]` |
+| `byte` | `byte[]` |
+| `sbyte`, `short`, `ushort`, `int` | `int[]` |
+| `uint`, `long`, `ulong` | `long[]` |
+
+`HeroCfgId.Value` is a `long` in the example below. The C# property `Hero` converts the exported field `_hero` to a `HeroCfgId` for your code:
 
 ```csharp
-[Export(PropertyHint.None, "HeroCfgId")]
-public long Hero { get; set; }
+using Conf.Editor;
 
-[Export(PropertyHint.None, "RaceCfgId")]
-public string Race { get; set; } = "";
-```
+[Export(CfgIdPropHint.Hero, CfgIdPropType.Hero)] long _hero;
+public HeroCfgId Hero { get => _hero; set => _hero = value; }
 
-For an array of config IDs, use `long[]` or `string[]` with `PropertyHint.TypeString`. Each element also shows as a dropdown. `Godot.Collections.Array<T>` does not show dropdowns, because Godot drops its hint string.
+[Export(CfgIdPropHint.Race, CfgIdPropType.Race)] string _race = "";
+public RaceCfgId Race { get => _race; set => _race = value; }
 
-```csharp
-[Export(PropertyHint.TypeString, "2/0:HeroCfgId")]
-public long[] Heroes { get; set; } = Array.Empty<long>();
+[Export(CfgIdPropHint.HeroArray, CfgIdPropType.HeroArray)]
+public long[] Heroes = Array.Empty<long>();
 
-[Export(PropertyHint.TypeString, "4/0:RaceCfgId")]
-public string[] Races { get; set; } = Array.Empty<string>();
+[Export(CfgIdPropHint.RaceArray, CfgIdPropType.RaceArray)]
+public string[] Races = Array.Empty<string>();
 ```
 
 ## Show More Than Just the ID

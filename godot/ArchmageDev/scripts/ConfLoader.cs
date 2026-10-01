@@ -1,27 +1,29 @@
 using System;
 using System.Threading.Tasks;
 using Conf;
+using Conf.Editor;
 using Conf.Enums;
 using Godot;
 using Shadop.Archmage.Sdk;
 
 public partial class ConfLoader : Node
 {
-    // The Archmage editor plugin shows each of these properties in the Inspector as a dropdown of the IDs in its
-    // table. See addons/archmage/ArchmageEditorPlugin.cs for details. Use long[] or string[] for a list, because
-    // Godot drops the hint string of a Godot.Collections.Array<T>.
+    // The Archmage editor plugin shows each of these exported properties in the Inspector as a
+    // dropdown of the IDs in its table. See addons/archmage/ArchmageEditorPlugin.cs for details.
+    // Godot cannot export a HeroCfgId, so the exported field is a long and the Hero C# property
+    // converts it.
     [ExportCategory("Easy Config ID Selection")]
-    [Export(PropertyHint.None, "HeroCfgId")]
-    public long Hero { get; set; } = 2;
+    [Export(CfgIdPropHint.Hero, CfgIdPropType.Hero)] long _hero = 2;
+    public HeroCfgId Hero { get => _hero; set => _hero = value; }
 
-    [Export(PropertyHint.None, "RaceCfgId")]
-    public string Race { get; set; } = "Elf";
+    [Export(CfgIdPropHint.Race, CfgIdPropType.Race)] string _race = "Elf";
+    public RaceCfgId Race { get => _race; set => _race = value; }
 
-    [Export(PropertyHint.TypeString, "2/0:HeroCfgId")]
-    public long[] Heroes { get; set; } = Array.Empty<long>();
+    [Export(CfgIdPropHint.HeroArray, CfgIdPropType.HeroArray)]
+    public long[] Heroes = Array.Empty<long>();
 
-    [Export(PropertyHint.TypeString, "4/0:RaceCfgId")]
-    public string[] Races { get; set; } = new[] { "Human" };
+    [Export(CfgIdPropHint.RaceArray, CfgIdPropType.RaceArray)]
+    public string[] Races = new[] { "Human" };
 
     public override async void _Ready()
     {

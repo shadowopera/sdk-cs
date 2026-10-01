@@ -13,18 +13,19 @@ using Godot;
 namespace Conf.Editor
 {
     /// <summary>
-    /// Provides the choices for a config ID property: each choice is a config ID
-    /// and its display name, shown in an editor dropdown.
-    ///
-    /// A property uses these choices when its hint string matches the key
-    /// under which this choice list was registered.
+    /// Provides the choices for an exported config ID property: each choice is
+    /// a config ID and its display name, shown in an editor dropdown.
     ///
     /// Example:
-    /// <c>[Export(PropertyHint.None, "HeroCfgId")]
-    /// public long Hero { get; set; }</c>
+    /// <code>
+    /// [Export(CfgIdPropHint.Hero, CfgIdPropType.Hero)] long _hero = 0;
+    /// public HeroCfgId Hero { get => _hero; set => _hero = value; }
+    /// </code>
     ///
-    /// In this example, the editor shows a dropdown for Hero using the choices
-    /// registered under "HeroCfgId". Selecting a hero stores its long ID.
+    /// In this example, the Inspector shows <c>_hero</c> as a dropdown that
+    /// lists all <c>HeroCfgId</c> values in the loaded configs. The chosen ID
+    /// is stored in <c>_hero</c>, and your code gets it from <c>Hero</c> as a
+    /// <c>HeroCfgId</c>.
     /// </summary>
     public sealed class CfgIdChoices
     {
