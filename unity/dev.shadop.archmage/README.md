@@ -271,7 +271,8 @@ i18n.MergeL10nFile("l10n/en.json", "en");
 i18n.MergeL10nFile("l10n/zh-CN.json", "zh-CN");
 
 i18n.Text("ui.ok", "zh-CN");  // → "确认"
-i18n.Text("ui.ok", "ja");     // → falls back to "OK"
+i18n.Text("ui.ok", "ja");     // → falls back to "OK" in "en"
+i18n.Text("ui.xx", "ja");     // → no translation found, so returns "ui.xx"
 ```
 
 In generated config classes, localized fields are typed as `L10n`. In JSON they are
@@ -286,6 +287,8 @@ L10n.GetPreferredLanguage = () => "zh-CN";
 // Then in your code:
 string label = hero.Name.Text;
 ```
+
+To detect a missing translation, use `GetText`, which returns a `bool`.
 
 ### XRef — Cross-table Reference
 
