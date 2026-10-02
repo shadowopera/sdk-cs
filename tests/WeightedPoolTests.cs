@@ -160,6 +160,28 @@ namespace Shadop.Archmage.Sdk.Tests
         }
 
         [Fact]
+        public void TestClone()
+        {
+            var wp = new WeightedPool<int>(new[] { 10, 20, 30 }, new[] { 1, 2, 3 });
+            var c = wp.Clone();
+            Assert.Equal(wp.Items, c.Items);
+            Assert.Equal(wp.Weights, c.Weights);
+
+            c.Items![0] = 99;
+            c.Weights![0] = 99;
+            Assert.Equal(10, wp.Items![0]);
+            Assert.Equal(1, wp.Weights![0]);
+        }
+
+        [Fact]
+        public void TestCloneEmpty()
+        {
+            var c = new WeightedPool<int>().Clone();
+            Assert.Null(c.Items);
+            Assert.Null(c.Weights);
+        }
+
+        [Fact]
         public void TestJsonRoundTrip()
         {
             var a = new WeightedPool<int>(new[] { 1, 2, 3 }, new[] { 4, 5, 6 });

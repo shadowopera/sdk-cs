@@ -34,6 +34,19 @@ namespace Shadop.Archmage.Sdk
         [JsonIgnore] public int Count => Items?.Length ?? 0;
 
         /// <summary>
+        /// Returns a copy of the pool. The copy has its own <see cref="Items"/> and <see cref="Weights"/>
+        /// arrays, so assigning to their elements does not affect the original pool.
+        /// </summary>
+        public WeightedPool<T> Clone()
+        {
+            return new WeightedPool<T>
+            {
+                Items = (T[]?)Items?.Clone(),
+                Weights = (int[]?)Weights?.Clone(),
+            };
+        }
+
+        /// <summary>
         /// Maps the <paramref name="value"/> to an item deterministically according to the weights.
         /// <c>value &lt; 0</c> returns the first item with non-zero weight; <c>value &gt;= 1</c>
         /// returns the last. Throws if the pool is empty or the total weight is zero.

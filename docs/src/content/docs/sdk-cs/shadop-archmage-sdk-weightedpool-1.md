@@ -76,6 +76,19 @@ public WeightedPool(T[] items, Int32[] weights)
 
 ## Methods
 
+### **Clone()**
+
+Returns a copy of the pool. The copy has its own [WeightedPool<T>.Items](../shadop-archmage-sdk-weightedpool-1/#items) and [WeightedPool<T>.Weights](../shadop-archmage-sdk-weightedpool-1/#weights)
+ arrays, so assigning to their elements does not affect the original pool.
+
+```csharp
+public WeightedPool<T> Clone()
+```
+
+#### Returns
+
+[WeightedPool<T>](../shadop-archmage-sdk-weightedpool-1/)<br>
+
 ### **SampleWith(Single)**
 
 Maps the `value` to an item deterministically according to the weights.
