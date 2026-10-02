@@ -25,10 +25,10 @@ public static L10n Empty
 
 ### **GetI18n**
 
-Returns the active I18n instance. It must be set before calling L10n.GetText or L10n.Text.
+Returns the active I18n instance used by L10n. This is a global setting and must be set before calling L10n.GetText or L10n.Text.
 
 ```csharp
-public static Func<I18n>? GetI18n
+public static Func<I18n> GetI18n
 ```
 
 #### Field Value
@@ -37,10 +37,10 @@ public static Func<I18n>? GetI18n
 
 ### **GetPreferredLanguage**
 
-Returns the player's current language tag. It must be set before calling L10n.Text.
+Returns the player's preferred language tag used by L10n. This is a global setting and must be set before calling L10n.Text.
 
 ```csharp
-public static Func<string>? GetPreferredLanguage
+public static Func<string> GetPreferredLanguage
 ```
 
 #### Field Value
@@ -63,7 +63,7 @@ public L10n(string key)
 
 ### **Text**
 
-Returns the translation for the player's preferred language, falling back to the default language if the key isn't found. An empty key yields an empty string.
+Returns the translation in the player's preferred language, falling back to the default language if no translation is found. An empty key yields an empty string.
 
 ```csharp
 public string Text { get; }
@@ -77,7 +77,7 @@ public string Text { get; }
 
 ### **GetText(String, String&)**
 
-Returns the translation for the given language. Returns true if the key is found, with the translated text in `text`; otherwise false. An empty key yields an empty string.
+Returns true on success, with the translated text in `text`; otherwise false. An empty key succeeds with an empty string.
 
 ```csharp
 public bool GetText(string lang, String& text)
@@ -88,7 +88,6 @@ public bool GetText(string lang, String& text)
 `lang` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
 `text` [String&](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The translated text, or null if not found.
 
 #### Returns
 
