@@ -103,6 +103,13 @@ The code in `godot/ArchmageDev/addons/archmage/` runs in the Godot editor proces
 - xmldoc2md writes nothing for `<typeparamref>` and for some `<see cref>` to methods, which leaves a gap in the sentence. Write the name in `<c>` instead, such as `<c>TId</c>`.
 - Godot: the script does not use the local Godot installation. It builds against the `GodotSharp` version in `Archmage.Godot.csproj`, so upgrading Godot locally needs no change.
 
+### README and CHANGELOG Copies
+
+Edit `README.md` and `CHANGELOG.md` in the repository root, not their copies. The next sync overwrites the copies.
+
+- `scripts/rsync-engines.sh` copies `README.md` to `unity/dev.shadop.archmage/README.md`, and `docs/update.sh` copies it to `docs/src/content/docs/overview-cs/sdk-cs.mdx`.
+- `scripts/rsync-engines.sh` copies `CHANGELOG.md` to `unity/dev.shadop.archmage/CHANGELOG.md`, and `docs/update.sh` copies it to `docs/src/content/docs/overview-cs/CHANGELOG.md`.
+
 ### atlas.json
 
 `atlas.json` maps each config key in one of three ways:

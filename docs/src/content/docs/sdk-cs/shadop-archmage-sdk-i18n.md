@@ -20,14 +20,14 @@ I18n (internationalization) stores text for multiple languages and retrieves the
 Usage pattern:
 
 1. Create an I18n instance with a fallback language
-2. Load translations via MergeTexts, MergeL10nData, or MergeL10nFile
+2. Load translations via MergeTexts, MergeL10nData, MergeL10nFile, or MergeL10nFileAsync
 3. Retrieve translations via GetText or Text
 
 ## Constructors
 
 ### **I18n(String)**
 
-Creates I18n with fallback language (used when key not found in requested language).
+Creates an I18n instance with the specified fallback language as the default.
 
 ```csharp
 public I18n(string fallbackLanguage)
@@ -194,8 +194,10 @@ True if the key was found in either the requested or fallback language; otherwis
 
 ### **Text(String, String)**
 
-Retrieves text with fallback, throwing an exception if not found.
- Tries the requested language first, then falls back to the default language.
+Retrieves text with fallback.
+ Tries the requested language first, then falls back to the default language,
+ and finally to the key string if neither language has a translation.
+ To detect a missing translation, use `GetText`.
 
 ```csharp
 public string Text(string key, string language)
@@ -212,9 +214,4 @@ The preferred language code.
 #### Returns
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The translation string.
-
-#### Exceptions
-
-[ArchmageException](../shadop-archmage-sdk-archmageexception/)<br>
-Thrown if the key is not found in either the requested or fallback language.
+The translation string, or the key string if no translation is found.

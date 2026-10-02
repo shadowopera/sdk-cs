@@ -349,7 +349,7 @@ namespace Shadop.Archmage.Sdk.Tests
             var r1 = i18n.Text("hello", "en");
             Assert.Equal("Hello", r1);
 
-            Assert.Throws<ArchmageException>(() => i18n.Text("world", "en"));
+            Assert.Equal("world", i18n.Text("world", "en"));
         }
     }
 }

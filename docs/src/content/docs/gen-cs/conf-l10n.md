@@ -37,7 +37,7 @@ public static Func<I18n> GetI18n
 
 ### **GetPreferredLanguage**
 
-Returns the player's preferred language tag used by L10n. This is a global setting and must be set before calling L10n.Text.
+Returns the player's preferred language code used by L10n. This is a global setting and must be set before calling L10n.Text.
 
 ```csharp
 public static Func<string> GetPreferredLanguage
@@ -63,7 +63,7 @@ public L10n(string key)
 
 ### **Text**
 
-Returns the translation in the player's preferred language, falling back to the default language if no translation is found. An empty key yields an empty string.
+Returns the translation in the player's preferred language, falling back to the default language if no translation is found, and finally to the key string if neither language has a translation.
 
 ```csharp
 public string Text { get; }

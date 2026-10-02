@@ -24,7 +24,7 @@ namespace Conf
         /// </summary>
         public static Func<I18n> GetI18n = null!;
         /// <summary>
-        /// Returns the player's preferred language tag used by L10n.
+        /// Returns the player's preferred language code used by L10n.
         /// This is a global setting and must be set before calling L10n.Text.
         /// </summary>
         public static Func<string> GetPreferredLanguage = null!;
@@ -50,8 +50,8 @@ namespace Conf
 
         /// <summary>
         /// Returns the translation in the player's preferred language, falling back to the
-        /// default language if no translation is found.
-        /// An empty key yields an empty string.
+        /// default language if no translation is found, and finally to the key string if
+        /// neither language has a translation.
         /// </summary>
         public string Text => string.IsNullOrEmpty(_key) ? string.Empty : GetI18n().Text(_key, GetPreferredLanguage());
 

@@ -20,7 +20,7 @@ namespace Shadop.Archmage.Sdk
     /// <para>Usage pattern:</para>
     /// <list type="number">
     /// <item><description>Create an I18n instance with a fallback language</description></item>
-    /// <item><description>Load translations via MergeTexts, MergeL10nData, or MergeL10nFile</description></item>
+    /// <item><description>Load translations via MergeTexts, MergeL10nData, MergeL10nFile, or MergeL10nFileAsync</description></item>
     /// <item><description>Retrieve translations via GetText or Text</description></item>
     /// </list>
     /// </remarks>
@@ -30,7 +30,7 @@ namespace Shadop.Archmage.Sdk
         readonly Dictionary<string, Dictionary<string, string>> _texts;
 
         /// <summary>
-        /// Creates I18n with fallback language (used when key not found in requested language).
+        /// Creates an I18n instance with the specified fallback language as the default.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown if fallbackLanguage is null.</exception>
         public I18n(string fallbackLanguage)
@@ -161,13 +161,14 @@ namespace Shadop.Archmage.Sdk
         }
 
         /// <summary>
-        /// Retrieves text with fallback, throwing an exception if not found.
-        /// Tries the requested language first, then falls back to the default language.
+        /// Retrieves text with fallback.
+        /// Tries the requested language first, then falls back to the default language,
+        /// and finally to the key string if neither language has a translation.
+        /// To detect a missing translation, use <c>GetText</c>.
         /// </summary>
         /// <param name="key">The translation key.</param>
         /// <param name="language">The preferred language code.</param>
-        /// <returns>The translation string.</returns>
-        /// <exception cref="ArchmageException">Thrown if the key is not found in either the requested or fallback language.</exception>
+        /// <returns>The translation string, or the key string if no translation is found.</returns>
         public string Text(string key, string language)
         {
             // Try requested language
@@ -184,7 +185,7 @@ namespace Shadop.Archmage.Sdk
                 return fallbackText;
             }
 
-            throw new ArchmageException($"Localization key not found: {key}.");
+            return key;
         }
     }
 }
