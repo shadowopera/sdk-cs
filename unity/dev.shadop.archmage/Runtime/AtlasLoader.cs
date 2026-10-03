@@ -336,7 +336,7 @@ namespace Shadop.Archmage.Sdk
             // Bind references
             atlas.BindRefs();
 
-            options.Logger.Info($"<archmage> Loaded {filtered.Count} config items in {stopwatch.ElapsedMilliseconds}ms");
+            options.Logger.Info($"<archmage> Loaded {filtered.Count} atlas items in {stopwatch.ElapsedMilliseconds}ms");
         }
 
         internal static JsonSerializerSettings CloneJsonSettings(JsonSerializerSettings? original)
@@ -593,8 +593,11 @@ namespace Shadop.Archmage.Sdk
                 _ => $" with {loadingItem.Overrides.Count} overrides"
             };
 
+            var mapping = atlasItem.Mapping == AtlasConstants.MappingVariant
+                ? $"mapping={atlasItem.Mapping}, variant={atlasItem.Variant}"
+                : $"mapping={atlasItem.Mapping}";
             var paths = string.Join(", ", loadingItem.FilePaths);
-            options.Logger.Info($"<archmage> Loaded ({atlasItem.Mapping}) {paths}{supplement} ({stopwatch.ElapsedMilliseconds}ms)");
+            options.Logger.Info($"<archmage> Loaded atlas item \"{key}\" ({mapping}) from {paths}{supplement} in {stopwatch.ElapsedMilliseconds}ms");
             atlasItem.Ready = true;
         }
 
