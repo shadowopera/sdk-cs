@@ -72,7 +72,7 @@ namespace Conf
         }
     }
 
-    #region Trifles
+    #region Details
 
     [JsonConverter(typeof(SkillCfgIdJsonConverter))]
     [TypeConverter(typeof(SkillCfgIdTypeConverter))]

@@ -29,7 +29,7 @@ namespace Conf
         [JsonProperty("xpCurve")] public List<int>? XpCurve { get; set; }
     }
 
-    #region Trifles
+    #region Details
 
     #endregion
 }

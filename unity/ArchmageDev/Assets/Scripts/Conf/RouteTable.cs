@@ -15,7 +15,7 @@ namespace Conf
 {
     public partial class RouteTable : Dictionary<string, Dictionary<string, List<List<XRef<RegionCfgId, RegionCfg>>>>?> { }
 
-    #region Trifles
+    #region Details
 
     public partial class RouteTable : IRefBinder
     {

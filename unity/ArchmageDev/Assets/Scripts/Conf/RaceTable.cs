@@ -51,7 +51,7 @@ namespace Conf
         }
     }
 
-    #region Trifles
+    #region Details
 
     [JsonConverter(typeof(RaceCfgIdJsonConverter))]
     [TypeConverter(typeof(RaceCfgIdTypeConverter))]

@@ -129,7 +129,7 @@ namespace Conf
         }
     }
 
-    #region Trifles
+    #region Details
 
     public partial class ConfigAtlas
     {

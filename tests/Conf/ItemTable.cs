@@ -46,7 +46,6 @@ namespace Conf
         [JsonProperty("enchants")] public List<Item_EnchantsEntry>? Enchants { get; set; }
     }
 
-    // Price represents $.*.price
     public partial class Price
     {
         [JsonProperty("gold")] public int Gold { get; set; }
@@ -82,7 +81,7 @@ namespace Conf
         }
     }
 
-    #region Trifles
+    #region Details
 
     [JsonConverter(typeof(ItemCfgIdJsonConverter))]
     [TypeConverter(typeof(ItemCfgIdTypeConverter))]

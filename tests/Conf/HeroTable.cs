@@ -86,7 +86,6 @@ namespace Conf
         [JsonProperty("talents")] public List<Hero_TalentsEntry>? Talents { get; set; }
     }
 
-    // Stats represents $.*.stats
     public partial class Stats
     {
         /// <summary>Base HP</summary>
@@ -122,7 +121,7 @@ namespace Conf
         }
     }
 
-    #region Trifles
+    #region Details
 
     [JsonConverter(typeof(HeroCfgIdJsonConverter))]
     [TypeConverter(typeof(HeroCfgIdTypeConverter))]

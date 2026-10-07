@@ -27,7 +27,7 @@ namespace Conf
         [JsonProperty("waves")] public List<long>? Waves { get; set; }
     }
 
-    #region Trifles
+    #region Details
 
     public partial class ChapterArray : IRefBinder
     {

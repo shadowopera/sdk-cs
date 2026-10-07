@@ -64,7 +64,7 @@ namespace Conf
         [JsonProperty("worldBounds")] public Vec4<int> WorldBounds { get; set; }
     }
 
-    #region Trifles
+    #region Details
 
     public partial class GameCfg : IRefBinder
     {
