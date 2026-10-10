@@ -14,6 +14,10 @@
     <Content Remove="Conf\**" />
     <EmbeddedResource Remove="Conf\**" />
     <None Remove="Conf\**" />
+    <Compile Remove="Enums\**" />
+    <Content Remove="Enums\**" />
+    <EmbeddedResource Remove="Enums\**" />
+    <None Remove="Enums\**" />
   </ItemGroup>
 
   <ItemGroup>

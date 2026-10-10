@@ -11,9 +11,10 @@ namespace Conf
     public partial class ConfigAtlas
     {
         /// <summary>
-        /// The version info of the config repo at codegen time.
+        /// The version info of the config repo at codegen time, or null if no version
+        /// info was provided at that time.
         /// </summary>
-        public static VersionInfo CodeVersion
+        public static VersionInfo? CodeVersion
         {
             get
             {
