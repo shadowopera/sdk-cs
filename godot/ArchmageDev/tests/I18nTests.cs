@@ -33,9 +33,9 @@ namespace ArchmageDev.Tests
         static void AssertTexts(I18n i18n)
         {
             // Translated into fr.
-            Assert.AreEqual("Légendes d’Avalon", i18n.Text("l10n.xlsx[game.title]", "fr"));
+            Assert.AreEqual("Légendes d’Avalon", i18n.Text("l10n.xlsx|game.title", "fr"));
             // Not translated: falls back to en.
-            Assert.AreEqual("Welcome back!", i18n.Text("game.tips.login", "fr"));
+            Assert.AreEqual("Welcome back!", i18n.Text("game|$.tips.login", "fr"));
         }
     }
 }
