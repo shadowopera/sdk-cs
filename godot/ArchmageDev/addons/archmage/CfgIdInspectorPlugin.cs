@@ -26,6 +26,25 @@ namespace Conf.Editor
             AddPropertyEditor(name, new CfgIdEditorProperty(hintString));
             return true;
         }
+
+        /// <summary>
+        /// Makes the Inspector create the property editors of the edited object again, so that a change of the
+        /// choices or of the inspector plugins takes effect.
+        /// </summary>
+        public static void RebuildInspector() =>
+            EditorInterface.Singleton.GetInspector()?.GetEditedObject()?.NotifyPropertyListChanged();
+    }
+
+    // The Inspector keeps its property editors when a plugin is enabled or disabled, so the plugin rebuilds it.
+    public partial class ArchmageEditorPlugin
+    {
+        public override void _Notification(int what)
+        {
+            // The Inspector rebuilds on its next update, after _EnterTree adds or _ExitTree removes the inspector plugin.
+            // A deferred call would run after the editor is freed when the editor quits.
+            if (what == NotificationEnterTree || what == NotificationExitTree)
+                CfgIdInspectorPlugin.RebuildInspector();
+        }
     }
 }
 

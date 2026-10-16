@@ -61,9 +61,7 @@ namespace Conf.Editor
                 }
 
                 InitializeCfgIdChoices(atlas);
-
-                // Rebuilds the property editors of the object shown in the Inspector.
-                EditorInterface.Singleton.GetInspector().GetEditedObject()?.NotifyPropertyListChanged();
+                CfgIdInspectorPlugin.RebuildInspector();
                 GD.Print("<archmage> Game configs loaded for the editor.");
             }
             catch (Exception ex)
