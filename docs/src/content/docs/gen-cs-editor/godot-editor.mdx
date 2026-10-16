@@ -9,14 +9,14 @@ Archmage can display config ID properties in the Inspector as dropdowns. Without
 
 ![A config ID dropdown in the Godot Inspector](../../../assets/archmage/godot-dropdown.jpg)
 
-`archmage struct` generates the dropdown code with the `godot-editor` template. The generated code is a Godot editor plugin, `ArchmageEditorPlugin`, which has two roles: it loads the configs in the editor, and it provides a custom inspector control that renders each config ID property as a dropdown.
+`archmage struct` generates the dropdown code with the `godot-editor-cs` template. The generated code is a Godot editor plugin, `ArchmageEditorPlugin`, which has two roles: it loads the configs in the editor, and it provides a custom inspector control that renders each config ID property as a dropdown.
 
 ## Generate the Code
 
 Run `archmage struct` with the same arguments as for the config code, but with a different `-t`, `--namespace` and `-o`:
 
 ```bash
-archmage struct -t godot-editor --namespace Conf.Editor \
+archmage struct -t godot-editor-cs --namespace Conf.Editor \
     -o addons/archmage hero.xlsx race.xlsx
 ```
 
