@@ -20,9 +20,9 @@ for name in "README.md" "CHANGELOG.md" "LICENSE"; do
 
     if [[ -f "$src_file" ]]; then
         if [[ "$name" == "README.md" ]]; then
-            # Skip first two lines
+            # Skip the first two lines (the image) and everything from "## Development" on
             tmp_file="$(mktemp)"
-            tail -n +3 "$src_file" > "$tmp_file"
+            tail -n +3 "$src_file" | perl -0777 -pe 's/\n---\s+## Development.*//s' > "$tmp_file"
             if [[ ! -f "$dst_file" ]]; then
                 cp "$tmp_file" "$dst_file"
                 echo "  + $name"
