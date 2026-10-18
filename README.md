@@ -412,6 +412,16 @@ dotnet test tests/Archmage.Tests.csproj --filter "FullyQualifiedName~TestName"
 UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj   # regenerate golden files
 ```
 
+### Versioning
+
+The version has the form `MAJOR.MINOR.PATCH`.
+
+| Part | Incremented when | Notes |
+|---|---|---|
+| <span style="white-space: nowrap">`MAJOR`</span> | The interface has a breaking change | Identifies the generation of the interface contract |
+| `MINOR` | Archmage adds a feature | Feature snapshot number; keeps counting across `MAJOR` versions and is not reset when `MAJOR` increments |
+| `PATCH` | The SDK fixes a bug, improves its language-specific implementation, or adds an SDK-only feature | Reset to 0 when `MAJOR` or `MINOR` increments |
+
 ## License
 
 Apache 2.0. See [LICENSE](LICENSE) for details.
