@@ -21,7 +21,7 @@ project/assembly_name="ArchmageDev"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/archmage/plugin.cfg")
+enabled=PackedStringArray("res://addons/archmage_editor/plugin.cfg")
 
 [rendering]
 

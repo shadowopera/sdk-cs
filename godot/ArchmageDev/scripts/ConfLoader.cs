@@ -9,7 +9,7 @@ using Shadop.Archmage.Sdk;
 public partial class ConfLoader : Node
 {
     // The Archmage editor plugin shows each of these exported properties in the Inspector as a
-    // dropdown of the IDs in its table. See addons/archmage/ArchmageEditorPlugin.cs for details.
+    // dropdown of the IDs in its table. See addons/archmage_editor/ArchmageEditorPlugin.cs for details.
     // Godot cannot export a HeroCfgId, so the exported field is a long and the Hero C# property
     // converts it.
     [ExportCategory("Easy Config ID Selection")]

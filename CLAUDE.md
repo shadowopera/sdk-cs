@@ -20,7 +20,7 @@ dotnet test tests/Archmage.Tests.csproj --filter "FullyQualifiedName~TestName"
 # Regenerate golden files after intentional output changes
 UPDATE_GOLDEN=1 dotnet test tests/Archmage.Tests.csproj
 
-# Sync source to the Unity package, and test data to the Unity and Godot projects
+# Sync source to the Unity package and the Godot asset, and test data to the Unity and Godot projects
 scripts/rsync-engines.sh
 
 # Run ArchmageDev PlayMode tests in batch mode (Unity Editor must be closed)
@@ -32,6 +32,9 @@ scripts/unity-test.sh [--no-sync] [--packed] [--filter <expr>]
 # which needs the Godot export templates
 # Summary: godot/ArchmageDev/logs/godot-<path|exported>-summary.txt
 scripts/godot-test.sh [--no-sync] [--exported] [--filter <regex>]
+
+# Pack the Godot asset into builds/archmage-<version>.zip for upload to the Godot Asset Store (see "Godot Asset")
+scripts/pack-godot-asset.sh [--no-sync]
 
 # Run .NET tests, then Unity PlayMode tests and Godot tests in both modes (args pass through to unity-test.sh only)
 scripts/run-all-tests.sh
@@ -73,20 +76,26 @@ The asmdef files are not synced by rsync — they live directly in the Unity pac
 
 The NuGet package `Shadop.Archmage.Godot` is built from `src/Archmage/Sdk/Godot/Archmage.Godot.csproj`, which sits next to its sources. The sources use the namespace `Shadop.Archmage.Sdk` and need no `#if`. `Archmage.csproj` excludes `Sdk/Godot/**`, and `scripts/rsync-engines.sh` does not sync it to Unity.
 
+### Godot Asset
+
+The Godot Asset Store asset is `godot/ArchmageDev/addons/archmage/`. The Asset Store does not accept NuGet packages, so the asset contains the SDK sources, and users add Newtonsoft.Json to their projects themselves. `scripts/rsync-engines.sh` syncs the `.cs` files of `src/Archmage/Sdk/` to it, except `Unity/`, and copies `README.md` and `LICENSE`.
+
+- The asset keeps the `.uid` files that Godot generates on import. After adding a `.cs` file to `src/Archmage/Sdk/`, run `scripts/godot-test.sh`, which imports the project, and commit the new `.uid` file. `scripts/pack-godot-asset.sh` fails when a `.uid` file is missing.
+
 ### Godot ArchmageDev Project
 
 `godot/ArchmageDev/` is a Godot .NET project with the SDK integration tests and a demo (`scripts/ConfLoader.cs`, on the main scene `scenes/demo.tscn`).
 
-- `ArchmageDev.csproj` references `Archmage.Godot.csproj` with `ProjectReference`, so changes in `src/` need no sync.
+- ArchmageDev compiles the SDK from `addons/archmage/`, so it tests the files that the asset contains. `ArchmageDev.csproj` references Newtonsoft.Json itself. After changing `src/`, run `scripts/rsync-engines.sh`; `scripts/godot-test.sh` runs it unless `--no-sync` is set.
 - `scripts/rsync-engines.sh` syncs `tests/testdata` to `configs/` and `tests/override` to `config_overrides/`. The `sdk-cs` recipe of `../whisper/JUSTFILE` generates `scripts/conf/`. `scripts/conf/AtlasExtension.cs` is not generated; keep it the same as `tests/Conf/AtlasExtension.cs`. The synced data and the generated code are committed.
-- `addons/archmage/` is an editor plugin that loads the configs in the editor and shows config ID properties as dropdowns in the Inspector; the root node of `scenes/demo.tscn` shows them. The same recipe generates it with the `godot-editor-cs` template. It writes `ArchmageEditorPlugin.cs` and `plugin.cfg` only when they do not exist, so edit those two here. To change the other files, edit `../whisper/archmage/structs/tpls/godot-editor-cs.tpl`.
+- `addons/archmage_editor/` is an editor plugin that loads the configs in the editor and shows config ID properties as dropdowns in the Inspector; the root node of `scenes/demo.tscn` shows them. The same recipe generates it with the `godot-editor-cs` template. It writes `ArchmageEditorPlugin.cs` and `plugin.cfg` only when they do not exist, so edit those two here. To change the other files, edit `../whisper/archmage/structs/tpls/godot-editor-cs.tpl`.
 - `tests/TestRunner.cs` awaits each `[GodotTest]` method in turn on the Godot main thread. `scripts/godot-test.sh` builds the project before `--import`, because an import before the build reports the C# scripts as not compiling.
 - From the project directory, the script passes `res://tests/test_runner.tscn` as the scene to run, so the demo does not start. The release template does not accept a scene path, so `--exported` exports the preset `macOS (tests)`, whose feature `archmage_tests` selects `run/main_scene.archmage_tests`, the runner.
 - The export needs `ArchmageDev.sln`, `include_filter="*.json"` in the preset (Godot does not export JSON files by default) and `import_etc2_astc=true` in `project.godot` (required for arm64 and universal macOS builds). Godot exits with 0 when the .NET part of an export fails, so the script checks the export log for `ERROR`.
 
 ### Godot Editor Plugin
 
-The code in `godot/ArchmageDev/addons/archmage/` runs in the Godot editor process.
+The code in `godot/ArchmageDev/addons/archmage_editor/` runs in the Godot editor process.
 
 - Put editor code in `#if TOOLS`. Exported programs do not contain `GodotSharpEditor`.
 - The editor loads new C# code only after a build: the Build button, Play, or a `dotnet build` followed by switching to the editor window. Saving a `.cs` file does not build.
@@ -108,7 +117,7 @@ The code in `godot/ArchmageDev/addons/archmage/` runs in the Godot editor proces
 
 Edit `README.md` and `CHANGELOG.md` in the repository root, not their copies. The next sync overwrites the copies.
 
-- `scripts/rsync-engines.sh` copies `README.md` to `unity/dev.shadop.archmage/README.md`, and `docs/update.sh` copies it to `docs/src/content/docs/overview-cs/sdk-cs.mdx`.
+- `scripts/rsync-engines.sh` copies `README.md` to `unity/dev.shadop.archmage/README.md` and `godot/ArchmageDev/addons/archmage/README.md`, and `docs/update.sh` copies it to `docs/src/content/docs/overview-cs/sdk-cs.mdx`.
 - `scripts/rsync-engines.sh` copies `CHANGELOG.md` to `unity/dev.shadop.archmage/CHANGELOG.md`, and `docs/update.sh` copies it to `docs/src/content/docs/overview-cs/CHANGELOG.md`.
 
 ### atlas.json

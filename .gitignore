@@ -108,3 +108,4 @@ artifacts/
 /release.json
 *.sln.DotSettings.user
 .antigravitycli
+/builds/

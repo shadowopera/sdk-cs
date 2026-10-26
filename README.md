@@ -71,7 +71,17 @@ If your project uses `.asmdef` files, add the following assembly references:
 - `Shadop.Archmage.Sdk.Unity.Addressables` *(optional, only if using Addressables)*
 - `Shadop.Archmage.Sdk.Unity.Editor` *(optional)*
 
-### Godot (via NuGet)
+### Godot
+
+Install the SDK in one of the following ways, not both.
+
+**Via the Godot Asset Store** — After installing the Archmage C# SDK asset, add Newtonsoft.Json to your project:
+
+```bash
+dotnet add package Newtonsoft.Json
+```
+
+**Or via NuGet directly**:
 
 ```bash
 dotnet add package Shadop.Archmage.Godot
@@ -398,7 +408,7 @@ sdk-cs/
 │   ├── override/                   # Override-layer JSON
 │   └── golden/                     # Expected DumpAtlas output
 ├── scripts/                        # Engine sync, tests, version bump, release
-│   └── rsync-engines.sh            # src/ → Unity package; test data → Unity and Godot projects
+│   └── rsync-engines.sh            # src/ → Unity package and Godot asset; test data → Unity and Godot projects
 └── docs/                           # Documentation site (Starlight)
 ```
 
