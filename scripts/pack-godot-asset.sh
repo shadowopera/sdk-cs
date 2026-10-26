@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Packs godot/ArchmageDev/addons/archmage/ into builds/archmage-<version>.zip for upload to the Godot Asset Store.
+# Packs godot/ArchmageDev/addons/archmage/ into builds/archmage-sdk-cs-godot-<version>.zip for upload to the Godot Asset Store.
 # The zip contains addons/archmage/ with the .uid files. The version is read from Archmage.Godot.csproj.
 #
 # Usage: scripts/pack-godot-asset.sh [--no-sync]
@@ -76,7 +76,7 @@ if [[ -z "$version" ]]; then
 fi
 
 mkdir -p "$OUT_DIR"
-zip_file="$OUT_DIR/archmage-$version.zip"
+zip_file="$OUT_DIR/archmage-sdk-cs-godot-$version.zip"
 rm -f "$zip_file"
 (cd "$PROJECT_DIR" && zip -qrX "$zip_file" addons/archmage -x "*.DS_Store") || exit 1
 

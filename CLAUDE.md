@@ -33,7 +33,7 @@ scripts/unity-test.sh [--no-sync] [--packed] [--filter <expr>]
 # Summary: godot/ArchmageDev/logs/godot-<path|exported>-summary.txt
 scripts/godot-test.sh [--no-sync] [--exported] [--filter <regex>]
 
-# Pack the Godot asset into builds/archmage-<version>.zip for upload to the Godot Asset Store (see "Godot Asset")
+# Pack the Godot asset into builds/archmage-sdk-cs-godot-<version>.zip for upload to the Godot Asset Store (see "Godot Asset")
 scripts/pack-godot-asset.sh [--no-sync]
 
 # Run .NET tests, then Unity PlayMode tests and Godot tests in both modes (args pass through to unity-test.sh only)
